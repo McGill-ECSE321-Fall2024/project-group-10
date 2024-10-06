@@ -4,8 +4,14 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+
 // line 89 "../../../../../../model.ump"
 // line 255 "../../../../../../model.ump"
+@Entity
 public class Platform
 {
 
@@ -20,10 +26,13 @@ public class Platform
   //------------------------
 
   //Platform Attributes
+  @Id
+  @GeneratedValue
   private int platform_id;
   private String platformName;
 
   //Platform Associations
+  @ManyToOne
   private Manager manager;
 
   //------------------------
@@ -42,6 +51,8 @@ public class Platform
       throw new RuntimeException("Unable to create Platform due to aManager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
+
+  protected Platform(){}
 
   //------------------------
   // INTERFACE

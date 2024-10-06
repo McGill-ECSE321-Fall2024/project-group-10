@@ -4,8 +4,11 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.Entity;
+
 // line 31 "../../../../../../model.ump"
 // line 195 "../../../../../../model.ump"
+@Entity
 public class Manager extends Staff
 {
 
@@ -22,6 +25,7 @@ public class Manager extends Staff
     super(aEmail, aUsername, aPassword, aPhoneNumber, aAddress);
   }
 
+  protected Manager(){}
   //------------------------
   // INTERFACE
   //------------------------

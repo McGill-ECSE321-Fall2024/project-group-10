@@ -4,8 +4,14 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+
 // line 14 "../../../../../../model.ump"
 // line 205 "../../../../../../model.ump"
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Staff extends Account
 {
 
@@ -21,6 +27,8 @@ public abstract class Staff extends Account
   {
     super(aEmail, aUsername, aPassword, aPhoneNumber, aAddress);
   }
+
+  protected Staff(){}
 
   //------------------------
   // INTERFACE

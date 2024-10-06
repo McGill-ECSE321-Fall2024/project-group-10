@@ -3,10 +3,19 @@
 
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 import java.sql.Date;
 
 // line 60 "../../../../../../model.ump"
 // line 227 "../../../../../../model.ump"
+@Entity
 public class Reply
 {
 
@@ -27,13 +36,19 @@ public class Reply
   //------------------------
 
   //Reply Attributes
+  @Id
+  @GeneratedValue
   private int reply_id;
   private Date replyDate;
   private String description;
   private ReviewRating reviewRating;
 
   //Reply Associations
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "review_id")
   private Review review;
+
+  @ManyToOne
   private Manager manager;
 
   //------------------------
@@ -58,6 +73,8 @@ public class Reply
       throw new RuntimeException("Unable to create Reply due to aManager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
+
+  protected Reply(){}
 
   //------------------------
   // INTERFACE

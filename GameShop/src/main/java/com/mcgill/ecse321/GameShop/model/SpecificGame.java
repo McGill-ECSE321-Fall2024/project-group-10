@@ -4,8 +4,15 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+
 // line 94 "../../../../../../model.ump"
 // line 245 "../../../../../../model.ump"
+@Entity
 public class SpecificGame
 {
 
@@ -26,11 +33,15 @@ public class SpecificGame
   //------------------------
 
   //SpecificGame Attributes
+  @Id
+  @GeneratedValue
   private int specificGame_id;
   private ItemStatus itemStatus;
 
   //SpecificGame Associations
+  @ManyToMany
   private List<Order> order;
+  @ManyToOne
   private Game games;
 
   //------------------------
@@ -49,6 +60,8 @@ public class SpecificGame
       throw new RuntimeException("Unable to create SpecificGame due to aGames. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
+
+  protected SpecificGame(){}
 
   //------------------------
   // INTERFACE

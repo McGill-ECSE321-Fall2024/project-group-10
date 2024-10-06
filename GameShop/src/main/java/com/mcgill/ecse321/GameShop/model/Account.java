@@ -4,8 +4,16 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+
 // line 4 "../../../../../../model.ump"
 // line 200 "../../../../../../model.ump"
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Account
 {
 
@@ -20,6 +28,8 @@ public abstract class Account
   //------------------------
 
   //Account Attributes
+  @Id
+  @GeneratedValue
   private String email;
   private String username;
   private String password;
@@ -41,6 +51,9 @@ public abstract class Account
       throw new RuntimeException("Cannot create due to duplicate email. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
   }
+
+  protected Account(){}
+
 
   //------------------------
   // INTERFACE

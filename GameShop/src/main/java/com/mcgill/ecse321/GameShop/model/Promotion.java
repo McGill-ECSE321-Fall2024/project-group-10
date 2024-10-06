@@ -3,10 +3,20 @@
 
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+
 import java.sql.Date;
 
 // line 100 "../../../../../../model.ump"
 // line 250 "../../../../../../model.ump"
+@Entity
 public class Promotion
 {
 
@@ -21,6 +31,8 @@ public class Promotion
   //------------------------
 
   //Promotion Attributes
+  @Id
+  @GeneratedValue
   private int promotion_id;
   private String description;
   private int discountRate;
@@ -28,7 +40,9 @@ public class Promotion
   private Date endDate;
 
   //Promotion Associations
+  @ManyToMany
   private List<Game> games;
+  @ManyToOne
   private Manager manager;
 
   //------------------------
@@ -51,6 +65,8 @@ public class Promotion
       throw new RuntimeException("Unable to create Promotion due to aManager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
+
+  protected Promotion(){}
 
   //------------------------
   // INTERFACE

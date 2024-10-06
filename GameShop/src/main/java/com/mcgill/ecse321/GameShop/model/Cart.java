@@ -3,10 +3,20 @@
 
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+
 import java.sql.Date;
 
 // line 108 "../../../../../../model.ump"
 // line 260 "../../../../../../model.ump"
+@Entity
 public class Cart
 {
 
@@ -21,10 +31,14 @@ public class Cart
   //------------------------
 
   //Cart Attributes
+  @Id
+  @GeneratedValue
   private int cart_id;
 
   //Cart Associations
+  @ManyToMany
   private List<Game> games;
+  @ManyToOne
   private Order order;
 
   //------------------------
@@ -40,6 +54,7 @@ public class Cart
     games = new ArrayList<Game>();
   }
 
+  protected Cart(){}
   //------------------------
   // INTERFACE
   //------------------------

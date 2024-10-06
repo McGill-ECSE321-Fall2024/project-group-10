@@ -4,8 +4,17 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+
 // line 36 "../../../../../../model.ump"
 // line 265 "../../../../../../model.ump"
+@Entity
 public class WishList
 {
 
@@ -20,11 +29,17 @@ public class WishList
   //------------------------
 
   //WishList Attributes
+  @Id
+  @GeneratedValue
   private int wishList_id;
   private String title;
 
   //WishList Associations
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "email")
   private Customer customer;
+  
+  @ManyToMany
   private List<Game> games;
 
   //------------------------
@@ -45,6 +60,8 @@ public class WishList
     }
     games = new ArrayList<Game>();
   }
+
+  protected WishList(){}
 
   //------------------------
   // INTERFACE
