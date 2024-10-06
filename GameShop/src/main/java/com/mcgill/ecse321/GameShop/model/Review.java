@@ -3,10 +3,20 @@
 
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+
 import java.sql.Date;
 
 // line 49 "../../../../../../model.ump"
 // line 221 "../../../../../../model.ump"
+@Entity
 public class Review
 {
 
@@ -27,6 +37,8 @@ public class Review
   //------------------------
 
   //Review Attributes
+  @Id
+  @GeneratedValue
   private int review_id;
   private Date reviewDate;
   private String description;
@@ -34,8 +46,14 @@ public class Review
   private GameRating gameRating;
 
   //Review Associations
+  @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Reply> reply;
+
+  @ManyToOne(cascade = CascadeType.ALL) 
+  @JoinColumn(name = "game_id")
   private Game game;
+
+  @ManyToOne
   private Customer customer;
 
   //------------------------
@@ -63,6 +81,8 @@ public class Review
       throw new RuntimeException("Unable to create Review due to aCustomer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
+
+  protected Review(){}
 
   //------------------------
   // INTERFACE

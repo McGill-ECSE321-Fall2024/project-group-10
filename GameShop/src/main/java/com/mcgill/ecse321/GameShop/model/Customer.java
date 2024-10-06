@@ -4,8 +4,16 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+
 // line 19 "../../../../../../model.ump"
 // line 210 "../../../../../../model.ump"
+@Entity
 public class Customer extends Account
 {
 
@@ -14,7 +22,10 @@ public class Customer extends Account
   //------------------------
 
   //Customer Associations
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<WishList> wishList;
+
+  @OneToOne
   private Cart cart;
 
   //------------------------
@@ -30,6 +41,8 @@ public class Customer extends Account
       throw new RuntimeException("Unable to create Customer due to aCart. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
+  
+  protected Customer(){}
 
   //------------------------
   // INTERFACE

@@ -3,10 +3,23 @@
 
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+
 import java.sql.Date;
 
 // line 69 "../../../../../../model.ump"
 // line 234 "../../../../../../model.ump"
+@Entity
 public class Game
 {
 
@@ -27,16 +40,37 @@ public class Game
   //------------------------
 
   //Game Attributes
+  @Id
+  @GeneratedValue
   private int game_id;
   private String description;
   private int price;
+
+  @Enumerated(EnumType.STRING)
   private GameStatus gameStatus;
+
   private int stockQuantity;
   private String photoUrl;
 
   //Game Associations
+  @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Review> review;
+
+  @ManyToMany
+  @JoinTable(
+      name = "game_category",
+      joinColumns = @JoinColumn(name = "game_id"),
+      inverseJoinColumns = @JoinColumn(name = "category_id")
+  )
   private List<Category> categories;
+
+  @ManyToMany
+  @JoinTable(
+      name = "game_platform",
+      joinColumns = @JoinColumn(name = "game_id"),
+      inverseJoinColumns = @JoinColumn(name = "platform_id")
+  )
+
   private List<Platform> platforms;
 
   //------------------------
@@ -58,6 +92,8 @@ public class Game
     categories = new ArrayList<Category>();
     platforms = new ArrayList<Platform>();
   }
+
+  protected Game(){}
 
   //------------------------
   // INTERFACE

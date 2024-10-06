@@ -4,8 +4,14 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+
 // line 84 "../../../../../../model.ump"
 // line 240 "../../../../../../model.ump"
+@Entity
 public class Category
 {
 
@@ -20,10 +26,13 @@ public class Category
   //------------------------
 
   //Category Attributes
+  @Id
+  @GeneratedValue
   private int category_id;
   private String categoryName;
 
   //Category Associations
+  @ManyToOne
   private Manager manager;
 
   //------------------------
@@ -42,6 +51,8 @@ public class Category
       throw new RuntimeException("Unable to create Category due to aManager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
+
+  protected Category(){}
 
   //------------------------
   // INTERFACE

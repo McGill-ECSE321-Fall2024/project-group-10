@@ -3,10 +3,17 @@
 
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+
 import java.sql.Date;
 
 // line 41 "../../../../../../model.ump"
 // line 216 "../../../../../../model.ump"
+@Entity
 public class Order
 {
 
@@ -21,12 +28,15 @@ public class Order
   //------------------------
 
   //Order Attributes
+  @Id
+  @GeneratedValue
   private String trackingNumber;
   private Date orderDate;
   private String note;
   private int paymentCard;
 
   //Order Associations
+  @ManyToOne
   private Customer customer;
 
   //------------------------
@@ -47,6 +57,8 @@ public class Order
       throw new RuntimeException("Unable to create Order due to aCustomer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
+
+  protected Order(){}
 
   //------------------------
   // INTERFACE
