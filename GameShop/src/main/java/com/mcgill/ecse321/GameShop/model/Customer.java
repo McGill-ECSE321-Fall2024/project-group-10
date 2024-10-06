@@ -5,7 +5,7 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
 // line 19 "../../../../../../model.ump"
-// line 183 "../../../../../../model.ump"
+// line 210 "../../../../../../model.ump"
 public class Customer extends Account
 {
 
@@ -75,9 +75,9 @@ public class Customer extends Account
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public WishList addWishList(int aId, String aTitle)
+  public WishList addWishList(int aWishList_id, String aTitle)
   {
-    return new WishList(aId, aTitle, this);
+    return new WishList(aWishList_id, aTitle, this);
   }
 
   public boolean addWishList(WishList aWishList)

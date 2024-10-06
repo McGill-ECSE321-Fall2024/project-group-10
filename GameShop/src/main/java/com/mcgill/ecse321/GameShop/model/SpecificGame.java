@@ -1,12 +1,11 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
-// TODO
-// Create a dictionary to keep track of returned items
+
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
-// line 91 "../../../../../../model.ump"
-// line 215 "../../../../../../model.ump"
+// line 94 "../../../../../../model.ump"
+// line 245 "../../../../../../model.ump"
 public class SpecificGame
 {
 
@@ -20,32 +19,34 @@ public class SpecificGame
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, SpecificGame> specificgamesById = new HashMap<Integer, SpecificGame>();
+  private static Map<Integer, SpecificGame> specificgamesBySpecificGame_id = new HashMap<Integer, SpecificGame>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //SpecificGame Attributes
-  private int id;
+  private int specificGame_id;
   private ItemStatus itemStatus;
 
   //SpecificGame Associations
-  private Order order;
+  private List<Order> order;
+  private Game games;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public SpecificGame(int aId, Order aOrder)
+  public SpecificGame(int aSpecificGame_id, Game aGames)
   {
-    if (!setId(aId))
+    if (!setSpecificGame_id(aSpecificGame_id))
     {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+      throw new RuntimeException("Cannot create due to duplicate specificGame_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
-    if (!setOrder(aOrder))
+    order = new ArrayList<Order>();
+    if (!setGames(aGames))
     {
-      throw new RuntimeException("Unable to create SpecificGame due to aOrder. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+      throw new RuntimeException("Unable to create SpecificGame due to aGames. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
 
@@ -53,22 +54,22 @@ public class SpecificGame
   // INTERFACE
   //------------------------
 
-  public boolean setId(int aId)
+  public boolean setSpecificGame_id(int aSpecificGame_id)
   {
     boolean wasSet = false;
-    Integer anOldId = getId();
-    if (anOldId != null && anOldId.equals(aId)) {
+    Integer anOldSpecificGame_id = getSpecificGame_id();
+    if (anOldSpecificGame_id != null && anOldSpecificGame_id.equals(aSpecificGame_id)) {
       return true;
     }
-    if (hasWithId(aId)) {
+    if (hasWithSpecificGame_id(aSpecificGame_id)) {
       return wasSet;
     }
-    id = aId;
+    specificGame_id = aSpecificGame_id;
     wasSet = true;
-    if (anOldId != null) {
-      specificgamesById.remove(anOldId);
+    if (anOldSpecificGame_id != null) {
+      specificgamesBySpecificGame_id.remove(anOldSpecificGame_id);
     }
-    specificgamesById.put(aId, this);
+    specificgamesBySpecificGame_id.put(aSpecificGame_id, this);
     return wasSet;
   }
 
@@ -80,37 +81,124 @@ public class SpecificGame
     return wasSet;
   }
 
-  public int getId()
+  public int getSpecificGame_id()
   {
-    return id;
+    return specificGame_id;
   }
   /* Code from template attribute_GetUnique */
-  public static SpecificGame getWithId(int aId)
+  public static SpecificGame getWithSpecificGame_id(int aSpecificGame_id)
   {
-    return specificgamesById.get(aId);
+    return specificgamesBySpecificGame_id.get(aSpecificGame_id);
   }
   /* Code from template attribute_HasUnique */
-  public static boolean hasWithId(int aId)
+  public static boolean hasWithSpecificGame_id(int aSpecificGame_id)
   {
-    return getWithId(aId) != null;
+    return getWithSpecificGame_id(aSpecificGame_id) != null;
   }
 
   public ItemStatus getItemStatus()
   {
     return itemStatus;
   }
-  /* Code from template association_GetOne */
-  public Order getOrder()
+  /* Code from template association_GetMany */
+  public Order getOrder(int index)
   {
-    return order;
+    Order aOrder = order.get(index);
+    return aOrder;
+  }
+
+  public List<Order> getOrder()
+  {
+    List<Order> newOrder = Collections.unmodifiableList(order);
+    return newOrder;
+  }
+
+  public int numberOfOrder()
+  {
+    int number = order.size();
+    return number;
+  }
+
+  public boolean hasOrder()
+  {
+    boolean has = order.size() > 0;
+    return has;
+  }
+
+  public int indexOfOrder(Order aOrder)
+  {
+    int index = order.indexOf(aOrder);
+    return index;
+  }
+  /* Code from template association_GetOne */
+  public Game getGames()
+  {
+    return games;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfOrder()
+  {
+    return 0;
+  }
+  /* Code from template association_AddUnidirectionalMany */
+  public boolean addOrder(Order aOrder)
+  {
+    boolean wasAdded = false;
+    if (order.contains(aOrder)) { return false; }
+    order.add(aOrder);
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeOrder(Order aOrder)
+  {
+    boolean wasRemoved = false;
+    if (order.contains(aOrder))
+    {
+      order.remove(aOrder);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addOrderAt(Order aOrder, int index)
+  {  
+    boolean wasAdded = false;
+    if(addOrder(aOrder))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfOrder()) { index = numberOfOrder() - 1; }
+      order.remove(aOrder);
+      order.add(index, aOrder);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveOrderAt(Order aOrder, int index)
+  {
+    boolean wasAdded = false;
+    if(order.contains(aOrder))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfOrder()) { index = numberOfOrder() - 1; }
+      order.remove(aOrder);
+      order.add(index, aOrder);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addOrderAt(aOrder, index);
+    }
+    return wasAdded;
   }
   /* Code from template association_SetUnidirectionalOne */
-  public boolean setOrder(Order aNewOrder)
+  public boolean setGames(Game aNewGames)
   {
     boolean wasSet = false;
-    if (aNewOrder != null)
+    if (aNewGames != null)
     {
-      order = aNewOrder;
+      games = aNewGames;
       wasSet = true;
     }
     return wasSet;
@@ -118,16 +206,17 @@ public class SpecificGame
 
   public void delete()
   {
-    specificgamesById.remove(getId());
-    order = null;
+    specificgamesBySpecificGame_id.remove(getSpecificGame_id());
+    order.clear();
+    games = null;
   }
 
 
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "]" + System.getProperties().getProperty("line.separator") +
+            "specificGame_id" + ":" + getSpecificGame_id()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "itemStatus" + "=" + (getItemStatus() != null ? !getItemStatus().equals(this)  ? getItemStatus().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "order = "+(getOrder()!=null?Integer.toHexString(System.identityHashCode(getOrder())):"null");
+            "  " + "games = "+(getGames()!=null?Integer.toHexString(System.identityHashCode(getGames())):"null");
   }
 }

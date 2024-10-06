@@ -5,7 +5,7 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
 // line 26 "../../../../../../model.ump"
-// line 163 "../../../../../../model.ump"
+// line 190 "../../../../../../model.ump"
 public class Employee extends Staff
 {
 

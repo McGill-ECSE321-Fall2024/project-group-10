@@ -6,7 +6,7 @@ import java.util.*;
 import java.sql.Date;
 
 // line 49 "../../../../../../model.ump"
-// line 194 "../../../../../../model.ump"
+// line 221 "../../../../../../model.ump"
 public class Review
 {
 
@@ -20,20 +20,21 @@ public class Review
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Review> reviewsById = new HashMap<Integer, Review>();
+  private static Map<Integer, Review> reviewsByReview_id = new HashMap<Integer, Review>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Review Attributes
-  private int id;
+  private int review_id;
   private Date reviewDate;
   private String description;
   private int rating;
   private GameRating gameRating;
 
   //Review Associations
+  private List<Reply> reply;
   private Game game;
   private Customer customer;
 
@@ -41,16 +42,17 @@ public class Review
   // CONSTRUCTOR
   //------------------------
 
-  public Review(int aId, Date aReviewDate, String aDescription, int aRating, GameRating aGameRating, Game aGame, Customer aCustomer)
+  public Review(int aReview_id, Date aReviewDate, String aDescription, int aRating, GameRating aGameRating, Game aGame, Customer aCustomer)
   {
     reviewDate = aReviewDate;
     description = aDescription;
     rating = aRating;
     gameRating = aGameRating;
-    if (!setId(aId))
+    if (!setReview_id(aReview_id))
     {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+      throw new RuntimeException("Cannot create due to duplicate review_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
+    reply = new ArrayList<Reply>();
     boolean didAddGame = setGame(aGame);
     if (!didAddGame)
     {
@@ -66,22 +68,22 @@ public class Review
   // INTERFACE
   //------------------------
 
-  public boolean setId(int aId)
+  public boolean setReview_id(int aReview_id)
   {
     boolean wasSet = false;
-    Integer anOldId = getId();
-    if (anOldId != null && anOldId.equals(aId)) {
+    Integer anOldReview_id = getReview_id();
+    if (anOldReview_id != null && anOldReview_id.equals(aReview_id)) {
       return true;
     }
-    if (hasWithId(aId)) {
+    if (hasWithReview_id(aReview_id)) {
       return wasSet;
     }
-    id = aId;
+    review_id = aReview_id;
     wasSet = true;
-    if (anOldId != null) {
-      reviewsById.remove(anOldId);
+    if (anOldReview_id != null) {
+      reviewsByReview_id.remove(anOldReview_id);
     }
-    reviewsById.put(aId, this);
+    reviewsByReview_id.put(aReview_id, this);
     return wasSet;
   }
 
@@ -117,19 +119,19 @@ public class Review
     return wasSet;
   }
 
-  public int getId()
+  public int getReview_id()
   {
-    return id;
+    return review_id;
   }
   /* Code from template attribute_GetUnique */
-  public static Review getWithId(int aId)
+  public static Review getWithReview_id(int aReview_id)
   {
-    return reviewsById.get(aId);
+    return reviewsByReview_id.get(aReview_id);
   }
   /* Code from template attribute_HasUnique */
-  public static boolean hasWithId(int aId)
+  public static boolean hasWithReview_id(int aReview_id)
   {
-    return getWithId(aId) != null;
+    return getWithReview_id(aReview_id) != null;
   }
 
   public Date getReviewDate()
@@ -151,6 +153,36 @@ public class Review
   {
     return gameRating;
   }
+  /* Code from template association_GetMany */
+  public Reply getReply(int index)
+  {
+    Reply aReply = reply.get(index);
+    return aReply;
+  }
+
+  public List<Reply> getReply()
+  {
+    List<Reply> newReply = Collections.unmodifiableList(reply);
+    return newReply;
+  }
+
+  public int numberOfReply()
+  {
+    int number = reply.size();
+    return number;
+  }
+
+  public boolean hasReply()
+  {
+    boolean has = reply.size() > 0;
+    return has;
+  }
+
+  public int indexOfReply(Reply aReply)
+  {
+    int index = reply.indexOf(aReply);
+    return index;
+  }
   /* Code from template association_GetOne */
   public Game getGame()
   {
@@ -160,6 +192,78 @@ public class Review
   public Customer getCustomer()
   {
     return customer;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfReply()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToOne */
+  public Reply addReply(int aReply_id, Date aReplyDate, String aDescription, Manager aManager)
+  {
+    return new Reply(aReply_id, aReplyDate, aDescription, this, aManager);
+  }
+
+  public boolean addReply(Reply aReply)
+  {
+    boolean wasAdded = false;
+    if (reply.contains(aReply)) { return false; }
+    Review existingReview = aReply.getReview();
+    boolean isNewReview = existingReview != null && !this.equals(existingReview);
+    if (isNewReview)
+    {
+      aReply.setReview(this);
+    }
+    else
+    {
+      reply.add(aReply);
+    }
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeReply(Reply aReply)
+  {
+    boolean wasRemoved = false;
+    //Unable to remove aReply, as it must always have a review
+    if (!this.equals(aReply.getReview()))
+    {
+      reply.remove(aReply);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addReplyAt(Reply aReply, int index)
+  {  
+    boolean wasAdded = false;
+    if(addReply(aReply))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfReply()) { index = numberOfReply() - 1; }
+      reply.remove(aReply);
+      reply.add(index, aReply);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveReplyAt(Reply aReply, int index)
+  {
+    boolean wasAdded = false;
+    if(reply.contains(aReply))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfReply()) { index = numberOfReply() - 1; }
+      reply.remove(aReply);
+      reply.add(index, aReply);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addReplyAt(aReply, index);
+    }
+    return wasAdded;
   }
   /* Code from template association_SetOneToMany */
   public boolean setGame(Game aGame)
@@ -194,7 +298,14 @@ public class Review
 
   public void delete()
   {
-    reviewsById.remove(getId());
+    reviewsByReview_id.remove(getReview_id());
+    while (reply.size() > 0)
+    {
+      Reply aReply = reply.get(reply.size() - 1);
+      aReply.delete();
+      reply.remove(aReply);
+    }
+    
     Game placeholderGame = game;
     this.game = null;
     if(placeholderGame != null)
@@ -208,7 +319,7 @@ public class Review
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "," +
+            "review_id" + ":" + getReview_id()+ "," +
             "description" + ":" + getDescription()+ "," +
             "rating" + ":" + getRating()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "reviewDate" + "=" + (getReviewDate() != null ? !getReviewDate().equals(this)  ? getReviewDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +

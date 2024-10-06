@@ -5,8 +5,8 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 import java.sql.Date;
 
-// line 66 "../../../../../../model.ump"
-// line 204 "../../../../../../model.ump"
+// line 69 "../../../../../../model.ump"
+// line 234 "../../../../../../model.ump"
 public class Game
 {
 
@@ -20,14 +20,14 @@ public class Game
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Game> gamesById = new HashMap<Integer, Game>();
+  private static Map<Integer, Game> gamesByGame_id = new HashMap<Integer, Game>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Game Attributes
-  private int id;
+  private int game_id;
   private String description;
   private int price;
   private GameStatus gameStatus;
@@ -38,49 +38,47 @@ public class Game
   private List<Review> review;
   private List<Category> categories;
   private List<Platform> platforms;
-  private List<Promotion> promotions;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Game(int aId, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl)
+  public Game(int aGame_id, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl)
   {
     description = aDescription;
     price = aPrice;
     gameStatus = aGameStatus;
     stockQuantity = aStockQuantity;
     photoUrl = aPhotoUrl;
-    if (!setId(aId))
+    if (!setGame_id(aGame_id))
     {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+      throw new RuntimeException("Cannot create due to duplicate game_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
     review = new ArrayList<Review>();
     categories = new ArrayList<Category>();
     platforms = new ArrayList<Platform>();
-    promotions = new ArrayList<Promotion>();
   }
 
   //------------------------
   // INTERFACE
   //------------------------
 
-  public boolean setId(int aId)
+  public boolean setGame_id(int aGame_id)
   {
     boolean wasSet = false;
-    Integer anOldId = getId();
-    if (anOldId != null && anOldId.equals(aId)) {
+    Integer anOldGame_id = getGame_id();
+    if (anOldGame_id != null && anOldGame_id.equals(aGame_id)) {
       return true;
     }
-    if (hasWithId(aId)) {
+    if (hasWithGame_id(aGame_id)) {
       return wasSet;
     }
-    id = aId;
+    game_id = aGame_id;
     wasSet = true;
-    if (anOldId != null) {
-      gamesById.remove(anOldId);
+    if (anOldGame_id != null) {
+      gamesByGame_id.remove(anOldGame_id);
     }
-    gamesById.put(aId, this);
+    gamesByGame_id.put(aGame_id, this);
     return wasSet;
   }
 
@@ -124,19 +122,19 @@ public class Game
     return wasSet;
   }
 
-  public int getId()
+  public int getGame_id()
   {
-    return id;
+    return game_id;
   }
   /* Code from template attribute_GetUnique */
-  public static Game getWithId(int aId)
+  public static Game getWithGame_id(int aGame_id)
   {
-    return gamesById.get(aId);
+    return gamesByGame_id.get(aGame_id);
   }
   /* Code from template attribute_HasUnique */
-  public static boolean hasWithId(int aId)
+  public static boolean hasWithGame_id(int aGame_id)
   {
-    return getWithId(aId) != null;
+    return getWithGame_id(aGame_id) != null;
   }
 
   public String getDescription()
@@ -253,45 +251,15 @@ public class Game
     int index = platforms.indexOf(aPlatform);
     return index;
   }
-  /* Code from template association_GetMany */
-  public Promotion getPromotion(int index)
-  {
-    Promotion aPromotion = promotions.get(index);
-    return aPromotion;
-  }
-
-  public List<Promotion> getPromotions()
-  {
-    List<Promotion> newPromotions = Collections.unmodifiableList(promotions);
-    return newPromotions;
-  }
-
-  public int numberOfPromotions()
-  {
-    int number = promotions.size();
-    return number;
-  }
-
-  public boolean hasPromotions()
-  {
-    boolean has = promotions.size() > 0;
-    return has;
-  }
-
-  public int indexOfPromotion(Promotion aPromotion)
-  {
-    int index = promotions.indexOf(aPromotion);
-    return index;
-  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfReview()
   {
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Review addReview(int aId, Date aReviewDate, String aDescription, int aRating, Review.GameRating aGameRating, Customer aCustomer)
+  public Review addReview(int aReview_id, Date aReviewDate, String aDescription, int aRating, Review.GameRating aGameRating, Customer aCustomer)
   {
-    return new Review(aId, aReviewDate, aDescription, aRating, aGameRating, this, aCustomer);
+    return new Review(aReview_id, aReviewDate, aDescription, aRating, aGameRating, this, aCustomer);
   }
 
   public boolean addReview(Review aReview)
@@ -469,67 +437,10 @@ public class Game
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfPromotions()
-  {
-    return 0;
-  }
-  /* Code from template association_AddUnidirectionalMany */
-  public boolean addPromotion(Promotion aPromotion)
-  {
-    boolean wasAdded = false;
-    if (promotions.contains(aPromotion)) { return false; }
-    promotions.add(aPromotion);
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removePromotion(Promotion aPromotion)
-  {
-    boolean wasRemoved = false;
-    if (promotions.contains(aPromotion))
-    {
-      promotions.remove(aPromotion);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addPromotionAt(Promotion aPromotion, int index)
-  {  
-    boolean wasAdded = false;
-    if(addPromotion(aPromotion))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfPromotions()) { index = numberOfPromotions() - 1; }
-      promotions.remove(aPromotion);
-      promotions.add(index, aPromotion);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMovePromotionAt(Promotion aPromotion, int index)
-  {
-    boolean wasAdded = false;
-    if(promotions.contains(aPromotion))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfPromotions()) { index = numberOfPromotions() - 1; }
-      promotions.remove(aPromotion);
-      promotions.add(index, aPromotion);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addPromotionAt(aPromotion, index);
-    }
-    return wasAdded;
-  }
 
   public void delete()
   {
-    gamesById.remove(getId());
+    gamesByGame_id.remove(getGame_id());
     while (review.size() > 0)
     {
       Review aReview = review.get(review.size() - 1);
@@ -539,14 +450,13 @@ public class Game
     
     categories.clear();
     platforms.clear();
-    promotions.clear();
   }
 
 
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "," +
+            "game_id" + ":" + getGame_id()+ "," +
             "description" + ":" + getDescription()+ "," +
             "price" + ":" + getPrice()+ "," +
             "stockQuantity" + ":" + getStockQuantity()+ "," +

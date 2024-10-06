@@ -5,8 +5,8 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 import java.sql.Date;
 
-// line 58 "../../../../../../model.ump"
-// line 199 "../../../../../../model.ump"
+// line 60 "../../../../../../model.ump"
+// line 227 "../../../../../../model.ump"
 public class Reply
 {
 
@@ -20,32 +20,38 @@ public class Reply
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Reply> replysById = new HashMap<Integer, Reply>();
+  private static Map<Integer, Reply> replysByReply_id = new HashMap<Integer, Reply>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Reply Attributes
-  private int id;
+  private int reply_id;
   private Date replyDate;
   private String description;
   private ReviewRating reviewRating;
 
   //Reply Associations
+  private Review review;
   private Manager manager;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Reply(int aId, Date aReplyDate, String aDescription, Manager aManager)
+  public Reply(int aReply_id, Date aReplyDate, String aDescription, Review aReview, Manager aManager)
   {
     replyDate = aReplyDate;
     description = aDescription;
-    if (!setId(aId))
+    if (!setReply_id(aReply_id))
     {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+      throw new RuntimeException("Cannot create due to duplicate reply_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
+    boolean didAddReview = setReview(aReview);
+    if (!didAddReview)
+    {
+      throw new RuntimeException("Unable to create reply due to review. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     if (!setManager(aManager))
     {
@@ -57,22 +63,22 @@ public class Reply
   // INTERFACE
   //------------------------
 
-  public boolean setId(int aId)
+  public boolean setReply_id(int aReply_id)
   {
     boolean wasSet = false;
-    Integer anOldId = getId();
-    if (anOldId != null && anOldId.equals(aId)) {
+    Integer anOldReply_id = getReply_id();
+    if (anOldReply_id != null && anOldReply_id.equals(aReply_id)) {
       return true;
     }
-    if (hasWithId(aId)) {
+    if (hasWithReply_id(aReply_id)) {
       return wasSet;
     }
-    id = aId;
+    reply_id = aReply_id;
     wasSet = true;
-    if (anOldId != null) {
-      replysById.remove(anOldId);
+    if (anOldReply_id != null) {
+      replysByReply_id.remove(anOldReply_id);
     }
-    replysById.put(aId, this);
+    replysByReply_id.put(aReply_id, this);
     return wasSet;
   }
 
@@ -100,19 +106,19 @@ public class Reply
     return wasSet;
   }
 
-  public int getId()
+  public int getReply_id()
   {
-    return id;
+    return reply_id;
   }
   /* Code from template attribute_GetUnique */
-  public static Reply getWithId(int aId)
+  public static Reply getWithReply_id(int aReply_id)
   {
-    return replysById.get(aId);
+    return replysByReply_id.get(aReply_id);
   }
   /* Code from template attribute_HasUnique */
-  public static boolean hasWithId(int aId)
+  public static boolean hasWithReply_id(int aReply_id)
   {
-    return getWithId(aId) != null;
+    return getWithReply_id(aReply_id) != null;
   }
 
   public Date getReplyDate()
@@ -130,9 +136,33 @@ public class Reply
     return reviewRating;
   }
   /* Code from template association_GetOne */
+  public Review getReview()
+  {
+    return review;
+  }
+  /* Code from template association_GetOne */
   public Manager getManager()
   {
     return manager;
+  }
+  /* Code from template association_SetOneToMany */
+  public boolean setReview(Review aReview)
+  {
+    boolean wasSet = false;
+    if (aReview == null)
+    {
+      return wasSet;
+    }
+
+    Review existingReview = review;
+    review = aReview;
+    if (existingReview != null && !existingReview.equals(aReview))
+    {
+      existingReview.removeReply(this);
+    }
+    review.addReply(this);
+    wasSet = true;
+    return wasSet;
   }
   /* Code from template association_SetUnidirectionalOne */
   public boolean setManager(Manager aNewManager)
@@ -148,7 +178,13 @@ public class Reply
 
   public void delete()
   {
-    replysById.remove(getId());
+    replysByReply_id.remove(getReply_id());
+    Review placeholderReview = review;
+    this.review = null;
+    if(placeholderReview != null)
+    {
+      placeholderReview.removeReply(this);
+    }
     manager = null;
   }
 
@@ -156,10 +192,11 @@ public class Reply
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "," +
+            "reply_id" + ":" + getReply_id()+ "," +
             "description" + ":" + getDescription()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "replyDate" + "=" + (getReplyDate() != null ? !getReplyDate().equals(this)  ? getReplyDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "reviewRating" + "=" + (getReviewRating() != null ? !getReviewRating().equals(this)  ? getReviewRating().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "review = "+(getReview()!=null?Integer.toHexString(System.identityHashCode(getReview())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "manager = "+(getManager()!=null?Integer.toHexString(System.identityHashCode(getManager())):"null");
   }
 }

@@ -3,9 +3,10 @@
 
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
+import java.sql.Date;
 
-// line 105 "../../../../../../model.ump"
-// line 230 "../../../../../../model.ump"
+// line 108 "../../../../../../model.ump"
+// line 260 "../../../../../../model.ump"
 public class Cart
 {
 
@@ -13,27 +14,28 @@ public class Cart
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Cart> cartsById = new HashMap<Integer, Cart>();
+  private static Map<Integer, Cart> cartsByCart_id = new HashMap<Integer, Cart>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Cart Attributes
-  private int id;
+  private int cart_id;
 
   //Cart Associations
   private List<Game> games;
+  private Order order;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Cart(int aId)
+  public Cart(int aCart_id)
   {
-    if (!setId(aId))
+    if (!setCart_id(aCart_id))
     {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+      throw new RuntimeException("Cannot create due to duplicate cart_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
     games = new ArrayList<Game>();
   }
@@ -42,38 +44,38 @@ public class Cart
   // INTERFACE
   //------------------------
 
-  public boolean setId(int aId)
+  public boolean setCart_id(int aCart_id)
   {
     boolean wasSet = false;
-    Integer anOldId = getId();
-    if (anOldId != null && anOldId.equals(aId)) {
+    Integer anOldCart_id = getCart_id();
+    if (anOldCart_id != null && anOldCart_id.equals(aCart_id)) {
       return true;
     }
-    if (hasWithId(aId)) {
+    if (hasWithCart_id(aCart_id)) {
       return wasSet;
     }
-    id = aId;
+    cart_id = aCart_id;
     wasSet = true;
-    if (anOldId != null) {
-      cartsById.remove(anOldId);
+    if (anOldCart_id != null) {
+      cartsByCart_id.remove(anOldCart_id);
     }
-    cartsById.put(aId, this);
+    cartsByCart_id.put(aCart_id, this);
     return wasSet;
   }
 
-  public int getId()
+  public int getCart_id()
   {
-    return id;
+    return cart_id;
   }
   /* Code from template attribute_GetUnique */
-  public static Cart getWithId(int aId)
+  public static Cart getWithCart_id(int aCart_id)
   {
-    return cartsById.get(aId);
+    return cartsByCart_id.get(aCart_id);
   }
   /* Code from template attribute_HasUnique */
-  public static boolean hasWithId(int aId)
+  public static boolean hasWithCart_id(int aCart_id)
   {
-    return getWithId(aId) != null;
+    return getWithCart_id(aCart_id) != null;
   }
   /* Code from template association_GetMany */
   public Game getGame(int index)
@@ -104,6 +106,17 @@ public class Cart
   {
     int index = games.indexOf(aGame);
     return index;
+  }
+  /* Code from template association_GetOne */
+  public Order getOrder()
+  {
+    return order;
+  }
+
+  public boolean hasOrder()
+  {
+    boolean has = order != null;
+    return has;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfGames()
@@ -162,17 +175,27 @@ public class Cart
     }
     return wasAdded;
   }
+  /* Code from template association_SetUnidirectionalOptionalOne */
+  public boolean setOrder(Order aNewOrder)
+  {
+    boolean wasSet = false;
+    order = aNewOrder;
+    wasSet = true;
+    return wasSet;
+  }
 
   public void delete()
   {
-    cartsById.remove(getId());
+    cartsByCart_id.remove(getCart_id());
     games.clear();
+    order = null;
   }
 
 
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "]";
+            "cart_id" + ":" + getCart_id()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "order = "+(getOrder()!=null?Integer.toHexString(System.identityHashCode(getOrder())):"null");
   }
 }
