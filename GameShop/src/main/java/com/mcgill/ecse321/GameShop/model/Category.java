@@ -4,8 +4,8 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
-// line 81 "../../../../../../model.ump"
-// line 210 "../../../../../../model.ump"
+// line 84 "../../../../../../model.ump"
+// line 240 "../../../../../../model.ump"
 public class Category
 {
 
@@ -13,26 +13,33 @@ public class Category
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Category> categorysById = new HashMap<Integer, Category>();
+  private static Map<Integer, Category> categorysByCategory_id = new HashMap<Integer, Category>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Category Attributes
-  private int id;
+  private int category_id;
   private String categoryName;
+
+  //Category Associations
+  private Manager manager;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Category(int aId, String aCategoryName)
+  public Category(int aCategory_id, String aCategoryName, Manager aManager)
   {
     categoryName = aCategoryName;
-    if (!setId(aId))
+    if (!setCategory_id(aCategory_id))
     {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+      throw new RuntimeException("Cannot create due to duplicate category_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
+    if (!setManager(aManager))
+    {
+      throw new RuntimeException("Unable to create Category due to aManager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
 
@@ -40,22 +47,22 @@ public class Category
   // INTERFACE
   //------------------------
 
-  public boolean setId(int aId)
+  public boolean setCategory_id(int aCategory_id)
   {
     boolean wasSet = false;
-    Integer anOldId = getId();
-    if (anOldId != null && anOldId.equals(aId)) {
+    Integer anOldCategory_id = getCategory_id();
+    if (anOldCategory_id != null && anOldCategory_id.equals(aCategory_id)) {
       return true;
     }
-    if (hasWithId(aId)) {
+    if (hasWithCategory_id(aCategory_id)) {
       return wasSet;
     }
-    id = aId;
+    category_id = aCategory_id;
     wasSet = true;
-    if (anOldId != null) {
-      categorysById.remove(anOldId);
+    if (anOldCategory_id != null) {
+      categorysByCategory_id.remove(anOldCategory_id);
     }
-    categorysById.put(aId, this);
+    categorysByCategory_id.put(aCategory_id, this);
     return wasSet;
   }
 
@@ -67,36 +74,54 @@ public class Category
     return wasSet;
   }
 
-  public int getId()
+  public int getCategory_id()
   {
-    return id;
+    return category_id;
   }
   /* Code from template attribute_GetUnique */
-  public static Category getWithId(int aId)
+  public static Category getWithCategory_id(int aCategory_id)
   {
-    return categorysById.get(aId);
+    return categorysByCategory_id.get(aCategory_id);
   }
   /* Code from template attribute_HasUnique */
-  public static boolean hasWithId(int aId)
+  public static boolean hasWithCategory_id(int aCategory_id)
   {
-    return getWithId(aId) != null;
+    return getWithCategory_id(aCategory_id) != null;
   }
 
   public String getCategoryName()
   {
     return categoryName;
   }
+  /* Code from template association_GetOne */
+  public Manager getManager()
+  {
+    return manager;
+  }
+  /* Code from template association_SetUnidirectionalOne */
+  public boolean setManager(Manager aNewManager)
+  {
+    boolean wasSet = false;
+    if (aNewManager != null)
+    {
+      manager = aNewManager;
+      wasSet = true;
+    }
+    return wasSet;
+  }
 
   public void delete()
   {
-    categorysById.remove(getId());
+    categorysByCategory_id.remove(getCategory_id());
+    manager = null;
   }
 
 
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "," +
-            "categoryName" + ":" + getCategoryName()+ "]";
+            "category_id" + ":" + getCategory_id()+ "," +
+            "categoryName" + ":" + getCategoryName()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "manager = "+(getManager()!=null?Integer.toHexString(System.identityHashCode(getManager())):"null");
   }
 }

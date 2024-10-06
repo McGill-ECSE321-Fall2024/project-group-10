@@ -5,8 +5,8 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 import java.sql.Date;
 
-// line 97 "../../../../../../model.ump"
-// line 220 "../../../../../../model.ump"
+// line 100 "../../../../../../model.ump"
+// line 250 "../../../../../../model.ump"
 public class Promotion
 {
 
@@ -14,32 +14,41 @@ public class Promotion
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Promotion> promotionsById = new HashMap<Integer, Promotion>();
+  private static Map<Integer, Promotion> promotionsByPromotion_id = new HashMap<Integer, Promotion>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Promotion Attributes
-  private int id;
+  private int promotion_id;
   private String description;
   private int discountRate;
   private Date startDate;
   private Date endDate;
 
+  //Promotion Associations
+  private List<Game> games;
+  private Manager manager;
+
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Promotion(int aId, String aDescription, int aDiscountRate, Date aStartDate, Date aEndDate)
+  public Promotion(int aPromotion_id, String aDescription, int aDiscountRate, Date aStartDate, Date aEndDate, Manager aManager)
   {
     description = aDescription;
     discountRate = aDiscountRate;
     startDate = aStartDate;
     endDate = aEndDate;
-    if (!setId(aId))
+    if (!setPromotion_id(aPromotion_id))
     {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+      throw new RuntimeException("Cannot create due to duplicate promotion_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
+    games = new ArrayList<Game>();
+    if (!setManager(aManager))
+    {
+      throw new RuntimeException("Unable to create Promotion due to aManager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
 
@@ -47,22 +56,22 @@ public class Promotion
   // INTERFACE
   //------------------------
 
-  public boolean setId(int aId)
+  public boolean setPromotion_id(int aPromotion_id)
   {
     boolean wasSet = false;
-    Integer anOldId = getId();
-    if (anOldId != null && anOldId.equals(aId)) {
+    Integer anOldPromotion_id = getPromotion_id();
+    if (anOldPromotion_id != null && anOldPromotion_id.equals(aPromotion_id)) {
       return true;
     }
-    if (hasWithId(aId)) {
+    if (hasWithPromotion_id(aPromotion_id)) {
       return wasSet;
     }
-    id = aId;
+    promotion_id = aPromotion_id;
     wasSet = true;
-    if (anOldId != null) {
-      promotionsById.remove(anOldId);
+    if (anOldPromotion_id != null) {
+      promotionsByPromotion_id.remove(anOldPromotion_id);
     }
-    promotionsById.put(aId, this);
+    promotionsByPromotion_id.put(aPromotion_id, this);
     return wasSet;
   }
 
@@ -98,19 +107,19 @@ public class Promotion
     return wasSet;
   }
 
-  public int getId()
+  public int getPromotion_id()
   {
-    return id;
+    return promotion_id;
   }
   /* Code from template attribute_GetUnique */
-  public static Promotion getWithId(int aId)
+  public static Promotion getWithPromotion_id(int aPromotion_id)
   {
-    return promotionsById.get(aId);
+    return promotionsByPromotion_id.get(aPromotion_id);
   }
   /* Code from template attribute_HasUnique */
-  public static boolean hasWithId(int aId)
+  public static boolean hasWithPromotion_id(int aPromotion_id)
   {
-    return getWithId(aId) != null;
+    return getWithPromotion_id(aPromotion_id) != null;
   }
 
   public String getDescription()
@@ -132,20 +141,126 @@ public class Promotion
   {
     return endDate;
   }
+  /* Code from template association_GetMany */
+  public Game getGame(int index)
+  {
+    Game aGame = games.get(index);
+    return aGame;
+  }
+
+  public List<Game> getGames()
+  {
+    List<Game> newGames = Collections.unmodifiableList(games);
+    return newGames;
+  }
+
+  public int numberOfGames()
+  {
+    int number = games.size();
+    return number;
+  }
+
+  public boolean hasGames()
+  {
+    boolean has = games.size() > 0;
+    return has;
+  }
+
+  public int indexOfGame(Game aGame)
+  {
+    int index = games.indexOf(aGame);
+    return index;
+  }
+  /* Code from template association_GetOne */
+  public Manager getManager()
+  {
+    return manager;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfGames()
+  {
+    return 0;
+  }
+  /* Code from template association_AddUnidirectionalMany */
+  public boolean addGame(Game aGame)
+  {
+    boolean wasAdded = false;
+    if (games.contains(aGame)) { return false; }
+    games.add(aGame);
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeGame(Game aGame)
+  {
+    boolean wasRemoved = false;
+    if (games.contains(aGame))
+    {
+      games.remove(aGame);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addGameAt(Game aGame, int index)
+  {  
+    boolean wasAdded = false;
+    if(addGame(aGame))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfGames()) { index = numberOfGames() - 1; }
+      games.remove(aGame);
+      games.add(index, aGame);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveGameAt(Game aGame, int index)
+  {
+    boolean wasAdded = false;
+    if(games.contains(aGame))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfGames()) { index = numberOfGames() - 1; }
+      games.remove(aGame);
+      games.add(index, aGame);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addGameAt(aGame, index);
+    }
+    return wasAdded;
+  }
+  /* Code from template association_SetUnidirectionalOne */
+  public boolean setManager(Manager aNewManager)
+  {
+    boolean wasSet = false;
+    if (aNewManager != null)
+    {
+      manager = aNewManager;
+      wasSet = true;
+    }
+    return wasSet;
+  }
 
   public void delete()
   {
-    promotionsById.remove(getId());
+    promotionsByPromotion_id.remove(getPromotion_id());
+    games.clear();
+    manager = null;
   }
 
 
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "," +
+            "promotion_id" + ":" + getPromotion_id()+ "," +
             "description" + ":" + getDescription()+ "," +
             "discountRate" + ":" + getDiscountRate()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "startDate" + "=" + (getStartDate() != null ? !getStartDate().equals(this)  ? getStartDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "endDate" + "=" + (getEndDate() != null ? !getEndDate().equals(this)  ? getEndDate().toString().replaceAll("  ","    ") : "this" : "null");
+            "  " + "endDate" + "=" + (getEndDate() != null ? !getEndDate().equals(this)  ? getEndDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "manager = "+(getManager()!=null?Integer.toHexString(System.identityHashCode(getManager())):"null");
   }
 }

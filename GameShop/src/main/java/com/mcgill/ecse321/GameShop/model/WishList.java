@@ -5,7 +5,7 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
 // line 36 "../../../../../../model.ump"
-// line 235 "../../../../../../model.ump"
+// line 265 "../../../../../../model.ump"
 public class WishList
 {
 
@@ -13,14 +13,14 @@ public class WishList
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, WishList> wishlistsById = new HashMap<Integer, WishList>();
+  private static Map<Integer, WishList> wishlistsByWishList_id = new HashMap<Integer, WishList>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //WishList Attributes
-  private int id;
+  private int wishList_id;
   private String title;
 
   //WishList Associations
@@ -31,12 +31,12 @@ public class WishList
   // CONSTRUCTOR
   //------------------------
 
-  public WishList(int aId, String aTitle, Customer aCustomer)
+  public WishList(int aWishList_id, String aTitle, Customer aCustomer)
   {
     title = aTitle;
-    if (!setId(aId))
+    if (!setWishList_id(aWishList_id))
     {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+      throw new RuntimeException("Cannot create due to duplicate wishList_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
     boolean didAddCustomer = setCustomer(aCustomer);
     if (!didAddCustomer)
@@ -50,22 +50,22 @@ public class WishList
   // INTERFACE
   //------------------------
 
-  public boolean setId(int aId)
+  public boolean setWishList_id(int aWishList_id)
   {
     boolean wasSet = false;
-    Integer anOldId = getId();
-    if (anOldId != null && anOldId.equals(aId)) {
+    Integer anOldWishList_id = getWishList_id();
+    if (anOldWishList_id != null && anOldWishList_id.equals(aWishList_id)) {
       return true;
     }
-    if (hasWithId(aId)) {
+    if (hasWithWishList_id(aWishList_id)) {
       return wasSet;
     }
-    id = aId;
+    wishList_id = aWishList_id;
     wasSet = true;
-    if (anOldId != null) {
-      wishlistsById.remove(anOldId);
+    if (anOldWishList_id != null) {
+      wishlistsByWishList_id.remove(anOldWishList_id);
     }
-    wishlistsById.put(aId, this);
+    wishlistsByWishList_id.put(aWishList_id, this);
     return wasSet;
   }
 
@@ -77,19 +77,19 @@ public class WishList
     return wasSet;
   }
 
-  public int getId()
+  public int getWishList_id()
   {
-    return id;
+    return wishList_id;
   }
   /* Code from template attribute_GetUnique */
-  public static WishList getWithId(int aId)
+  public static WishList getWithWishList_id(int aWishList_id)
   {
-    return wishlistsById.get(aId);
+    return wishlistsByWishList_id.get(aWishList_id);
   }
   /* Code from template attribute_HasUnique */
-  public static boolean hasWithId(int aId)
+  public static boolean hasWithWishList_id(int aWishList_id)
   {
-    return getWithId(aId) != null;
+    return getWithWishList_id(aWishList_id) != null;
   }
 
   public String getTitle()
@@ -210,7 +210,7 @@ public class WishList
 
   public void delete()
   {
-    wishlistsById.remove(getId());
+    wishlistsByWishList_id.remove(getWishList_id());
     Customer placeholderCustomer = customer;
     this.customer = null;
     if(placeholderCustomer != null)
@@ -224,7 +224,7 @@ public class WishList
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "," +
+            "wishList_id" + ":" + getWishList_id()+ "," +
             "title" + ":" + getTitle()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null");
   }
