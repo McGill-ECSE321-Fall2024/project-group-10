@@ -5,8 +5,8 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 import java.sql.Date;
 
-// line 99 "../../../../../../model.ump"
-// line 222 "../../../../../../model.ump"
+// line 97 "../../../../../../model.ump"
+// line 220 "../../../../../../model.ump"
 public class Promotion
 {
 

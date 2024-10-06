@@ -5,8 +5,8 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 import java.sql.Date;
 
-// line 51 "../../../../../../model.ump"
-// line 196 "../../../../../../model.ump"
+// line 49 "../../../../../../model.ump"
+// line 194 "../../../../../../model.ump"
 public class Review
 {
 

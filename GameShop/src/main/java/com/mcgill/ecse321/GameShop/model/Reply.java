@@ -5,8 +5,8 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 import java.sql.Date;
 
-// line 60 "../../../../../../model.ump"
-// line 201 "../../../../../../model.ump"
+// line 58 "../../../../../../model.ump"
+// line 199 "../../../../../../model.ump"
 public class Reply
 {
 

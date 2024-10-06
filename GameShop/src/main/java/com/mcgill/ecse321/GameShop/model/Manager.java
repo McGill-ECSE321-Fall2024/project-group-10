@@ -4,8 +4,8 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
-// line 32 "../../../../../../model.ump"
-// line 170 "../../../../../../model.ump"
+// line 31 "../../../../../../model.ump"
+// line 168 "../../../../../../model.ump"
 public class Manager extends Staff
 {
 
@@ -17,9 +17,9 @@ public class Manager extends Staff
   // CONSTRUCTOR
   //------------------------
 
-  public Manager(int aId, String aEmail, String aUsername, String aPassword, int aPhoneNumber, String aAddress)
+  public Manager(String aEmail, String aUsername, String aPassword, int aPhoneNumber, String aAddress)
   {
-    super(aId, aEmail, aUsername, aPassword, aPhoneNumber, aAddress);
+    super(aEmail, aUsername, aPassword, aPhoneNumber, aAddress);
   }
 
   //------------------------
