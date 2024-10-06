@@ -1,11 +1,12 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
-
+// TODO
+// Create a dictionary to keep track of returned items
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
-// line 93 "../../../../../../model.ump"
-// line 217 "../../../../../../model.ump"
+// line 91 "../../../../../../model.ump"
+// line 215 "../../../../../../model.ump"
 public class SpecificGame
 {
 
@@ -13,7 +14,7 @@ public class SpecificGame
   // ENUMERATIONS
   //------------------------
 
-  public enum OrderStatus { Confirmed, Returned }
+  public enum ItemStatus { Confirmed, Returned }
 
   //------------------------
   // STATIC VARIABLES
@@ -27,7 +28,7 @@ public class SpecificGame
 
   //SpecificGame Attributes
   private int id;
-  private OrderStatus orderStatus;
+  private ItemStatus itemStatus;
 
   //SpecificGame Associations
   private Order order;
@@ -71,10 +72,10 @@ public class SpecificGame
     return wasSet;
   }
 
-  public boolean setOrderStatus(OrderStatus aOrderStatus)
+  public boolean setItemStatus(ItemStatus aItemStatus)
   {
     boolean wasSet = false;
-    orderStatus = aOrderStatus;
+    itemStatus = aItemStatus;
     wasSet = true;
     return wasSet;
   }
@@ -94,9 +95,9 @@ public class SpecificGame
     return getWithId(aId) != null;
   }
 
-  public OrderStatus getOrderStatus()
+  public ItemStatus getItemStatus()
   {
-    return orderStatus;
+    return itemStatus;
   }
   /* Code from template association_GetOne */
   public Order getOrder()
@@ -126,7 +127,7 @@ public class SpecificGame
   {
     return super.toString() + "["+
             "id" + ":" + getId()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "orderStatus" + "=" + (getOrderStatus() != null ? !getOrderStatus().equals(this)  ? getOrderStatus().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "itemStatus" + "=" + (getItemStatus() != null ? !getItemStatus().equals(this)  ? getItemStatus().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "order = "+(getOrder()!=null?Integer.toHexString(System.identityHashCode(getOrder())):"null");
   }
 }

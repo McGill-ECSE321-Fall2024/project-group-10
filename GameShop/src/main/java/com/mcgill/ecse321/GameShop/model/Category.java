@@ -4,8 +4,8 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
-// line 83 "../../../../../../model.ump"
-// line 212 "../../../../../../model.ump"
+// line 81 "../../../../../../model.ump"
+// line 210 "../../../../../../model.ump"
 public class Category
 {
 

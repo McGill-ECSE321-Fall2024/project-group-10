@@ -5,8 +5,8 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 import java.sql.Date;
 
-// line 42 "../../../../../../model.ump"
-// line 191 "../../../../../../model.ump"
+// line 41 "../../../../../../model.ump"
+// line 189 "../../../../../../model.ump"
 public class Order
 {
 
@@ -14,7 +14,6 @@ public class Order
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Order> ordersById = new HashMap<Integer, Order>();
   private static Map<String, Order> ordersByTrackingNumber = new HashMap<String, Order>();
 
   //------------------------
@@ -22,7 +21,6 @@ public class Order
   //------------------------
 
   //Order Attributes
-  private int id;
   private String trackingNumber;
   private Date orderDate;
   private String note;
@@ -35,15 +33,11 @@ public class Order
   // CONSTRUCTOR
   //------------------------
 
-  public Order(int aId, String aTrackingNumber, Date aOrderDate, String aNote, int aPaymentCard, Customer aCustomer)
+  public Order(String aTrackingNumber, Date aOrderDate, String aNote, int aPaymentCard, Customer aCustomer)
   {
     orderDate = aOrderDate;
     note = aNote;
     paymentCard = aPaymentCard;
-    if (!setId(aId))
-    {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
     if (!setTrackingNumber(aTrackingNumber))
     {
       throw new RuntimeException("Cannot create due to duplicate trackingNumber. See https://manual.umple.org?RE003ViolationofUniqueness.html");
@@ -57,25 +51,6 @@ public class Order
   //------------------------
   // INTERFACE
   //------------------------
-
-  public boolean setId(int aId)
-  {
-    boolean wasSet = false;
-    Integer anOldId = getId();
-    if (anOldId != null && anOldId.equals(aId)) {
-      return true;
-    }
-    if (hasWithId(aId)) {
-      return wasSet;
-    }
-    id = aId;
-    wasSet = true;
-    if (anOldId != null) {
-      ordersById.remove(anOldId);
-    }
-    ordersById.put(aId, this);
-    return wasSet;
-  }
 
   public boolean setTrackingNumber(String aTrackingNumber)
   {
@@ -118,21 +93,6 @@ public class Order
     paymentCard = aPaymentCard;
     wasSet = true;
     return wasSet;
-  }
-
-  public int getId()
-  {
-    return id;
-  }
-  /* Code from template attribute_GetUnique */
-  public static Order getWithId(int aId)
-  {
-    return ordersById.get(aId);
-  }
-  /* Code from template attribute_HasUnique */
-  public static boolean hasWithId(int aId)
-  {
-    return getWithId(aId) != null;
   }
 
   public String getTrackingNumber()
@@ -183,7 +143,6 @@ public class Order
 
   public void delete()
   {
-    ordersById.remove(getId());
     ordersByTrackingNumber.remove(getTrackingNumber());
     customer = null;
   }
@@ -192,7 +151,6 @@ public class Order
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "," +
             "trackingNumber" + ":" + getTrackingNumber()+ "," +
             "note" + ":" + getNote()+ "," +
             "paymentCard" + ":" + getPaymentCard()+ "]" + System.getProperties().getProperty("line.separator") +

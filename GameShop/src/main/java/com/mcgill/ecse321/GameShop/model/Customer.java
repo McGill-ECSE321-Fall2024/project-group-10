@@ -4,8 +4,8 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
-// line 20 "../../../../../../model.ump"
-// line 185 "../../../../../../model.ump"
+// line 19 "../../../../../../model.ump"
+// line 183 "../../../../../../model.ump"
 public class Customer extends Account
 {
 
@@ -21,9 +21,9 @@ public class Customer extends Account
   // CONSTRUCTOR
   //------------------------
 
-  public Customer(int aId, String aEmail, String aUsername, String aPassword, int aPhoneNumber, String aAddress, Cart aCart)
+  public Customer(String aEmail, String aUsername, String aPassword, int aPhoneNumber, String aAddress, Cart aCart)
   {
-    super(aId, aEmail, aUsername, aPassword, aPhoneNumber, aAddress);
+    super(aEmail, aUsername, aPassword, aPhoneNumber, aAddress);
     wishList = new ArrayList<WishList>();
     if (!setCart(aCart))
     {

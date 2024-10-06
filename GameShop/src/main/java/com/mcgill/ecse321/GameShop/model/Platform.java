@@ -4,8 +4,8 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
-// line 88 "../../../../../../model.ump"
-// line 227 "../../../../../../model.ump"
+// line 86 "../../../../../../model.ump"
+// line 225 "../../../../../../model.ump"
 public class Platform
 {
 

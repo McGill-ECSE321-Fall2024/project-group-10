@@ -5,7 +5,7 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
 // line 4 "../../../../../../model.ump"
-// line 175 "../../../../../../model.ump"
+// line 173 "../../../../../../model.ump"
 public abstract class Account
 {
 
@@ -13,7 +13,6 @@ public abstract class Account
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Account> accountsById = new HashMap<Integer, Account>();
   private static Map<String, Account> accountsByEmail = new HashMap<String, Account>();
 
   //------------------------
@@ -21,7 +20,6 @@ public abstract class Account
   //------------------------
 
   //Account Attributes
-  private int id;
   private String email;
   private String username;
   private String password;
@@ -32,16 +30,12 @@ public abstract class Account
   // CONSTRUCTOR
   //------------------------
 
-  public Account(int aId, String aEmail, String aUsername, String aPassword, int aPhoneNumber, String aAddress)
+  public Account(String aEmail, String aUsername, String aPassword, int aPhoneNumber, String aAddress)
   {
     username = aUsername;
     password = aPassword;
     phoneNumber = aPhoneNumber;
     address = aAddress;
-    if (!setId(aId))
-    {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
     if (!setEmail(aEmail))
     {
       throw new RuntimeException("Cannot create due to duplicate email. See https://manual.umple.org?RE003ViolationofUniqueness.html");
@@ -51,25 +45,6 @@ public abstract class Account
   //------------------------
   // INTERFACE
   //------------------------
-
-  public boolean setId(int aId)
-  {
-    boolean wasSet = false;
-    Integer anOldId = getId();
-    if (anOldId != null && anOldId.equals(aId)) {
-      return true;
-    }
-    if (hasWithId(aId)) {
-      return wasSet;
-    }
-    id = aId;
-    wasSet = true;
-    if (anOldId != null) {
-      accountsById.remove(anOldId);
-    }
-    accountsById.put(aId, this);
-    return wasSet;
-  }
 
   public boolean setEmail(String aEmail)
   {
@@ -122,21 +97,6 @@ public abstract class Account
     return wasSet;
   }
 
-  public int getId()
-  {
-    return id;
-  }
-  /* Code from template attribute_GetUnique */
-  public static Account getWithId(int aId)
-  {
-    return accountsById.get(aId);
-  }
-  /* Code from template attribute_HasUnique */
-  public static boolean hasWithId(int aId)
-  {
-    return getWithId(aId) != null;
-  }
-
   public String getEmail()
   {
     return email;
@@ -174,7 +134,6 @@ public abstract class Account
 
   public void delete()
   {
-    accountsById.remove(getId());
     accountsByEmail.remove(getEmail());
   }
 
@@ -182,7 +141,6 @@ public abstract class Account
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "," +
             "email" + ":" + getEmail()+ "," +
             "username" + ":" + getUsername()+ "," +
             "password" + ":" + getPassword()+ "," +

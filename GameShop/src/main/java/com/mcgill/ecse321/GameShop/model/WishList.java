@@ -4,8 +4,8 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
-// line 37 "../../../../../../model.ump"
-// line 237 "../../../../../../model.ump"
+// line 36 "../../../../../../model.ump"
+// line 235 "../../../../../../model.ump"
 public class WishList
 {
 

@@ -4,8 +4,8 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
-// line 107 "../../../../../../model.ump"
-// line 232 "../../../../../../model.ump"
+// line 105 "../../../../../../model.ump"
+// line 230 "../../../../../../model.ump"
 public class Cart
 {
 
