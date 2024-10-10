@@ -37,6 +37,7 @@ public class Cart
 
   //Cart Associations
   @ManyToMany
+  // TODO: Add join table
   private List<Game> games;
   @ManyToOne
   private Order order;

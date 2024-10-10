@@ -70,7 +70,6 @@ public class Game
       joinColumns = @JoinColumn(name = "game_id"),
       inverseJoinColumns = @JoinColumn(name = "platform_id")
   )
-
   private List<Platform> platforms;
 
   //------------------------
