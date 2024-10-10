@@ -41,6 +41,7 @@ public class Promotion
 
   //Promotion Associations
   @ManyToMany
+  // TODO: Add Join Table
   private List<Game> games;
   @ManyToOne
   private Manager manager;

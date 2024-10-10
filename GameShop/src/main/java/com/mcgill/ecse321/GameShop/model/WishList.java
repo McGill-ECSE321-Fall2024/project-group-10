@@ -40,6 +40,7 @@ public class WishList
   private Customer customer;
   
   @ManyToMany
+  // TODO: Add Join Table
   private List<Game> games;
 
   //------------------------
