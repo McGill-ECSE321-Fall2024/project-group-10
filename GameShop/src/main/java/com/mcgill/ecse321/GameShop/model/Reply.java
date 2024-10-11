@@ -44,7 +44,7 @@ public class Reply
   private ReviewRating reviewRating;
 
   //Reply Associations
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
   @JoinColumn(name = "review_id")
   private Review review;
 

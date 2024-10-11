@@ -49,7 +49,7 @@ public class Review
   // @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
   // private List<Reply> reply;
 
-  @ManyToOne(cascade = CascadeType.ALL) 
+  @ManyToOne 
   @JoinColumn(name = "game_id")
   private Game game;
 
