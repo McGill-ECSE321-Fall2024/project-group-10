@@ -53,13 +53,10 @@ public class WishList
   // CONSTRUCTOR
   //------------------------
 
-  public WishList(int aWishList_id, String aTitle, Customer aCustomer)
+  public WishList(String aTitle, Customer aCustomer)
   {
     title = aTitle;
-    if (!setWishList_id(aWishList_id))
-    {
-      throw new RuntimeException("Cannot create due to duplicate wishList_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
+
     boolean didAddCustomer = setCustomer(aCustomer);
     if (!didAddCustomer)
     {

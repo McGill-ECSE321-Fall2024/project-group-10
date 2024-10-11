@@ -82,9 +82,9 @@ public class Customer extends Account
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public WishList addWishList(int aWishList_id, String aTitle)
+  public WishList addWishList( String aTitle)
   {
-    return new WishList(aWishList_id, aTitle, this);
+    return new WishList(aTitle, this);
   }
 
   // public boolean addWishList(WishList aWishList)
