@@ -3,20 +3,23 @@ name: Gradle Build
 on:
   push:
     branches:
-      - '**'  # Action applicable on all branches
+      - '**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       # Step 1: Checkout the code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Java without specifying version
-      - name: Set up Java
+      # Step 2: Set up Java with specific version and distribution
+      - name: Set up JDK 11
         uses: actions/setup-java@v3
+        with:
+          java-version: '11'          # Specify the Java version
+          distribution: 'temurin'     # Specify the JDK distribution (temurin is popular)
 
       # Step 3: Run the Gradle build
       - name: Run Gradle clean build
