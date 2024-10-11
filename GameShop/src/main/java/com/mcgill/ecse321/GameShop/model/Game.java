@@ -52,9 +52,9 @@ public class Game
   private int stockQuantity;
   private String photoUrl;
 
-  //Game Associations
-  @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Review> review;
+  // //Game Associations
+  // @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+  // private List<Review> review;
 
   @ManyToMany
   @JoinTable(
@@ -87,7 +87,7 @@ public class Game
     {
       throw new RuntimeException("Cannot create due to duplicate game_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
-    review = new ArrayList<Review>();
+    //review = new ArrayList<Review>();
     categories = new ArrayList<Category>();
     platforms = new ArrayList<Platform>();
   }
@@ -197,35 +197,35 @@ public class Game
     return photoUrl;
   }
   /* Code from template association_GetMany */
-  public Review getReview(int index)
-  {
-    Review aReview = review.get(index);
-    return aReview;
-  }
+  // public Review getReview(int index)
+  // {
+  //   Review aReview = review.get(index);
+  //   return aReview;
+  // }
 
-  public List<Review> getReview()
-  {
-    List<Review> newReview = Collections.unmodifiableList(review);
-    return newReview;
-  }
+  // public List<Review> getReview()
+  // {
+  //   List<Review> newReview = Collections.unmodifiableList(review);
+  //   return newReview;
+  // }
 
-  public int numberOfReview()
-  {
-    int number = review.size();
-    return number;
-  }
+  // public int numberOfReview()
+  // {
+  //   int number = review.size();
+  //   return number;
+  // }
 
-  public boolean hasReview()
-  {
-    boolean has = review.size() > 0;
-    return has;
-  }
+  // public boolean hasReview()
+  // {
+  //   boolean has = review.size() > 0;
+  //   return has;
+  // }
 
-  public int indexOfReview(Review aReview)
-  {
-    int index = review.indexOf(aReview);
-    return index;
-  }
+  // public int indexOfReview(Review aReview)
+  // {
+  //   int index = review.indexOf(aReview);
+  //   return index;
+  // }
   /* Code from template association_GetMany */
   public Category getCategory(int index)
   {
@@ -287,77 +287,77 @@ public class Game
     return index;
   }
   /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfReview()
-  {
-    return 0;
-  }
-  /* Code from template association_AddManyToOne */
-  public Review addReview(int aReview_id, Date aReviewDate, String aDescription, int aRating, Review.GameRating aGameRating, Customer aCustomer)
-  {
-    return new Review(aReview_id, aReviewDate, aDescription, aRating, aGameRating, this, aCustomer);
-  }
+  // public static int minimumNumberOfReview()
+  // {
+  //   return 0;
+  // }
+  // /* Code from template association_AddManyToOne */
+  // public Review addReview(int aReview_id, Date aReviewDate, String aDescription, int aRating, Review.GameRating aGameRating, Customer aCustomer)
+  // {
+  //   return new Review(aReview_id, aReviewDate, aDescription, aRating, aGameRating, this, aCustomer);
+  // }
 
-  public boolean addReview(Review aReview)
-  {
-    boolean wasAdded = false;
-    if (review.contains(aReview)) { return false; }
-    Game existingGame = aReview.getGame();
-    boolean isNewGame = existingGame != null && !this.equals(existingGame);
-    if (isNewGame)
-    {
-      aReview.setGame(this);
-    }
-    else
-    {
-      review.add(aReview);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
+  // public boolean addReview(Review aReview)
+  // {
+  //   boolean wasAdded = false;
+  //   if (review.contains(aReview)) { return false; }
+  //   Game existingGame = aReview.getGame();
+  //   boolean isNewGame = existingGame != null && !this.equals(existingGame);
+  //   if (isNewGame)
+  //   {
+  //     aReview.setGame(this);
+  //   }
+  //   else
+  //   {
+  //     review.add(aReview);
+  //   }
+  //   wasAdded = true;
+  //   return wasAdded;
+  // }
 
-  public boolean removeReview(Review aReview)
-  {
-    boolean wasRemoved = false;
-    //Unable to remove aReview, as it must always have a game
-    if (!this.equals(aReview.getGame()))
-    {
-      review.remove(aReview);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addReviewAt(Review aReview, int index)
-  {  
-    boolean wasAdded = false;
-    if(addReview(aReview))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfReview()) { index = numberOfReview() - 1; }
-      review.remove(aReview);
-      review.add(index, aReview);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
+  // // public boolean removeReview(Review aReview)
+  // // {
+  // //   boolean wasRemoved = false;
+  // //   //Unable to remove aReview, as it must always have a game
+  // //   if (!this.equals(aReview.getGame()))
+  // //   {
+  // //     review.remove(aReview);
+  // //     wasRemoved = true;
+  // //   }
+  // //   return wasRemoved;
+  // // }
+  // // /* Code from template association_AddIndexControlFunctions */
+  // // // public boolean addReviewAt(Review aReview, int index)
+  // {  
+  //   boolean wasAdded = false;
+  //   if(addReview(aReview))
+  //   {
+  //     if(index < 0 ) { index = 0; }
+  //     if(index > numberOfReview()) { index = numberOfReview() - 1; }
+  //     review.remove(aReview);
+  //     review.add(index, aReview);
+  //     wasAdded = true;
+  //   }
+  //   return wasAdded;
+  // }
 
-  public boolean addOrMoveReviewAt(Review aReview, int index)
-  {
-    boolean wasAdded = false;
-    if(review.contains(aReview))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfReview()) { index = numberOfReview() - 1; }
-      review.remove(aReview);
-      review.add(index, aReview);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addReviewAt(aReview, index);
-    }
-    return wasAdded;
-  }
+  // public boolean addOrMoveReviewAt(Review aReview, int index)
+  // {
+  //   boolean wasAdded = false;
+  //   if(review.contains(aReview))
+  //   {
+  //     if(index < 0 ) { index = 0; }
+  //     if(index > numberOfReview()) { index = numberOfReview() - 1; }
+  //     review.remove(aReview);
+  //     review.add(index, aReview);
+  //     wasAdded = true;
+  //   } 
+  //   else 
+  //   {
+  //     wasAdded = addReviewAt(aReview, index);
+  //   }
+  //   return wasAdded;
+  // }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfCategories()
   {
@@ -476,12 +476,12 @@ public class Game
   public void delete()
   {
     gamesByGame_id.remove(getGame_id());
-    while (review.size() > 0)
-    {
-      Review aReview = review.get(review.size() - 1);
-      aReview.delete();
-      review.remove(aReview);
-    }
+    // while (review.size() > 0)
+    // {
+    //   Review aReview = review.get(review.size() - 1);
+    //   aReview.delete();
+    //   review.remove(aReview);
+    // }
     
     categories.clear();
     platforms.clear();

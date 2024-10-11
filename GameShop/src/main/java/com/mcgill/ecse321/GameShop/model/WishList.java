@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
@@ -42,11 +41,6 @@ public class WishList
   
   @ManyToMany
   // TODO: Add Join Table
-  @JoinTable(
-      name = "wishList_jt",
-      joinColumns = @JoinColumn(name = "wishList_id"),
-      inverseJoinColumns = @JoinColumn(name = "game_id")
-  )
   private List<Game> games;
 
   //------------------------
@@ -166,11 +160,11 @@ public class WishList
 
     Customer existingCustomer = customer;
     customer = aCustomer;
-    if (existingCustomer != null && !existingCustomer.equals(aCustomer))
-    {
-      existingCustomer.removeWishList(this);
-    }
-    customer.addWishList(this);
+    // if (existingCustomer != null && !existingCustomer.equals(aCustomer))
+    // {
+    //   existingCustomer.removeWishList(this);
+    // }
+    // customer.addWishList(this);
     wasSet = true;
     return wasSet;
   }
@@ -237,10 +231,10 @@ public class WishList
     wishlistsByWishList_id.remove(getWishList_id());
     Customer placeholderCustomer = customer;
     this.customer = null;
-    if(placeholderCustomer != null)
-    {
-      placeholderCustomer.removeWishList(this);
-    }
+    // if(placeholderCustomer != null)
+    // {
+    //   placeholderCustomer.removeWishList(this);
+    // }
     games.clear();
   }
 

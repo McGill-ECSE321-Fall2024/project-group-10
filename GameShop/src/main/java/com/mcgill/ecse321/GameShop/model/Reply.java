@@ -173,11 +173,11 @@ public class Reply
 
     Review existingReview = review;
     review = aReview;
-    if (existingReview != null && !existingReview.equals(aReview))
-    {
-      existingReview.removeReply(this);
-    }
-    review.addReply(this);
+    // if (existingReview != null && !existingReview.equals(aReview))
+    // {
+    //   existingReview.removeReply(this);
+    // }
+    // review.addReply(this);
     wasSet = true;
     return wasSet;
   }
@@ -198,10 +198,10 @@ public class Reply
     replysByReply_id.remove(getReply_id());
     Review placeholderReview = review;
     this.review = null;
-    if(placeholderReview != null)
-    {
-      placeholderReview.removeReply(this);
-    }
+    // if(placeholderReview != null)
+    // {
+    //   placeholderReview.removeReply(this);
+    // }
     manager = null;
   }
 
