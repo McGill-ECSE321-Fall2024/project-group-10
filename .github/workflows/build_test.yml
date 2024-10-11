@@ -29,7 +29,4 @@ jobs:
 
       # Step 4: Run the Gradle build
       - name: Run Gradle clean build
-        run: |
-          ls
-          pwd
-          ./gradlew clean build
+        run: ./GameShop/gradlew clean build
