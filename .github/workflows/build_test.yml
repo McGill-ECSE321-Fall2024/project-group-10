@@ -14,11 +14,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Change directory and make gradlew executable
-      - name: Change to root directory and make gradlew executable
+      # Step 2: Navigate to GameShop and make gradlew executable
+      - name: Change to GameShop directory and make gradlew executable
         run: |
           cd GameShop
-          chmod +x gradlew   # Make gradlew script executable
+          chmod +x ./gradlew
 
       # Step 3: Set up Java
       - name: Set up JDK 11
@@ -27,6 +27,8 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      # Step 4: Run the Gradle build
+      # Step 4: Run Gradle build from GameShop directory
       - name: Run Gradle clean build
-        run: ./GameShop/gradlew clean build
+        run: |
+          cd GameShop           # Navigate to the GameShop directory
+          ./gradlew clean build
