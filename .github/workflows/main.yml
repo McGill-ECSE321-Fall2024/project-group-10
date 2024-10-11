@@ -23,7 +23,7 @@ jobs:
 
       # Step 3: Make gradlew executable (only if needed)
       - name: Make gradlew executable
-        run: chmod +x ./gradlew
+        run: chmod +x gradlew
 
       # Step 4: Run the Gradle build
       - name: Run Gradle clean build
