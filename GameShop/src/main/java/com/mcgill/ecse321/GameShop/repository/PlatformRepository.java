@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 import com.mcgill.ecse321.GameShop.model.Platform;
 
 public interface PlatformRepository extends CrudRepository<Platform, Integer> {
-   public Platform findByID(int platform_id);
+   public Platform findById(int platform_id);
 }
