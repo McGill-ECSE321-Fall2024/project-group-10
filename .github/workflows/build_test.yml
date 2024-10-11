@@ -17,8 +17,6 @@ jobs:
       # Step 2: Change directory and make gradlew executable
       - name: Change to root directory and make gradlew executable
         run: |
-          cd ..            # Navigate up two directories
-          ls
           cd GameShop
           chmod +x gradlew   # Make gradlew script executable
 
