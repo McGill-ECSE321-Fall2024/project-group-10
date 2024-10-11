@@ -17,8 +17,9 @@ jobs:
       # Step 2: Change directory and make gradlew executable
       - name: Change to root directory and make gradlew executable
         run: |
-          cd ..            # Navigate up two directories
-          chmod +x ./gradlew   # Make gradlew script executable
+          cd ../..            # Navigate up two directories
+          cd GameShop
+          chmod +x gradlew   # Make gradlew script executable
 
       # Step 3: Set up Java
       - name: Set up JDK 11
