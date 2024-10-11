@@ -1,0 +1,23 @@
+name: Gradle Build
+
+on:
+  push:
+    branches:
+      - '**'  # Action applicable on all branches
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Java without specifying version
+      - name: Set up Java
+        uses: actions/setup-java@v3
+
+      # Step 3: Run the Gradle build
+      - name: Run Gradle clean build
+        run: ./gradlew clean build
