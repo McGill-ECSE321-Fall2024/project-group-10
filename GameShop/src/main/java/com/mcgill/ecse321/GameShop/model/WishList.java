@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
@@ -35,12 +36,17 @@ public class WishList
   private String title;
 
   //WishList Associations
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
   @JoinColumn(name = "email")
   private Customer customer;
   
   @ManyToMany
   // TODO: Add Join Table
+  @JoinTable(
+      name = "wishList_jt",
+      joinColumns = @JoinColumn(name = "wishList_id"),
+      inverseJoinColumns = @JoinColumn(name = "game_id")
+  )
   private List<Game> games;
 
   //------------------------
