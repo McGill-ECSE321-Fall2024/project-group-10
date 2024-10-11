@@ -44,8 +44,8 @@ public class SpecificGame
   @ManyToMany
   // TODO: Add Join table
   @JoinTable(
-      name = "specificgame_jt",
-      joinColumns = @JoinColumn(name = "specificgame_id"),
+      name = "specificGame_jt",
+      joinColumns = @JoinColumn(name = "specificGame_id"),
       inverseJoinColumns = @JoinColumn(name = "order_id")
   )
   private List<Order> order;
