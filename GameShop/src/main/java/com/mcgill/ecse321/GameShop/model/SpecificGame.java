@@ -7,6 +7,8 @@ import java.util.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
@@ -41,6 +43,11 @@ public class SpecificGame
   //SpecificGame Associations
   @ManyToMany
   // TODO: Add Join table
+  @JoinTable(
+      name = "specificgame_jt",
+      joinColumns = @JoinColumn(name = "specificgame_id"),
+      inverseJoinColumns = @JoinColumn(name = "order_id")
+  )
   private List<Order> order;
   @ManyToOne
   private Game games;
