@@ -1,4 +1,4 @@
-name: Gradle Build
+name: Gradle Build with PostgreSQL
 
 on:
   push:
@@ -9,26 +9,40 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres # PostgreSQL user for the database
+          POSTGRES_PASSWORD: grouptenpsql       # PostgreSQL password
+          POSTGRES_DB: GameShop           # PostgreSQL database name
+        ports:
+          - 5432:5432                   # Expose PostgreSQL port
+        options: >-
+          --health-cmd "pg_isready -U test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      # Step 1: Checkout the code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Navigate to GameShop and make gradlew executable
-      - name: Change to GameShop directory and make gradlew executable
-        run: |
-          cd GameShop
-          chmod +x ./gradlew
-
-      # Step 3: Set up Java
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      # Step 4: Run Gradle build from GameShop directory
-      - name: Run Gradle clean build
-        run: |
-          cd GameShop           # Navigate to the GameShop directory
-          ./gradlew clean build
+      - name: Make gradlew executable
+        run: chmod +x ./GameShop/gradlew
+
+      - name: Run Gradle build
+        run: ./GameShop/gradlew clean build
+
+      - name: Run Gradle tests
+        run: ./GameShop/gradlew test
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
+          SPRING_DATASOURCE_USERNAME: test
+          SPRING_DATASOURCE_PASSWORD: test
