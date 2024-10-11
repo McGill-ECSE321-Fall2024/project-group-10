@@ -46,8 +46,8 @@ public class Review
   private GameRating gameRating;
 
   //Review Associations
-  @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Reply> reply;
+  // @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+  // private List<Reply> reply;
 
   @ManyToOne(cascade = CascadeType.ALL) 
   @JoinColumn(name = "game_id")
@@ -70,7 +70,7 @@ public class Review
     {
       throw new RuntimeException("Cannot create due to duplicate review_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
-    reply = new ArrayList<Reply>();
+    //reply = new ArrayList<Reply>();
     boolean didAddGame = setGame(aGame);
     if (!didAddGame)
     {
@@ -174,35 +174,35 @@ public class Review
     return gameRating;
   }
   /* Code from template association_GetMany */
-  public Reply getReply(int index)
-  {
-    Reply aReply = reply.get(index);
-    return aReply;
-  }
+  // public Reply getReply(int index)
+  // {
+  //   Reply aReply = reply.get(index);
+  //   return aReply;
+  // }
 
-  public List<Reply> getReply()
-  {
-    List<Reply> newReply = Collections.unmodifiableList(reply);
-    return newReply;
-  }
+  // public List<Reply> getReply()
+  // {
+  //   List<Reply> newReply = Collections.unmodifiableList(reply);
+  //   return newReply;
+  // }
 
-  public int numberOfReply()
-  {
-    int number = reply.size();
-    return number;
-  }
+  // public int numberOfReply()
+  // {
+  //   int number = reply.size();
+  //   return number;
+  // }
 
-  public boolean hasReply()
-  {
-    boolean has = reply.size() > 0;
-    return has;
-  }
+  // public boolean hasReply()
+  // {
+  //   boolean has = reply.size() > 0;
+  //   return has;
+  // }
 
-  public int indexOfReply(Reply aReply)
-  {
-    int index = reply.indexOf(aReply);
-    return index;
-  }
+  // public int indexOfReply(Reply aReply)
+  // {
+  //   int index = reply.indexOf(aReply);
+  //   return index;
+  // }
   /* Code from template association_GetOne */
   public Game getGame()
   {
@@ -224,67 +224,67 @@ public class Review
     return new Reply(aReply_id, aReplyDate, aDescription, this, aManager);
   }
 
-  public boolean addReply(Reply aReply)
-  {
-    boolean wasAdded = false;
-    if (reply.contains(aReply)) { return false; }
-    Review existingReview = aReply.getReview();
-    boolean isNewReview = existingReview != null && !this.equals(existingReview);
-    if (isNewReview)
-    {
-      aReply.setReview(this);
-    }
-    else
-    {
-      reply.add(aReply);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
+  // public boolean addReply(Reply aReply)
+  // {
+  //   boolean wasAdded = false;
+  //   if (reply.contains(aReply)) { return false; }
+  //   Review existingReview = aReply.getReview();
+  //   boolean isNewReview = existingReview != null && !this.equals(existingReview);
+  //   if (isNewReview)
+  //   {
+  //     aReply.setReview(this);
+  //   }
+  //   else
+  //   {
+  //     reply.add(aReply);
+  //   }
+  //   wasAdded = true;
+  //   return wasAdded;
+  // }
 
-  public boolean removeReply(Reply aReply)
-  {
-    boolean wasRemoved = false;
-    //Unable to remove aReply, as it must always have a review
-    if (!this.equals(aReply.getReview()))
-    {
-      reply.remove(aReply);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addReplyAt(Reply aReply, int index)
-  {  
-    boolean wasAdded = false;
-    if(addReply(aReply))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfReply()) { index = numberOfReply() - 1; }
-      reply.remove(aReply);
-      reply.add(index, aReply);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
+  // public boolean removeReply(Reply aReply)
+  // {
+  //   boolean wasRemoved = false;
+  //   //Unable to remove aReply, as it must always have a review
+  //   if (!this.equals(aReply.getReview()))
+  //   {
+  //     reply.remove(aReply);
+  //     wasRemoved = true;
+  //   }
+  //   return wasRemoved;
+  // }
+  // /* Code from template association_AddIndexControlFunctions */
+  // public boolean addReplyAt(Reply aReply, int index)
+  // {  
+  //   boolean wasAdded = false;
+  //   if(addReply(aReply))
+  //   {
+  //     if(index < 0 ) { index = 0; }
+  //     if(index > numberOfReply()) { index = numberOfReply() - 1; }
+  //     reply.remove(aReply);
+  //     reply.add(index, aReply);
+  //     wasAdded = true;
+  //   }
+  //   return wasAdded;
+  // }
 
-  public boolean addOrMoveReplyAt(Reply aReply, int index)
-  {
-    boolean wasAdded = false;
-    if(reply.contains(aReply))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfReply()) { index = numberOfReply() - 1; }
-      reply.remove(aReply);
-      reply.add(index, aReply);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addReplyAt(aReply, index);
-    }
-    return wasAdded;
-  }
+  // public boolean addOrMoveReplyAt(Reply aReply, int index)
+  // {
+  //   boolean wasAdded = false;
+  //   if(reply.contains(aReply))
+  //   {
+  //     if(index < 0 ) { index = 0; }
+  //     if(index > numberOfReply()) { index = numberOfReply() - 1; }
+  //     reply.remove(aReply);
+  //     reply.add(index, aReply);
+  //     wasAdded = true;
+  //   } 
+  //   else 
+  //   {
+  //     wasAdded = addReplyAt(aReply, index);
+  //   }
+  //   return wasAdded;
+  // }
   /* Code from template association_SetOneToMany */
   public boolean setGame(Game aGame)
   {
@@ -296,11 +296,11 @@ public class Review
 
     Game existingGame = game;
     game = aGame;
-    if (existingGame != null && !existingGame.equals(aGame))
-    {
-      existingGame.removeReview(this);
-    }
-    game.addReview(this);
+    // if (existingGame != null && !existingGame.equals(aGame))
+    // {
+    //   existingGame.removeReview(this);
+    // }
+    // game.addReview(this);
     wasSet = true;
     return wasSet;
   }
@@ -319,19 +319,19 @@ public class Review
   public void delete()
   {
     reviewsByReview_id.remove(getReview_id());
-    while (reply.size() > 0)
-    {
-      Reply aReply = reply.get(reply.size() - 1);
-      aReply.delete();
-      reply.remove(aReply);
-    }
+    // while (reply.size() > 0)
+    // {
+    //   Reply aReply = reply.get(reply.size() - 1);
+    //   aReply.delete();
+    //   reply.remove(aReply);
+    // }
     
     Game placeholderGame = game;
     this.game = null;
-    if(placeholderGame != null)
-    {
-      placeholderGame.removeReview(this);
-    }
+    // if(placeholderGame != null)
+    // {
+    //   placeholderGame.removeReview(this);
+    // }
     customer = null;
   }
 
