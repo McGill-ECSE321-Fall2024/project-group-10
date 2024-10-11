@@ -76,17 +76,14 @@ public class Game
   // CONSTRUCTOR
   //------------------------
 
-  public Game(int aGame_id, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl)
+  public Game( String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl)
   {
     description = aDescription;
     price = aPrice;
     gameStatus = aGameStatus;
     stockQuantity = aStockQuantity;
     photoUrl = aPhotoUrl;
-    if (!setGame_id(aGame_id))
-    {
-      throw new RuntimeException("Cannot create due to duplicate game_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
+  
     //review = new ArrayList<Review>();
     categories = new ArrayList<Category>();
     platforms = new ArrayList<Platform>();

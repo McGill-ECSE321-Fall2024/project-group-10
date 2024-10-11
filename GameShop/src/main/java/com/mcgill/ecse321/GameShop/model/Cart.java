@@ -53,16 +53,12 @@ public class Cart
   // CONSTRUCTOR
   //------------------------
 
-  public Cart(int aCart_id)
+  public Cart()
   {
-    if (!setCart_id(aCart_id))
-    {
-      throw new RuntimeException("Cannot create due to duplicate cart_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
+   
     games = new ArrayList<Game>();
   }
 
-  protected Cart(){}
   //------------------------
   // INTERFACE
   //------------------------

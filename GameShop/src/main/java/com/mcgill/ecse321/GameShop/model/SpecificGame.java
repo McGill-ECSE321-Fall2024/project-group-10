@@ -56,12 +56,9 @@ public class SpecificGame
   // CONSTRUCTOR
   //------------------------
 
-  public SpecificGame(int aSpecificGame_id, Game aGames)
+  public SpecificGame( Game aGames)
   {
-    if (!setSpecificGame_id(aSpecificGame_id))
-    {
-      throw new RuntimeException("Cannot create due to duplicate specificGame_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
+
     order = new ArrayList<Order>();
     if (!setGames(aGames))
     {

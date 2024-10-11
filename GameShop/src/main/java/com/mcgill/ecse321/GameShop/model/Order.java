@@ -8,12 +8,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Table;
 
 import java.sql.Date;
 
 // line 41 "../../../../../../model.ump"
 // line 216 "../../../../../../model.ump"
 @Entity
+@Table(name = "\"order\"")
 public class Order
 {
 
@@ -29,7 +32,6 @@ public class Order
 
   //Order Attributes
   @Id
-  @GeneratedValue
   private String trackingNumber;
   private Date orderDate;
   private String note;
@@ -43,15 +45,13 @@ public class Order
   // CONSTRUCTOR
   //------------------------
 
-  public Order(String aTrackingNumber, Date aOrderDate, String aNote, int aPaymentCard, Customer aCustomer)
+  public Order(Date aOrderDate, String aNote, int aPaymentCard, Customer aCustomer)
   {
     orderDate = aOrderDate;
     note = aNote;
     paymentCard = aPaymentCard;
-    if (!setTrackingNumber(aTrackingNumber))
-    {
-      throw new RuntimeException("Cannot create due to duplicate trackingNumber. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
+    trackingNumber = UUID.randomUUID().toString();
+
     if (!setCustomer(aCustomer))
     {
       throw new RuntimeException("Unable to create Order due to aCustomer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");

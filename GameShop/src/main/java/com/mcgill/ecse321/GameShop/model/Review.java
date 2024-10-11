@@ -60,16 +60,13 @@ public class Review
   // CONSTRUCTOR
   //------------------------
 
-  public Review(int aReview_id, Date aReviewDate, String aDescription, int aRating, GameRating aGameRating, Game aGame, Customer aCustomer)
+  public Review( Date aReviewDate, String aDescription, int aRating, GameRating aGameRating, Game aGame, Customer aCustomer)
   {
     reviewDate = aReviewDate;
     description = aDescription;
     rating = aRating;
     gameRating = aGameRating;
-    if (!setReview_id(aReview_id))
-    {
-      throw new RuntimeException("Cannot create due to duplicate review_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
+
     //reply = new ArrayList<Reply>();
     boolean didAddGame = setGame(aGame);
     if (!didAddGame)
@@ -221,7 +218,7 @@ public class Review
   /* Code from template association_AddManyToOne */
   public Reply addReply(int aReply_id, Date aReplyDate, String aDescription, Manager aManager)
   {
-    return new Reply(aReply_id, aReplyDate, aDescription, this, aManager);
+    return new Reply(aReplyDate, aDescription, this, aManager);
   }
 
   // public boolean addReply(Reply aReply)

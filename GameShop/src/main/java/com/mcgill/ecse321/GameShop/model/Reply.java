@@ -55,14 +55,11 @@ public class Reply
   // CONSTRUCTOR
   //------------------------
 
-  public Reply(int aReply_id, Date aReplyDate, String aDescription, Review aReview, Manager aManager)
+  public Reply( Date aReplyDate, String aDescription, Review aReview, Manager aManager)
   {
     replyDate = aReplyDate;
     description = aDescription;
-    if (!setReply_id(aReply_id))
-    {
-      throw new RuntimeException("Cannot create due to duplicate reply_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
+
     boolean didAddReview = setReview(aReview);
     if (!didAddReview)
     {

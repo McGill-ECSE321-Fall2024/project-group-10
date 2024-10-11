@@ -55,16 +55,12 @@ public class Promotion
   // CONSTRUCTOR
   //------------------------
 
-  public Promotion(int aPromotion_id, String aDescription, int aDiscountRate, Date aStartDate, Date aEndDate, Manager aManager)
+  public Promotion( String aDescription, int aDiscountRate, Date aStartDate, Date aEndDate, Manager aManager)
   {
     description = aDescription;
     discountRate = aDiscountRate;
     startDate = aStartDate;
     endDate = aEndDate;
-    if (!setPromotion_id(aPromotion_id))
-    {
-      throw new RuntimeException("Cannot create due to duplicate promotion_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
     games = new ArrayList<Game>();
     if (!setManager(aManager))
     {

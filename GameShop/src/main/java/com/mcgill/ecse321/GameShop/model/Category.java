@@ -39,13 +39,9 @@ public class Category
   // CONSTRUCTOR
   //------------------------
 
-  public Category(int aCategory_id, String aCategoryName, Manager aManager)
+  public Category(String aCategoryName, Manager aManager)
   {
     categoryName = aCategoryName;
-    if (!setCategory_id(aCategory_id))
-    {
-      throw new RuntimeException("Cannot create due to duplicate category_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
     if (!setManager(aManager))
     {
       throw new RuntimeException("Unable to create Category due to aManager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");

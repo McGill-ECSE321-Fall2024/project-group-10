@@ -29,7 +29,6 @@ public abstract class Account
 
   //Account Attributes
   @Id
-  @GeneratedValue
   private String email;
   private String username;
   private String password;

@@ -39,13 +39,9 @@ public class Platform
   // CONSTRUCTOR
   //------------------------
 
-  public Platform(int aPlatform_id, String aPlatformName, Manager aManager)
+  public Platform(String aPlatformName, Manager aManager)
   {
     platformName = aPlatformName;
-    if (!setPlatform_id(aPlatform_id))
-    {
-      throw new RuntimeException("Cannot create due to duplicate platform_id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
     if (!setManager(aManager))
     {
       throw new RuntimeException("Unable to create Platform due to aManager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
