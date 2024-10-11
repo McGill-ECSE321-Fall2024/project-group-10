@@ -7,6 +7,8 @@ import java.util.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -38,6 +40,11 @@ public class Cart
   //Cart Associations
   @ManyToMany
   // TODO: Add join table
+  @JoinTable(
+      name = "cart_items_jt",
+      joinColumns = @JoinColumn(name = "cart_id"),
+      inverseJoinColumns = @JoinColumn(name = "game_id")
+  )
   private List<Game> games;
   @ManyToOne
   private Order order;

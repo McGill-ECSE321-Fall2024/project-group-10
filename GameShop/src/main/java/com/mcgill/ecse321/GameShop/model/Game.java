@@ -58,7 +58,7 @@ public class Game
 
   @ManyToMany
   @JoinTable(
-      name = "game_category",
+      name = "game_category_jt",
       joinColumns = @JoinColumn(name = "game_id"),
       inverseJoinColumns = @JoinColumn(name = "category_id")
   )
@@ -66,7 +66,7 @@ public class Game
 
   @ManyToMany
   @JoinTable(
-      name = "game_platform",
+      name = "game_platform_jt",
       joinColumns = @JoinColumn(name = "game_id"),
       inverseJoinColumns = @JoinColumn(name = "platform_id")
   )
