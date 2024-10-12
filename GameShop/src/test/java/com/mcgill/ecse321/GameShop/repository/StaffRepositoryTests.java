@@ -8,62 +8,30 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.mcgill.ecse321.GameShop.model.Account;
-import com.mcgill.ecse321.GameShop.model.Cart;
-import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Manager;
+import com.mcgill.ecse321.GameShop.model.Staff;
 
 
 @SpringBootTest
-public class AccountRepositoryTests {
+public class StaffRepositoryTests {
     @Autowired
-    private AccountRepository accountRepository;
+    private StaffRepository staffRepository;
     @Autowired
     private CartRepository cartRepository;
 
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
-        accountRepository.deleteAll();
+        staffRepository.deleteAll();
         cartRepository.deleteAll();
        
     }
 
-    @Test
-    public void testCreateAndReadCustomerAccount() {
-        // Create Customer 1
-        String email = "anthony.saber@hotmail.com";
-        String username = "AnthonySaber";
-        String password = "password";
-        String phoneNumber = "+1 (438) 865-9294";
-        String address = "1234 rue Sainte-Catherine";
-
-        Cart cart = new Cart();
-        cart = cartRepository.save(cart);
-        int cartId = cart.getCart_id();
-
-        Customer customer1 = new Customer(email, username, password, phoneNumber, address, cart);
-        customer1 = accountRepository.save(customer1);
-        
-        Account account2 = accountRepository.findByEmail(email);
-
-        assertNotNull(customer1);
-        assertEquals(email, account2.getEmail());
-        assertEquals(username, account2.getUsername());
-        assertEquals(password, account2.getPassword());
-        assertEquals(phoneNumber, account2.getPhoneNumber());
-        assertEquals(address, account2.getAddress());
-        assertTrue(account2 instanceof Customer, "The account should be a customer.");
-        assertEquals(cartId, ((Customer)account2).getCart().getCart_id());
-
-        
-        
-}
         @Test
-        public void testCreateAndReadEmployeeAccount() {
+        public void testCreateAndReadEmployeeAccountAsStaff() {
             // Create Employee 1
-            String email = "anthony.saber@hotmail.commm";
+            String email = "anthony.saber@hotmail.commmmm";
             String username = "AnthonySaber";
             String password = "password";
             String phoneNumber = "+1 (438) 865-9295";
@@ -72,9 +40,9 @@ public class AccountRepositoryTests {
 
 
             Employee createdEmployee = new Employee(email, username, password, phoneNumber, address);
-            createdEmployee = accountRepository.save(createdEmployee);
+            createdEmployee = staffRepository.save(createdEmployee);
             
-            Account pulledEmployee = accountRepository.findByEmail(email);
+            Staff pulledEmployee = staffRepository.findByEmail(email);
 
             assertNotNull(createdEmployee);
             assertEquals(email, pulledEmployee.getEmail());
@@ -87,9 +55,9 @@ public class AccountRepositoryTests {
         }
 
         @Test
-        public void testCreateAndReadManagerAccount() {
+        public void testCreateAndReadManagerAccountAsStaff() {
             // Create Manager
-            String email = "anthony.saber@hotmail.commmmmm";
+            String email = "anthony.saber@hotmail.commmmmmm";
             String username = "AnthonySaber";
             String password = "password";
             String phoneNumber = "+1 (438) 865-9293";
@@ -98,9 +66,9 @@ public class AccountRepositoryTests {
 
 
             Manager createdManager = new Manager(email, username, password, phoneNumber, address);
-            createdManager = accountRepository.save(createdManager);
+            createdManager = staffRepository.save(createdManager);
             
-            Account pulledManager = accountRepository.findByEmail(email);
+            Staff pulledManager = staffRepository.findByEmail(email);
 
             assertNotNull(createdManager);
             assertEquals(email, pulledManager.getEmail());
@@ -112,8 +80,10 @@ public class AccountRepositoryTests {
             
         }
 
+    }
 
 
 
 
-}
+
+
