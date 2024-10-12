@@ -38,4 +38,3 @@ out/
 ../.idea/
 .DS_Store
 
-GameShop/src/test/java/com/mcgill/ecse321/GameShop/repository/CartRepositoryTests.java
