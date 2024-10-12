@@ -8,6 +8,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -56,7 +57,7 @@ public class Game
   // @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
   // private List<Review> review;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "game_category_jt",
       joinColumns = @JoinColumn(name = "game_id"),
@@ -64,7 +65,7 @@ public class Game
   )
   private List<Category> categories;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "game_platform_jt",
       joinColumns = @JoinColumn(name = "game_id"),

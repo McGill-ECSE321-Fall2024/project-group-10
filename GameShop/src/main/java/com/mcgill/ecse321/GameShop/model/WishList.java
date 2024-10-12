@@ -6,6 +6,7 @@ import java.util.*;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -40,7 +41,7 @@ public class WishList
   @JoinColumn(name = "email")
   private Customer customer;
   
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   // TODO: Add Join Table
   @JoinTable(
       name = "wishList_jt",

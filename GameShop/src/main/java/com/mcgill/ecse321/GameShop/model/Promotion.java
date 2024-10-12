@@ -5,6 +5,7 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -40,7 +41,7 @@ public class Promotion
   private Date endDate;
 
   //Promotion Associations
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   // TODO: Add Join Table
   @JoinTable(
       name = "promotion_jt",

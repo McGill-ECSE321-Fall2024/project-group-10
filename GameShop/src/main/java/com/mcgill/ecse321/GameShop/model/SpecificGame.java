@@ -5,6 +5,7 @@ package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -41,7 +42,7 @@ public class SpecificGame
   private ItemStatus itemStatus;
 
   //SpecificGame Associations
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   // TODO: Add Join table
   @JoinTable(
       name = "specificGame_jt",

@@ -1,10 +1,9 @@
 package com.mcgill.ecse321.GameShop.repository;
 import java.sql.Date;
+import java.util.List;
 
-import org.hibernate.Hibernate;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,14 +61,16 @@ public class PromotionRepositoryTests {
 
         Promotion pulledPromotion = promotionRepository.findById(promotionId);
 
-        Hibernate.initialize(pulledPromotion.getGames());
-        
+        // Hibernate.initialize(pulledPromotion.getGames());
+        List<Game> x = pulledPromotion.getGames();
+        Boolean y = pulledPromotion.getGames().contains(createdGame);
+        System.out.println(x);
         // Assertions
         assertEquals("Promotion", pulledPromotion.getDescription());
         assertEquals(10, pulledPromotion.getDiscountRate());
         assertEquals(startDate, pulledPromotion.getStartDate());
         assertEquals(endDate, pulledPromotion.getEndDate());
-        assertTrue(pulledPromotion.getGames().contains(createdGame));       
+        assertEquals(createdGame.getGame_id(), pulledPromotion.getGames().get(0).getGame_id()); // same issue as the line udner it 
         assertEquals(createdManager.getEmail(), pulledPromotion.getManager().getEmail()); // Be careful with this line, you should compare pk's and not objects
     }
 }
