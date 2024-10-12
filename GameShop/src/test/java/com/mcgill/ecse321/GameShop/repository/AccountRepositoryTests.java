@@ -32,7 +32,7 @@ public class AccountRepositoryTests {
 
     @Test
     public void testCreateAndReadCustomerAccount() {
-        // create customer1
+        // Create Customer 1
         String email = "anthony.saber@hotmail.com";
         String username = "AnthonySaber";
         String password = "password";
@@ -55,7 +55,7 @@ public class AccountRepositoryTests {
         assertEquals(password, account2.getPassword());
         assertEquals(phoneNumber, account2.getPhoneNumber());
         assertEquals(address, account2.getAddress());
-        assertTrue(account2 instanceof Customer, "the account should be a customer");
+        assertTrue(account2 instanceof Customer, "The account should be a customer.");
         assertEquals(cartId, ((Customer)account2).getCart().getCart_id());
 
         
@@ -63,7 +63,7 @@ public class AccountRepositoryTests {
 }
         @Test
         public void testCreateAndReadEmployeeAccount() {
-            // create customer1
+            // Create Employee 1
             String email = "anthony.saber@hotmail.commm";
             String username = "AnthonySaber";
             String password = "password";
@@ -83,13 +83,13 @@ public class AccountRepositoryTests {
             assertEquals(password, pulledEmployee.getPassword());
             assertEquals(phoneNumber, pulledEmployee.getPhoneNumber());
             assertEquals(address, pulledEmployee.getAddress());
-            assertTrue(pulledEmployee instanceof Employee, "the account should be a employee");
+            assertTrue(pulledEmployee instanceof Employee, "The account should be an employee.");
             
         }
 
         @Test
         public void testCreateAndReadManagerAccount() {
-            // create customer1
+            // Create Manager
             String email = "anthony.saber@hotmail.commmmmm";
             String username = "AnthonySaber";
             String password = "password";
@@ -109,7 +109,7 @@ public class AccountRepositoryTests {
             assertEquals(password, pulledManager.getPassword());
             assertEquals(phoneNumber, pulledManager.getPhoneNumber());
             assertEquals(address, pulledManager.getAddress());
-            assertTrue(pulledManager instanceof Manager, "the account should be a Manager");
+            assertTrue(pulledManager instanceof Manager, "The account should be a manager.");
             
         }
 

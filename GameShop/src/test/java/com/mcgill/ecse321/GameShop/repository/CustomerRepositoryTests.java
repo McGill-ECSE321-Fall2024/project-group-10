@@ -52,7 +52,7 @@ public class CustomerRepositoryTests {
         assertEquals(password, account2.getPassword());
         assertEquals(phoneNumber, account2.getPhoneNumber());
         assertEquals(address, account2.getAddress());
-        assertTrue(account2 instanceof Customer, "the account should be a customer");
+        assertTrue(account2 instanceof Customer, "The account should be a customer.");
         assertEquals(cartId, ((Customer)account2).getCart().getCart_id());  
 }
 }
