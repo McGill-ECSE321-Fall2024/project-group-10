@@ -47,7 +47,7 @@ public class PromotionRepositoryTests {
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = managerRepository.save(createdManager);
     
-        Game createdGame = new Game("Halo", 60, GameStatus.InStock, 100, "https://www.halo.com");
+        Game createdGame = new Game("Halo", 60, GameStatus.InStock, 100, "https://www.halo.com"); // TODO Add title field
         createdGame = gameRepository.save(createdGame);
 
         Date startDate = Date.valueOf("2021-10-10");
