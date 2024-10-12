@@ -30,6 +30,10 @@ public class WishListRepositoryTests{
     @AfterEach
     public void clearDatabase() {
         wishListRepository.deleteAll();
+        wishListRepository.deleteAll();
+        gameRepository.deleteAll();
+        customerRepository.deleteAll();
+        cartRepository.deleteAll();
     }
     @Test
     public void testCreateAndReadWishList(){
