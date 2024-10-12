@@ -43,6 +43,7 @@ public class Game
   @Id
   @GeneratedValue
   private int game_id;
+  private String title;
   private String description;
   private int price;
 
@@ -76,8 +77,9 @@ public class Game
   // CONSTRUCTOR
   //------------------------
 
-  public Game( String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl)
+  public Game( String aTitle, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl)
   {
+    title = aTitle;
     description = aDescription;
     price = aPrice;
     gameStatus = aGameStatus;
@@ -111,6 +113,14 @@ public class Game
       gamesByGame_id.remove(anOldGame_id);
     }
     gamesByGame_id.put(aGame_id, this);
+    return wasSet;
+  }
+
+  public boolean setTitle(String aTitle)
+  {
+    boolean wasSet = false;
+    title = aTitle;
+    wasSet = true;
     return wasSet;
   }
 
@@ -167,6 +177,11 @@ public class Game
   public static boolean hasWithGame_id(int aGame_id)
   {
     return getWithGame_id(aGame_id) != null;
+  }
+
+  public String getTitle()
+  {
+    return title;
   }
 
   public String getDescription()
