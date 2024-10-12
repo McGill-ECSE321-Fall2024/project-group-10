@@ -1,21 +1,13 @@
 package com.mcgill.ecse321.GameShop.repository;
+import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.sql.Date;
-
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
-import com.mcgill.ecse321.GameShop.model.Account;
-import com.mcgill.ecse321.GameShop.model.Cart;
-import com.mcgill.ecse321.GameShop.model.Category;
-import com.mcgill.ecse321.GameShop.model.Customer;
-import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Platform;
 
@@ -26,6 +18,8 @@ public class PlatformRepositoryTests {
     @Autowired
     private AccountRepository accountRepository;
 
+
+
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
@@ -34,9 +28,10 @@ public class PlatformRepositoryTests {
     }
 
     @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testCreateAndReadPlatform() {
        
-        String email = "anthony.saber@hotmail.co";
+        String email = "anthony.saber@hotmail.cox";
         String username = "AnthonySaber";
         String password = "password";
         int phoneNumber = 1234567890;
@@ -46,6 +41,7 @@ public class PlatformRepositoryTests {
     
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = accountRepository.save(createdManager);
+
     
         Platform createdPlatform = new Platform("PS5", createdManager);
         createdPlatform = platformRepository.save(createdPlatform);
@@ -61,8 +57,6 @@ public class PlatformRepositoryTests {
         assertEquals("PS5", pulledPlatform.getPlatformName());
         assertEquals(createdManager.getEmail(), pulledPlatform.getManager().getEmail());
         }
-
-        
         
 }
 

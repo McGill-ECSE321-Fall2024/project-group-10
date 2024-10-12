@@ -1,11 +1,8 @@
 package com.mcgill.ecse321.GameShop.repository;
+import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.sql.Date;
-
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,57 +61,57 @@ public class AccountRepositoryTests {
         
         
 }
-@Test
-public void testCreateAndReadEmployeeAccount() {
-    // create customer1
-    String email = "anthony.saber@hotmail.commm";
-    String username = "AnthonySaber";
-    String password = "password";
-    int phoneNumber = 1234567890;
-    String address = "1234 rue Sainte-Catherine";
+        @Test
+        public void testCreateAndReadEmployeeAccount() {
+            // create customer1
+            String email = "anthony.saber@hotmail.commm";
+            String username = "AnthonySaber";
+            String password = "password";
+            int phoneNumber = 1234567890;
+            String address = "1234 rue Sainte-Catherine";
 
 
 
-    Employee createdEmployee = new Employee(email, username, password, phoneNumber, address);
-    createdEmployee = accountRepository.save(createdEmployee);
-    
-    Account pulledEmployee = accountRepository.findByEmail(email);
+            Employee createdEmployee = new Employee(email, username, password, phoneNumber, address);
+            createdEmployee = accountRepository.save(createdEmployee);
+            
+            Account pulledEmployee = accountRepository.findByEmail(email);
 
-    assertNotNull(createdEmployee);
-    assertEquals(email, pulledEmployee.getEmail());
-    assertEquals(username, pulledEmployee.getUsername());
-    assertEquals(password, pulledEmployee.getPassword());
-    assertEquals(phoneNumber, pulledEmployee.getPhoneNumber());
-    assertEquals(address, pulledEmployee.getAddress());
-    assertTrue(pulledEmployee instanceof Employee, "the account should be a employee");
-    
-}
+            assertNotNull(createdEmployee);
+            assertEquals(email, pulledEmployee.getEmail());
+            assertEquals(username, pulledEmployee.getUsername());
+            assertEquals(password, pulledEmployee.getPassword());
+            assertEquals(phoneNumber, pulledEmployee.getPhoneNumber());
+            assertEquals(address, pulledEmployee.getAddress());
+            assertTrue(pulledEmployee instanceof Employee, "the account should be a employee");
+            
+        }
 
-@Test
-public void testCreateAndReadManagerAccount() {
-    // create customer1
-    String email = "anthony.saber@hotmail.commmmmm";
-    String username = "AnthonySaber";
-    String password = "password";
-    int phoneNumber = 1234567890;
-    String address = "1234 rue Sainte-Catherine";
+        @Test
+        public void testCreateAndReadManagerAccount() {
+            // create customer1
+            String email = "anthony.saber@hotmail.commmmmm";
+            String username = "AnthonySaber";
+            String password = "password";
+            int phoneNumber = 1234567890;
+            String address = "1234 rue Sainte-Catherine";
 
 
 
-    Manager createdManager = new Manager(email, username, password, phoneNumber, address);
-    createdManager = accountRepository.save(createdManager);
-    
-    Account pulledManager = accountRepository.findByEmail(email);
+            Manager createdManager = new Manager(email, username, password, phoneNumber, address);
+            createdManager = accountRepository.save(createdManager);
+            
+            Account pulledManager = accountRepository.findByEmail(email);
 
-    assertNotNull(createdManager);
-    assertEquals(email, pulledManager.getEmail());
-    assertEquals(username, pulledManager.getUsername());
-    assertEquals(password, pulledManager.getPassword());
-    assertEquals(phoneNumber, pulledManager.getPhoneNumber());
-    assertEquals(address, pulledManager.getAddress());
-    assertTrue(pulledManager instanceof Manager, "the account should be a Manager");
-    
-}
+            assertNotNull(createdManager);
+            assertEquals(email, pulledManager.getEmail());
+            assertEquals(username, pulledManager.getUsername());
+            assertEquals(password, pulledManager.getPassword());
+            assertEquals(phoneNumber, pulledManager.getPhoneNumber());
+            assertEquals(address, pulledManager.getAddress());
+            assertTrue(pulledManager instanceof Manager, "the account should be a Manager");
+            
+        }
 
 
 
