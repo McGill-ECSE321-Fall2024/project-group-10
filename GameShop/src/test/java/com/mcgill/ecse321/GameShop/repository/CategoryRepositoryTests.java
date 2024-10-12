@@ -39,7 +39,7 @@ public class CategoryRepositoryTests {
         String email = "anthony.saber@hotmail.co";
         String username = "AnthonySaber";
         String password = "password";
-        int phoneNumber = 1234567890;
+        String phoneNumber = "+1 (438) 865-9291";
         String address = "1234 rue Sainte-Catherine";
     
     

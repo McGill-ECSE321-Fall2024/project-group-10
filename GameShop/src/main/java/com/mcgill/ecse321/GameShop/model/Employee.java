@@ -20,7 +20,7 @@ public class Employee extends Staff
   // CONSTRUCTOR
   //------------------------
 
-  public Employee(String aEmail, String aUsername, String aPassword, int aPhoneNumber, String aAddress)
+  public Employee(String aEmail, String aUsername, String aPassword, String aPhoneNumber, String aAddress)
   {
     super(aEmail, aUsername, aPassword, aPhoneNumber, aAddress);
   }

@@ -32,14 +32,14 @@ public abstract class Account
   private String email;
   private String username;
   private String password;
-  private int phoneNumber;
+  private String phoneNumber;
   private String address;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Account(String aEmail, String aUsername, String aPassword, int aPhoneNumber, String aAddress)
+  public Account(String aEmail, String aUsername, String aPassword, String aPhoneNumber, String aAddress)
   {
     username = aUsername;
     password = aPassword;
@@ -93,7 +93,7 @@ public abstract class Account
     return wasSet;
   }
 
-  public boolean setPhoneNumber(int aPhoneNumber)
+  public boolean setPhoneNumber(String aPhoneNumber)
   {
     boolean wasSet = false;
     phoneNumber = aPhoneNumber;
@@ -134,7 +134,7 @@ public abstract class Account
     return password;
   }
 
-  public int getPhoneNumber()
+  public String getPhoneNumber()
   {
     return phoneNumber;
   }

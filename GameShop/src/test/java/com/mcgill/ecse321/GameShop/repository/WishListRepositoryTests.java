@@ -36,7 +36,7 @@ public class WishListRepositoryTests{
         String email = "marc.germanos@hotmail.com";
         String username = "Marcg";
         String password = "password";
-        int phoneNumber = 1234567890;
+        String phoneNumber = "+1 (438) 865-9277";
         String address = "120 rue Pen";
         String aTitle = "Marcg's wishlist";
         Cart cart = new Cart();

@@ -36,7 +36,7 @@ public class AccountRepositoryTests {
         String email = "anthony.saber@hotmail.com";
         String username = "AnthonySaber";
         String password = "password";
-        int phoneNumber = 1234567890;
+        String phoneNumber = "+1 (438) 865-9294";
         String address = "1234 rue Sainte-Catherine";
 
         Cart cart = new Cart();
@@ -67,7 +67,7 @@ public class AccountRepositoryTests {
             String email = "anthony.saber@hotmail.commm";
             String username = "AnthonySaber";
             String password = "password";
-            int phoneNumber = 1234567890;
+            String phoneNumber = "+1 (438) 865-9295";
             String address = "1234 rue Sainte-Catherine";
 
 
@@ -93,7 +93,7 @@ public class AccountRepositoryTests {
             String email = "anthony.saber@hotmail.commmmmm";
             String username = "AnthonySaber";
             String password = "password";
-            int phoneNumber = 1234567890;
+            String phoneNumber = "+1 (438) 865-9293";
             String address = "1234 rue Sainte-Catherine";
 
 

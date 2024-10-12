@@ -29,7 +29,7 @@ public class Customer extends Account
   // CONSTRUCTOR
   //------------------------
 
-  public Customer(String aEmail, String aUsername, String aPassword, int aPhoneNumber, String aAddress, Cart aCart)
+  public Customer(String aEmail, String aUsername, String aPassword, String aPhoneNumber, String aAddress, Cart aCart)
   {
     super(aEmail, aUsername, aPassword, aPhoneNumber, aAddress);
     // wishList = new ArrayList<WishList>();
