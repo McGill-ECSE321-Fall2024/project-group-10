@@ -20,7 +20,7 @@ public class Manager extends Staff
   // CONSTRUCTOR
   //------------------------
 
-  public Manager(String aEmail, String aUsername, String aPassword, int aPhoneNumber, String aAddress)
+  public Manager(String aEmail, String aUsername, String aPassword, String aPhoneNumber, String aAddress)
   {
     super(aEmail, aUsername, aPassword, aPhoneNumber, aAddress);
   }

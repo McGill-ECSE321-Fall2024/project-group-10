@@ -34,7 +34,7 @@ public class PlatformRepositoryTests {
         String email = "anthony.saber@hotmail.cox";
         String username = "AnthonySaber";
         String password = "password";
-        int phoneNumber = 1234567890;
+        String phoneNumber = "+1 (438) 865-9290";
         String address = "1234 rue Sainte-Catherine";
     
     

@@ -40,7 +40,7 @@ public class PromotionRepositoryTests {
         String email = "nicolas.saade@gmail.com";
         String username = "NicolasSaade";
         String password = "password";
-        int phoneNumber = 1234567890;
+        String phoneNumber = "+1 (438) 865-9297";
         String address = "1234 rue Sainte-Catherine";
 
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
