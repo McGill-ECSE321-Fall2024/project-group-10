@@ -44,7 +44,6 @@ public class CustomerRepositoryTests {
         customer1 = customerRepository.save(customer1);
         
         Account account2 = customerRepository.findByEmail(email);
-        Cart cart2 = cartRepository.findById(cartId);
 
         assertNotNull(customer1);
         assertEquals(email, account2.getEmail());
