@@ -43,7 +43,6 @@ public class Order
 
   //Order Associations
   @ManyToOne
-  @JoinColumn(name = "customer_id", nullable=false)
   private Customer customer;
 
   //------------------------
