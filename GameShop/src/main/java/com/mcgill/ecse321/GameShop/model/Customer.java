@@ -75,10 +75,15 @@ public class Customer extends Account
   //   return index;
   // }
   /* Code from template association_GetOne */
-  public Cart getCart()
+  public Cart getCart() // TODO: remember to deal with this later and check orphon removal
   {
-    return cart;
+    if (cart != null)
+    {
+      return cart;
+    }
+    return null;
   }
+  
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfWishList()
   {
@@ -155,11 +160,10 @@ public class Customer extends Account
   public boolean setCart(Cart aNewCart)
   {
     boolean wasSet = false;
-    if (aNewCart != null)
-    {
-      cart = aNewCart;
-      wasSet = true;
-    }
+
+    cart = aNewCart;
+    wasSet = true;
+
     return wasSet;
   }
 
