@@ -4,7 +4,9 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -47,7 +49,7 @@ public class Cart
       inverseJoinColumns = @JoinColumn(name = "game_id")
   )
   private List<Game> games;
-  @ManyToOne
+  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private Order order;
 
   //------------------------
