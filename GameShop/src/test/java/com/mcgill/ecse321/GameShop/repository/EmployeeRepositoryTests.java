@@ -27,7 +27,7 @@ public class EmployeeRepositoryTests {
     }
 
     @Test
-        public void testCreateAndReadEmployeeAccount() {
+        public void testCreateAndReadEmployeeAccountAsAccount() {
             // create customer1
             String email = "anthony.saber.02@hotmail.com";
             String username = "AnthonySaber";
