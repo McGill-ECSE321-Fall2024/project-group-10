@@ -42,22 +42,26 @@ public class OrderRepositoryTests {
         String password = "p123";
         String phoneNumber = "+1 (438) 320-239";
         String address = "1110 rue Sainte-Catherine";
-
+        
+        // Creating Cart
         Cart cart = new Cart();
         cart = cartRepository.save(cart);
         int cartId = cart.getCart_id();
 
+        // Creating Customer
         Customer customer1 = new Customer(email, username, password, phoneNumber, address, cart);
         customer1 = accountRepository.save(customer1);
-
+        
+        // Creating date, note, and paymentCard in order to define order
         Date orderDate = Date.valueOf("2021-10-10");
-
         String note = "testing";
         int paymentCard = 1209028310;
 
+        // Defining order and saving it to the order table
         Order order = new Order(orderDate, note, paymentCard, customer1);
         order = orderRepository.save(order);
-
+        
+        // Getting the tracking number from the order
         String trackingNumber = order.getTrackingNumber();
         
 
