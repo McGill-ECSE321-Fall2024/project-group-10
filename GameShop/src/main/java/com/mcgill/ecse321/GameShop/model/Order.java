@@ -4,6 +4,8 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.GenerationType;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -32,6 +34,7 @@ public class Order
 
   //Order Attributes
   @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
   private String trackingNumber;
   private Date orderDate;
   private String note;
@@ -50,7 +53,7 @@ public class Order
     orderDate = aOrderDate;
     note = aNote;
     paymentCard = aPaymentCard;
-    trackingNumber = UUID.randomUUID().toString();
+  
 
     if (!setCustomer(aCustomer))
     {

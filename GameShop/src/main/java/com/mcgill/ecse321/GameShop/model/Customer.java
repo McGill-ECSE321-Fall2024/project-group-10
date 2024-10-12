@@ -2,7 +2,9 @@
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
 package com.mcgill.ecse321.GameShop.model;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 
 // line 19 "../../../../../../model.ump"
@@ -19,7 +21,8 @@ public class Customer extends Account
   // @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
   // private List<WishList> wishList;
 
-  @OneToOne
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "cart_id", nullable = true)
   private Cart cart;
 
   //------------------------
