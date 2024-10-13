@@ -15,6 +15,8 @@ import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Order;
 
+import jakarta.transaction.Transactional;
+
 @SpringBootTest
 public class OrderRepositoryTests {
 
@@ -36,6 +38,7 @@ public class OrderRepositoryTests {
     }
 
     @Test
+    @Transactional
     public void TestCreateAndReadOrder(){
         String email = "judes@gmail.com";
         String username = "JudeSousou";

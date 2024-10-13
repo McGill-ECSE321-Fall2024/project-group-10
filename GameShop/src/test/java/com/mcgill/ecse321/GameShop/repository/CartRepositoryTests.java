@@ -22,6 +22,9 @@ import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
+
+import jakarta.transaction.Transactional;
+
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Order;
 import com.mcgill.ecse321.GameShop.model.SpecificGame;
@@ -38,24 +41,24 @@ public class CartRepositoryTests {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
-    private AccountRepository accountRepository;
+    private CustomerRepository customerRepository;
 
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
 
     // Fetch all customers and remove their cart references before deleting carts
-    Iterable<Account> customers = accountRepository.findAll();
-    for (Account customer : customers) {
-        ((Customer)customer).deleteCart();
-        System.out.println("ASKDBJASDLJASHDLJHASLJD: " + customer);
-        accountRepository.save(customer); // Save the update to remove the cart reference
-    }
+    // Iterable<Account> customers = accountRepository.findAll();
+    // for (Account customer : customers) {
+    //     ((Customer)customer).deleteCart();
+    //     System.out.println("ASKDBJASDLJASHDLJHASLJD: " + customer);
+    //     accountRepository.save(customer); // Save the update to remove the cart reference
+    // }
 
     // Now it is safe to delete carts
     specificgameRepository.deleteAll();
     orderRepository.deleteAll();
-    accountRepository.deleteAll();
+    customerRepository.deleteAll();
     cartRepository.deleteAll();
     gameRepository.deleteAll();
 
@@ -64,6 +67,7 @@ public class CartRepositoryTests {
     // Order --> Customer --> Cart --> GAME <-- SpecificGame
 
     @Test
+    @Transactional
     public void testCreateAndReadCart() {
         System.out.println("ASKDBJASDLJASHDLJHASLJD: ");
         String aDescription = "Halo2";
@@ -98,7 +102,7 @@ public class CartRepositoryTests {
         cart = cartRepository.save(cart);
 
         Customer aCustomer = new Customer("ajn@njr.cm", "ajn", "ajn2", "1234567890", "123 street", cart);
-        aCustomer = accountRepository.save(aCustomer); 
+        aCustomer = customerRepository.save(aCustomer); 
 
         Order order = new Order(aOrderDate,"notes of the order",123456,aCustomer);
         order = orderRepository.save(order);

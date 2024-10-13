@@ -8,6 +8,9 @@ import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.SpecificGame.ItemStatus;
+
+import jakarta.transaction.Transactional;
+
 import com.mcgill.ecse321.GameShop.model.Order;
 import com.mcgill.ecse321.GameShop.model.SpecificGame;
 import java.sql.Date;
@@ -47,6 +50,7 @@ public class SpecificGameRepositoryTests {
     }
 
     @Test
+    @Transactional
     public void TestCreateAndReadSpecificGame(){
         //create first game
         String title = "game1";

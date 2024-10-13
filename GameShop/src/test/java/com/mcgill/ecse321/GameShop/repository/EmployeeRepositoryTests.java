@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Employee;
 
+import jakarta.transaction.Transactional;
+
 @SpringBootTest
 public class EmployeeRepositoryTests {
     @Autowired
@@ -27,6 +29,7 @@ public class EmployeeRepositoryTests {
     }
 
     @Test
+    @Transactional
         public void testCreateAndReadEmployeeAccountAsAccount() {
             // create customer1
             String email = "anthony.saber.02@hotmail.com";

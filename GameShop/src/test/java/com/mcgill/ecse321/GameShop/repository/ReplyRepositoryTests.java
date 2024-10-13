@@ -25,6 +25,8 @@ import com.mcgill.ecse321.GameShop.model.Reply;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 
+import jakarta.transaction.Transactional;
+
 @SpringBootTest
 public class ReplyRepositoryTests {
     @Autowired
@@ -49,6 +51,7 @@ public class ReplyRepositoryTests {
     }
 
     @Test
+    @Transactional
     public void testCreateAndReadReply() {
        
         String email = "tarek.elakkaoui@hotmail.com";

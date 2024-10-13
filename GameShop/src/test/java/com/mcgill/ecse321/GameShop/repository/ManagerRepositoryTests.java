@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Manager;
 
+import jakarta.transaction.Transactional;
+
 @SpringBootTest
 public class ManagerRepositoryTests {
     @Autowired
@@ -27,6 +29,7 @@ public class ManagerRepositoryTests {
     }
 
     @Test
+    @Transactional
         public void testCreateAndReadManagerAccountAsAccount() {
             // Create Manager
             String email = "anthony.saber.as@hotmail.commmmmm";
