@@ -75,10 +75,15 @@ public class Customer extends Account
   //   return index;
   // }
   /* Code from template association_GetOne */
-  public Cart getCart()
+  public Cart getCart() // TODO: remember to deal with this later and check orphon removal
   {
-    return cart;
+    if (cart != null)
+    {
+      return cart;
+    }
+    return null;
   }
+  
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfWishList()
   {
@@ -161,6 +166,16 @@ public class Customer extends Account
       wasSet = true;
     }
     return wasSet;
+  }
+
+  public boolean deleteCart() {
+    boolean wasDeleted = false;
+    if (this.cart != null) {
+        // Set the cart to null to disassociate it and trigger orphan removal
+        this.cart = null;
+        wasDeleted = true;
+    }
+    return wasDeleted;
   }
 
   public void delete()
