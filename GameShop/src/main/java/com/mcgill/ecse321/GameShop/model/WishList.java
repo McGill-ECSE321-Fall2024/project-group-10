@@ -42,7 +42,6 @@ public class WishList
   private Customer customer;
   
   @ManyToMany(fetch = FetchType.EAGER)
-  // TODO: Add Join Table
   @JoinTable(
       name = "wishList_jt",
       joinColumns = @JoinColumn(name = "wishList_id"),

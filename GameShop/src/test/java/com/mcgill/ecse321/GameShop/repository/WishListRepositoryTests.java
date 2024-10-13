@@ -28,6 +28,7 @@ public class WishListRepositoryTests{
     private GameRepository gameRepository;
     @Autowired
     private CustomerRepository customerRepository;
+
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
@@ -37,6 +38,7 @@ public class WishListRepositoryTests{
         customerRepository.deleteAll();
         cartRepository.deleteAll();
     }
+
     @Test
     @Transactional
     public void testCreateAndReadWishList(){
@@ -45,7 +47,7 @@ public class WishListRepositoryTests{
         String password = "password";
         String phoneNumber = "+1 (438) 865-9277";
         String address = "120 rue Pen";
-        String aTitle = "Marcg's wishlist";
+        String aTitle = "Marc's wishlist";
         Cart cart = new Cart();
         cart = cartRepository.save(cart);
         
@@ -102,4 +104,55 @@ public class WishListRepositoryTests{
         assertTrue(wasFound);/**/
 
     }
+
+    @Test
+    @Transactional
+    public void testMultipleWishListsPerCustomer() {
+        // Create a Cart and Customer
+        Cart cart = new Cart();
+        cart = cartRepository.save(cart);
+
+        Customer customer = new Customer("moh.abdelhady@moh.com", "mohamed", "password", "+1 (123) 123-4567", "132 Drummond", cart);
+        customer = customerRepository.save(customer);
+
+        // Create two WishLists for the same Customer
+        WishList wishList1 = new WishList("Mohamed's First WishList", customer);
+        WishList wishList2 = new WishList("Mohamed's Second WishList", customer);
+        wishList1 = wishListRepository.save(wishList1);
+        wishList2 = wishListRepository.save(wishList2);
+
+        // Retrieve and verify the WishLists
+        WishList pulledWishList1 = wishListRepository.findById(wishList1.getWishList_id());
+        WishList pulledWishList2 = wishListRepository.findById(wishList2.getWishList_id());
+
+        assertNotNull(pulledWishList1);
+        assertNotNull(pulledWishList2);
+        assertEquals(customer.getEmail(), pulledWishList1.getCustomer().getEmail(), "WishList1 should be associated with Mohamed.");
+        assertEquals(customer.getEmail(), pulledWishList2.getCustomer().getEmail(), "WishList2 should be associated with Mohamed.");
+}
+
+    @Test
+    @Transactional
+    public void testUpdateWishListDetails() {
+        // Create a Cart and Customer
+        Cart cart = new Cart();
+        cart = cartRepository.save(cart);
+
+        Customer customer = new Customer("moh.abdelhady@moh.com", "mohamed", "password", "+1 (123) 123-4567", "132 Drummond", cart);
+        customer = customerRepository.save(customer);
+
+        // Create a WishList
+        WishList wishList = new WishList("Mohamed's WishList", customer);
+        wishList = wishListRepository.save(wishList);
+
+        // Update WishList title
+        wishList.setTitle("Mohamed's Updated WishList");
+        wishList = wishListRepository.save(wishList);
+
+        // Retrieve and verify the updated WishList
+        WishList updatedWishList = wishListRepository.findById(wishList.getWishList_id());
+        assertNotNull(updatedWishList);
+        assertEquals("Mohamed's Updated WishList", updatedWishList.getTitle(), "WishList title should be updated.");
+}
+
 }
