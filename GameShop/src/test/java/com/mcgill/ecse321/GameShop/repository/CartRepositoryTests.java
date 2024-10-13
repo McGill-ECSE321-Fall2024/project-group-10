@@ -43,10 +43,11 @@ public class CartRepositoryTests {
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
-    // // Fetch all customers and remove their cart references before deleting carts
+
+    // Fetch all customers and remove their cart references before deleting carts
     Iterable<Account> customers = accountRepository.findAll();
     for (Account customer : customers) {
-        ((Customer)customer).setCart(null);
+        ((Customer)customer).deleteCart();
         System.out.println("ASKDBJASDLJASHDLJHASLJD: " + customer);
         accountRepository.save(customer); // Save the update to remove the cart reference
     }

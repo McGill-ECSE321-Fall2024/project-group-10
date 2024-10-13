@@ -160,11 +160,22 @@ public class Customer extends Account
   public boolean setCart(Cart aNewCart)
   {
     boolean wasSet = false;
-
-    cart = aNewCart;
-    wasSet = true;
-
+    if (aNewCart != null)
+    {
+      cart = aNewCart;
+      wasSet = true;
+    }
     return wasSet;
+  }
+
+  public boolean deleteCart() {
+    boolean wasDeleted = false;
+    if (this.cart != null) {
+        // Set the cart to null to disassociate it and trigger orphan removal
+        this.cart = null;
+        wasDeleted = true;
+    }
+    return wasDeleted;
   }
 
   public void delete()
