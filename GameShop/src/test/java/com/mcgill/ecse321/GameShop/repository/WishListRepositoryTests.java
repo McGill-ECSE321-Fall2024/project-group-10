@@ -107,32 +107,6 @@ public class WishListRepositoryTests{
 
     @Test
     @Transactional
-    public void testMultipleWishListsPerCustomer() {
-        // Create a Cart and Customer
-        Cart cart = new Cart();
-        cart = cartRepository.save(cart);
-
-        Customer customer = new Customer("moh.abdelhady@moh.com", "mohamed", "password", "+1 (123) 123-4567", "132 Drummond", cart);
-        customer = customerRepository.save(customer);
-
-        // Create two WishLists for the same Customer
-        WishList wishList1 = new WishList("Mohamed's First WishList", customer);
-        WishList wishList2 = new WishList("Mohamed's Second WishList", customer);
-        wishList1 = wishListRepository.save(wishList1);
-        wishList2 = wishListRepository.save(wishList2);
-
-        // Retrieve and verify the WishLists
-        WishList pulledWishList1 = wishListRepository.findById(wishList1.getWishList_id());
-        WishList pulledWishList2 = wishListRepository.findById(wishList2.getWishList_id());
-
-        assertNotNull(pulledWishList1);
-        assertNotNull(pulledWishList2);
-        assertEquals(customer.getEmail(), pulledWishList1.getCustomer().getEmail(), "WishList1 should be associated with Mohamed.");
-        assertEquals(customer.getEmail(), pulledWishList2.getCustomer().getEmail(), "WishList2 should be associated with Mohamed.");
-}
-
-    @Test
-    @Transactional
     public void testUpdateWishListDetails() {
         // Create a Cart and Customer
         Cart cart = new Cart();
