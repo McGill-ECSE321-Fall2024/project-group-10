@@ -3,6 +3,9 @@ import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +34,8 @@ public class EmployeeRepositoryTests {
     @Test
     @Transactional
         public void testCreateAndReadEmployeeAccountAsAccount() {
-            // create customer1
-            String email = "anthony.saber.02@hotmail.com";
+            // create employee 1
+            String email = "9@9.com";
             String username = "AnthonySaber";
             String password = "password";
             String phoneNumber = "+1 (438) 865-9295";
@@ -40,18 +43,42 @@ public class EmployeeRepositoryTests {
 
 
 
-            Employee createdEmployee = new Employee(email, username, password, phoneNumber, address);
-            createdEmployee = employeeRepository.save(createdEmployee);
+            Employee createdFirstEmployee = new Employee(email, username, password, phoneNumber, address);
+            createdFirstEmployee = employeeRepository.save(createdFirstEmployee);
             
-            Account pulledEmployee = employeeRepository.findByEmail(email);
+            Account pulledFirstEmployee = employeeRepository.findByEmail(email);
 
-            assertNotNull(createdEmployee);
-            assertEquals(email, pulledEmployee.getEmail());
-            assertEquals(username, pulledEmployee.getUsername());
-            assertEquals(password, pulledEmployee.getPassword());
-            assertEquals(phoneNumber, pulledEmployee.getPhoneNumber());
-            assertEquals(address, pulledEmployee.getAddress());
-            assertTrue(pulledEmployee instanceof Employee, "The account should be an employee.");
+            String email2 = "10@10.com";
+            String username2 = "AnthonySaber";
+            String password2 = "password";
+            String phoneNumber2 = "+1 (438) 865-9295";
+            String address2 = "1234 rue Sainte-Catherine";
+
+
+
+            Employee createdSecondEmployee = new Employee(email2, username2, password2, phoneNumber2, address2);
+            createdSecondEmployee = employeeRepository.save(createdSecondEmployee);
+            
+            Account pulledSecondEmployee = employeeRepository.findByEmail(email2);
+
+            assertNotNull(createdFirstEmployee);
+            assertEquals(email, pulledFirstEmployee.getEmail());
+            assertEquals(username, pulledFirstEmployee.getUsername());
+            assertEquals(password, pulledFirstEmployee.getPassword());
+            assertEquals(phoneNumber, pulledFirstEmployee.getPhoneNumber());
+            assertEquals(address, pulledFirstEmployee.getAddress());
+            assertTrue(pulledFirstEmployee instanceof Employee, "The account should be an employee.");
+
+            assertNotNull(createdSecondEmployee);
+            assertEquals(email2, pulledSecondEmployee.getEmail());
+            assertEquals(username2, pulledSecondEmployee.getUsername());
+            assertEquals(password2, pulledSecondEmployee.getPassword());
+            assertEquals(phoneNumber2, pulledSecondEmployee.getPhoneNumber());
+            assertEquals(address2, pulledSecondEmployee.getAddress());
+            assertTrue(pulledSecondEmployee instanceof Employee, "The account should be an employee.");
+
+            List<Account> employees = (List<Account>) employeeRepository.findAll();
+            assertEquals(2, employees.size());
             
         }
 }

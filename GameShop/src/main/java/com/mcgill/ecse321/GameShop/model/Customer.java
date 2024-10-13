@@ -14,7 +14,7 @@ public class Customer extends Account
 {
 
   //------------------------
-  // MEMBER VARIABLES
+  // MEMBER VARIABLESf
   //------------------------
 
   //Customer Associations
@@ -22,7 +22,7 @@ public class Customer extends Account
   // private List<WishList> wishList;
 
   @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "cart_id", nullable = true)
+  // @JoinColumn(name = "cart_id", nullable = true)
   private Cart cart;
 
   //------------------------
@@ -168,15 +168,15 @@ public class Customer extends Account
     return wasSet;
   }
 
-  public boolean deleteCart() {
-    boolean wasDeleted = false;
-    if (this.cart != null) {
-        // Set the cart to null to disassociate it and trigger orphan removal
-        this.cart = null;
-        wasDeleted = true;
-    }
-    return wasDeleted;
-  }
+  // public boolean deleteCart() {
+  //   boolean wasDeleted = false;
+  //   if (this.cart != null) {
+  //       // Set the cart to null to disassociate it and trigger orphan removal
+  //       this.cart = null;
+  //       wasDeleted = true;
+  //   }
+  //   return wasDeleted;
+  // }
 
   public void delete()
   {
