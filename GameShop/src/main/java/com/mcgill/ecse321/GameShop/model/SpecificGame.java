@@ -45,7 +45,6 @@ public class SpecificGame {
 
   // SpecificGame Associations
   @ManyToMany(fetch = FetchType.EAGER)
-  // TODO: Add Join table
   @JoinTable(name = "specificGame_jt", joinColumns = @JoinColumn(name = "specificGame_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
   private List<Order> order;
   @ManyToOne

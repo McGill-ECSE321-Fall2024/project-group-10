@@ -37,7 +37,6 @@ public class Cart {
 
   // Cart Associations
   @ManyToMany(fetch = FetchType.EAGER)
-  // TODO: Add join table
   @JoinTable(name = "cart_items_jt", joinColumns = @JoinColumn(name = "cart_id"), inverseJoinColumns = @JoinColumn(name = "game_id"))
   private List<Game> games;
   @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
