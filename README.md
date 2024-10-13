@@ -35,4 +35,5 @@ STEP 3: Launch IDE & Run Tests
 --------
 Now, with the repository and PostgreSQL database set up locally on your machine, you may build and run the tests.
 Launch your IDE and connect your IDE to the database.
+
 Then, run the following command to build and test: ./gradlew build -xtest
