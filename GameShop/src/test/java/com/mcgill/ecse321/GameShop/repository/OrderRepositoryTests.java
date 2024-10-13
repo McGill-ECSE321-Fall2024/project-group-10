@@ -1,13 +1,12 @@
 package com.mcgill.ecse321.GameShop.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.sql.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +90,7 @@ public class OrderRepositoryTests {
         firstSpecificGame = specificgameRepository.save(firstSpecificGame);
         SpecificGame pulledFirstSpecificGame = specificgameRepository.findById(firstSpecificGame.getSpecificGame_id());
         cart.addGame(firstGame);
-        cart = cartRepository.save(cart);
+        // cart = cartRepository.save(cart);
 
         
 
@@ -130,7 +129,7 @@ public class OrderRepositoryTests {
         assertEquals(address, firstPulledOrder.getCustomer().getAddress());
         assertEquals(firstGame.getGame_id(), firstPulledOrder.getCustomer().getCart().getGames().getFirst().getGame_id());
         String firstOrderTrackingNumber = firstOrder.getTrackingNumber();
-        boolean foundOrder = pulledFirstSpecificGame.getOrder().stream().anyMatch(order -> order.getTrackingNumber() == firstOrderTrackingNumber);
+        boolean foundOrder = pulledFirstSpecificGame.getOrder().stream().anyMatch(order -> order.getTrackingNumber().equals(firstOrderTrackingNumber));
         assertTrue(foundOrder, "First order should be in the specific game."); 
 
         assertNotNull(secondPulledOrder);
