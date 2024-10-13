@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,4 +78,84 @@ public class PromotionRepositoryTests {
         assertEquals(createdGame.getGame_id(), pulledPromotion.getGames().get(0).getGame_id()); // same issue as the line udner it 
         assertEquals(createdManager.getEmail(), pulledPromotion.getManager().getEmail()); // Be careful with this line, you should compare pk's and not objects
     }
+
+    @Test
+    @Transactional
+    public void testPromotionWithMultipleGames() {
+        // Create manager
+        String email = "manager.mohamed@example.com";
+        String username = "ManagerUser";
+        String password = "password";
+        String phoneNumber = "+1 (123) 456-7890";
+        String address = "123 Manager St";
+
+        Manager createdManager = new Manager(email, username, password, phoneNumber, address);
+        createdManager = managerRepository.save(createdManager);
+
+        // Create games
+        final Game game1 = gameRepository.save(new Game("Game 1", "Description 1", 50, GameStatus.InStock, 10, "http://example.com/game1.jpg"));
+        final Game game2 = gameRepository.save(new Game("Game 2", "Description 2", 60, GameStatus.InStock, 20, "http://example.com/game2.jpg"));
+
+        Date startDate = Date.valueOf("2022-01-01");
+        Date endDate = Date.valueOf("2022-01-10");
+
+        Promotion promotion = new Promotion("Multiple Games Promotion", 15, startDate, endDate, createdManager);
+        promotion.addGame(game1);
+        promotion.addGame(game2);
+        promotion = promotionRepository.save(promotion);
+
+        // Retrieve promotion
+        Promotion pulledPromotion = promotionRepository.findById(promotion.getPromotion_id());
+
+        // Assertions
+        assertNotNull(pulledPromotion);
+        assertEquals(2, pulledPromotion.getGames().size(), "Promotion should have 2 games.");
+        assertTrue(pulledPromotion.getGames().stream().anyMatch(game -> game.getGame_id() == game1.getGame_id()), "Promotion should contain Game 1.");
+        assertTrue(pulledPromotion.getGames().stream().anyMatch(game -> game.getGame_id() == game2.getGame_id()), "Promotion should contain Game 2.");
+    }
+
+    @Test
+    @Transactional
+    public void testOverlappingPromotionsForSameGame() {
+        // Create manager
+        String email = "manager.mohamed.abdelhady@example2.com";
+        String username = "ManagerUser";
+        String password = "password";
+        String phoneNumber = "+1 (123) 456-7890";
+        String address = "123 Manager St";
+
+        Manager createdManager = new Manager(email, username, password, phoneNumber, address);
+        createdManager = managerRepository.save(createdManager);
+
+        // Create game
+        Game createdGame = new Game("Overlapping Promotion Game", "Description", 50, GameStatus.InStock, 10, "http://example.com/game.jpg");
+        createdGame = gameRepository.save(createdGame);
+
+        // Create first promotion
+        Date startDate1 = Date.valueOf("2022-01-01");
+        Date endDate1 = Date.valueOf("2022-01-10");
+        Promotion firstPromotion = new Promotion("First Promotion", 10, startDate1, endDate1, createdManager);
+        firstPromotion.addGame(createdGame);
+        firstPromotion = promotionRepository.save(firstPromotion);
+
+        // Create second promotion with overlapping dates
+        Date startDate2 = Date.valueOf("2022-01-05");
+        Date endDate2 = Date.valueOf("2022-01-15");
+        Promotion secondPromotion = new Promotion("Second Promotion", 20, startDate2, endDate2, createdManager);
+        secondPromotion.addGame(createdGame);
+        secondPromotion = promotionRepository.save(secondPromotion);
+
+        // Retrieve promotions
+        Promotion pulledFirstPromotion = promotionRepository.findById(firstPromotion.getPromotion_id());
+        Promotion pulledSecondPromotion = promotionRepository.findById(secondPromotion.getPromotion_id());
+
+        // Assertions
+        assertNotNull(pulledFirstPromotion, "First promotion should exist.");
+        assertNotNull(pulledSecondPromotion, "Second promotion should exist.");
+
+        // Check that both promotions contain the same game
+        assertEquals(createdGame.getGame_id(), pulledFirstPromotion.getGames().get(0).getGame_id());
+        assertEquals(createdGame.getGame_id(), pulledSecondPromotion.getGames().get(0).getGame_id());
+    }
+
 }
