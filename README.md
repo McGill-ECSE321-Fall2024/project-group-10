@@ -28,8 +28,8 @@ You are to follow these instructions with the following information specific to 
 Quick Summary of PostgreSQL Setup:
 1. Start PostgreSQL server.
 2. Open psql.
-Step 3: Create a database with the name gameshop.
-Step 4: Set the port to 5432 and ensure you have the correct password (grouptenpsql).
+3. Create a database with the name gameshop.
+4. Set the port to 5432 and ensure you have the correct password (grouptenpsql).
 
 STEP 3: Launch IDE & Run Tests
 --------
