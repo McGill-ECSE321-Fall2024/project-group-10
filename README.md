@@ -24,6 +24,13 @@ You are to follow these instructions with the following information specific to 
 - PORT NUMBER: 5432
 - PASSWORD: grouptenpsql
 
+
+Quick Summary of PostgreSQL Setup:
+1. Start PostgreSQL server.
+2. Open psql.
+Step 3: Create a database with the name gameshop.
+Step 4: Set the port to 5432 and ensure you have the correct password (grouptenpsql).
+
 STEP 3: Launch IDE & Run Tests
 --------
 Now, with the repository and PostgreSQL database set up locally on your machine, you may build and run the tests.
