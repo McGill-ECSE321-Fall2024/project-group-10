@@ -1,8 +1,8 @@
 DELIVERABLE 1: Build System Instructions
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* As per TA instructions, the project report is fully completed with all required sections in the wiki and is navigable using this link: https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-1-Project-Report.
 * As per deliverable 1 instructions and confirmation by TAs, this README file is to contain instructions regarding the required configs aspect of the build system.
-* As per TA instructions, the project report is fully completed with all required sections in the wiki and is navigable using this link: https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-1-Project-Report
 * The other part of the build system submission (Testing Summary) is to be completed as part of the wiki along with the project report.
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
