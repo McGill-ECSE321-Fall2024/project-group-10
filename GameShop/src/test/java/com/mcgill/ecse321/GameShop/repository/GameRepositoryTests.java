@@ -130,17 +130,14 @@ public class GameRepositoryTests {
         assertEquals(gameStatus, wishListFromDb.getGames().getFirst().getGameStatus());
         assertEquals(stockQuantity, wishListFromDb.getGames().getFirst().getStockQuantity());
         assertEquals(photoUrl, wishListFromDb.getGames().getFirst().getPhotoUrl());
-        // assertEquals("Electronics", wishListFromDb.getGames().getFirst().getCategories().get(0).getCategoryName());
+        assertEquals("Actionssss", wishListFromDb.getGames().getFirst().getCategories().get(0).getCategoryName());
+
 
         //getting the customer from the wishlist and checking that the game is properly added to the customer's cart
         //for customer we only need to check the email as that is the primary key
         assertEquals(emailCustomer, wishListFromDb.getCustomer().getEmail());
         assertEquals(title, wishListFromDb.getCustomer().getCart().getGames().getLast().getTitle());
-        assertEquals(description, wishListFromDb.getGames().getFirst().getDescription());
-        assertEquals(price, wishListFromDb.getGames().getFirst().getPrice());
-        assertEquals(gameStatus, wishListFromDb.getGames().getFirst().getGameStatus());
-        assertEquals(stockQuantity, wishListFromDb.getGames().getFirst().getStockQuantity());
-        assertEquals(photoUrl, wishListFromDb.getGames().getFirst().getPhotoUrl());
+
 
         assertEquals(title, gameFromDb.getTitle());
         assertEquals(description, gameFromDb.getDescription());
@@ -148,6 +145,7 @@ public class GameRepositoryTests {
         assertEquals(gameStatus, gameFromDb.getGameStatus());
         assertEquals(stockQuantity, gameFromDb.getStockQuantity());
         assertEquals(photoUrl, gameFromDb.getPhotoUrl());
+        assertEquals("Actionssss", gameFromDb.getCategories().get(0).getCategoryName());
 
 
 
