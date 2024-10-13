@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +86,8 @@ public class CustomerRepositoryTests {
         assertTrue(pulledSecondCustomer instanceof Customer, "The account should be a customer.");
         assertEquals(secondCartId, ((Customer) pulledSecondCustomer).getCart().getCart_id());
 
+        List<Account> customers = (List<Account>) customerRepository.findAll();
+        assertEquals(2, customers.size());
     }
 
     @Test

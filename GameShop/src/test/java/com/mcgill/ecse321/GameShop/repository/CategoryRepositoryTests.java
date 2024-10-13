@@ -3,6 +3,9 @@ package com.mcgill.ecse321.GameShop.repository;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +65,9 @@ public class CategoryRepositoryTests {
 
         assertEquals(createdManager.getEmail(), firstPulledCategory.getManager().getEmail());
         assertEquals(createdManager.getEmail(), secondPulledCategory.getManager().getEmail());
+
+        List<Category> category = (List<Category>) categoryRepository.findAll();
+        assertEquals(2, category.size());
     }
 
 }
