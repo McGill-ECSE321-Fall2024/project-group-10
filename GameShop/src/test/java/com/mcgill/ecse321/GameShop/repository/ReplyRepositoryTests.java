@@ -1,9 +1,12 @@
 package com.mcgill.ecse321.GameShop.repository;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +38,8 @@ public class ReplyRepositoryTests {
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
     private CartRepository cartRepository;
 
     @BeforeEach
@@ -43,6 +48,7 @@ public class ReplyRepositoryTests {
         replyRepository.deleteAll();
         reviewRepository.deleteAll();
         gameRepository.deleteAll();
+        employeeRepository.deleteAll();
         managerRepository.deleteAll();
         customerRepository.deleteAll();
         cartRepository.deleteAll();
@@ -51,7 +57,7 @@ public class ReplyRepositoryTests {
     @Test
     @Transactional
     public void testCreateAndReadReply() {
-       
+        // Create necessary objects
         String email = "tarek.elakkaoui@gmail.com";
         String username = "TarekElAkkaoui";
         String password = "pass";
@@ -82,12 +88,13 @@ public class ReplyRepositoryTests {
         Cart cart = new Cart();
         cart = cartRepository.save(cart);
 
-        Customer customer = new Customer(customerEmail, customerUsername, customerPassword, customerPhoneNumber, customerAddress, cart);
+        Customer customer = new Customer(customerEmail, customerUsername, customerPassword, customerPhoneNumber,
+                customerAddress, cart);
         customer = customerRepository.save(customer);
-    
+
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = managerRepository.save(createdManager);
-        
+
         Game game = new Game(title, gameDescription, price, status, stock, url);
         game = gameRepository.save(game);
 
@@ -109,13 +116,60 @@ public class ReplyRepositoryTests {
         assertEquals(reply.getReview().getReview_id(), pulledReply.getReview().getReview_id());
         assertEquals(createdManager.getEmail(), reply.getManager().getEmail());
         assertTrue(pulledReply.getManager() instanceof Manager, "The reply account should be a manager.");
-        }       
+    }
+
+    @Test
+    @Transactional
+    public void testCreateMultipleRepliesToReview() {
+        // Create necessary objects
+        Cart cart2 = new Cart();
+        cart2 = cartRepository.save(cart2);
+
+        Customer customer = new Customer("101@101.com", "101", "password",
+                "+1 (101) 456-7890", "101 Rue Egypt", cart2);
+        customer = customerRepository.save(customer);
+
+        Manager manager = new Manager("102@102.com", "102User", "pas",
+                "+1 (102) 654-3210", "102 Rue Liban");
+        manager = managerRepository.save(manager);
+
+        Game game = new Game("Batman", "I am Batman", 59, GameStatus.InStock, 101,
+                "batmanlink.com");
+        game = gameRepository.save(game);
+
+        Review review = new Review(Date.valueOf("2024-01-10"), "I Love this Game!", 5,
+                GameRating.Five, game, customer);
+        review = reviewRepository.save(review);
+
+        // Create first reply
+        Reply firstReply = new Reply(Date.valueOf("2023-10-02"), "Thank you for your feedback!!!",
+                review, manager);
+        firstReply.setReviewRating(Reply.ReviewRating.Like);
+        firstReply = replyRepository.save(firstReply);
+
+        // Create second reply
+        Reply secondReply = new Reply(Date.valueOf("2023-10-03"), "We appreciate your support!!!!",
+                review, manager);
+        secondReply.setReviewRating(Reply.ReviewRating.Like);
+        secondReply = replyRepository.save(secondReply);
+
+        // Retrieve all replies
+        Iterable<Reply> allReplies = replyRepository.findAll();
+
+        // Filter replies associated with the specific review
+        List<Reply> repliesForReview = new ArrayList<>();
+        for (Reply reply : allReplies) {
+            if (reply.getReview().equals(review) && reply.getReview().getReview_id() == review.getReview_id()) {
+                repliesForReview.add(reply);
+            }
+        }
+
+        // Assertions
+        assertNotNull(repliesForReview, "Replies list should not be null.");
+        assertEquals(2, repliesForReview.size(), "There should be 2 replies associated with the review.");
+
+        // Verify that both replies are present in the retrieved list
+        assertTrue(repliesForReview.contains(firstReply), "First reply should be associated with the review.");
+        assertTrue(repliesForReview.contains(secondReply), "Second reply should be associated with the review.");
+    }
 }
-
-
-
-
-
-
-
-
