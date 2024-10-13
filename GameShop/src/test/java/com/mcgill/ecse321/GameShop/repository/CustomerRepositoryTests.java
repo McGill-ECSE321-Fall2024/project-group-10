@@ -12,6 +12,8 @@ import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 
+import jakarta.transaction.Transactional;
+
 @SpringBootTest
 public class CustomerRepositoryTests {
     @Autowired
@@ -28,6 +30,7 @@ public class CustomerRepositoryTests {
     }
 
     @Test
+    @Transactional
     public void testCreateAndReadCustomerAccountAsAccount() {
         // create customer1
         String email = "anthony.saber@hotmail";

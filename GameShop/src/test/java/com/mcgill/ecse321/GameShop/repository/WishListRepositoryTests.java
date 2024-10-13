@@ -15,6 +15,8 @@ import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.WishList;
 
+import jakarta.transaction.Transactional;
+
 
 @SpringBootTest
 public class WishListRepositoryTests{
@@ -36,6 +38,7 @@ public class WishListRepositoryTests{
         cartRepository.deleteAll();
     }
     @Test
+    @Transactional
     public void testCreateAndReadWishList(){
         String email = "marc.germanos@hotmail.com";
         String username = "Marcg";

@@ -12,6 +12,8 @@ import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Staff;
 
+import jakarta.transaction.Transactional;
+
 
 @SpringBootTest
 public class StaffRepositoryTests {
@@ -29,6 +31,7 @@ public class StaffRepositoryTests {
     }
 
         @Test
+        @Transactional
         public void testCreateAndReadEmployeeAccountAsStaff() {
             // Create Employee 1
             String email = "anthony.saber@hotmail.commmmm";

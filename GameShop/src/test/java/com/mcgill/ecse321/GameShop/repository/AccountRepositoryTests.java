@@ -14,6 +14,8 @@ import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Manager;
 
+import jakarta.transaction.Transactional;
+
 
 @SpringBootTest
 public class AccountRepositoryTests {
@@ -31,6 +33,7 @@ public class AccountRepositoryTests {
     }
 
     @Test
+    @Transactional
     public void testCreateAndReadCustomerAccount() {
         // Create Customer 1
         String email = "anthony.saber@hotmail.com";

@@ -11,6 +11,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Platform;
 
+import jakarta.transaction.Transactional;
+
 @SpringBootTest
 public class PlatformRepositoryTests {
     @Autowired
@@ -28,6 +30,7 @@ public class PlatformRepositoryTests {
     }
 
     @Test
+    @Transactional
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testCreateAndReadPlatform() {
        

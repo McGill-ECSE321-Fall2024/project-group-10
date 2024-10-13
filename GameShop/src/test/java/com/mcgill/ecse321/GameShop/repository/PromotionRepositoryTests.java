@@ -14,6 +14,8 @@ import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Promotion;
 
+import jakarta.transaction.Transactional;
+
 
 @SpringBootTest
 public class PromotionRepositoryTests {
@@ -35,6 +37,7 @@ public class PromotionRepositoryTests {
     }
 
     @Test
+    @Transactional
     public void testCreateAndReadPromotion() {
         // Create manager
         String email = "nicolas.saade@gmail.com";
