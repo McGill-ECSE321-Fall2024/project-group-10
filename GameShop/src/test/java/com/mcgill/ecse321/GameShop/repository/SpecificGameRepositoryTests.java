@@ -2,7 +2,6 @@ package com.mcgill.ecse321.GameShop.repository;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
@@ -19,11 +18,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 @SpringBootTest
 public class SpecificGameRepositoryTests {
@@ -51,8 +50,8 @@ public class SpecificGameRepositoryTests {
 
     @Test
     @Transactional
-    public void TestCreateAndReadSpecificGame(){
-        //create first game
+    public void TestCreateAndReadSpecificGame() {
+        // create first game
         String title = "game1";
         String description = "game1_description";
         int price = 25;
@@ -63,7 +62,6 @@ public class SpecificGameRepositoryTests {
 
         Game game = new Game(title, description, price, gameStatus, stockQuantity, photoUrl);
         game = gameRepository.save(game);
-        int gameId = game.getGame_id();
 
         SpecificGame specificGame = new SpecificGame(game);
         specificGame.setItemStatus(itemStatus);
@@ -77,7 +75,6 @@ public class SpecificGameRepositoryTests {
 
         Cart cart = new Cart();
         cart = cartRepository.save(cart);
-        int cartId = cart.getCart_id();
 
         Customer customer1 = new Customer(email, username, password, phoneNumber, address, cart);
         customer1 = customerRepository.save(customer1);
@@ -91,7 +88,6 @@ public class SpecificGameRepositoryTests {
         order = orderRepository.save(order);
 
         String trackingNumber = order.getTrackingNumber();
-        
 
         Order orderFromDb = orderRepository.findByTrackingNumber(trackingNumber);
         specificGame.addOrder(orderFromDb);
@@ -99,7 +95,7 @@ public class SpecificGameRepositoryTests {
         specificGame = specificGameRepository.save(specificGame);
 
         SpecificGame specificGameFromDb = specificGameRepository.findById(specificGame.getSpecificGame_id());
-        
+
         assertNotNull(specificGameFromDb);
         assertEquals(itemStatus, specificGameFromDb.getItemStatus());
         assertEquals(title, specificGameFromDb.getGames().getTitle());
@@ -116,7 +112,83 @@ public class SpecificGameRepositoryTests {
         assertEquals(password, specificGameFromDb.getOrder().getLast().getCustomer().getPassword());
         assertEquals(phoneNumber, specificGameFromDb.getOrder().getLast().getCustomer().getPhoneNumber());
         assertEquals(address, specificGameFromDb.getOrder().getLast().getCustomer().getAddress());
-        
+
     }
-    
+
+    @Test
+    @Transactional
+    public void testMultipleSpecificGamesWithSameGame() {
+        // Verify that multiple SpecificGames can be associated with the same Game.
+        // Create Game
+        Game game = new Game("SharedGame", "Game shared among SpecificGames", 90, GameStatus.InStock, 100,
+                "http://sharedgame.url");
+        game = gameRepository.save(game);
+
+        // Create SpecificGame 1
+        SpecificGame specificGame1 = new SpecificGame(game);
+        specificGame1.setItemStatus(ItemStatus.Confirmed);
+        specificGame1 = specificGameRepository.save(specificGame1);
+
+        // Create SpecificGame 2
+        SpecificGame specificGame2 = new SpecificGame(game);
+        specificGame2.setItemStatus(ItemStatus.Returned);
+        specificGame2 = specificGameRepository.save(specificGame2);
+
+        // Retrieve and verify SpecificGames
+        SpecificGame pulledSpecificGame1 = specificGameRepository.findById(specificGame1.getSpecificGame_id());
+        SpecificGame pulledSpecificGame2 = specificGameRepository.findById(specificGame2.getSpecificGame_id());
+
+        assertNotNull(pulledSpecificGame1);
+        assertNotNull(pulledSpecificGame2);
+        assertEquals(game.getGame_id(), pulledSpecificGame1.getGames().getGame_id(),
+                "SpecificGame1 should be associated with the Game.");
+        assertEquals(game.getGame_id(), pulledSpecificGame2.getGames().getGame_id(),
+                "SpecificGame2 should be associated with the Game.");
+        assertNotEquals(pulledSpecificGame1.getSpecificGame_id(), pulledSpecificGame2.getSpecificGame_id());
+    }
+
+    @Test
+    @Transactional
+    public void testMultipleSpecificGamesWithSameOrder() {
+        // Verify that multiple SpecificGames can be associated with the same Order.
+        // Create Game
+        Game game1 = new Game("OrderGame1", "Game1 for Order", 100, GameStatus.InStock, 50, "http://ordergame1.url");
+        Game game2 = new Game("OrderGame2", "Game2 for Order", 110, GameStatus.InStock, 60, "http://ordergame2.url");
+        game1 = gameRepository.save(game1);
+        game2 = gameRepository.save(game2);
+
+        // Create SpecificGames
+        SpecificGame specificGame1 = new SpecificGame(game1);
+        specificGame1.setItemStatus(ItemStatus.Confirmed);
+        specificGame1 = specificGameRepository.save(specificGame1);
+
+        SpecificGame specificGame2 = new SpecificGame(game2);
+        specificGame2.setItemStatus(ItemStatus.Confirmed);
+        specificGame2 = specificGameRepository.save(specificGame2);
+
+        // Create Customer and Order
+        Cart cart = cartRepository.save(new Cart());
+        Customer customer = customerRepository.save(
+                new Customer("400@400.com", "400", "password", "+1 (400) 456-7890", "400 rue Ottawa", cart));
+        Order order = orderRepository.save(new Order(Date.valueOf("2021-03-01"), "OrderNote", 3333333, customer));
+
+        // Associate both SpecificGames with the same Order
+        specificGame1.addOrder(order);
+        specificGame2.addOrder(order);
+        specificGame1 = specificGameRepository.save(specificGame1);
+        specificGame2 = specificGameRepository.save(specificGame2);
+
+        // Retrieve and verify Orders
+        SpecificGame pulledSpecificGame1 = specificGameRepository.findById(specificGame1.getSpecificGame_id());
+        SpecificGame pulledSpecificGame2 = specificGameRepository.findById(specificGame2.getSpecificGame_id());
+
+        assertNotNull(pulledSpecificGame1);
+        assertNotNull(pulledSpecificGame2);
+        assertEquals(1, pulledSpecificGame1.getOrder().size(), "SpecificGame1 should have 1 Order.");
+        assertEquals(1, pulledSpecificGame2.getOrder().size(), "SpecificGame2 should have 1 Order.");
+        assertEquals(order.getTrackingNumber(), pulledSpecificGame1.getOrder().get(0).getTrackingNumber(),
+                "Order should be associated with SpecificGame1.");
+        assertEquals(order.getTrackingNumber(), pulledSpecificGame2.getOrder().get(0).getTrackingNumber(),
+                "Order should be associated with SpecificGame2.");
+    }
 }
