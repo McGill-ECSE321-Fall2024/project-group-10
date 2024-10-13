@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Manager;
 
+import jakarta.transaction.Transactional;
+
 
 @SpringBootTest
 public class CategoryRepositoryTests {
@@ -26,6 +28,7 @@ public class CategoryRepositoryTests {
     }
 
     @Test
+    @Transactional
     public void testCreateAndReadCategory() {
        
         String email = "anthony1.saber@hotmail.co";
