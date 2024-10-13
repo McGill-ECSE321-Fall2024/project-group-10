@@ -97,8 +97,7 @@ public class CartRepositoryTests {
         assertEquals(2, pulledCart.getGames().size(), "Cart should have 2 games.");
         assertNotNull(pulledCart.getOrder(), "Order should not be null.");
         assertEquals(order.getTrackingNumber(), pulledCart.getOrder().getTrackingNumber());
-        assertEquals(Date.valueOf("2022-04-05"), pulledCart.getOrder().getOrderDate(),
-                "Order date should be '2022-04-05'.");
+        assertEquals(Date.valueOf("2022-04-05"), pulledCart.getOrder().getOrderDate(),"Order date should be '2022-04-05'.");
         assertEquals("notes of the order", pulledCart.getOrder().getNote(), "Order notes should match.");
 
         int firstGameId = firstGame.getGame_id();
@@ -107,10 +106,8 @@ public class CartRepositoryTests {
         assertTrue(foundFirstGame, "First game should be in the cart.");
         boolean foundSecondGame = pulledCart.getGames().stream().anyMatch(game -> game.getGame_id() == secondGameId);
         assertTrue(foundSecondGame, "second game should be in the cart.");
-        assertEquals(GameStatus.InStock, pulledCart.getGames().get(0).getGameStatus(),
-                "First game's status should be InStock.");
-        assertEquals(GameStatus.OutOfStock, pulledCart.getGames().get(1).getGameStatus(),
-                "Second game's status should be OutOfStock.");
+        assertEquals(GameStatus.InStock, pulledCart.getGames().get(0).getGameStatus(),"First game's status should be InStock.");
+        assertEquals(GameStatus.OutOfStock, pulledCart.getGames().get(1).getGameStatus(),"Second game's status should be OutOfStock.");
         assertEquals("Halo2", pulledCart.getGames().get(0).getDescription(), "First game should be Halo2.");
         assertEquals("CsGo", pulledCart.getGames().get(1).getDescription(), "Second game should be CsGo.");
         assertEquals(50, pulledCart.getGames().get(0).getPrice(), "First game's price should be 50.");
