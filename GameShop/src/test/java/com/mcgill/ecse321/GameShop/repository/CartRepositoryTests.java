@@ -1,29 +1,29 @@
 package com.mcgill.ecse321.GameShop.repository;
 
+import java.sql.Date;
+
+import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import java.sql.Date;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
-import jakarta.transaction.Transactional;
 import com.mcgill.ecse321.GameShop.model.Order;
-import com.mcgill.ecse321.GameShop.model.SpecificGame;
+
+import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class CartRepositoryTests {
     @Autowired
     private CartRepository cartRepository;
-    @Autowired
-    private SpecificGameRepository specificgameRepository;
     @Autowired
     private GameRepository gameRepository;
     @Autowired
@@ -36,7 +36,6 @@ public class CartRepositoryTests {
     public void clearDatabase() {
 
         // Now it is safe to delete carts
-        specificgameRepository.deleteAll();
         orderRepository.deleteAll();
         customerRepository.deleteAll();
         cartRepository.deleteAll();
@@ -56,8 +55,6 @@ public class CartRepositoryTests {
         Game firstGame = new Game(aDescription + "A", aDescription, aPrice, aGameStatus, aStockQuantity, aPhotoUrl);
         firstGame = gameRepository.save(firstGame);
 
-        SpecificGame firstSpecificGame = new SpecificGame(firstGame);
-        firstSpecificGame = specificgameRepository.save(firstSpecificGame);
 
         String aDescription2 = "CsGo";
         int aPrice2 = 15;
@@ -69,8 +66,6 @@ public class CartRepositoryTests {
                 aPhotoUrl2);
         secondGame = gameRepository.save(secondGame);
 
-        SpecificGame secondSpecificGame = new SpecificGame(secondGame);
-        secondSpecificGame = specificgameRepository.save(secondSpecificGame);
 
         Date aOrderDate = Date.valueOf("2022-04-05");
 
