@@ -60,7 +60,35 @@ public class PlatformRepositoryTests {
         assertEquals("PS5", pulledPlatform.getPlatformName());
         assertEquals(createdManager.getEmail(), pulledPlatform.getManager().getEmail());
         }
-        
+
+        @Test
+        @Transactional
+        public void testUpdatePlatformName() {
+            // Create Manager
+            String email = "manager7@example.com";
+            String username = "ManagerSeven";
+            String password = "password";
+            String phoneNumber = "+1 (789) 012-3456";
+            String address = "700 rue Manager";
+
+            Manager manager = new Manager(email, username, password, phoneNumber, address);
+            manager = accountRepository.save(manager);
+
+            // Create Platform
+            Platform platform = new Platform("OldName", manager);
+            platform = platformRepository.save(platform);
+
+            // Update Platform Name
+            platform.setPlatformName("NewName");
+            platform = platformRepository.save(platform);
+
+            // Retrieve Platform
+            Platform pulledPlatform = platformRepository.findById(platform.getPlatform_id());
+
+            // Assertions
+            assertNotNull(pulledPlatform, "Platform should not be null.");
+            assertEquals("NewName", pulledPlatform.getPlatformName(), "Platform name should be updated.");
+}
 }
 
 
