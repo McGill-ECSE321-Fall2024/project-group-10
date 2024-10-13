@@ -34,9 +34,8 @@ public class Category
   private String categoryName;
 
   //Category Associations
-  @ManyToOne
-  // (cascade = CascadeType.ALL)
-  // @JoinColumn(name = "email", nullable = true)
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "email", nullable = true)
   private Manager manager;
 
   //------------------------
