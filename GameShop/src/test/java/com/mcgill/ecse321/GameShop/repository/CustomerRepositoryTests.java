@@ -92,9 +92,9 @@ public class CustomerRepositoryTests {
 
     @Test
     @Transactional
-    public void testCreateAndReadCustomerWithCartReplacement() {
+    public void testCreateAndReadCustomerAsAccountWithCartReplacement() {
         // create firstCustomer
-        String email = "8@8.com";
+        String email = "mohamed@mohamed.com";
         String username = "AnthonySaber";
         String password = "password";
         String phoneNumber = "+1 (438) 865-9294";

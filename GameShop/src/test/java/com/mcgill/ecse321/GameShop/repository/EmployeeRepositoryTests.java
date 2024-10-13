@@ -35,7 +35,7 @@ public class EmployeeRepositoryTests {
     @Transactional
         public void testCreateAndReadEmployeeAccountAsAccount() {
             // create employee 1
-            String email = "9@9.com";
+            String email = "mohamed.abdelhady@mohamed.com";
             String username = "AnthonySaber";
             String password = "password";
             String phoneNumber = "+1 (438) 865-9295";
@@ -48,7 +48,7 @@ public class EmployeeRepositoryTests {
             
             Account pulledFirstEmployee = employeeRepository.findByEmail(email);
 
-            String email2 = "10@10.com";
+            String email2 = "22@22.com";
             String username2 = "AnthonySaber";
             String password2 = "password";
             String phoneNumber2 = "+1 (438) 865-9295";

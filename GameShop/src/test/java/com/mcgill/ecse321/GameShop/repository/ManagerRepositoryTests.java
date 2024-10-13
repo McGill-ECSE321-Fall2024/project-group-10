@@ -35,7 +35,7 @@ public class ManagerRepositoryTests {
     @Transactional
         public void testCreateAndReadManagerAccountAsAccount() {
             // Create Manager
-            String email = "anthony.saber.as@hotmail.commmmmm";
+            String email = "mohamed@hotmail.com";
             String username = "AnthonySaber";
             String password = "password";
             String phoneNumber = "+1 (438) 865-9293";
