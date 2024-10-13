@@ -68,7 +68,6 @@ public class PromotionRepositoryTests {
 
         // Hibernate.initialize(pulledPromotion.getGames());
         List<Game> x = pulledPromotion.getGames();
-        Boolean y = pulledPromotion.getGames().contains(createdGame);
         System.out.println(x);
         // Assertions
         assertEquals("Promotion", pulledPromotion.getDescription());

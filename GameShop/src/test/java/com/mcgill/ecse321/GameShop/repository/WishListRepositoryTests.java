@@ -28,6 +28,7 @@ public class WishListRepositoryTests{
     private GameRepository gameRepository;
     @Autowired
     private CustomerRepository customerRepository;
+
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
@@ -37,6 +38,7 @@ public class WishListRepositoryTests{
         customerRepository.deleteAll();
         cartRepository.deleteAll();
     }
+
     @Test
     @Transactional
     public void testCreateAndReadWishList(){
@@ -45,7 +47,7 @@ public class WishListRepositoryTests{
         String password = "password";
         String phoneNumber = "+1 (438) 865-9277";
         String address = "120 rue Pen";
-        String aTitle = "Marcg's wishlist";
+        String aTitle = "Marc's wishlist";
         Cart cart = new Cart();
         cart = cartRepository.save(cart);
         
@@ -102,4 +104,29 @@ public class WishListRepositoryTests{
         assertTrue(wasFound);/**/
 
     }
+
+    @Test
+    @Transactional
+    public void testUpdateWishListDetails() {
+        // Create a Cart and Customer
+        Cart cart = new Cart();
+        cart = cartRepository.save(cart);
+
+        Customer customer = new Customer("moh.abdelhady@moh.com", "mohamed", "password", "+1 (123) 123-4567", "132 Drummond", cart);
+        customer = customerRepository.save(customer);
+
+        // Create a WishList
+        WishList wishList = new WishList("Mohamed's WishList", customer);
+        wishList = wishListRepository.save(wishList);
+
+        // Update WishList title
+        wishList.setTitle("Mohamed's Updated WishList");
+        wishList = wishListRepository.save(wishList);
+
+        // Retrieve and verify the updated WishList
+        WishList updatedWishList = wishListRepository.findById(wishList.getWishList_id());
+        assertNotNull(updatedWishList);
+        assertEquals("Mohamed's Updated WishList", updatedWishList.getTitle(), "WishList title should be updated.");
+}
+
 }
