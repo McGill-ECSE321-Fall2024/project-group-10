@@ -38,4 +38,5 @@ Launch your IDE and connect your IDE to the database. For example, on VS Code, y
 
 <img width="184" alt="Screenshot 2024-10-13 at 1 09 19 PM" src="https://github.com/user-attachments/assets/a94c06a4-a278-4775-aae0-bf973ba3e82b">
 
+
 Then, run the following command to build and test: ./gradlew build -xtest
