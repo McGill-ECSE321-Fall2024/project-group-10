@@ -79,7 +79,7 @@ public class CartRepositoryTests {
         cart.addGame(secondGame);
         cart = cartRepository.save(cart);
 
-        Customer aCustomer = new Customer("ajn@njr.cm", "ajn", "ajn2", "1234567890", "123 street", cart);
+        Customer aCustomer = new Customer("4@4.com", "ajn", "ajn2", "1234567890", "123 street", cart);
         aCustomer = customerRepository.save(aCustomer);
 
         Order order = new Order(aOrderDate, "notes of the order", 123456, aCustomer);
@@ -118,7 +118,7 @@ public class CartRepositoryTests {
 
         Customer retrievedCustomer = pulledCart.getOrder().getCustomer();
         assertNotNull(retrievedCustomer, "Customer should not be null.");
-        assertEquals("ajn@njr.cm", retrievedCustomer.getEmail(), "Customer's email should be 'ajn@njr.cm'.");
+        assertEquals("4@4.com", retrievedCustomer.getEmail(), "Customer's email should be '4@4.com'.");
         assertEquals("1234567890", retrievedCustomer.getPhoneNumber(), "Customer's phone number should match.");
         assertEquals("123 street", retrievedCustomer.getAddress(), "Customer's address should match.");
         assertEquals("ajn", retrievedCustomer.getUsername(), "Customer's username should match.");

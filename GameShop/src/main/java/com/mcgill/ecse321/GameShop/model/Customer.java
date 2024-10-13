@@ -168,15 +168,15 @@ public class Customer extends Account
     return wasSet;
   }
 
-  public boolean deleteCart() {
-    boolean wasDeleted = false;
-    if (this.cart != null) {
-        // Set the cart to null to disassociate it and trigger orphan removal
-        this.cart = null;
-        wasDeleted = true;
-    }
-    return wasDeleted;
-  }
+  // public boolean deleteCart() {
+  //   boolean wasDeleted = false;
+  //   if (this.cart != null) {
+  //       // Set the cart to null to disassociate it and trigger orphan removal
+  //       this.cart = null;
+  //       wasDeleted = true;
+  //   }
+  //   return wasDeleted;
+  // }
 
   public void delete()
   {

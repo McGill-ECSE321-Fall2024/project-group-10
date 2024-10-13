@@ -31,7 +31,7 @@ public class CategoryRepositoryTests {
     @Transactional
     public void testCreateAndReadCategory() {
 
-        String email = "anthony1.saber@hotmail.co";
+        String email = "5@5.com";
         String username = "AnthonySaber";
         String password = "password";
         String phoneNumber = "+1 (438) 865-9291";
