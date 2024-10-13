@@ -14,7 +14,7 @@ public class Customer extends Account
 {
 
   //------------------------
-  // MEMBER VARIABLES
+  // MEMBER VARIABLESf
   //------------------------
 
   //Customer Associations
@@ -22,7 +22,7 @@ public class Customer extends Account
   // private List<WishList> wishList;
 
   @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "cart_id", nullable = true)
+  // @JoinColumn(name = "cart_id", nullable = true)
   private Cart cart;
 
   //------------------------

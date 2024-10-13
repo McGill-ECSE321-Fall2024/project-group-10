@@ -43,7 +43,7 @@ public class Order
 
   //Order Associations
   @ManyToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "email", nullable = true)
+  // @JoinColumn(name = "email", nullable = true)
   private Customer customer;
 
   //------------------------
