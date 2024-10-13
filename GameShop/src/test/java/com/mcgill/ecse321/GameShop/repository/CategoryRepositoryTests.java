@@ -16,19 +16,19 @@ public class CategoryRepositoryTests {
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
-    private AccountRepository accountRepository;
+    private ManagerRepository managerRepository;
 
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
         categoryRepository.deleteAll();
-        accountRepository.deleteAll();
+        managerRepository.deleteAll();
     }
 
     @Test
     public void testCreateAndReadCategory() {
        
-        String email = "anthony.saber@hotmail.co";
+        String email = "anthony1.saber@hotmail.co";
         String username = "AnthonySaber";
         String password = "password";
         String phoneNumber = "+1 (438) 865-9291";
@@ -37,7 +37,7 @@ public class CategoryRepositoryTests {
     
     
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
-        createdManager = accountRepository.save(createdManager);
+        createdManager = managerRepository.save(createdManager);
     
         Category createdCategory = new Category("Electronics", createdManager);
         createdCategory = categoryRepository.save(createdCategory);

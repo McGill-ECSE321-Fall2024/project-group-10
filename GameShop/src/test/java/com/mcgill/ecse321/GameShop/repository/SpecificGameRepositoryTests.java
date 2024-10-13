@@ -64,10 +64,6 @@ public class SpecificGameRepositoryTests {
         SpecificGame specificGame = new SpecificGame(game);
         specificGame.setItemStatus(itemStatus);
         specificGame = specificGameRepository.save(specificGame);
-        
-        // SpecificGame specificGameFromDb = specificGameRepository.findById(specificGame.getSpecificGame_id());
-
-        // SpecificGame gameFromDb = specificGameRepository.findById(gameId);
 
         String email = "judes10@gmail.com";
         String username = "JudeSousou1";
@@ -102,6 +98,20 @@ public class SpecificGameRepositoryTests {
         
         assertNotNull(specificGameFromDb);
         assertEquals(itemStatus, specificGameFromDb.getItemStatus());
+        assertEquals(title, specificGameFromDb.getGames().getTitle());
+        assertEquals(description, specificGameFromDb.getGames().getDescription());
+        assertEquals(price, specificGameFromDb.getGames().getPrice());
+        assertEquals(gameStatus, specificGameFromDb.getGames().getGameStatus());
+        assertEquals(stockQuantity, specificGameFromDb.getGames().getStockQuantity());
+        assertEquals(photoUrl, specificGameFromDb.getGames().getPhotoUrl());
+        assertEquals(note, specificGameFromDb.getOrder().getLast().getNote());
+        assertEquals(orderDate, specificGameFromDb.getOrder().getLast().getOrderDate());
+        assertEquals(paymentCard, specificGameFromDb.getOrder().getLast().getPaymentCard());
+        assertEquals(email, specificGameFromDb.getOrder().getLast().getCustomer().getEmail());
+        assertEquals(username, specificGameFromDb.getOrder().getLast().getCustomer().getUsername());
+        assertEquals(password, specificGameFromDb.getOrder().getLast().getCustomer().getPassword());
+        assertEquals(phoneNumber, specificGameFromDb.getOrder().getLast().getCustomer().getPhoneNumber());
+        assertEquals(address, specificGameFromDb.getOrder().getLast().getCustomer().getAddress());
         
     }
     

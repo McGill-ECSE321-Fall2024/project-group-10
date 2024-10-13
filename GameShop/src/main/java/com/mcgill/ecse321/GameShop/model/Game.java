@@ -58,7 +58,7 @@ public class Game
   // @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
   // private List<Review> review;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinTable(
       name = "game_category_jt",
       joinColumns = @JoinColumn(name = "game_id"),
@@ -66,7 +66,7 @@ public class Game
   )
   private List<Category> categories;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinTable(
       name = "game_platform_jt",
       joinColumns = @JoinColumn(name = "game_id"),

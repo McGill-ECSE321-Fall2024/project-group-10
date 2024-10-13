@@ -4,9 +4,11 @@
 package com.mcgill.ecse321.GameShop.model;
 import java.util.*;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 // line 84 "../../../../../../model.ump"
@@ -33,6 +35,8 @@ public class Category
 
   //Category Associations
   @ManyToOne
+  // (cascade = CascadeType.ALL)
+  // @JoinColumn(name = "email", nullable = true)
   private Manager manager;
 
   //------------------------
