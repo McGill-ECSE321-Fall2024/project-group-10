@@ -3,8 +3,7 @@ package com.mcgill.ecse321.GameShop.repository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Answers.valueOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
+
 
 import java.sql.Date;
 
@@ -14,15 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
-import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Customer;
-import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Game;
-import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Review;
-import com.mcgill.ecse321.GameShop.model.Reply;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 
@@ -33,7 +27,7 @@ public class ReviewRepositoryTests {
     @Autowired
     private GameRepository gameRepository;
     @Autowired
-    private AccountRepository accountRepository;
+    private CustomerRepository customerRepository;
     @Autowired
     private CartRepository cartRepository;
 
@@ -42,18 +36,18 @@ public class ReviewRepositoryTests {
     public void clearDatabase() {
         reviewRepository.deleteAll();
         gameRepository.deleteAll();
-        accountRepository.deleteAll();
+        customerRepository.deleteAll();
         cartRepository.deleteAll();
     }
 
     @Test
     public void testCreateAndReadReview() {
        
-        String email = "tarek.elakkaoui@gmail.ca";
-        String username = "TarekEl-Akkaoui";
-        String password = "pass";
-        String phoneNumber = "+1 (438) 865-9292";
-        String address = "0000 rue Liban";
+        String customerEmail = "tarek.elakkaoui@gmail.ca";
+        String customerUsername = "TarekEl-Akkaoui";
+        String customerPassword = "pass";
+        String customerPhoneNumber = "+1 (438) 865-9292";
+        String customerAddress = "0000 rue Liban";
 
         String title = "Tetris";
         String gameDescription = "A block puzzle game";
@@ -67,17 +61,11 @@ public class ReviewRepositoryTests {
         GameRating gameRating = GameRating.Five;
         String reviewDescription = "This is a very good game";
 
-        String customerEmail = "anthony.saber@hotmail.uk";
-        String customerUsername = "AnthonySaberrrrr";
-        String customerPassword = "pass";
-        String customerPhoneNumber = "+1 (438) 865-9282";
-        String customerAddress = "321 rue Canada";
-
         Cart cart = new Cart();
         cart = cartRepository.save(cart);
 
         Customer customer = new Customer(customerEmail, customerUsername, customerPassword, customerPhoneNumber, customerAddress, cart);
-        customer = accountRepository.save(customer);
+        customer = customerRepository.save(customer);
         
         Game game = new Game(title, gameDescription, price, status, stock, url);
         game = gameRepository.save(game);
@@ -96,6 +84,7 @@ public class ReviewRepositoryTests {
         assertEquals(review.getGame().getGame_id(), pulledReview.getGame().getGame_id());
         assertEquals(customer.getEmail(), pulledReview.getCustomer().getEmail());
         assertEquals(review.getRating(), pulledReview.getRating());
+        assertTrue(review.getCustomer() instanceof Customer, "The reviewer account should be a customer.");
         }       
 }
 

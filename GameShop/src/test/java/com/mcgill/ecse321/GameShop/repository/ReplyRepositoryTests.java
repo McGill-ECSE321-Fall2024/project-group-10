@@ -2,8 +2,6 @@ package com.mcgill.ecse321.GameShop.repository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Answers.valueOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.sql.Date;
 
@@ -13,11 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
-import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Customer;
-import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Review;
@@ -34,7 +29,9 @@ public class ReplyRepositoryTests {
     @Autowired
     private GameRepository gameRepository;
     @Autowired
-    private AccountRepository accountRepository;
+    private ManagerRepository managerRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
     @Autowired
     private CartRepository cartRepository;
 
@@ -44,14 +41,15 @@ public class ReplyRepositoryTests {
         replyRepository.deleteAll();
         reviewRepository.deleteAll();
         gameRepository.deleteAll();
-        accountRepository.deleteAll();
+        managerRepository.deleteAll();
+        customerRepository.deleteAll();
         cartRepository.deleteAll();
     }
 
     @Test
     public void testCreateAndReadReply() {
        
-        String email = "tarek.elakkaoui@hotmail.com";
+        String email = "tarek.elakkaoui@gmail.com";
         String username = "TarekElAkkaoui";
         String password = "pass";
         String phoneNumber = "+1 (438) 865-9298";
@@ -82,10 +80,10 @@ public class ReplyRepositoryTests {
         cart = cartRepository.save(cart);
 
         Customer customer = new Customer(customerEmail, customerUsername, customerPassword, customerPhoneNumber, customerAddress, cart);
-        customer = accountRepository.save(customer);
+        customer = customerRepository.save(customer);
     
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
-        createdManager = accountRepository.save(createdManager);
+        createdManager = managerRepository.save(createdManager);
         
         Game game = new Game(title, gameDescription, price, status, stock, url);
         game = gameRepository.save(game);
@@ -107,7 +105,7 @@ public class ReplyRepositoryTests {
         assertEquals(reply.getReviewRating(), pulledReply.getReviewRating());
         assertEquals(reply.getReview().getReview_id(), pulledReply.getReview().getReview_id());
         assertEquals(createdManager.getEmail(), reply.getManager().getEmail());
-        assertEquals(reply.getReviewRating(), pulledReply.getReviewRating());
+        assertTrue(pulledReply.getManager() instanceof Manager, "The reply account should be a manager.");
         }       
 }
 
