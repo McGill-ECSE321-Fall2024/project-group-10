@@ -49,7 +49,7 @@ public class StaffRepositoryTests {
             Employee createdFirstEmployee = new Employee(email, username, password, phoneNumber, address);
             createdFirstEmployee = staffRepository.save(createdFirstEmployee);
             
-            Account pulledFirstEmployee = staffRepository.findByEmail(email);
+            Staff pulledFirstEmployee = staffRepository.findByEmail(email);
 
             String email2 = "mohamed.abdelhady2@gmail.com";
             String username2 = "mohamed2";
@@ -62,7 +62,7 @@ public class StaffRepositoryTests {
             Employee createdSecondEmployee = new Employee(email2, username2, password2, phoneNumber2, address2);
             createdSecondEmployee = staffRepository.save(createdSecondEmployee);
             
-            Account pulledSecondEmployee = staffRepository.findByEmail(email2);
+            Staff pulledSecondEmployee = staffRepository.findByEmail(email2);
 
             assertNotNull(createdFirstEmployee);
             assertEquals(email, pulledFirstEmployee.getEmail());
@@ -100,7 +100,7 @@ public class StaffRepositoryTests {
             Manager createdManager = new Manager(email, username, password, phoneNumber, address);
             createdManager = staffRepository.save(createdManager);
             
-            Account pulledManager = staffRepository.findByEmail(email);
+            Staff pulledManager = staffRepository.findByEmail(email);
 
             assertNotNull(createdManager);
             assertEquals(email, pulledManager.getEmail());
