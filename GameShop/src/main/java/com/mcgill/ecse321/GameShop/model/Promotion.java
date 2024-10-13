@@ -42,7 +42,6 @@ public class Promotion {
 
   // Promotion Associations
   @ManyToMany(fetch = FetchType.EAGER)
-  // TODO: Add Join Table
   @JoinTable(name = "promotion_jt", joinColumns = @JoinColumn(name = "promotion_id"), inverseJoinColumns = @JoinColumn(name = "game_id"))
   private List<Game> games;
   @ManyToOne
