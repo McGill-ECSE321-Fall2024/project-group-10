@@ -27,7 +27,7 @@ import jakarta.transaction.Transactional;
 public class CartRepositoryTests {
 
     private static List<String> testEmails = new ArrayList<String>();
-    private static List<String> testTrackigNumbers = new ArrayList<String>();
+    private static List<String> testTrackingNumbers = new ArrayList<String>();
 
     @Autowired
     private CartRepository cartRepository;
@@ -51,8 +51,8 @@ public class CartRepositoryTests {
         gameRepository.deleteAll();
         Account.clearTestEmails(CartRepositoryTests.testEmails);
         CartRepositoryTests.testEmails.clear();
-        Order.clearTestTrackingNumbers(CartRepositoryTests.testTrackigNumbers);
-        CartRepositoryTests.testTrackigNumbers.clear();
+        Order.clearTestTrackingNumbers(CartRepositoryTests.testTrackingNumbers);
+        CartRepositoryTests.testTrackingNumbers.clear();
     }
 
     @Test
@@ -92,7 +92,7 @@ public class CartRepositoryTests {
         // Create and save order with customer
         Order order = new Order(aOrderDate, "notes of the order", 123456, aCustomer);
         order = orderRepository.save(order);
-        CartRepositoryTests.testTrackigNumbers.add(order.getTrackingNumber());
+        CartRepositoryTests.testTrackingNumbers.add(order.getTrackingNumber());
 
         // Associate order with cart and save
         cart.setOrder(order);

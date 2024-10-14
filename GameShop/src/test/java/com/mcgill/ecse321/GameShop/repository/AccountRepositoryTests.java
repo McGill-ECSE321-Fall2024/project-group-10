@@ -3,7 +3,6 @@ package com.mcgill.ecse321.GameShop.repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -26,7 +25,6 @@ import jakarta.transaction.Transactional;
 public class AccountRepositoryTests {
 
     private static List<String> testEmails = new ArrayList<String>();
-    private static List<Integer> testCartIds = new ArrayList<Integer>();
 
     @Autowired
     private AccountRepository accountRepository;
@@ -57,7 +55,6 @@ public class AccountRepositoryTests {
         Cart cart = new Cart();
         cart = cartRepository.save(cart);
         int cartId = cart.getCart_id();
-        AccountRepositoryTests.testCartIds.add(cartId);
 
         // Create and save a new customer
         Customer customer1 = new Customer(email, username, password, phoneNumber, address, cart);
@@ -92,7 +89,6 @@ public class AccountRepositoryTests {
         Cart firstCart = new Cart();
         firstCart = cartRepository.save(firstCart);
         int firstCardId = firstCart.getCart_id();
-        AccountRepositoryTests.testCartIds.add(firstCardId);
 
         // Create and save the first customer
         Customer firstCustomer = new Customer(email, username, password, phoneNumber, address, firstCart);
@@ -106,7 +102,6 @@ public class AccountRepositoryTests {
         Cart secondCart = new Cart();
         secondCart = cartRepository.save(secondCart);
         int secondCartId = secondCart.getCart_id();
-        AccountRepositoryTests.testCartIds.add(secondCartId);
 
         // Replace the cart of the first customer
         firstCustomer.setCart(secondCart);
