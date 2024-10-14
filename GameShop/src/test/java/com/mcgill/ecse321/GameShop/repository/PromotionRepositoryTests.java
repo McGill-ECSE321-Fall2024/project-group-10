@@ -1,6 +1,6 @@
 package com.mcgill.ecse321.GameShop.repository;
+
 import java.sql.Date;
-import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,9 +18,9 @@ import com.mcgill.ecse321.GameShop.model.Promotion;
 
 import jakarta.transaction.Transactional;
 
-
 @SpringBootTest
 public class PromotionRepositoryTests {
+
     @Autowired
     private PromotionRepository promotionRepository;
 
@@ -30,6 +30,7 @@ public class PromotionRepositoryTests {
     @Autowired
     private AccountRepository managerRepository;
 
+    // Clear the database before and after each test
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
@@ -50,10 +51,12 @@ public class PromotionRepositoryTests {
 
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = managerRepository.save(createdManager);
-    
+
+        // Create game
         Game createdGame = new Game("Halo", "HAlo", 60, GameStatus.InStock, 100, "https://www.halo.com");
         createdGame = gameRepository.save(createdGame);
 
+        // Create promotion
         Date startDate = Date.valueOf("2021-10-10");
         Date endDate = Date.valueOf("2021-10-20");
 
@@ -63,19 +66,16 @@ public class PromotionRepositoryTests {
 
         int promotionId = createdPromotion.getPromotion_id();
 
-
+        // Retrieve promotion
         Promotion pulledPromotion = promotionRepository.findById(promotionId);
 
-        // Hibernate.initialize(pulledPromotion.getGames());
-        List<Game> x = pulledPromotion.getGames();
-        System.out.println(x);
         // Assertions
         assertEquals("Promotion", pulledPromotion.getDescription());
         assertEquals(10, pulledPromotion.getDiscountRate());
         assertEquals(startDate, pulledPromotion.getStartDate());
         assertEquals(endDate, pulledPromotion.getEndDate());
-        assertEquals(createdGame.getGame_id(), pulledPromotion.getGames().get(0).getGame_id()); // same issue as the line udner it 
-        assertEquals(createdManager.getEmail(), pulledPromotion.getManager().getEmail()); // Be careful with this line, you should compare pk's and not objects
+        assertEquals(createdGame.getGame_id(), pulledPromotion.getGames().get(0).getGame_id()); // Compare game IDs
+        assertEquals(createdManager.getEmail(), pulledPromotion.getManager().getEmail()); // Compare manager emails
     }
 
     @Test
@@ -92,9 +92,12 @@ public class PromotionRepositoryTests {
         createdManager = managerRepository.save(createdManager);
 
         // Create games
-        final Game game1 = gameRepository.save(new Game("Game 1", "Description 1", 50, GameStatus.InStock, 10, "http://example.com/game1.jpg"));
-        final Game game2 = gameRepository.save(new Game("Game 2", "Description 2", 60, GameStatus.InStock, 20, "http://example.com/game2.jpg"));
+        final Game game1 = gameRepository
+                .save(new Game("Game 1", "Description 1", 50, GameStatus.InStock, 10, "http://example.com/game1.jpg"));
+        final Game game2 = gameRepository
+                .save(new Game("Game 2", "Description 2", 60, GameStatus.InStock, 20, "http://example.com/game2.jpg"));
 
+        // Create promotion
         Date startDate = Date.valueOf("2022-01-01");
         Date endDate = Date.valueOf("2022-01-10");
 
@@ -109,8 +112,10 @@ public class PromotionRepositoryTests {
         // Assertions
         assertNotNull(pulledPromotion);
         assertEquals(2, pulledPromotion.getGames().size(), "Promotion should have 2 games.");
-        assertTrue(pulledPromotion.getGames().stream().anyMatch(game -> game.getGame_id() == game1.getGame_id()), "Promotion should contain Game 1.");
-        assertTrue(pulledPromotion.getGames().stream().anyMatch(game -> game.getGame_id() == game2.getGame_id()), "Promotion should contain Game 2.");
+        assertTrue(pulledPromotion.getGames().stream().anyMatch(game -> game.getGame_id() == game1.getGame_id()),
+                "Promotion should contain Game 1.");
+        assertTrue(pulledPromotion.getGames().stream().anyMatch(game -> game.getGame_id() == game2.getGame_id()),
+                "Promotion should contain Game 2.");
     }
 
     @Test
@@ -127,7 +132,8 @@ public class PromotionRepositoryTests {
         createdManager = managerRepository.save(createdManager);
 
         // Create game
-        Game createdGame = new Game("Overlapping Promotion Game", "Description", 50, GameStatus.InStock, 10, "http://example.com/game.jpg");
+        Game createdGame = new Game("Overlapping Promotion Game", "Description", 50, GameStatus.InStock, 10,
+                "http://example.com/game.jpg");
         createdGame = gameRepository.save(createdGame);
 
         // Create first promotion
@@ -156,5 +162,4 @@ public class PromotionRepositoryTests {
         assertEquals(createdGame.getGame_id(), pulledFirstPromotion.getGames().get(0).getGame_id());
         assertEquals(createdGame.getGame_id(), pulledSecondPromotion.getGames().get(0).getGame_id());
     }
-
 }

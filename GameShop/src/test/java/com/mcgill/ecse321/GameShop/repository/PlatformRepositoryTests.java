@@ -1,4 +1,5 @@
 package com.mcgill.ecse321.GameShop.repository;
+
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -15,13 +16,14 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class PlatformRepositoryTests {
+
     @Autowired
     private PlatformRepository platformRepository;
+
     @Autowired
     private AccountRepository accountRepository;
 
-
-
+    // Clear the database before and after each test
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
@@ -33,68 +35,57 @@ public class PlatformRepositoryTests {
     @Transactional
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testCreateAndReadPlatform() {
-       
+        // Create Manager
         String email = "anthony.saber@hotmail.cox";
         String username = "AnthonySaber";
         String password = "password";
         String phoneNumber = "+1 (438) 865-9290";
         String address = "1234 rue Sainte-Catherine";
-    
-    
-    
+
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = accountRepository.save(createdManager);
 
-    
+        // Create Platform
         Platform createdPlatform = new Platform("PS5", createdManager);
         createdPlatform = platformRepository.save(createdPlatform);
         int platformId = createdPlatform.getPlatform_id();
 
+        // Retrieve Platform
         Platform pulledPlatform = platformRepository.findById(platformId);
 
-
-
-        // Assertions
+        // Assertions to verify the platform was created and retrieved correctly
         assertNotNull(pulledPlatform);
         assertNotNull(createdPlatform);
         assertEquals("PS5", pulledPlatform.getPlatformName());
         assertEquals(createdManager.getEmail(), pulledPlatform.getManager().getEmail());
-        }
+    }
 
-        @Test
-        @Transactional
-        public void testUpdatePlatformName() {
-            // Create Manager
-            String email = "manager7@example.com";
-            String username = "ManagerSeven";
-            String password = "password";
-            String phoneNumber = "+1 (789) 012-3456";
-            String address = "700 rue Manager";
+    @Test
+    @Transactional
+    public void testUpdatePlatformName() {
+        // Create Manager
+        String email = "manager7@example.com";
+        String username = "ManagerSeven";
+        String password = "password";
+        String phoneNumber = "+1 (789) 012-3456";
+        String address = "700 rue Manager";
 
-            Manager manager = new Manager(email, username, password, phoneNumber, address);
-            manager = accountRepository.save(manager);
+        Manager manager = new Manager(email, username, password, phoneNumber, address);
+        manager = accountRepository.save(manager);
 
-            // Create Platform
-            Platform platform = new Platform("OldName", manager);
-            platform = platformRepository.save(platform);
+        // Create Platform
+        Platform platform = new Platform("OldName", manager);
+        platform = platformRepository.save(platform);
 
-            // Update Platform Name
-            platform.setPlatformName("NewName");
-            platform = platformRepository.save(platform);
+        // Update Platform Name
+        platform.setPlatformName("NewName");
+        platform = platformRepository.save(platform);
 
-            // Retrieve Platform
-            Platform pulledPlatform = platformRepository.findById(platform.getPlatform_id());
+        // Retrieve Platform
+        Platform pulledPlatform = platformRepository.findById(platform.getPlatform_id());
 
-            // Assertions
-            assertNotNull(pulledPlatform, "Platform should not be null.");
-            assertEquals("NewName", pulledPlatform.getPlatformName(), "Platform name should be updated.");
+        // Assertions to verify the platform name was updated correctly
+        assertNotNull(pulledPlatform, "Platform should not be null.");
+        assertEquals("NewName", pulledPlatform.getPlatformName(), "Platform name should be updated.");
+    }
 }
-}
-
-
-
-
-
-
-
-

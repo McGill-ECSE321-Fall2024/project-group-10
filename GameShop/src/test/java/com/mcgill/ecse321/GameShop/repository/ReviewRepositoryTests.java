@@ -1,14 +1,13 @@
 package com.mcgill.ecse321.GameShop.repository;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.sql.Date;
-import java.util.List;
-import java.util.ArrayList;
-
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +16,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
-import com.mcgill.ecse321.GameShop.model.Review;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
+import com.mcgill.ecse321.GameShop.model.Review;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class ReviewRepositoryTests {
+
     @Autowired
     private ReviewRepository reviewRepository;
     @Autowired
@@ -34,6 +34,7 @@ public class ReviewRepositoryTests {
     @Autowired
     private CartRepository cartRepository;
 
+    // Clear the database before and after each test
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
@@ -65,24 +66,28 @@ public class ReviewRepositoryTests {
         GameRating gameRating = GameRating.Five;
         String reviewDescription = "This is a very good game";
 
+        // Save cart to the repository
         Cart cart = new Cart();
         cart = cartRepository.save(cart);
 
+        // Save customer to the repository
         Customer customer = new Customer(customerEmail, customerUsername, customerPassword, customerPhoneNumber,
                 customerAddress, cart);
         customer = customerRepository.save(customer);
 
+        // Save game to the repository
         Game game = new Game(title, gameDescription, price, status, stock, url);
         game = gameRepository.save(game);
 
+        // Save review to the repository
         Review review = new Review(reviewDate, reviewDescription, rating, gameRating, game, customer);
         review = reviewRepository.save(review);
         int reviewId = review.getReview_id();
 
-        // Get Review fro the DB
+        // Get Review from the DB
         Review pulledReview = reviewRepository.findById(reviewId);
 
-        // Assertions
+        // Assertions to verify the review was saved and retrieved correctly
         assertNotNull(pulledReview);
         assertEquals(review.getDescription(), pulledReview.getDescription());
         assertEquals(review.getReviewDate(), pulledReview.getReviewDate());
@@ -103,6 +108,7 @@ public class ReviewRepositoryTests {
         Cart cart3 = new Cart();
         cart3 = cartRepository.save(cart3);
 
+        // Save customers to the repository
         Customer customer1 = new Customer("201@201.com", "201", "password",
                 "+1 (201) 201-7890", "201 rue Crescent", cart2);
         customer1 = customerRepository.save(customer1);
@@ -111,11 +117,12 @@ public class ReviewRepositoryTests {
                 "+1 (202) 765-2022", "202 rue Bishop", cart3);
         customer2 = customerRepository.save(customer2);
 
+        // Save game to the repository
         Game game = new Game("Superman", "An interesting game", 50, GameStatus.InStock,
                 10, "");
         game = gameRepository.save(game);
 
-        // Create first review
+        // Create and save first review
         Date reviewDate1 = Date.valueOf("2024-10-05");
         GameRating gameRating1 = GameRating.Five;
         String reviewDescription1 = "This is a very good game";
@@ -123,7 +130,7 @@ public class ReviewRepositoryTests {
         Review review1 = new Review(reviewDate1, reviewDescription1, 0, gameRating1, game, customer1);
         review1 = reviewRepository.save(review1);
 
-        // Create second review
+        // Create and save second review
         Date reviewDate2 = Date.valueOf("2024-10-06");
         GameRating gameRating2 = GameRating.Four;
         String reviewDescription2 = "Enjoyed the game a lot";
@@ -146,7 +153,8 @@ public class ReviewRepositoryTests {
             }
         }
 
-        // Assertions
+        // Assertions to verify the correct number of reviews and their association with
+        // the game
         assertEquals(2, reviewsForGame.size(), "There should be 2 reviews associated with the game.");
 
         // Verify that both reviews are present in the retrieved list
