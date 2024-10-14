@@ -1,6 +1,8 @@
 package com.mcgill.ecse321.GameShop.repository;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
@@ -22,6 +25,9 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class CartRepositoryTests {
+
+    private static List<String> testEmails = new ArrayList<String>();
+    private static List<String> testTrackigNumbers = new ArrayList<String>();
 
     @Autowired
     private CartRepository cartRepository;
@@ -43,6 +49,10 @@ public class CartRepositoryTests {
         customerRepository.deleteAll();
         cartRepository.deleteAll();
         gameRepository.deleteAll();
+        Account.clearTestEmails(CartRepositoryTests.testEmails);
+        CartRepositoryTests.testEmails.clear();
+        Account.clearTestEmails(CartRepositoryTests.testTrackigNumbers);
+        CartRepositoryTests.testTrackigNumbers.clear();
     }
 
     @Test
@@ -77,10 +87,12 @@ public class CartRepositoryTests {
         // Create and save customer with cart
         Customer aCustomer = new Customer("4@4.com", "ajn", "ajn2", "1234567890", "123 street", cart);
         aCustomer = customerRepository.save(aCustomer);
+        CartRepositoryTests.testEmails.add(aCustomer.getEmail());
 
         // Create and save order with customer
         Order order = new Order(aOrderDate, "notes of the order", 123456, aCustomer);
         order = orderRepository.save(order);
+        CartRepositoryTests.testTrackigNumbers.add(order.getTrackingNumber());
 
         // Associate order with cart and save
         cart.setOrder(order);

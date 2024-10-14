@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,9 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class CustomerRepositoryTests {
+
+    private static List<String> testEmails = new ArrayList<String>();
+
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
@@ -32,6 +36,8 @@ public class CustomerRepositoryTests {
         // Clear the database before and after each test to ensure a clean state
         customerRepository.deleteAll();
         cartRepository.deleteAll();
+        Account.clearTestEmails(CustomerRepositoryTests.testEmails);
+        CustomerRepositoryTests.testEmails.clear();
     }
 
     @Test
@@ -50,6 +56,7 @@ public class CustomerRepositoryTests {
 
         Customer firstCustomer = new Customer(email, username, password, phoneNumber, address, firstCart);
         firstCustomer = customerRepository.save(firstCustomer);
+        CustomerRepositoryTests.testEmails.add(firstCustomer.getEmail());
 
         // Retrieve the first customer by email
         Account pulledFirstCustomer = customerRepository.findByEmail(email);
@@ -67,6 +74,7 @@ public class CustomerRepositoryTests {
 
         Customer secondCustomer = new Customer(email2, username2, password2, phoneNumber2, address2, secondCart);
         secondCustomer = customerRepository.save(secondCustomer);
+        CustomerRepositoryTests.testEmails.add(firstCustomer.getEmail());
 
         // Retrieve the second customer by email
         Account pulledSecondCustomer = customerRepository.findByEmail(email2);
@@ -112,6 +120,7 @@ public class CustomerRepositoryTests {
 
         Customer firstCustomer = new Customer(email, username, password, phoneNumber, address, firstCart);
         firstCustomer = customerRepository.save(firstCustomer);
+        CustomerRepositoryTests.testEmails.add(firstCustomer.getEmail());
 
         // Retrieve the first customer by email
         Account pulledFirstCustomer = customerRepository.findByEmail(email);

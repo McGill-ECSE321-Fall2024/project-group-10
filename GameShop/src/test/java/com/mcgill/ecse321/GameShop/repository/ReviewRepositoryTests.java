@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
@@ -24,6 +25,8 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class ReviewRepositoryTests {
+
+    private static List<String> testEmails = new ArrayList<String>();
 
     @Autowired
     private ReviewRepository reviewRepository;
@@ -42,6 +45,8 @@ public class ReviewRepositoryTests {
         gameRepository.deleteAll();
         customerRepository.deleteAll();
         cartRepository.deleteAll();
+        Account.clearTestEmails(ReviewRepositoryTests.testEmails);
+        ReviewRepositoryTests.testEmails.clear();
     }
 
     @Test
@@ -74,6 +79,7 @@ public class ReviewRepositoryTests {
         Customer customer = new Customer(customerEmail, customerUsername, customerPassword, customerPhoneNumber,
                 customerAddress, cart);
         customer = customerRepository.save(customer);
+        ReviewRepositoryTests.testEmails.add(customer.getEmail());
 
         // Save game to the repository
         Game game = new Game(title, gameDescription, price, status, stock, url);
@@ -112,10 +118,12 @@ public class ReviewRepositoryTests {
         Customer customer1 = new Customer("201@201.com", "201", "password",
                 "+1 (201) 201-7890", "201 rue Crescent", cart2);
         customer1 = customerRepository.save(customer1);
+        ReviewRepositoryTests.testEmails.add(customer1.getEmail());
 
         Customer customer2 = new Customer("202@202.com", "202", "password",
                 "+1 (202) 765-2022", "202 rue Bishop", cart3);
         customer2 = customerRepository.save(customer2);
+        ReviewRepositoryTests.testEmails.add(customer2.getEmail());
 
         // Save game to the repository
         Game game = new Game("Superman", "An interesting game", 50, GameStatus.InStock,

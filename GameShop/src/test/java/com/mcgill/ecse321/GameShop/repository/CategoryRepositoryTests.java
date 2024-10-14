@@ -1,5 +1,6 @@
 package com.mcgill.ecse321.GameShop.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Manager;
 
@@ -17,6 +19,9 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class CategoryRepositoryTests {
+
+    // private static List<Integer> testCategoryIDs = new ArrayList<Integer>();
+    private static List<String> testEmails = new ArrayList<String>();
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -30,6 +35,10 @@ public class CategoryRepositoryTests {
     public void clearDatabase() {
         categoryRepository.deleteAll();
         managerRepository.deleteAll();
+        // Category.clearTestCategories(CategoryRepositoryTests.testCategoryIDs);
+        // CategoryRepositoryTests.testCategoryIDs.clear();
+        Account.clearTestEmails(CategoryRepositoryTests.testEmails);
+        CategoryRepositoryTests.testEmails.clear();
     }
 
     @Test
@@ -45,11 +54,13 @@ public class CategoryRepositoryTests {
 
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = managerRepository.save(createdManager);
+        CategoryRepositoryTests.testEmails.add(createdManager.getEmail());
 
         // Create and save the first Category
         Category firstCreatedCategory = new Category("thriller", createdManager);
         firstCreatedCategory = categoryRepository.save(firstCreatedCategory);
         int firstCategoryId = firstCreatedCategory.getCategory_id();
+        // CategoryRepositoryTests.testCategoryIDs.add(firstCreatedCategory.getCategory_id());
 
         // Retrieve the first Category by its ID
         Category firstPulledCategory = categoryRepository.findById(firstCategoryId);
@@ -58,6 +69,7 @@ public class CategoryRepositoryTests {
         Category secondCreatedCategory = new Category("barbie", createdManager);
         secondCreatedCategory = categoryRepository.save(secondCreatedCategory);
         int secondCategoryId = secondCreatedCategory.getCategory_id();
+        // CategoryRepositoryTests.testCategoryIDs.add(secondCreatedCategory.getCategory_id());
 
         // Retrieve the second Category by its ID
         Category secondPulledCategory = categoryRepository.findById(secondCategoryId);

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
@@ -26,6 +27,9 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class ReplyRepositoryTests {
+
+        private static List<String> testEmails = new ArrayList<String>();
+
         @Autowired
         private ReplyRepository replyRepository;
         @Autowired
@@ -52,6 +56,8 @@ public class ReplyRepositoryTests {
                 managerRepository.deleteAll();
                 customerRepository.deleteAll();
                 cartRepository.deleteAll();
+                Account.clearTestEmails(ReplyRepositoryTests.testEmails);
+                ReplyRepositoryTests.testEmails.clear();
         }
 
         @Test
@@ -92,6 +98,7 @@ public class ReplyRepositoryTests {
                 Customer customer = new Customer(customerEmail, customerUsername, customerPassword, customerPhoneNumber,
                                 customerAddress, cart);
                 customer = customerRepository.save(customer);
+                ReplyRepositoryTests.testEmails.add(customer.getEmail());
 
                 // Save manager to the repository
                 Manager createdManager = new Manager(email, username, password, phoneNumber, address);
@@ -134,6 +141,7 @@ public class ReplyRepositoryTests {
                 Customer customer = new Customer("101@101.com", "101", "password",
                                 "+1 (101) 456-7890", "101 Rue Egypt", cart2);
                 customer = customerRepository.save(customer);
+                ReplyRepositoryTests.testEmails.add(customer.getEmail());
 
                 Manager manager = new Manager("102@102.com", "102User", "pas",
                                 "+1 (102) 654-3210", "102 Rue Liban");

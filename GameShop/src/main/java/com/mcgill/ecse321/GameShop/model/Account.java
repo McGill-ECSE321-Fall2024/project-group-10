@@ -144,4 +144,10 @@ public abstract class Account {
         "phoneNumber" + ":" + getPhoneNumber() + "," +
         "address" + ":" + getAddress() + "]";
   }
+
+  public static void clearTestEmails(List<String> test_emails) {
+    for (String test_email : test_emails) {
+      accountsByEmail.remove(test_email);
+    }
+  }
 }

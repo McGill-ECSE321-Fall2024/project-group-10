@@ -163,4 +163,9 @@ public class Order {
         "  " + "customer = "
         + (getCustomer() != null ? Integer.toHexString(System.identityHashCode(getCustomer())) : "null");
   }
+  public static void clearTestTrackingNumbers(List<String> test_tracking_numbers) {
+    for (String test_tracking_number : test_tracking_numbers) {
+      ordersByTrackingNumber.remove(test_tracking_number);
+    }
+  }
 }

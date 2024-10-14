@@ -1,5 +1,6 @@
 package com.mcgill.ecse321.GameShop.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
@@ -20,6 +22,8 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class WishListRepositoryTests {
+
+    private static List<String> testEmails = new ArrayList<String>();
 
     @Autowired
     private WishListRepository wishListRepository;
@@ -39,6 +43,8 @@ public class WishListRepositoryTests {
         gameRepository.deleteAll();
         customerRepository.deleteAll();
         cartRepository.deleteAll();
+        Account.clearTestEmails(WishListRepositoryTests.testEmails);
+        WishListRepositoryTests.testEmails.clear();
     }
 
     @Test
@@ -49,13 +55,14 @@ public class WishListRepositoryTests {
         cart = cartRepository.save(cart);
 
         // Create and save a Customer
-        String email = "marc.germanos@hotmail.com";
+        String email = "moh.abdelhady@moh.com";
         String username = "Marcg";
         String password = "password";
         String phoneNumber = "+1 (438) 865-9277";
         String address = "120 rue Pen";
         Customer aCustomer = new Customer(email, username, password, phoneNumber, address, cart);
         aCustomer = customerRepository.save(aCustomer);
+        WishListRepositoryTests.testEmails.add(aCustomer.getEmail());
 
         // Create and save a WishList
         String aTitle = "Marc's wishlist";
@@ -126,6 +133,7 @@ public class WishListRepositoryTests {
         Customer customer = new Customer("moh.abdelhady@moh.com", "mohamed", "password", "+1 (123) 123-4567",
                 "132 Drummond", cart);
         customer = customerRepository.save(customer);
+        WishListRepositoryTests.testEmails.add(customer.getEmail());
 
         // Create and save a WishList
         WishList wishList = new WishList("Mohamed's WishList", customer);

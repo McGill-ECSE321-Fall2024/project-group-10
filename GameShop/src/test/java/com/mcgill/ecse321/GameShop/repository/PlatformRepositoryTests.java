@@ -3,12 +3,17 @@ package com.mcgill.ecse321.GameShop.repository;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Platform;
 
@@ -16,6 +21,8 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class PlatformRepositoryTests {
+
+    private static List<String> testEmails = new ArrayList<String>();      
 
     @Autowired
     private PlatformRepository platformRepository;
@@ -29,6 +36,8 @@ public class PlatformRepositoryTests {
     public void clearDatabase() {
         platformRepository.deleteAll();
         accountRepository.deleteAll();
+        Account.clearTestEmails(PlatformRepositoryTests.testEmails);
+        PlatformRepositoryTests.testEmails.clear();
     }
 
     @Test
@@ -44,6 +53,7 @@ public class PlatformRepositoryTests {
 
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = accountRepository.save(createdManager);
+        PlatformRepositoryTests.testEmails.add(createdManager.getEmail());
 
         // Create Platform
         Platform createdPlatform = new Platform("PS5", createdManager);
@@ -72,6 +82,7 @@ public class PlatformRepositoryTests {
 
         Manager manager = new Manager(email, username, password, phoneNumber, address);
         manager = accountRepository.save(manager);
+        PlatformRepositoryTests.testEmails.add(manager.getEmail());
 
         // Create Platform
         Platform platform = new Platform("OldName", manager);

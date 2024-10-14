@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.repository;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
@@ -23,6 +25,9 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class OrderRepositoryTests {
+
+    private static List<String> testEmails = new ArrayList<String>();
+    private static List<String> testTrackingNumbers = new ArrayList<String>();
 
     @Autowired
     private OrderRepository orderRepository;
@@ -44,6 +49,10 @@ public class OrderRepositoryTests {
         customerRepository.deleteAll();
         cartRepository.deleteAll();
         gameRepository.deleteAll();
+        Account.clearTestEmails(OrderRepositoryTests.testEmails);
+        OrderRepositoryTests.testEmails.clear();
+        Account.clearTestEmails(OrderRepositoryTests.testTrackingNumbers);
+        OrderRepositoryTests.testTrackingNumbers.clear();
     }
 
     @Test
@@ -76,6 +85,7 @@ public class OrderRepositoryTests {
         // Creating and saving Customer
         Customer firstCustomer = new Customer(email, username, password, phoneNumber, address, cart);
         firstCustomer = customerRepository.save(firstCustomer);
+        OrderRepositoryTests.testEmails.add(firstCustomer.getEmail());
 
         // Define and save first Order
         Date orderDate = Date.valueOf("2021-10-10");
@@ -83,6 +93,7 @@ public class OrderRepositoryTests {
         int paymentCard = 1209028310;
         Order firstOrder = new Order(orderDate, note, paymentCard, firstCustomer);
         firstOrder = orderRepository.save(firstOrder);
+        OrderRepositoryTests.testTrackingNumbers.add(firstOrder.getTrackingNumber());
 
         // Associate SpecificGame with the first Order
         firstSpecificGame.addOrder(firstOrder);
@@ -101,6 +112,7 @@ public class OrderRepositoryTests {
         int paymentCard2 = 12090;
         Order secondOrder = new Order(orderDate2, note2, paymentCard2, firstCustomer);
         secondOrder = orderRepository.save(secondOrder);
+        OrderRepositoryTests.testTrackingNumbers.add(secondOrder.getTrackingNumber());
 
         // Get tracking number from the second Order
         String secondTrackingNumber = secondOrder.getTrackingNumber();

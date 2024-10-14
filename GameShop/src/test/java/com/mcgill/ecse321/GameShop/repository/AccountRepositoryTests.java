@@ -1,7 +1,9 @@
 package com.mcgill.ecse321.GameShop.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -22,6 +24,10 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class AccountRepositoryTests {
+
+    private static List<String> testEmails = new ArrayList<String>();
+    private static List<Integer> testCartIds = new ArrayList<Integer>();
+
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
@@ -33,6 +39,10 @@ public class AccountRepositoryTests {
     public void clearDatabase() {
         accountRepository.deleteAll();
         cartRepository.deleteAll();
+        Account.clearTestEmails(AccountRepositoryTests.testEmails);
+        AccountRepositoryTests.testEmails.clear();
+        Cart.clearTestCarts(AccountRepositoryTests.testCartIds);
+        AccountRepositoryTests.testCartIds.clear();
     }
 
     @Test
@@ -49,9 +59,11 @@ public class AccountRepositoryTests {
         Cart cart = new Cart();
         cart = cartRepository.save(cart);
         int cartId = cart.getCart_id();
+        AccountRepositoryTests.testCartIds.add(cartId);
 
         // Create and save a new customer
         Customer customer1 = new Customer(email, username, password, phoneNumber, address, cart);
+        AccountRepositoryTests.testEmails.add(customer1.getEmail());
         customer1 = accountRepository.save(customer1);
 
         // Retrieve the customer by email
@@ -72,7 +84,7 @@ public class AccountRepositoryTests {
     @Transactional
     public void testCreateAndReadCustomerWithCartReplacement() {
         // Create first customer
-        String email = "8@8.com";
+        String email = "1@1.com";
         String username = "AnthonySaber";
         String password = "password";
         String phoneNumber = "+1 (438) 865-9294";
@@ -82,9 +94,11 @@ public class AccountRepositoryTests {
         Cart firstCart = new Cart();
         firstCart = cartRepository.save(firstCart);
         int firstCardId = firstCart.getCart_id();
+        AccountRepositoryTests.testCartIds.add(firstCardId);
 
         // Create and save the first customer
         Customer firstCustomer = new Customer(email, username, password, phoneNumber, address, firstCart);
+        AccountRepositoryTests.testEmails.add(firstCustomer.getEmail());
         firstCustomer = accountRepository.save(firstCustomer);
 
         // Retrieve the first customer by email
@@ -94,6 +108,7 @@ public class AccountRepositoryTests {
         Cart secondCart = new Cart();
         secondCart = cartRepository.save(secondCart);
         int secondCartId = secondCart.getCart_id();
+        AccountRepositoryTests.testCartIds.add(secondCartId);
 
         // Replace the cart of the first customer
         firstCustomer.setCart(secondCart);
@@ -114,7 +129,7 @@ public class AccountRepositoryTests {
     @Transactional
     public void testCreateAndReadEmployeeAccount() {
         // Create first employee
-        String email = "9@9.com";
+        String email = "1@1.com";
         String username = "AnthonySaber";
         String password = "password";
         String phoneNumber = "+1 (438) 865-9295";
@@ -122,6 +137,7 @@ public class AccountRepositoryTests {
 
         // Create and save the first employee
         Employee createdFirstEmployee = new Employee(email, username, password, phoneNumber, address);
+        AccountRepositoryTests.testEmails.add(createdFirstEmployee.getEmail());
         createdFirstEmployee = accountRepository.save(createdFirstEmployee);
 
         // Retrieve the first employee by email
@@ -136,6 +152,8 @@ public class AccountRepositoryTests {
 
         // Create and save the second employee
         Employee createdSecondEmployee = new Employee(email2, username2, password2, phoneNumber2, address2);
+        AccountRepositoryTests.testEmails.add(createdSecondEmployee.getEmail());
+
         createdSecondEmployee = accountRepository.save(createdSecondEmployee);
 
         // Retrieve the second employee by email
@@ -167,7 +185,7 @@ public class AccountRepositoryTests {
     @Transactional
     public void testCreateAndReadManagerAccount() {
         // Create Manager
-        String email = "anthony.saber.as@hotmail.commmmmm";
+        String email = "1@1.com";
         String username = "AnthonySaber";
         String password = "password";
         String phoneNumber = "+1 (438) 865-9293";
@@ -175,6 +193,7 @@ public class AccountRepositoryTests {
 
         // Create and save the manager
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
+        AccountRepositoryTests.testEmails.add(createdManager.getEmail());
         createdManager = accountRepository.save(createdManager);
 
         // Retrieve the manager by email
