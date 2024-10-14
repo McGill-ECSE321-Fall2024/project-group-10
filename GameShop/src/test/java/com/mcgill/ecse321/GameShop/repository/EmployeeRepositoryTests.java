@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,8 @@ import jakarta.transaction.Transactional;
 @SpringBootTest
 public class EmployeeRepositoryTests {
 
+    private static List<String> testEmails = new ArrayList<String>();
+
     @Autowired
     private EmployeeRepository employeeRepository;
 
@@ -32,6 +35,8 @@ public class EmployeeRepositoryTests {
     public void clearDatabase() {
         employeeRepository.deleteAll();
         cartRepository.deleteAll();
+        Account.clearTestEmails(EmployeeRepositoryTests.testEmails);
+        EmployeeRepositoryTests.testEmails.clear();
     }
 
     @Test
@@ -46,6 +51,7 @@ public class EmployeeRepositoryTests {
 
         Employee createdFirstEmployee = new Employee(email, username, password, phoneNumber, address);
         createdFirstEmployee = employeeRepository.save(createdFirstEmployee);
+        EmployeeRepositoryTests.testEmails.add(createdFirstEmployee.getEmail());
 
         // Retrieve the first employee by email
         Account pulledFirstEmployee = employeeRepository.findByEmail(email);
@@ -59,6 +65,7 @@ public class EmployeeRepositoryTests {
 
         Employee createdSecondEmployee = new Employee(email2, username2, password2, phoneNumber2, address2);
         createdSecondEmployee = employeeRepository.save(createdSecondEmployee);
+        EmployeeRepositoryTests.testEmails.add(createdSecondEmployee.getEmail());
 
         // Retrieve the second employee by email
         Account pulledSecondEmployee = employeeRepository.findByEmail(email2);

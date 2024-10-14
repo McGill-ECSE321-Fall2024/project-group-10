@@ -202,4 +202,5 @@ public class Cart {
         "cart_id" + ":" + getCart_id() + "]" + System.getProperties().getProperty("line.separator") +
         "  " + "order = " + (getOrder() != null ? Integer.toHexString(System.identityHashCode(getOrder())) : "null");
   }
+
 }

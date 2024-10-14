@@ -126,4 +126,5 @@ public class Category {
         "  " + "manager = "
         + (getManager() != null ? Integer.toHexString(System.identityHashCode(getManager())) : "null");
   }
+
 }

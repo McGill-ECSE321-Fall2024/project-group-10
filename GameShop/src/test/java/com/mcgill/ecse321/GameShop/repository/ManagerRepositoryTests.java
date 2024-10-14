@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,8 @@ import jakarta.transaction.Transactional;
 @SpringBootTest
 public class ManagerRepositoryTests {
 
+    private static List<String> testEmails = new ArrayList<String>();
+
     @Autowired
     private ManagerRepository managerRepository;
 
@@ -32,6 +35,8 @@ public class ManagerRepositoryTests {
     public void clearDatabase() {
         managerRepository.deleteAll();
         cartRepository.deleteAll();
+        Account.clearTestEmails(ManagerRepositoryTests.testEmails);
+        ManagerRepositoryTests.testEmails.clear();
     }
 
     @Test
@@ -47,6 +52,7 @@ public class ManagerRepositoryTests {
         // Save the created manager to the repository
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = managerRepository.save(createdManager);
+        ManagerRepositoryTests.testEmails.add(createdManager.getEmail());
 
         // Retrieve the manager by email
         Account pulledManager = managerRepository.findByEmail(email);

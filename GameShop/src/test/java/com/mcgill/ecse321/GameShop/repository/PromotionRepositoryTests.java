@@ -1,6 +1,8 @@
 package com.mcgill.ecse321.GameShop.repository;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.Manager;
@@ -20,6 +23,8 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class PromotionRepositoryTests {
+
+    private static List<String> testEmails = new ArrayList<String>();
 
     @Autowired
     private PromotionRepository promotionRepository;
@@ -37,6 +42,8 @@ public class PromotionRepositoryTests {
         promotionRepository.deleteAll();
         managerRepository.deleteAll();
         gameRepository.deleteAll();
+        Account.clearTestEmails(PromotionRepositoryTests.testEmails);
+        PromotionRepositoryTests.testEmails.clear();
     }
 
     @Test
@@ -51,6 +58,7 @@ public class PromotionRepositoryTests {
 
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = managerRepository.save(createdManager);
+        PromotionRepositoryTests.testEmails.add(createdManager.getEmail());
 
         // Create game
         Game createdGame = new Game("Halo", "HAlo", 60, GameStatus.InStock, 100, "https://www.halo.com");
@@ -90,6 +98,7 @@ public class PromotionRepositoryTests {
 
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = managerRepository.save(createdManager);
+        PromotionRepositoryTests.testEmails.add(createdManager.getEmail());
 
         // Create games
         final Game game1 = gameRepository
@@ -130,6 +139,7 @@ public class PromotionRepositoryTests {
 
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = managerRepository.save(createdManager);
+        PromotionRepositoryTests.testEmails.add(createdManager.getEmail());
 
         // Create game
         Game createdGame = new Game("Overlapping Promotion Game", "Description", 50, GameStatus.InStock, 10,

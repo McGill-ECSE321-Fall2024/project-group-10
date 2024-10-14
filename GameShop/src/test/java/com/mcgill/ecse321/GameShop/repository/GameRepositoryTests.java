@@ -5,12 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Customer;
@@ -26,6 +30,8 @@ import com.mcgill.ecse321.GameShop.model.WishList;
 
 @SpringBootTest
 public class GameRepositoryTests {
+
+    private static List<String> testEmails = new ArrayList<String>();       
 
     @Autowired
     private GameRepository gameRepository;
@@ -56,6 +62,8 @@ public class GameRepositoryTests {
         categoryRepository.deleteAll();
         platformRepository.deleteAll();
         managerRepository.deleteAll();
+        Account.clearTestEmails(GameRepositoryTests.testEmails);
+        GameRepositoryTests.testEmails.clear();
     }
 
     @Test
@@ -83,6 +91,7 @@ public class GameRepositoryTests {
         String address = "1100 rue Sainte-Catherine";
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = managerRepository.save(createdManager);
+        GameRepositoryTests.testEmails.add(createdManager.getEmail());
 
         // Create and save a category
         Category createdCategory = new Category("Actionssss", createdManager);
@@ -118,6 +127,7 @@ public class GameRepositoryTests {
         Cart pulledCart = cartRepository.findById(cart.getCart_id());
         Customer customer1 = new Customer(emailCustomer, usernameCustomer, passwordCustomer, phoneNumberCustomer,
                 addressCustomer, cart);
+        GameRepositoryTests.testEmails.add(customer1.getEmail());
         customer1 = customerRepository.save(customer1);
 
         // Create and save a wishlist
@@ -182,6 +192,7 @@ public class GameRepositoryTests {
         // Create and save a manager
         Manager manager = new Manager("13@13.com", "Manager1", "pass123", "+1 (555) 555-5555", "1234 Manager St");
         manager = managerRepository.save(manager);
+        GameRepositoryTests.testEmails.add(manager.getEmail());
 
         // Create and save categories
         Category actionCategory = new Category("Action22", manager);

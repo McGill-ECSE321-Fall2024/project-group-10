@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,8 @@ import jakarta.transaction.Transactional;
 @SpringBootTest
 public class StaffRepositoryTests {
 
+    private static List<String> testEmails = new ArrayList<String>();
+
     @Autowired
     private StaffRepository staffRepository;
 
@@ -34,6 +37,8 @@ public class StaffRepositoryTests {
     public void clearDatabase() {
         staffRepository.deleteAll();
         cartRepository.deleteAll();
+        Account.clearTestEmails(StaffRepositoryTests.testEmails);
+        StaffRepositoryTests.testEmails.clear();
     }
 
     @Test
@@ -48,6 +53,7 @@ public class StaffRepositoryTests {
 
         Employee createdFirstEmployee = new Employee(email, username, password, phoneNumber, address);
         createdFirstEmployee = staffRepository.save(createdFirstEmployee);
+        StaffRepositoryTests.testEmails.add(createdFirstEmployee.getEmail());
 
         // Retrieve the first employee by email
         Staff pulledFirstEmployee = staffRepository.findByEmail(email);
@@ -61,6 +67,7 @@ public class StaffRepositoryTests {
 
         Employee createdSecondEmployee = new Employee(email2, username2, password2, phoneNumber2, address2);
         createdSecondEmployee = staffRepository.save(createdSecondEmployee);
+        StaffRepositoryTests.testEmails.add(createdFirstEmployee.getEmail());
 
         // Retrieve the second employee by email
         Staff pulledSecondEmployee = staffRepository.findByEmail(email2);
