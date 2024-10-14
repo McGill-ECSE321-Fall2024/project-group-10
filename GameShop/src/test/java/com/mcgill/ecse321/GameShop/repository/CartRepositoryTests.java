@@ -51,7 +51,7 @@ public class CartRepositoryTests {
         gameRepository.deleteAll();
         Account.clearTestEmails(CartRepositoryTests.testEmails);
         CartRepositoryTests.testEmails.clear();
-        Account.clearTestEmails(CartRepositoryTests.testTrackigNumbers);
+        Order.clearTestTrackingNumbers(CartRepositoryTests.testTrackigNumbers);
         CartRepositoryTests.testTrackigNumbers.clear();
     }
 
