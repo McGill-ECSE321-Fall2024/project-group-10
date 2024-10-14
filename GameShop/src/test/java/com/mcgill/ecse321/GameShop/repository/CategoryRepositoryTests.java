@@ -1,11 +1,10 @@
 package com.mcgill.ecse321.GameShop.repository;
 
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +17,14 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class CategoryRepositoryTests {
+
     @Autowired
     private CategoryRepository categoryRepository;
+
     @Autowired
     private ManagerRepository managerRepository;
 
+    // Clear the database before and after each test to ensure a clean state
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
@@ -34,6 +36,7 @@ public class CategoryRepositoryTests {
     @Transactional
     public void testCreateAndReadCategory() {
 
+        // Create a new Manager instance
         String email = "5@5.com";
         String username = "AnthonySaber";
         String password = "password";
@@ -43,18 +46,23 @@ public class CategoryRepositoryTests {
         Manager createdManager = new Manager(email, username, password, phoneNumber, address);
         createdManager = managerRepository.save(createdManager);
 
+        // Create and save the first Category
         Category firstCreatedCategory = new Category("thriller", createdManager);
         firstCreatedCategory = categoryRepository.save(firstCreatedCategory);
         int firstCategoryId = firstCreatedCategory.getCategory_id();
 
+        // Retrieve the first Category by its ID
         Category firstPulledCategory = categoryRepository.findById(firstCategoryId);
 
+        // Create and save the second Category
         Category secondCreatedCategory = new Category("barbie", createdManager);
         secondCreatedCategory = categoryRepository.save(secondCreatedCategory);
         int secondCategoryId = secondCreatedCategory.getCategory_id();
 
+        // Retrieve the second Category by its ID
         Category secondPulledCategory = categoryRepository.findById(secondCategoryId);
-        // Assertions
+
+        // Assertions to verify the correctness of the operations
         assertNotNull(firstPulledCategory);
         assertNotNull(secondCreatedCategory);
         assertEquals(firstCreatedCategory.getCategory_id(), firstPulledCategory.getCategory_id());
@@ -66,6 +74,7 @@ public class CategoryRepositoryTests {
         assertEquals(createdManager.getEmail(), firstPulledCategory.getManager().getEmail());
         assertEquals(createdManager.getEmail(), secondPulledCategory.getManager().getEmail());
 
+        // Verify that there are exactly 2 categories in the repository
         List<Category> category = (List<Category>) categoryRepository.findAll();
         assertEquals(2, category.size());
     }

@@ -29,15 +29,15 @@ public class CustomerRepositoryTests {
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
+        // Clear the database before and after each test to ensure a clean state
         customerRepository.deleteAll();
         cartRepository.deleteAll();
-
     }
 
     @Test
     @Transactional
     public void testCreateAndReadCustomerAccountAsAccount() {
-        // create firstCustomer
+        // Create and save the first customer
         String email = "6@6.com";
         String username = "AnthonySaber";
         String password = "password";
@@ -51,8 +51,10 @@ public class CustomerRepositoryTests {
         Customer firstCustomer = new Customer(email, username, password, phoneNumber, address, firstCart);
         firstCustomer = customerRepository.save(firstCustomer);
 
+        // Retrieve the first customer by email
         Account pulledFirstCustomer = customerRepository.findByEmail(email);
 
+        // Create and save the second customer
         String email2 = "7@7.com";
         String username2 = "AnthonySaber2";
         String password2 = "password2";
@@ -66,8 +68,10 @@ public class CustomerRepositoryTests {
         Customer secondCustomer = new Customer(email2, username2, password2, phoneNumber2, address2, secondCart);
         secondCustomer = customerRepository.save(secondCustomer);
 
+        // Retrieve the second customer by email
         Account pulledSecondCustomer = customerRepository.findByEmail(email2);
 
+        // Assertions for the first customer
         assertNotNull(firstCustomer);
         assertEquals(email, pulledFirstCustomer.getEmail());
         assertEquals(username, pulledFirstCustomer.getUsername());
@@ -77,6 +81,7 @@ public class CustomerRepositoryTests {
         assertTrue(pulledFirstCustomer instanceof Customer, "The account should be a customer.");
         assertEquals(firstCardId, ((Customer) pulledFirstCustomer).getCart().getCart_id());
 
+        // Assertions for the second customer
         assertNotNull(secondCustomer);
         assertEquals(email2, pulledSecondCustomer.getEmail());
         assertEquals(username2, pulledSecondCustomer.getUsername());
@@ -86,6 +91,7 @@ public class CustomerRepositoryTests {
         assertTrue(pulledSecondCustomer instanceof Customer, "The account should be a customer.");
         assertEquals(secondCartId, ((Customer) pulledSecondCustomer).getCart().getCart_id());
 
+        // Verify that both customers are saved in the repository
         List<Account> customers = (List<Account>) customerRepository.findAll();
         assertEquals(2, customers.size());
     }
@@ -93,7 +99,7 @@ public class CustomerRepositoryTests {
     @Test
     @Transactional
     public void testCreateAndReadCustomerAsAccountWithCartReplacement() {
-        // create firstCustomer
+        // Create and save the first customer
         String email = "mohamed@mohamed.com";
         String username = "AnthonySaber";
         String password = "password";
@@ -107,14 +113,17 @@ public class CustomerRepositoryTests {
         Customer firstCustomer = new Customer(email, username, password, phoneNumber, address, firstCart);
         firstCustomer = customerRepository.save(firstCustomer);
 
+        // Retrieve the first customer by email
         Account pulledFirstCustomer = customerRepository.findByEmail(email);
 
+        // Create and save a new cart, then replace the customer's cart
         Cart secondCart = new Cart();
         secondCart = cartRepository.save(secondCart);
         int secondCartId = secondCart.getCart_id();
 
         firstCustomer.setCart(secondCart);
 
+        // Assertions to verify the cart replacement
         assertNotNull(firstCustomer);
         assertEquals(email, pulledFirstCustomer.getEmail());
         assertEquals(username, pulledFirstCustomer.getUsername());
@@ -124,6 +133,5 @@ public class CustomerRepositoryTests {
         assertTrue(pulledFirstCustomer instanceof Customer, "The account should be a customer.");
         assertNotEquals(firstCardId, ((Customer) pulledFirstCustomer).getCart().getCart_id());
         assertEquals(secondCartId, ((Customer) pulledFirstCustomer).getCart().getCart_id());
-
     }
 }
