@@ -203,9 +203,4 @@ public class Cart {
         "  " + "order = " + (getOrder() != null ? Integer.toHexString(System.identityHashCode(getOrder())) : "null");
   }
 
-  public static void clearTestCarts(List<Integer> testIDs) {
-    for (Integer testID : testIDs) {
-      cartsByCart_id.remove(testID);
-    }
-  }
 }

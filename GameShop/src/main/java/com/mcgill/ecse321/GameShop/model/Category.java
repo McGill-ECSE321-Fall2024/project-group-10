@@ -127,9 +127,4 @@ public class Category {
         + (getManager() != null ? Integer.toHexString(System.identityHashCode(getManager())) : "null");
   }
 
-  // public static void clearTestCategories(List<Integer> categoryIDs) {
-  //   for (Integer categoryID : categoryIDs) {
-  //     categorysByCategory_id.remove(categoryID);
-  //   }
-  // }
 }

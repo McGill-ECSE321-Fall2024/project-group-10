@@ -41,8 +41,6 @@ public class AccountRepositoryTests {
         cartRepository.deleteAll();
         Account.clearTestEmails(AccountRepositoryTests.testEmails);
         AccountRepositoryTests.testEmails.clear();
-        Cart.clearTestCarts(AccountRepositoryTests.testCartIds);
-        AccountRepositoryTests.testCartIds.clear();
     }
 
     @Test
