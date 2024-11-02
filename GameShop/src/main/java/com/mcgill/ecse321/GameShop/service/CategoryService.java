@@ -8,10 +8,8 @@ import org.springframework.stereotype.Service;
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Manager;
-import com.mcgill.ecse321.GameShop.model.Platform;
 import com.mcgill.ecse321.GameShop.repository.CategoryRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
-import com.mcgill.ecse321.GameShop.repository.PlatformRepository;
 
 import jakarta.transaction.Transactional;
 

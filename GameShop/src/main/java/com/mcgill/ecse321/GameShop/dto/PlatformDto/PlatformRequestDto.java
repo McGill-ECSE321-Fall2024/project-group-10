@@ -1,4 +1,7 @@
-package com.mcgill.ecse321.GameShop.dto;
+package com.mcgill.ecse321.GameShop.dto.PlatformDto;
+import com.mcgill.ecse321.GameShop.model.Manager;
+import com.mcgill.ecse321.GameShop.model.Platform;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -7,17 +10,22 @@ import jakarta.validation.constraints.NotBlank;
 public class PlatformRequestDto {
    @NotBlank(message = "Platform name cannot be empty")
     private String platformName;
-@Email(message = "Email should be valid")
+    @Email(message = "Email should be valid")
     private String managerEmail;
+ 
 
     public PlatformRequestDto() {
     }
 
+    // public PlatformRequestDto(Platform platform) {
+    //     this.platformName = platform.getPlatformName();
+    //     this.managerEmail = platform.getManager().getEmail();
+    //     this.manager = platform.getManager();
+    // }
     public PlatformRequestDto(String platformName, String managerEmail) {
         this.platformName = platformName;
         this.managerEmail = managerEmail;
     }
-
     public String getPlatformName() {
         return platformName;
     }
