@@ -1,12 +1,13 @@
 package com.mcgill.ecse321.GameShop.dto;
-
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 
 
 public class PlatformRequestDto {
-   
+   @NotBlank(message = "Platform name cannot be empty")
     private String platformName;
-  
+@Email(message = "Email should be valid")
     private String managerEmail;
 
     public PlatformRequestDto() {
