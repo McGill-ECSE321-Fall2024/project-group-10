@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.mcgill.ecse321.GameShop.exception.AccountException;
+import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
@@ -40,16 +40,18 @@ public class AccountService {
     @Transactional
     public Manager createManager(String email, String username, String password, String phoneNumber, String address){
         if (email.trim().isEmpty() || email == null){
-            throw new IllegalArgumentException("Email must not be empty");
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+					String.format("Email is invalid"));
         }
         if (username.trim().isEmpty() || username == null){
-            throw new IllegalArgumentException("Invalid username");
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+            String.format("Invalid username %s", username));
         }
         Account account = accountRepository.findByEmail(email);
         if (account != null){
-            throw new IllegalArgumentException("Email already exists");
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+					String.format("Account with email %s already exists.", email));
         }
-        //not sure if we need to do validation
 
         Manager manager = new Manager(email, username, password, phoneNumber, address);
         return managerRepo.save(manager);
@@ -58,14 +60,17 @@ public class AccountService {
     @Transactional
     public Employee createEmployee(String email, String username, String password, String phoneNumber, String address){
         if (email.trim().isEmpty() || email == null){
-            throw new IllegalArgumentException("Email must not be empty");
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+					String.format("Email is invalid"));
         }
         if (username.trim().isEmpty() || username == null){
-            throw new IllegalArgumentException("Invalid username");
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+            String.format("Invalid username %s", username));
         }
         Account account = accountRepository.findByEmail(email);
         if (account != null){
-            throw new IllegalArgumentException("Email already exists");
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+					String.format("Account with email %s already exists.", email));
         }
         Employee employee = new Employee(email, username, password, phoneNumber, address);
         return employeeRepo.save(employee);
@@ -74,14 +79,17 @@ public class AccountService {
     @Transactional
     public Customer createCustomer(String email, String username, String password, String phoneNumber, String address){
         if (email.trim().isEmpty() || email == null){
-            throw new IllegalArgumentException("Email must not be empty");
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+					String.format("Email is invalid"));
         }
         if (username.trim().isEmpty() || username == null){
-            throw new IllegalArgumentException("Invalid username");
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+            String.format("Invalid username %s", username));
         }
         Account account = accountRepository.findByEmail(email);
         if (account != null){
-            throw new IllegalArgumentException("Email already exists");
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+            String.format("Account with email %s already exists.", email));
         }
         
         Cart cart = new Cart();
@@ -112,6 +120,9 @@ public class AccountService {
             account.setPassword(password);
             account.setPhoneNumber(phoneNumber);
             account.setAddress(address);
+        } else{
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+            String.format("Account with email %s does not exist.", email));
         }
         
         return accountRepository.save(account);
@@ -121,7 +132,7 @@ public class AccountService {
     public Account getAccountByEmail(String email){
         Account account = accountRepository.findByEmail(email);
         if (account == null) {
-			throw new AccountException(HttpStatus.NOT_FOUND,
+			throw new GameShopException(HttpStatus.NOT_FOUND,
 					String.format("There is no account with email %s.", email));
 		}
 		return account;
@@ -133,5 +144,7 @@ public class AccountService {
         if (employee != null){
             accountRepository.delete(employee);
         }
+        throw new GameShopException(HttpStatus.NOT_FOUND,
+        String.format("Account with email %s does not exist.", email));
     }
 }
