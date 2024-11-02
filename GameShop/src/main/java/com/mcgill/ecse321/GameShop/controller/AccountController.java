@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mcgill.ecse321.GameShop.dto.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountResponseDto;
-import com.mcgill.ecse321.GameShop.dto.CustomerRequestDto;
 import com.mcgill.ecse321.GameShop.dto.CustomerResponseDto;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Customer;
@@ -69,7 +68,12 @@ public class AccountController {
     }
 
     @GetMapping("/account/employees")
-    public String getMethodName(@RequestParam String param) {
+    public String getEmployees(@RequestParam String param) {
+        return new String();
+    }
+
+    @GetMapping("/account/customers")
+    public String getCustomers(@RequestParam String param) {
         return new String();
     }
     
@@ -86,6 +90,9 @@ public class AccountController {
     public void deleteEmployeeAccount(@PathVariable String email){
         accountService.deleteEmployee(email);
     }
+
+
+
 
 
     

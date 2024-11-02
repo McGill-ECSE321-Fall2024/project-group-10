@@ -1,35 +1,22 @@
 package com.mcgill.ecse321.GameShop.dto;
 
 import com.mcgill.ecse321.GameShop.model.Account;
-import com.mcgill.ecse321.GameShop.model.Customer;
-import com.mcgill.ecse321.GameShop.model.Employee;
-import com.mcgill.ecse321.GameShop.model.Staff;
 
-public class AccountResponseDto {
-    // private AccountType type;
+public class EmployeeSummaryDto {
     private String email;
     private String username;
     private String phoneNumber;
     private String address;
 
-    protected AccountResponseDto(){}
+    protected EmployeeSummaryDto(){}
 
-    public AccountResponseDto(Account account){
-        // this.type = AccountType.CUSTOMER;
+    public EmployeeSummaryDto(Account account){
         this.email = account.getEmail();
         this.username = account.getUsername();
         this.phoneNumber = account.getPhoneNumber();
         this.address = account.getAddress();
     }
 
-    public static AccountResponseDto create(Account account){
-        if (account != null){
-            return new AccountResponseDto(account);
-        }
-        else{
-            throw new IllegalArgumentException("Account does not exist.");
-        }
-    }
 
 
     public String getEmail(){
