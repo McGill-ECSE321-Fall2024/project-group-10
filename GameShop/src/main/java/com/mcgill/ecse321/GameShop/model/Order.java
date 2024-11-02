@@ -1,5 +1,5 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
+/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
 package com.mcgill.ecse321.GameShop.model;
 
@@ -13,10 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import java.sql.Date;
-
 // line 41 "../../../../../../model.ump"
-// line 216 "../../../../../../model.ump"
+// line 212 "../../../../../../model.ump"
 @Entity
 @Table(name = "\"order\"")
 public class Order {
@@ -46,7 +44,6 @@ public class Order {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
-
   public Order(Date aOrderDate, String aNote, int aPaymentCard, Customer aCustomer) {
     orderDate = aOrderDate;
     note = aNote;
@@ -56,9 +53,6 @@ public class Order {
       throw new RuntimeException(
           "Unable to create Order due to aCustomer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
-  }
-
-  protected Order() {
   }
 
   // ------------------------
@@ -163,6 +157,7 @@ public class Order {
         "  " + "customer = "
         + (getCustomer() != null ? Integer.toHexString(System.identityHashCode(getCustomer())) : "null");
   }
+
   public static void clearTestTrackingNumbers(List<String> test_tracking_numbers) {
     for (String test_tracking_number : test_tracking_numbers) {
       ordersByTrackingNumber.remove(test_tracking_number);
