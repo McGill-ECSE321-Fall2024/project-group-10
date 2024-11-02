@@ -11,6 +11,7 @@ import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
+import com.mcgill.ecse321.GameShop.repository.CartRepository;
 import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
 import com.mcgill.ecse321.GameShop.repository.EmployeeRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
@@ -29,43 +30,82 @@ public class AccountService {
     @Autowired
     private CustomerRepository customerRepo;
 
+    @Autowired
+    private CartRepository cartRepository;
+
 
     @Autowired
     private AccountRepository accountRepository;
 
     @Transactional
     public Manager createManager(String email, String username, String password, String phoneNumber, String address){
+        if (email.trim().isEmpty() || email == null){
+            throw new IllegalArgumentException("Email must not be empty");
+        }
+        if (username.trim().isEmpty() || username == null){
+            throw new IllegalArgumentException("Invalid username");
+        }
+        Account account = accountRepository.findByEmail(email);
+        if (account != null){
+            throw new IllegalArgumentException("Email already exists");
+        }
+        //not sure if we need to do validation
+
         Manager manager = new Manager(email, username, password, phoneNumber, address);
         return managerRepo.save(manager);
     }
 
     @Transactional
     public Employee createEmployee(String email, String username, String password, String phoneNumber, String address){
+        if (email.trim().isEmpty() || email == null){
+            throw new IllegalArgumentException("Email must not be empty");
+        }
+        if (username.trim().isEmpty() || username == null){
+            throw new IllegalArgumentException("Invalid username");
+        }
+        Account account = accountRepository.findByEmail(email);
+        if (account != null){
+            throw new IllegalArgumentException("Email already exists");
+        }
         Employee employee = new Employee(email, username, password, phoneNumber, address);
         return employeeRepo.save(employee);
     }
 
     @Transactional
-    public Customer createCustomer(String email, String username, String password, String phoneNumber, String address, Cart cart){
+    public Customer createCustomer(String email, String username, String password, String phoneNumber, String address){
+        if (email.trim().isEmpty() || email == null){
+            throw new IllegalArgumentException("Email must not be empty");
+        }
+        if (username.trim().isEmpty() || username == null){
+            throw new IllegalArgumentException("Invalid username");
+        }
+        Account account = accountRepository.findByEmail(email);
+        if (account != null){
+            throw new IllegalArgumentException("Email already exists");
+        }
+        
+        Cart cart = new Cart();
+        cartRepository.save(cart);
+
         Customer customer = new Customer(email, username, password, phoneNumber, address, cart);
         return customerRepo.save(customer);
     }
 
 
     @Transactional
-    public Iterable<Account> findAllEmployees(){
+    public Iterable<Account> getAllEmployees(){
         return employeeRepo.findAll();
     }
 
 
     @Transactional
-    public Iterable<Account> findAllCustomers(){
+    public Iterable<Account> getAllCustomers(){
         return customerRepo.findAll();
     }
 
     @Transactional
     public Account updateAccount(String email, String username, String password, String phoneNumber, String address){
-        Account account = findAccountByEmail(email);
+        Account account = getAccountByEmail(email);
 
         if (account!= null){
             account.setUsername(username);
@@ -78,12 +118,20 @@ public class AccountService {
     }
 
     @Transactional
-    public Account findAccountByEmail(String email){
+    public Account getAccountByEmail(String email){
         Account account = accountRepository.findByEmail(email);
         if (account == null) {
 			throw new AccountException(HttpStatus.NOT_FOUND,
 					String.format("There is no account with email %s.", email));
 		}
 		return account;
+    }
+
+    @Transactional
+    public void deleteEmployee(String email){
+        Employee employee = employeeRepo.findByEmail(email);
+        if (employee != null){
+            accountRepository.delete(employee);
+        }
     }
 }

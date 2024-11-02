@@ -11,6 +11,7 @@ import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.service.AccountService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,56 +29,63 @@ public class AccountController {
     private AccountService accountService;
 
     @PostMapping("/account/customer")
-    public CustomerResponseDto createCustomer(@RequestBody CustomerRequestDto customerToCreate) {
+    public AccountResponseDto createCustomer(@RequestBody AccountRequestDto customerToCreate) {
         Customer createdCustomer = accountService.createCustomer(customerToCreate.getEmail(), 
             customerToCreate.getUsername(), 
             customerToCreate.getPassword(), 
             customerToCreate.getPhoneNumber(),
-             customerToCreate.getAddress(), customerToCreate.geCart());
+             customerToCreate.getAddress());
         
-        return new CustomerResponseDto(createdCustomer);
+        return new AccountResponseDto(createdCustomer);
     }
 
 
     @PostMapping("/account/manager")
-    public AccountResponseDto createManager(@RequestBody AccountRequestDto accountToCreate) {
-        Account createdManager = accountService.createManager(accountToCreate.getEmail(), 
-            accountToCreate.getUsername(), 
-            accountToCreate.getPassword(), 
-            accountToCreate.getPhoneNumber(),
-            accountToCreate.getAddress());
+    public AccountResponseDto createManager(@RequestBody AccountRequestDto managerToCreate) {
+        Account createdManager = accountService.createManager(managerToCreate.getEmail(), 
+            managerToCreate.getUsername(), 
+            managerToCreate.getPassword(), 
+            managerToCreate.getPhoneNumber(),
+            managerToCreate.getAddress());
         
         return new AccountResponseDto(createdManager);
     }
 
     @PostMapping("/account/employee")
-    public AccountResponseDto createEmployee(@RequestBody AccountRequestDto accountToCreate) {
-        Account createdEmployee = accountService.createManager(accountToCreate.getEmail(), 
-            accountToCreate.getUsername(), 
-            accountToCreate.getPassword(), 
-            accountToCreate.getPhoneNumber(),
-            accountToCreate.getAddress());
+    public AccountResponseDto createEmployee(@RequestBody AccountRequestDto employeeToCreate) {
+        Account createdEmployee = accountService.createManager(employeeToCreate.getEmail(), 
+            employeeToCreate.getUsername(), 
+            employeeToCreate.getPassword(), 
+            employeeToCreate.getPhoneNumber(),
+            employeeToCreate.getAddress());
         
         return new AccountResponseDto(createdEmployee);
     }
 
     @GetMapping("/account/{email}")
     public AccountResponseDto findPersonByEmail(@PathVariable String email) {
-        Account createdAccount = accountService.findAccountByEmail(email);
+        Account createdAccount = accountService.getAccountByEmail(email);
         return new AccountResponseDto(createdAccount);
     }
 
-    // @GetMapping("/account/employees")
-    // public String getMethodName(@RequestParam String param) {
-    //     return new String();
-    // }
+    @GetMapping("/account/employees")
+    public String getMethodName(@RequestParam String param) {
+        return new String();
+    }
     
-    // @PutMapping("account/{email}")
-    // public String putMethodName(@PathVariable String email, @RequestBody String entity) {
-    //     //TODO: process PUT request
-        
-    //     return entity;
-    // }
+    //need to check the put mapping
+    @PutMapping("account/{email}")
+    public void updateAccount(@PathVariable String email, @RequestBody AccountRequestDto updatedInformation) {
+        accountService.updateAccount(email, updatedInformation.getUsername(), 
+            updatedInformation.getPassword(), 
+            updatedInformation.getPhoneNumber(), 
+            updatedInformation.getAddress());
+    }
+
+    @DeleteMapping("account/{email}")
+    public void deleteEmployeeAccount(@PathVariable String email){
+        accountService.deleteEmployee(email);
+    }
 
 
     
