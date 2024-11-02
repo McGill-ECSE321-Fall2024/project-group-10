@@ -1,6 +1,5 @@
 package com.mcgill.ecse321.GameShop.dto.PlatformDto;
-import com.mcgill.ecse321.GameShop.model.Manager;
-import com.mcgill.ecse321.GameShop.model.Platform;
+
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
