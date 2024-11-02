@@ -40,11 +40,11 @@ public class AccountService {
     @Transactional
     public Manager createManager(String email, String username, String password, String phoneNumber, String address){
         if (email.trim().isEmpty() || email == null){
-            throw new GameShopException(HttpStatus.NOT_FOUND,
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
 					String.format("Email is invalid"));
         }
         if (username.trim().isEmpty() || username == null){
-            throw new GameShopException(HttpStatus.NOT_FOUND,
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
         }
         Account account = accountRepository.findByEmail(email);
@@ -60,11 +60,11 @@ public class AccountService {
     @Transactional
     public Employee createEmployee(String email, String username, String password, String phoneNumber, String address){
         if (email.trim().isEmpty() || email == null){
-            throw new GameShopException(HttpStatus.NOT_FOUND,
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
 					String.format("Email is invalid"));
         }
         if (username.trim().isEmpty() || username == null){
-            throw new GameShopException(HttpStatus.NOT_FOUND,
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
         }
         Account account = accountRepository.findByEmail(email);
@@ -79,11 +79,11 @@ public class AccountService {
     @Transactional
     public Customer createCustomer(String email, String username, String password, String phoneNumber, String address){
         if (email.trim().isEmpty() || email == null){
-            throw new GameShopException(HttpStatus.NOT_FOUND,
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
 					String.format("Email is invalid"));
         }
         if (username.trim().isEmpty() || username == null){
-            throw new GameShopException(HttpStatus.NOT_FOUND,
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
         }
         Account account = accountRepository.findByEmail(email);
