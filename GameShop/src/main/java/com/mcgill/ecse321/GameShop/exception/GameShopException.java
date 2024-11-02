@@ -8,7 +8,7 @@ public class GameShopException extends RuntimeException{
     @NonNull
     private HttpStatus status;
 
-    public GameShopException(@NonNull HttpStatus statusm, String message) {
+    public GameShopException(@NonNull HttpStatus status, String message) {
         super(message);
         this.status = status;
     }

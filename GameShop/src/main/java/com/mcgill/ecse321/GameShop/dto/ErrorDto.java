@@ -5,7 +5,7 @@ import java.util.List;
 public class ErrorDto {
     private List<String> errors;
 
-    @SuppressWarnings("unsued")
+    @SuppressWarnings("unused")
     private ErrorDto() {
     }
 
