@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,7 +94,6 @@ public class CartRepositoryTests {
         CartRepositoryTests.testTrackingNumbers.add(order.getTrackingNumber());
 
         // Associate order with cart and save
-        cart.setOrder(order);
         cart = cartRepository.save(cart);
 
         // Retrieve and verify cart
@@ -104,11 +102,6 @@ public class CartRepositoryTests {
         assertNotNull(pulledCart, "Cart should not be null.");
         assertEquals(cart.getCart_id(), pulledCart.getCart_id(), "Cart ID should match.");
         assertEquals(2, pulledCart.getGames().size(), "Cart should have 2 games.");
-        assertNotNull(pulledCart.getOrder(), "Order should not be null.");
-        assertEquals(order.getTrackingNumber(), pulledCart.getOrder().getTrackingNumber());
-        assertEquals(Date.valueOf("2022-04-05"), pulledCart.getOrder().getOrderDate(),
-                "Order date should be '2022-04-05'.");
-        assertEquals("notes of the order", pulledCart.getOrder().getNote(), "Order notes should match.");
 
         // Verify games in cart
         int firstGameId = firstGame.getGame_id();
@@ -125,15 +118,6 @@ public class CartRepositoryTests {
         assertEquals("CsGo", pulledCart.getGames().get(1).getDescription(), "Second game should be CsGo.");
         assertEquals(50, pulledCart.getGames().get(0).getPrice(), "First game's price should be 50.");
         assertEquals(15, pulledCart.getGames().get(1).getPrice(), "Second game's price should be 15.");
-
-        // Verify customer details
-        Customer retrievedCustomer = pulledCart.getOrder().getCustomer();
-        assertNotNull(retrievedCustomer, "Customer should not be null.");
-        assertEquals("4@4.com", retrievedCustomer.getEmail(), "Customer's email should be '4@4.com'.");
-        assertEquals("1234567890", retrievedCustomer.getPhoneNumber(), "Customer's phone number should match.");
-        assertEquals("123 street", retrievedCustomer.getAddress(), "Customer's address should match.");
-        assertEquals("ajn", retrievedCustomer.getUsername(), "Customer's username should match.");
-        assertEquals("ajn2", retrievedCustomer.getPassword(), "Customer's password should match.");
     }
 
     @Test
@@ -149,6 +133,5 @@ public class CartRepositoryTests {
         assertEquals(cart.getCart_id(), pulledCart.getCart_id(), "Cart ID should match.");
         assertNotNull(pulledCart, "Cart should not be null");
         assertEquals(0, pulledCart.getGames().size(), "This cart should have no games");
-        assertNull(pulledCart.getOrder(), "This cart should not have an order");
     }
 }

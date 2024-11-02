@@ -1,5 +1,5 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
+/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
 package com.mcgill.ecse321.GameShop.model;
 
@@ -16,7 +16,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
 // line 108 "../../../../../../model.ump"
-// line 260 "../../../../../../model.ump"
+// line 250 "../../../../../../model.ump"
 @Entity
 public class Cart {
 
@@ -39,8 +39,6 @@ public class Cart {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "cart_items_jt", joinColumns = @JoinColumn(name = "cart_id"), inverseJoinColumns = @JoinColumn(name = "game_id"))
   private List<Game> games;
-  @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-  private Order order;
 
   // ------------------------
   // CONSTRUCTOR
@@ -113,16 +111,6 @@ public class Cart {
     return index;
   }
 
-  /* Code from template association_GetOne */
-  public Order getOrder() {
-    return order;
-  }
-
-  public boolean hasOrder() {
-    boolean has = order != null;
-    return has;
-  }
-
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfGames() {
     return 0;
@@ -183,24 +171,13 @@ public class Cart {
     return wasAdded;
   }
 
-  /* Code from template association_SetUnidirectionalOptionalOne */
-  public boolean setOrder(Order aNewOrder) {
-    boolean wasSet = false;
-    order = aNewOrder;
-    wasSet = true;
-    return wasSet;
-  }
-
   public void delete() {
     cartsByCart_id.remove(getCart_id());
     games.clear();
-    order = null;
   }
 
   public String toString() {
     return super.toString() + "[" +
-        "cart_id" + ":" + getCart_id() + "]" + System.getProperties().getProperty("line.separator") +
-        "  " + "order = " + (getOrder() != null ? Integer.toHexString(System.identityHashCode(getOrder())) : "null");
+        "cart_id" + ":" + getCart_id() + "]";
   }
-
 }
