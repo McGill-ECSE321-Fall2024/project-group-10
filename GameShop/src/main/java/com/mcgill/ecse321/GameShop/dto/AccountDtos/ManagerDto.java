@@ -1,4 +1,4 @@
-package com.mcgill.ecse321.GameShop.dto;
+package com.mcgill.ecse321.GameShop.dto.AccountDtos;
 
 public class ManagerDto {
     private String email;

@@ -1,20 +1,14 @@
-package com.mcgill.ecse321.GameShop.dto;
+package com.mcgill.ecse321.GameShop.dto.AccountDtos;
 
 
 public class AccountRequestDto {
-    private AccountType type;
 	private String email;
     private String username;
     private String password;
     private String phoneNumber;
     private String address;
     
-    public AccountType getType() {
-        return type;
-    }
-    public void setType(AccountType type) {
-        this.type = type;
-    }
+  
     public String getEmail() {
         return email;
     }

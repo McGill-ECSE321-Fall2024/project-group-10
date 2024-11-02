@@ -1,4 +1,4 @@
-package com.mcgill.ecse321.GameShop.dto;
+package com.mcgill.ecse321.GameShop.dto.AccountDtos;
 
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;

@@ -1,12 +1,16 @@
 package com.mcgill.ecse321.GameShop.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+import java.util.ArrayList;
 
-import com.mcgill.ecse321.GameShop.dto.AccountRequestDto;
-import com.mcgill.ecse321.GameShop.dto.AccountResponseDto;
-import com.mcgill.ecse321.GameShop.dto.CustomerResponseDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountListDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.CustomerResponseDto;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Customer;
+import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.service.AccountService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,13 +72,31 @@ public class AccountController {
     }
 
     @GetMapping("/account/employees")
-    public String getEmployees(@RequestParam String param) {
-        return new String();
+    public AccountListDto getEmployees() {
+        List<AccountResponseDto> dtos = new ArrayList<AccountResponseDto>();
+        for (Account e: accountService.getAllEmployees()){
+            if (e instanceof Employee){
+                dtos.add(new AccountResponseDto(e));
+            }
+            else{
+                continue;
+            }
+        }
+        return new AccountListDto(dtos);
     }
 
     @GetMapping("/account/customers")
-    public String getCustomers(@RequestParam String param) {
-        return new String();
+    public AccountListDto getCustomers() {
+        List<AccountResponseDto> dtos = new ArrayList<AccountResponseDto>();
+        for (Account c: accountService.getAllCustomers()){
+            if (c instanceof Customer){
+                dtos.add(new AccountResponseDto(c));
+            }
+            else{
+                continue;
+            }
+        }
+        return new AccountListDto(dtos);
     }
     
     //need to check the put mapping
