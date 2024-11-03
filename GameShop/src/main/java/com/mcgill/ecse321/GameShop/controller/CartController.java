@@ -23,7 +23,6 @@ public class CartController {
         return buildCartResponseDto(cart);
     }
 
-    // Add games to the cart
     @PostMapping("/carts/{cartId}/games")
     public CartResponseDto addGamesToCart(
             @PathVariable int cartId,
@@ -37,7 +36,6 @@ public class CartController {
         return buildCartResponseDto(cart);
     }
 
-    // Remove games from the cart
     @PostMapping("/carts/{cartId}/games/remove")
     public CartResponseDto removeGamesFromCart(
             @PathVariable int cartId,
@@ -51,14 +49,12 @@ public class CartController {
         return buildCartResponseDto(cart);
     }
 
-    // Get a cart by its ID
     @GetMapping("/carts/{cartId}")
     public CartResponseDto findCartById(@PathVariable int cartId) {
         Cart cart = cartService.getCartById(cartId);
         return buildCartResponseDto(cart);
     }
 
-    // Get all carts
     @GetMapping("/carts")
     public CartListDto findAllCarts() {
         List<CartSummaryDto> cartSummaries = new ArrayList<>();
@@ -102,7 +98,6 @@ public class CartController {
             gameInfo.put("stockQuantity", game.getStockQuantity());
             gameInfo.put("quantity", quantity);
 
-            // Calculate total price (price per game * quantity)
             totalPrice += game.getPrice() * quantity;
 
             games.add(gameInfo);
@@ -111,7 +106,6 @@ public class CartController {
         return new CartResponseDto(cart.getCart_id(), games, totalItems, totalPrice);
     }
 
-    // Update the quantity of a game in the cart
     @PostMapping("/carts/{cartId}/games/updateQuantity")
     public CartResponseDto updateGameQuantityInCart(
             @PathVariable int cartId,

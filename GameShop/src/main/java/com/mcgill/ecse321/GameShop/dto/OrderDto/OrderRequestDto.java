@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 public class OrderRequestDto {
     @NotNull(message = "Order date cannot be null")
@@ -22,6 +23,9 @@ public class OrderRequestDto {
     @NotEmpty(message = "Customer email cannot be empty")
     @Email(message = "Customer email should be valid")
     private String customerEmail;
+
+    @NotEmpty(message = "Specific game IDs cannot be empty")
+    private List<Integer> specificGameIds;
 
     public Date getOrderDate() {
         return orderDate;
@@ -53,5 +57,13 @@ public class OrderRequestDto {
 
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
+    }
+
+    public List<Integer> getSpecificGameIds() {
+        return specificGameIds;
+    }
+
+    public void setSpecificGameIds(List<Integer> specificGameIds) {
+        this.specificGameIds = specificGameIds;
     }
 }
