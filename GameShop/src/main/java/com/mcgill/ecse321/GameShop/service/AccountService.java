@@ -35,11 +35,16 @@ public class AccountService {
     private CartRepository cartRepository;
 
 
+
     @Autowired
     private AccountRepository accountRepository;
 
     @Transactional
     public Manager createManager(String email, String username, String password, String phoneNumber, String address){
+        if (managerRepo.count() > 1){
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
+            String.format("A manager already exists"));
+        }
         if (email.trim().isEmpty() || email == null){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
 					String.format("Email is invalid"));
