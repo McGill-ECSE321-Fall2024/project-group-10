@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeListDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
@@ -52,14 +54,14 @@ public class AccountController {
     }
 
     @PostMapping("/account/employee")
-    public AccountResponseDto createEmployee(@RequestBody AccountRequestDto employeeToCreate) {
-        Account createdEmployee = accountService.createManager(employeeToCreate.getEmail(), 
+    public EmployeeResponseDto createEmployee(@RequestBody AccountRequestDto employeeToCreate) {
+        Account createdEmployee = accountService.createEmployee(employeeToCreate.getEmail(), 
             employeeToCreate.getUsername(), 
             employeeToCreate.getPassword(), 
             employeeToCreate.getPhoneNumber(),
             employeeToCreate.getAddress());
         
-        return new AccountResponseDto(createdEmployee);
+        return new EmployeeResponseDto(createdEmployee);
     }
 
     @GetMapping("/account/{email}")
@@ -69,17 +71,17 @@ public class AccountController {
     }
 
     @GetMapping("/account/employees")
-    public AccountListDto getEmployees() {
-        List<AccountResponseDto> dtos = new ArrayList<AccountResponseDto>();
+    public EmployeeListDto getEmployees() {
+        List<EmployeeResponseDto> dtos = new ArrayList<EmployeeResponseDto>();
         for (Account e: accountService.getAllEmployees()){
             if (e instanceof Employee){
-                dtos.add(new AccountResponseDto(e));
+                dtos.add(new EmployeeResponseDto(e));
             }
             else{
                 continue;
             }
         }
-        return new AccountListDto(dtos);
+        return new EmployeeListDto(dtos);
     }
 
     @GetMapping("/account/customers")
@@ -98,19 +100,21 @@ public class AccountController {
     
     //need to check the put mapping
     @PutMapping("account/{email}")
-    public void updateAccount(@PathVariable String email, @RequestBody AccountRequestDto updatedInformation) {
+    public AccountResponseDto updateAccount(@PathVariable String email, @RequestBody AccountRequestDto updatedInformation) {
+        Account account = accountService.getAccountByEmail(email);
         accountService.updateAccount(email, updatedInformation.getUsername(), 
             updatedInformation.getPassword(), 
             updatedInformation.getPhoneNumber(), 
             updatedInformation.getAddress());
+        return new AccountResponseDto(account);
     }
 
     @PutMapping("account/employee/{email}")
-    public void archiveEmployeeAccount(@PathVariable String email){
-        accountService.archiveEmployee(email);
+    public EmployeeResponseDto archiveEmployeeAccount(@PathVariable String email){
+        Account employee = (Account) accountService.archiveEmployee(email);
+        return new EmployeeResponseDto(employee);
     }
 
-    
     
     
 }
