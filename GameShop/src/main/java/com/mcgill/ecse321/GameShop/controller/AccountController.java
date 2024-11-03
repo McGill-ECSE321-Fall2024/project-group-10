@@ -108,16 +108,11 @@ public class AccountController {
             updatedInformation.getAddress());
     }
 
-    @DeleteMapping("account/{email}")
-    public void deleteEmployeeAccount(@PathVariable String email){
-        accountService.deleteEmployee(email);
+    @PutMapping("account/{email}")
+    public void archiveEmployeeAccount(@PathVariable String email){
+        accountService.archiveEmployee(email);
     }
 
-
-
-
-
-    
     
     
     

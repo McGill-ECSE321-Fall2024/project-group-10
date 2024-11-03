@@ -8,6 +8,7 @@ public class AccountRequestDto {
     private String phoneNumber;
     private String address;
     
+    
   
     public String getEmail() {
         return email;

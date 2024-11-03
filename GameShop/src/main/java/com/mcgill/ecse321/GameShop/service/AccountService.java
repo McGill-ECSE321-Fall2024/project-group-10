@@ -10,6 +10,7 @@ import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Manager;
+import com.mcgill.ecse321.GameShop.model.Employee.EmployeeStatus;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CartRepository;
 import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
@@ -139,10 +140,11 @@ public class AccountService {
     }
 
     @Transactional
-    public void deleteEmployee(String email){
+    public Employee archiveEmployee(String email){
         Employee employee = employeeRepo.findByEmail(email);
         if (employee != null){
-            accountRepository.delete(employee);
+            employee.setEmployeeStatus(EmployeeStatus.Archived);
+            return accountRepository.save(employee);
         }
         throw new GameShopException(HttpStatus.NOT_FOUND,
         String.format("Account with email %s does not exist.", email));
