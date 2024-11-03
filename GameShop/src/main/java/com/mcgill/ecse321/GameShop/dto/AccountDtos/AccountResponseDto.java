@@ -1,9 +1,7 @@
 package com.mcgill.ecse321.GameShop.dto.AccountDtos;
 
 import com.mcgill.ecse321.GameShop.model.Account;
-import com.mcgill.ecse321.GameShop.model.Customer;
-import com.mcgill.ecse321.GameShop.model.Employee;
-import com.mcgill.ecse321.GameShop.model.Staff;
+
 
 public class AccountResponseDto {
     // private AccountType type;
