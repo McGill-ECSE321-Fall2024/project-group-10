@@ -79,4 +79,3 @@ public class ReplyRequestDto {
         this.managerEmail = managerEmail;
     }
 }
-
