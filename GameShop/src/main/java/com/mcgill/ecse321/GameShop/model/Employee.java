@@ -51,8 +51,4 @@ public class Employee extends Staff {
   public EmployeeStatus getEmployeeStatus() {
     return employeeStatus;
   }
-
-  public void delete() {
-    super.delete();
-  }
 }
