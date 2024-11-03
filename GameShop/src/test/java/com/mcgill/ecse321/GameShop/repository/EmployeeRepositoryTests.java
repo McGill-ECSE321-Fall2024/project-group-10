@@ -64,6 +64,7 @@ public class EmployeeRepositoryTests {
         String address2 = "1234 rue Sainte-Catherine";
 
         Employee createdSecondEmployee = new Employee(email2, username2, password2, phoneNumber2, address2);
+        createdSecondEmployee.setEmployeeStatus(Employee.EmployeeStatus.Archived);
         createdSecondEmployee = employeeRepository.save(createdSecondEmployee);
         EmployeeRepositoryTests.testEmails.add(createdSecondEmployee.getEmail());
 
@@ -78,6 +79,7 @@ public class EmployeeRepositoryTests {
         assertEquals(phoneNumber, pulledFirstEmployee.getPhoneNumber());
         assertEquals(address, pulledFirstEmployee.getAddress());
         assertTrue(pulledFirstEmployee instanceof Employee, "The account should be an employee.");
+        assertEquals(createdFirstEmployee.getEmployeeStatus(), ((Employee) pulledFirstEmployee).getEmployeeStatus());
 
         // Assertions to verify the second employee's details
         assertNotNull(createdSecondEmployee);
@@ -87,6 +89,7 @@ public class EmployeeRepositoryTests {
         assertEquals(phoneNumber2, pulledSecondEmployee.getPhoneNumber());
         assertEquals(address2, pulledSecondEmployee.getAddress());
         assertTrue(pulledSecondEmployee instanceof Employee, "The account should be an employee.");
+        assertEquals(createdSecondEmployee.getEmployeeStatus(), ((Employee) pulledSecondEmployee).getEmployeeStatus());
 
         // Verify that there are exactly two employees in the repository
         List<Account> employees = (List<Account>) employeeRepository.findAll();
