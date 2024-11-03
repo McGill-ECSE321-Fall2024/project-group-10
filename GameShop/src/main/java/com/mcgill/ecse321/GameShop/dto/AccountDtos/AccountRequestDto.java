@@ -1,11 +1,17 @@
 package com.mcgill.ecse321.GameShop.dto.AccountDtos;
 
+import jakarta.validation.constraints.NotBlank;
 
 public class AccountRequestDto {
-	private String email;
+	@NotBlank(message = "Email is required.")
+    private String email;
+    @NotBlank(message = "Username is required.")
     private String username;
+    @NotBlank(message = "Password is required.")
     private String password;
+    @NotBlank(message = "String is required.")
     private String phoneNumber;
+    @NotBlank(message = "Address is required.")
     private String address;
     
     
