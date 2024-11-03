@@ -60,7 +60,7 @@ public class WishlistService {
         throw new GameShopException(HttpStatus.NOT_FOUND,
                 String.format("There is no Game with Id %d in the WishList with Id %d.",gameId,wishlistId));
     }
-
+    @Transactional
     public int getWishlistSize(int wishlistId) {
         WishList wishList = findWishlistById(wishlistId);
         if (wishList == null) {
@@ -68,5 +68,14 @@ public class WishlistService {
                     String.format("There is no WishList with Id %d.",wishlistId));
         }
         return wishList.getGames().size();
+    }
+    @Transactional
+    public Iterable<Game> getGamesInWishList(int wishlistId){
+        WishList wishList = findWishlistById(wishlistId);
+        if (wishList == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("There is no WishList with Id %d.",wishlistId));
+        }
+        return wishList.getGames();
     }
 }

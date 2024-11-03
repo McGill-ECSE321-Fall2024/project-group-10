@@ -1,7 +1,28 @@
 package com.mcgill.ecse321.GameShop.dto.WishListDto;
 
-import org.antlr.v4.runtime.misc.NotNull;
+import java.nio.file.attribute.GroupPrincipal;
+
+import jakarta.validation.constraints.NotBlank;
 
 public class WishListRequestDto {
-    @NotNull()
+    @NotBlank(message ="WishList name cannot be empty")
+    private String wishListName;
+    @NotBlank(message = "Email cannot be empty")
+    private String customerEmail;
+
+    protected WishListRequestDto() {
+    }
+    public WishListRequestDto(String wishListName, String customerEmail) {
+        this.wishListName = wishListName;
+        this.customerEmail = customerEmail;
+    }
+    public String getWishListName() {
+        return wishListName;
+    }
+
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
+
+    //public Iterable<Gto> 
 }
