@@ -1,20 +1,20 @@
 package com.mcgill.ecse321.GameShop.dto.OrderDto;
 
+import com.mcgill.ecse321.GameShop.model.Order;
+
 import java.util.Date;
 
 public class OrderResponseDto {
     private String trackingNumber;
     private Date orderDate;
     private String note;
-    private int paymentCard;
     private String customerEmail;
 
-    public OrderResponseDto(String trackingNumber, Date orderDate, String note, int paymentCard, String customerEmail) {
-        this.trackingNumber = trackingNumber;
-        this.orderDate = orderDate;
-        this.note = note;
-        this.paymentCard = paymentCard;
-        this.customerEmail = customerEmail;
+    public OrderResponseDto(Order order) {
+        this.trackingNumber = order.getTrackingNumber();
+        this.orderDate = order.getOrderDate();
+        this.note = order.getNote();
+        this.customerEmail = order.getCustomer().getEmail();
     }
 
     public String getTrackingNumber() {
@@ -27,10 +27,6 @@ public class OrderResponseDto {
 
     public String getNote() {
         return note;
-    }
-
-    public int getPaymentCard() {
-        return paymentCard;
     }
 
     public String getCustomerEmail() {
