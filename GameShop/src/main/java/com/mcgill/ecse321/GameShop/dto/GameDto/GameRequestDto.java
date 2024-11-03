@@ -75,11 +75,11 @@ public class GameRequestDto {
         this.aStockQuantity = aStockQuantity;
     }
 
-    public String getaPhotoUr() {
+    public String getaPhotoUrl() {
         return aPhotoUr;
     }
 
-    public void setaPhotoUr(String aPhotoUr) {
+    public void setaPhotoUrl(String aPhotoUr) {
         this.aPhotoUr = aPhotoUr;
     }
 }
