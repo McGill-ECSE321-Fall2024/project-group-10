@@ -144,7 +144,7 @@ public class AccountService {
         Employee employee = employeeRepo.findByEmail(email);
         if (employee != null){
             employee.setEmployeeStatus(EmployeeStatus.Archived);
-            return accountRepository.save(employee);
+            return employeeRepo.save(employee);
         }
         throw new GameShopException(HttpStatus.NOT_FOUND,
         String.format("Account with email %s does not exist.", email));
