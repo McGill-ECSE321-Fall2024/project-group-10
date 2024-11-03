@@ -108,7 +108,7 @@ public class AccountController {
             updatedInformation.getAddress());
     }
 
-    @PutMapping("account/{email}")
+    @PutMapping("account/employee/{email}")
     public void archiveEmployeeAccount(@PathVariable String email){
         accountService.archiveEmployee(email);
     }
