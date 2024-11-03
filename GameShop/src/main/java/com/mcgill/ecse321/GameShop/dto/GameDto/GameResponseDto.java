@@ -5,25 +5,34 @@ import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 
 public class GameResponseDto {
         
+        private int aGame_id;
         private String aTitle;
         private String aDescription;
         private int aPrice;
         private GameStatus aGameStatus;
         private int aStockQuantity;
-        private String aPhotoUr;
+        private String aPhotoUrl;
+
+        protected GameResponseDto() {
+        }
 
         public GameResponseDto(Game aGame) {
+            this.aGame_id = aGame.getGame_id();
             this.aTitle = aGame.getTitle();
             this.aDescription = aGame.getDescription();
             this.aPrice = aGame.getPrice();
             this.aGameStatus = aGame.getGameStatus();
             this.aStockQuantity = aGame.getStockQuantity();
-            this.aPhotoUr = aGame.getPhotoUrl();
+            this.aPhotoUrl = aGame.getPhotoUrl();
         }
 
         // TODO check with team: Static factory method to create a GameResponseDto from a Game instance
         public static GameResponseDto create(Game aGame) {
             return new GameResponseDto(aGame);
+        }
+
+        public int getaGame_id() {
+            return aGame_id;
         }
 
         public String getaTitle() {
@@ -47,7 +56,7 @@ public class GameResponseDto {
         }
 
         public String getaPhotoUr() {
-            return aPhotoUr;
+            return aPhotoUrl;
         }
     
 }
