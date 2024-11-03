@@ -19,7 +19,7 @@ public class WishListResponseDto {
     public WishListResponseDto(WishList wishList) {
         this.wishList_id = wishList.getWishList_id();
         this.title = wishList.getTitle();
-        List<GameSummaryDto> gameSummaryList = new ArrayList<GameSummaryDto>;
+        List<GameSummaryDto> gameSummaryList = new ArrayList<GameSummaryDto>();
         for(Game game : wishList.getGames()) {
             gameSummaryList.add(new GameSummaryDto(game));
         }
