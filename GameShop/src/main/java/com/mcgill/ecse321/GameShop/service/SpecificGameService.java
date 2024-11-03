@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.SpecificGame;
-import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.SpecificGameRepository;
 
 import jakarta.transaction.Transactional;
@@ -21,6 +20,7 @@ public class SpecificGameService {
     @Transactional
     public SpecificGame createSpecificGame(Game game) {
         SpecificGame specificGame = new SpecificGame(game);
+        specificGameRepository.save(specificGame);
         return specificGame;
     }
 
