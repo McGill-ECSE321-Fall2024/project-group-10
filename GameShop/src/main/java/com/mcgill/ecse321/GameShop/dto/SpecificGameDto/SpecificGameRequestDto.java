@@ -17,7 +17,7 @@ public class SpecificGameRequestDto {
 
         @NotBlank(message = "Specific game linked order tracking numbers cannot be empty")
         private List<String> trackingNumbers;
-        @Positive(message = "Specific game ID cannot be negative")
+        @Positive(message = "Associated Game ID cannot be negative")
         private int game_id;
 
         public SpecificGameRequestDto(int specificGame_id, ItemStatus itemStatus, List<String> trackingNumber, int game_id) {
