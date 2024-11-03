@@ -21,12 +21,14 @@ public class GameService {
     public boolean isEmpty(String str){
         return str == null || str.trim().isEmpty();
     }
+    
     @Transactional
     public Game CreateGame(String title, String aDescription, int aPrice, Game.GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl) {
         if (isEmpty(aPhotoUrl) || isEmpty(title) || isEmpty(aDescription) || aPrice < 0 || aStockQuantity < 0 || aGameStatus == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Constructor fields for Game cannot be empty, null, or negative");
         }
         Game game = new Game(title, aDescription, aPrice, aGameStatus, aStockQuantity, aPhotoUrl);
+        gameRepository.save(game);
         return game;
     }
 

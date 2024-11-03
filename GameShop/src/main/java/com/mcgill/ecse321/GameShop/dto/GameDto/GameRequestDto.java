@@ -24,15 +24,15 @@ public class GameRequestDto {
     private int aStockQuantity;
 
     @NotBlank(message = "Game photo URL cannot be empty")
-    private String aPhotoUr;
+    private String aPhotoUrl;
 
-    public GameRequestDto(String aTitle, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUr) {
+    public GameRequestDto(String aTitle, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl) {
         this.aTitle = aTitle;
         this.aDescription = aDescription;
         this.aPrice = aPrice;
         this.aGameStatus = aGameStatus;
         this.aStockQuantity = aStockQuantity;
-        this.aPhotoUr = aPhotoUr;
+        this.aPhotoUrl = aPhotoUrl;
     }
 
     public String getaTitle() {
@@ -76,10 +76,10 @@ public class GameRequestDto {
     }
 
     public String getaPhotoUrl() {
-        return aPhotoUr;
+        return aPhotoUrl;
     }
 
-    public void setaPhotoUrl(String aPhotoUr) {
-        this.aPhotoUr = aPhotoUr;
+    public void setaPhotoUrl(String aPhotoUrl) {
+        this.aPhotoUrl = aPhotoUrl;
     }
 }
