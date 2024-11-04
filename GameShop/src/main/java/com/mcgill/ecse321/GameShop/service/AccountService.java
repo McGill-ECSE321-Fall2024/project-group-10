@@ -33,6 +33,7 @@ public class AccountService {
 
     @Autowired
     private CartRepository cartRepository;
+    
 
 
 
@@ -52,6 +53,10 @@ public class AccountService {
         if (username.trim().isEmpty() || username == null){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
+        }
+        if (password.trim().isEmpty() || password == null){
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
+            String.format("Invalid password"));
         }
         Account account = accountRepository.findByEmail(email);
         if (account != null){
@@ -73,6 +78,10 @@ public class AccountService {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
         }
+        if (password.trim().isEmpty() || password == null){
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
+            String.format("Invalid password"));
+        }
         Account account = accountRepository.findByEmail(email);
         if (account != null){
             throw new GameShopException(HttpStatus.NOT_FOUND,
@@ -91,6 +100,10 @@ public class AccountService {
         if (username.trim().isEmpty() || username == null){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
+        }
+        if (password.trim().isEmpty() || password == null){
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
+            String.format("Invalid password"));
         }
         Account account = accountRepository.findByEmail(email);
         if (account != null){
