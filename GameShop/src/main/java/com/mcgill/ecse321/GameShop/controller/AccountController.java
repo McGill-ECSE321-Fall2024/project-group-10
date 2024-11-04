@@ -37,8 +37,7 @@ public class AccountController {
             customerToCreate.getPassword(), 
             customerToCreate.getPhoneNumber(),
              customerToCreate.getAddress());
-        
-        return new AccountResponseDto(createdCustomer);
+        return AccountResponseDto.create(createdCustomer);
     }
 
 
@@ -49,8 +48,7 @@ public class AccountController {
             managerToCreate.getPassword(), 
             managerToCreate.getPhoneNumber(),
             managerToCreate.getAddress());
-        
-        return new AccountResponseDto(createdManager);
+        return AccountResponseDto.create(createdManager);
     }
 
     @PostMapping("/account/employee")
@@ -60,15 +58,21 @@ public class AccountController {
             employeeToCreate.getPassword(), 
             employeeToCreate.getPhoneNumber(),
             employeeToCreate.getAddress());
-        
-        return new EmployeeResponseDto(createdEmployee);
+        return EmployeeResponseDto.create(createdEmployee);
     }
 
-    @GetMapping("/account/{email}")
-    public AccountResponseDto findPersonByEmail(@PathVariable String email) {
+    @GetMapping("/account/customer/{email}")
+    public AccountResponseDto findCustomerByEmail(@PathVariable String email) {
         Account createdAccount = accountService.getAccountByEmail(email);
-        return new AccountResponseDto(createdAccount);
+        return AccountResponseDto.create(createdAccount);
     }
+
+    @GetMapping("/account/employee/{email}")
+    public EmployeeResponseDto findEmployeeByEmail(@PathVariable String email) {
+        Employee createdAccount = (Employee) accountService.getEmployeeAccountByEmail(email);
+        return EmployeeResponseDto.create(createdAccount);
+    }
+
 
     @GetMapping("/account/employees")
     public EmployeeListDto getEmployees() {
@@ -98,7 +102,6 @@ public class AccountController {
         return new AccountListDto(dtos);
     }
     
-    //need to check the put mapping
     @PutMapping("account/{email}")
     public AccountResponseDto updateAccount(@PathVariable String email, @RequestBody AccountRequestDto updatedInformation) {
         Account account = accountService.getAccountByEmail(email);
@@ -106,13 +109,13 @@ public class AccountController {
             updatedInformation.getPassword(), 
             updatedInformation.getPhoneNumber(), 
             updatedInformation.getAddress());
-        return new AccountResponseDto(account);
+        return AccountResponseDto.create(account);
     }
 
     @PutMapping("account/employee/{email}")
     public EmployeeResponseDto archiveEmployeeAccount(@PathVariable String email){
         Account employee = (Account) accountService.archiveEmployee(email);
-        return new EmployeeResponseDto(employee);
+        return EmployeeResponseDto.create(employee);
     }
 
     
