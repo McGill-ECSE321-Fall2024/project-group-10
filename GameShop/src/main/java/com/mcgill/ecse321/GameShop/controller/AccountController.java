@@ -12,6 +12,7 @@ import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
+import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.service.AccountService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,19 @@ public class AccountController {
         return EmployeeResponseDto.create(createdAccount);
     }
 
+    @GetMapping("/account/getmanager")
+    public AccountListDto getManager() {
+        List<AccountResponseDto> dtos = new ArrayList<AccountResponseDto>();
+        for (Account m: accountService.getManager()){
+            if (m instanceof Manager){
+                dtos.add(new AccountResponseDto(m));
+            }
+            else{
+                continue;
+            }
+        }
+        return new AccountListDto(dtos);
+    }
 
     @GetMapping("/account/employees")
     public EmployeeListDto getEmployees() {

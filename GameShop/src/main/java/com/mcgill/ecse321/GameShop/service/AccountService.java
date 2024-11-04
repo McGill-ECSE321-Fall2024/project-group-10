@@ -156,6 +156,12 @@ public class AccountService {
     }
 
     @Transactional
+    public Iterable<Account> getManager(){
+        return managerRepo.findAll();
+    }
+
+
+    @Transactional
     public Account updateAccount(String email, String username, String password, String phoneNumber, String address){
         Account account = getAccountByEmail(email);
         //ensure that the account exists
