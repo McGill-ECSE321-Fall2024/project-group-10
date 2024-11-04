@@ -42,4 +42,8 @@ public class WishListResponseDto {
     public GameListDto getGames() {
         return games;
     }
+
+    public static WishListResponseDto create(WishList wishList) {
+        return new WishListResponseDto(wishList);
+    }
 }

@@ -13,7 +13,7 @@ import com.mcgill.ecse321.GameShop.repository.WishListRepository;
 import jakarta.transaction.Transactional;
 
 @Service
-public class WishlistService {
+public class WishListService {
     @Autowired
     private WishListRepository wishListRepository;
 
