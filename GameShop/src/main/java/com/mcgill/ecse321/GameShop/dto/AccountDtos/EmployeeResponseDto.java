@@ -38,6 +38,10 @@ public class EmployeeResponseDto {
         return employeeStatus;
     }
 
+    public AccountType getType(){
+        return type;
+    }
+
     public String getEmail(){
         return email;
     }
