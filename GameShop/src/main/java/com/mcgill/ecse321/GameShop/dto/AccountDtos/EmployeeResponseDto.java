@@ -23,9 +23,9 @@ public class EmployeeResponseDto {
         this.address = account.getAddress();
     }
 
-    public static AccountResponseDto create(Account account){
+    public static EmployeeResponseDto create(Account account){
         if (account != null){
-            return new AccountResponseDto(account);
+            return new EmployeeResponseDto(account);
         }
         else{
             throw new IllegalArgumentException("Account does not exist.");
