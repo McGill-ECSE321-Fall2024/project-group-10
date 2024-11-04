@@ -26,14 +26,14 @@ public class PlatformController {
     @PostMapping("/platforms")
     public PlatformResponseDto createPlatform(@Valid @RequestBody PlatformRequestDto request) {
         Platform platform = platformService.createPlatform(request.getPlatformName(), request.getManagerEmail());
-        return new PlatformResponseDto(platform);
+        return PlatformResponseDto.create(platform);
     }
 
     /** Get a platform by ID */
     @GetMapping("/platforms/{pid}")
     public PlatformResponseDto getPlatformById(@PathVariable int pid) {
         Platform platform = platformService.getPlatform(pid);
-        return new PlatformResponseDto(platform);
+        return PlatformResponseDto.create(platform);
     }
 
     /** Get all platforms */
@@ -50,7 +50,7 @@ public class PlatformController {
     @PutMapping("/platforms/{id}")
     public PlatformResponseDto updatePlatform(@PathVariable int id, @RequestBody PlatformRequestDto request) {
         Platform platform = platformService.updatePlatform(id, request.getPlatformName());
-        return new PlatformResponseDto(platform);
+        return PlatformResponseDto.create(platform);
     }
 
     /** Delete a platform */

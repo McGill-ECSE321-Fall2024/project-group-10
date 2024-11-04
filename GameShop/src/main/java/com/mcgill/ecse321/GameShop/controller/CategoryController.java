@@ -25,14 +25,14 @@ public class CategoryController {
     @PostMapping("/categories")
     public CategoryResponseDto createCategory(@Valid @RequestBody CategoryRequestDto request) {
         Category category = categoryService.createCategory(request.getCategoryName(), request.getManagerEmail());
-        return new CategoryResponseDto(category);
+        return CategoryResponseDto.create(category);
     }
 
     /** Get a category by ID */
     @GetMapping("/categories/{cid}")
     public CategoryResponseDto getCategoryById(@PathVariable int cid) {
         Category category = categoryService.getCategory(cid);
-        return new CategoryResponseDto(category);
+        return CategoryResponseDto.create(category);
     }
 
     /** Get all categories */
@@ -49,7 +49,7 @@ public class CategoryController {
     @PutMapping("/categories/{id}")
     public CategoryResponseDto updateCategory(@PathVariable int id, @RequestBody CategoryRequestDto request) {
         Category category = categoryService.updateCategory(id, request.getCategoryName());
-        return new CategoryResponseDto(category);
+        return CategoryResponseDto.create(category);
     }
 
     /** Delete a category */

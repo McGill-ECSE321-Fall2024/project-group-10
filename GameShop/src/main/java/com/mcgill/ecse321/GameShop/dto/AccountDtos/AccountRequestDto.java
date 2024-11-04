@@ -13,6 +13,14 @@ public class AccountRequestDto {
     private String phoneNumber;
     @NotBlank(message = "Address is required.")
     private String address;
+
+    public AccountRequestDto(String email, String username, String password, String phoneNumber, String address) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+    }
     
     
   
