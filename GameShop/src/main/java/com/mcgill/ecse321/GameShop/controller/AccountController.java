@@ -63,7 +63,7 @@ public class AccountController {
 
     @GetMapping("/account/customer/{email}")
     public AccountResponseDto findCustomerByEmail(@PathVariable String email) {
-        Account createdAccount = accountService.getAccountByEmail(email);
+        Account createdAccount = accountService.getCustomerAccountByEmail(email);
         return AccountResponseDto.create(createdAccount);
     }
 
