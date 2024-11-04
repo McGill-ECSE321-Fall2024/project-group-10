@@ -36,7 +36,7 @@ public class AccountController {
             customerToCreate.getUsername(), 
             customerToCreate.getPassword(), 
             customerToCreate.getPhoneNumber(),
-             customerToCreate.getAddress());
+            customerToCreate.getAddress());
         return AccountResponseDto.create(createdCustomer);
     }
 
