@@ -145,6 +145,26 @@ public class AccountService {
     }
 
     @Transactional
+    public Employee getEmployeeAccountByEmail(String email){
+        Employee account = employeeRepo.findByEmail(email);
+        if (account == null) {
+			throw new GameShopException(HttpStatus.NOT_FOUND,
+					String.format("There is no employee account with email %s.", email));
+		}
+		return account;
+    }
+
+    @Transactional
+    public Customer getCustomerAccountByEmail(String email){
+        Customer account = customerRepo.findByEmail(email);
+        if (account == null) {
+			throw new GameShopException(HttpStatus.NOT_FOUND,
+					String.format("There is no customer account with email %s.", email));
+		}
+		return account;
+    }
+
+    @Transactional
     public Employee archiveEmployee(String email){
         Employee employee = employeeRepo.findByEmail(email);
         if (employee != null){
