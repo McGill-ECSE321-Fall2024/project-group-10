@@ -5,6 +5,7 @@ import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Employee.EmployeeStatus;
 
 public class EmployeeResponseDto {
+    private AccountType type;
     private EmployeeStatus employeeStatus;
     private String email;
     private String username;
@@ -21,6 +22,7 @@ public class EmployeeResponseDto {
         this.username = account.getUsername();
         this.phoneNumber = account.getPhoneNumber();
         this.address = account.getAddress();
+        this.type = AccountType.EMPLOYEE;
     }
 
     public static EmployeeResponseDto create(Account account){

@@ -9,7 +9,7 @@ public class AccountRequestDto {
     private String username;
     @NotBlank(message = "Password is required.")
     private String password;
-    @NotBlank(message = "String is required.")
+    @NotBlank(message = "PhoneNumber is required.")
     private String phoneNumber;
     @NotBlank(message = "Address is required.")
     private String address;
