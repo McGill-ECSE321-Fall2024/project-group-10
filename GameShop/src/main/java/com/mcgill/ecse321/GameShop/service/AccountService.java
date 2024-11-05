@@ -137,8 +137,8 @@ public class AccountService {
         Customer customer = new Customer(email, username, password, phoneNumber, address, cart);
         
         //each customer needs a wishlist upon creation
-        WishList wishlist = new WishList("Customer's wishlist", customer);
-        wishListRepository.save(wishlist);
+        // WishList wishlist = new WishList("Customer's wishlist", customer);
+        // wishListRepository.save(wishlist);
 
         return customerRepo.save(customer);
     }

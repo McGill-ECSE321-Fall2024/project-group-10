@@ -9,12 +9,17 @@ public class AccountRequestDto {
     private String username;
     @NotBlank(message = "Password is required.")
     private String password;
-    @NotBlank(message = "PhoneNumber is required.")
     private String phoneNumber;
-    @NotBlank(message = "Address is required.")
     private String address;
-
-    public AccountRequestDto(String email, String username, String password, String phoneNumber, String address) {
+    private AccountType type;
+    
+  
+    public AccountRequestDto(@NotBlank(message = "Email is required.") String email,
+            @NotBlank(message = "Username is required.") String username,
+            @NotBlank(message = "Password is required.") String password,
+            String phoneNumber,
+            String address) {
+        this.type = AccountType.EMPLOYEE;
         this.email = email;
         this.username = username;
         this.password = password;
@@ -22,8 +27,6 @@ public class AccountRequestDto {
         this.address = address;
     }
     
-    
-  
     public String getEmail() {
         return email;
     }
@@ -55,7 +58,13 @@ public class AccountRequestDto {
         this.address = address;
     }
 
-   
+    public AccountType getAccountType() {
+        return type;
+    }
 
-    
+    public void setAccountType(AccountType type) {
+        this.type = type;
+    }
+
+
 }

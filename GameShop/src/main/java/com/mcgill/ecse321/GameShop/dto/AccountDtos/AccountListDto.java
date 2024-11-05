@@ -2,8 +2,11 @@ package com.mcgill.ecse321.GameShop.dto.AccountDtos;
 import java.util.List;
 
 
+
 public class AccountListDto {
    private List<AccountResponseDto> accounts;
+
+   protected AccountListDto(){}
 
    public AccountListDto(List<AccountResponseDto> accounts){
         this.accounts = accounts;
