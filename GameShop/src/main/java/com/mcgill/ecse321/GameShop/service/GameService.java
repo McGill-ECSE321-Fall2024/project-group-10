@@ -112,4 +112,6 @@ public class GameService {
         return game;
     }
     
+
+    // set game platform and category
 }

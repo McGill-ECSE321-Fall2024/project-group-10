@@ -53,5 +53,17 @@ public class GameController { // TODO, should we implement Delete for this contr
 
 
     // TODO still have to implement PUT mapping for update
+
+    // Archive Game (Upon archiving the app should require the owner to specify if the archived game should still appear in the catalogue), 
+    
+    // GetAllSpecificGames (return list of reg objects), GetGames (return list of reg objects) Add Game to platform
+
+    // GetGamesByTitle, GetGamesByCategory, GetGameByPlatform, GetGameByStatus
+
+    // Add/Remove game from platform/category
+
+    // UpdateAllFields
+
+    // AddSpecificGames.
     
 }
