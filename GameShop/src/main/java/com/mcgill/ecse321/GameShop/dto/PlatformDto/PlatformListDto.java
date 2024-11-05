@@ -7,6 +7,8 @@ public class PlatformListDto {
     public PlatformListDto(List<PlatformSummaryDto> platforms) {
         this.platforms = platforms;
     }
+    public PlatformListDto() {
+    }
     public List<PlatformSummaryDto> getPlatforms() {
         return platforms;
     }
