@@ -1,5 +1,7 @@
 package com.mcgill.ecse321.GameShop.dto.GameDto;
 
+import java.util.List;
+
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 
 import jakarta.validation.constraints.NotBlank;
@@ -25,6 +27,11 @@ public class GameRequestDto {
 
     @NotBlank(message = "Game photo URL cannot be empty")
     private String aPhotoUrl;
+
+    // private List<Integer> aPlatform;
+    private List<Integer> Categories;
+
+    protected GameRequestDto() {}
 
     public GameRequestDto(String aTitle, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl) {
         this.aTitle = aTitle;
@@ -81,5 +88,13 @@ public class GameRequestDto {
 
     public void setaPhotoUrl(String aPhotoUrl) {
         this.aPhotoUrl = aPhotoUrl;
+    }
+
+    public void setCategories(List<Integer> Categories) {
+        this.Categories = Categories;
+    }
+
+    public List<Integer> getCategories() {
+        return Categories;
     }
 }

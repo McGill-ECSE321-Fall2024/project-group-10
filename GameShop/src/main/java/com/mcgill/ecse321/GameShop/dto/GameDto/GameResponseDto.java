@@ -1,5 +1,6 @@
 package com.mcgill.ecse321.GameShop.dto.GameDto;
 
+import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryListDto;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 
@@ -12,6 +13,7 @@ public class GameResponseDto {
         private GameStatus aGameStatus;
         private int aStockQuantity;
         private String aPhotoUrl;
+        private CategoryListDto categories;
 
         protected GameResponseDto() {
         }
@@ -24,6 +26,7 @@ public class GameResponseDto {
             this.aGameStatus = aGame.getGameStatus();
             this.aStockQuantity = aGame.getStockQuantity();
             this.aPhotoUrl = aGame.getPhotoUrl();
+            this.categories = CategoryListDto.convertToCategoryListDto(aGame.getCategories());
         }
 
         // TODO check with team: Static factory method to create a GameResponseDto from a Game instance
