@@ -4,14 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryListDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategorySummaryDto;
-import com.mcgill.ecse321.GameShop.model.Category;
+import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.repository.CategoryRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import org.junit.jupiter.api.AfterAll;
@@ -28,7 +27,7 @@ import org.springframework.http.*;
 
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
-import com.mcgill.ecse321.GameShop.model.Manager;
+
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -49,7 +48,7 @@ public class CategoryIntegrationTests {
     private AccountRepository accountRepo;
 
     private int categoryId;
-    private static final String MANAGER_EMAIL = "manager@example.com";
+    private static final String MANAGER_EMAIL = "manager2@example.com";
     private static final String MANAGER_PASSWORD = "managerPass";
     private static final String MANAGER_USERNAME = "managerUser";
     private static final String MANAGER_PHONE = "123-456-7890";
@@ -165,6 +164,11 @@ public class CategoryIntegrationTests {
     public void testDeleteCategory() {
         // Arrange
         String url = String.format("/categories/%d", this.categoryId);
+        ResponseEntity<PlatformResponseDto> responseBefore = client.getForEntity(url, PlatformResponseDto.class);
+
+        // Assert
+        assertNotNull(responseBefore);
+        assertEquals(HttpStatus.OK, responseBefore.getStatusCode(), "Category does not exist before deletion");
     
         // Act
         ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);

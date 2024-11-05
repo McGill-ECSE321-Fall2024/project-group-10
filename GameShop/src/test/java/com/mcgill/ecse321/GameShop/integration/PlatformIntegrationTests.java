@@ -45,7 +45,7 @@ public class PlatformIntegrationTests {
     private AccountRepository accountRepo;
 
     private int platformId;
-    private static final String MANAGER_EMAIL = "manager2@example.com";
+    private static final String MANAGER_EMAIL = "manager@example.com";
     private static final String MANAGER_PASSWORD = "managerPass";
     private static final String MANAGER_USERNAME = "managerUser";
     private static final String MANAGER_PHONE = "123-456-7890";
@@ -164,6 +164,12 @@ public class PlatformIntegrationTests {
     public void testDeletePlatform() {
         // Arrange
         String url = String.format("/platforms/%d", this.platformId);
+        ResponseEntity<PlatformResponseDto> responseBefore = client.getForEntity(url, PlatformResponseDto.class);
+
+        // Assert
+        assertNotNull(responseBefore);
+        assertEquals(HttpStatus.OK, responseBefore.getStatusCode(), "Platform does not exist before deletion");
+
 
         // Act
         ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);
