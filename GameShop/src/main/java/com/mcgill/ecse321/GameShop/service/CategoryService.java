@@ -1,14 +1,19 @@
 package com.mcgill.ecse321.GameShop.service;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Category;
+import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.repository.CategoryRepository;
+import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 
 import jakarta.transaction.Transactional;
@@ -20,6 +25,10 @@ public class CategoryService {
     private CategoryRepository categoryRepository;
     @Autowired
     private ManagerRepository managerRepository;
+    @Autowired
+    private GameRepository gameRepository;
+    @Autowired
+    private GameService gameService;
 
 
     @Transactional
@@ -51,6 +60,18 @@ public class CategoryService {
     public Iterable<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
+    @Transactional
+    public Iterable<Game> getAllGamesInCategory(int categoryId) {
+        ArrayList<Game> games = new ArrayList<Game>();
+        for (Game game : gameService.getAllGames()) {
+            if (game.getCategory(categoryId).getCategory_id() == categoryId){
+            games.add(game);
+        }
+
+        
+    }
+    return games;
+}
     
     @Transactional
     public Category updateCategory(int categoryId, String categoryName) {

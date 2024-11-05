@@ -10,9 +10,16 @@ import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryListDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategorySummaryDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
+import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.repository.CategoryRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
+import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
+import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -182,6 +189,30 @@ public class CategoryIntegrationTests {
         // Verify Deletion by trying to fetch the category again
         ResponseEntity<CategoryResponseDto> getResponse = client.getForEntity(url, CategoryResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
+    }
+    @Test
+    @Order(6)
+    public void testFindAllGamesInCategory() {
+        // Arrange
+        String url = String.format("/categories/%d/games", this.categoryId);
+        // Create a game in the category
+        GameRequestDto gameRequest = new GameRequestDto( "rambo 2", "this game is awesome", 59,GameStatus.InStock,5, "www.game.com");
+        gameRequest.setCategory_id(this.categoryId);
+        ResponseEntity<GameResponseDto> createResponse = client.postForEntity("/games", gameRequest, GameResponseDto.class);
+        assertNotNull(createResponse);
+        assertEquals(HttpStatus.OK, createResponse.getStatusCode());
+
+        // Act
+        ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        GameListDto games = response.getBody();
+        assertNotNull(games);
+        List<GameSummaryDto> gameList = games.getGames();
+        assertNotNull(gameList);
+        assertTrue(gameList.stream().anyMatch(game -> "New Game".equals(game.getGameName())));
     }
     
 
