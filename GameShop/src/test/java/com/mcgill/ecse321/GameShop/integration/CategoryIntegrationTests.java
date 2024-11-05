@@ -202,14 +202,14 @@ public class CategoryIntegrationTests {
         ResponseEntity<GameResponseDto> createResponse = client.postForEntity("/games", gameRequest, GameResponseDto.class);
         
         assertNotNull(createResponse);
-        assertEquals(HttpStatus.OK, createResponse.getStatusCode());
+        assertEquals(HttpStatus.OK, createResponse.getStatusCode(), "Game not created");
 
         // Act
         ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
 
         // Assert
         assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "Games not found");
         GameListDto games = response.getBody();
         assertNotNull(games);
         List<GameSummaryDto> gameList = games.getGames();

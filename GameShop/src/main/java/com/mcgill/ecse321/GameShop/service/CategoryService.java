@@ -27,8 +27,6 @@ public class CategoryService {
     private ManagerRepository managerRepository;
     @Autowired
     private GameRepository gameRepository;
-    @Autowired
-    private GameService gameService;
 
 
     @Transactional
@@ -53,6 +51,7 @@ public class CategoryService {
             throw new GameShopException(HttpStatus.NOT_FOUND,
                     String.format("Category does not exist"));
         }
+        System.out.println("XIXI"+category.getCategoryName());
         return category;
     }
     
@@ -63,7 +62,7 @@ public class CategoryService {
     @Transactional
     public Iterable<Game> getAllGamesInCategory(int categoryId) {
         ArrayList<Game> games = new ArrayList<Game>();
-        for (Game game : gameService.getAllGames()) {
+        for (Game game : gameRepository.findAll()) {
             if (game.getCategory(categoryId).getCategory_id() == categoryId){
             games.add(game);
         }

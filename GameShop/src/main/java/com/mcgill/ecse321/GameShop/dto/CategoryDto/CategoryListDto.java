@@ -23,7 +23,7 @@ public class CategoryListDto {
         this.categories = categories;
     }
 
-    public CategoryListDto convertToCategoryListDto(List<Category> categories) {
+    public static CategoryListDto convertToCategoryListDto(List<Category> categories) {
         List<CategorySummaryDto> categorySummaryDtos = new ArrayList<>();
         for (Category category : categories) {
             categorySummaryDtos.add(new CategorySummaryDto(category));

@@ -51,9 +51,18 @@ public class GameController { // TODO, should we implement Delete for this contr
     @PostMapping("/games")
     public GameResponseDto createGame(@Valid @RequestBody GameRequestDto request) {
         Game createdGame = gameService.CreateGame(request.getaTitle(), request.getaDescription(), request.getaPrice(), request.getaGameStatus(), request.getaStockQuantity(), request.getaPhotoUrl());
+        System.out.println("AAAAAAAAAAAAAAAAAA");
+        System.out.println(request.getCategories());
+        System.out.println(request.getCategories().size());
+        System.out.println(request.getCategories() != null);
+        System.out.println("BBBBBBBBBBBBBBBBBBB");
         if (request.getCategories() != null) {
+            System.out.println("CCCCCCCCCCCCCC");
             gameService.updateCategories(createdGame, request.getCategories());
+            System.out.println("Categories updated");
+        
         }
+        System.out.println(createdGame.getCategories()+"anthony hello world ");
         return GameResponseDto.create(createdGame);
     }
 

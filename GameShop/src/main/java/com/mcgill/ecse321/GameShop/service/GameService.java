@@ -119,10 +119,20 @@ public class GameService {
 
     @Transactional
     public Game updateCategories(Game game, List<Integer> categories) {
+        System.out.println("updateCategoriesstart");
+        if (categories == null) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Categories cannot be null");
+        }
+        System.out.println(categories);
+        System.out.println("middle of the function");
         for (int category_id : categories) {
+            System.out.println("Loop");
+            System.out.println(category_id);
             Category category = categoryService.getCategory(category_id);
+            System.out.println("cssssssssssssategory"+ category );
             game.addCategory(category);
         }
+        System.out.println("updateCategoriesend llaaaaaaast");
         gameRepository.save(game);
         return game;
     }
