@@ -78,4 +78,16 @@ public class WishListService {
         }
         return wishList.getGames();
     }
+    @Transactional
+    public WishList removeAllGamesFromWishlist(int wishlistId) {
+        WishList wishList = findWishlistById(wishlistId);
+        if (wishList == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("There is no WishList with Id %d.",wishlistId));
+        }
+        for (Game game : wishList.getGames()) {
+            wishList.removeGame(game);
+        }
+        return wishListRepository.save(wishList);
+    }
 }
