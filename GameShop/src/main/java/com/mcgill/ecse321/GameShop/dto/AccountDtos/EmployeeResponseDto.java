@@ -2,45 +2,43 @@ package com.mcgill.ecse321.GameShop.dto.AccountDtos;
 
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Employee;
-import com.mcgill.ecse321.GameShop.model.Manager;
+import com.mcgill.ecse321.GameShop.model.Employee.EmployeeStatus;
 
-
-
-public class AccountResponseDto {
+public class EmployeeResponseDto {
     private AccountType type;
+    private EmployeeStatus employeeStatus;
     private String email;
     private String username;
     private String phoneNumber;
     private String address;
 
-    protected AccountResponseDto(){}
+    protected EmployeeResponseDto(){}
 
-    public AccountResponseDto(Account account){
+    public EmployeeResponseDto(Account account){
         if (account instanceof Employee){
-            this.type = AccountType.EMPLOYEE;
-        }
-        else if (account instanceof Manager){
-            this.type = AccountType.MANAGER;
-        }
-        else{
-            this.type = AccountType.CUSTOMER;
+           this.employeeStatus = ((Employee)account).getEmployeeStatus();
         }
         this.email = account.getEmail();
         this.username = account.getUsername();
         this.phoneNumber = account.getPhoneNumber();
         this.address = account.getAddress();
+        this.type = AccountType.EMPLOYEE;
     }
 
-    public static AccountResponseDto create(Account account){
+    public static EmployeeResponseDto create(Account account){
         if (account != null){
-            return new AccountResponseDto(account);
+            return new EmployeeResponseDto(account);
         }
         else{
             throw new IllegalArgumentException("Account does not exist.");
         }
     }
 
-    public AccountType getAccountType(){
+    public EmployeeStatus getEmployeeStatus(){
+        return employeeStatus;
+    }
+
+    public AccountType getType(){
         return type;
     }
 

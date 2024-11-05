@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeListDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
+import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.service.AccountService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +38,7 @@ public class AccountController {
             customerToCreate.getPassword(), 
             customerToCreate.getPhoneNumber(),
              customerToCreate.getAddress());
-        
-        return new AccountResponseDto(createdCustomer);
+        return AccountResponseDto.create(createdCustomer);
     }
 
 
@@ -47,39 +49,57 @@ public class AccountController {
             managerToCreate.getPassword(), 
             managerToCreate.getPhoneNumber(),
             managerToCreate.getAddress());
-        
-        return new AccountResponseDto(createdManager);
+        return AccountResponseDto.create(createdManager);
     }
 
     @PostMapping("/account/employee")
-    public AccountResponseDto createEmployee(@RequestBody AccountRequestDto employeeToCreate) {
-        Account createdEmployee = accountService.createManager(employeeToCreate.getEmail(), 
+    public EmployeeResponseDto createEmployee(@RequestBody AccountRequestDto employeeToCreate) {
+        Account createdEmployee = accountService.createEmployee(employeeToCreate.getEmail(), 
             employeeToCreate.getUsername(), 
             employeeToCreate.getPassword(), 
             employeeToCreate.getPhoneNumber(),
             employeeToCreate.getAddress());
-        
-        return new AccountResponseDto(createdEmployee);
+        return EmployeeResponseDto.create(createdEmployee);
     }
 
-    @GetMapping("/account/{email}")
-    public AccountResponseDto findPersonByEmail(@PathVariable String email) {
-        Account createdAccount = accountService.getAccountByEmail(email);
-        return new AccountResponseDto(createdAccount);
+    @GetMapping("/account/customer/{email}")
+    public AccountResponseDto findCustomerByEmail(@PathVariable String email) {
+        Account createdAccount = accountService.getCustomerAccountByEmail(email);
+        return AccountResponseDto.create(createdAccount);
     }
 
-    @GetMapping("/account/employees")
-    public AccountListDto getEmployees() {
+    @GetMapping("/account/employee/{email}")
+    public EmployeeResponseDto findEmployeeByEmail(@PathVariable String email) {
+        Employee createdAccount = (Employee) accountService.getEmployeeAccountByEmail(email);
+        return EmployeeResponseDto.create(createdAccount);
+    }
+
+    @GetMapping("/account/getmanager")
+    public AccountListDto getManager() {
         List<AccountResponseDto> dtos = new ArrayList<AccountResponseDto>();
-        for (Account e: accountService.getAllEmployees()){
-            if (e instanceof Employee){
-                dtos.add(new AccountResponseDto(e));
+        for (Account m: accountService.getManager()){
+            if (m instanceof Manager){
+                dtos.add(new AccountResponseDto(m));
             }
             else{
                 continue;
             }
         }
         return new AccountListDto(dtos);
+    }
+
+    @GetMapping("/account/employees")
+    public EmployeeListDto getEmployees() {
+        List<EmployeeResponseDto> dtos = new ArrayList<EmployeeResponseDto>();
+        for (Account e: accountService.getAllEmployees()){
+            if (e instanceof Employee){
+                dtos.add(new EmployeeResponseDto(e));
+            }
+            else{
+                continue;
+            }
+        }
+        return new EmployeeListDto(dtos);
     }
 
     @GetMapping("/account/customers")
@@ -96,21 +116,22 @@ public class AccountController {
         return new AccountListDto(dtos);
     }
     
-    //need to check the put mapping
     @PutMapping("account/{email}")
-    public void updateAccount(@PathVariable String email, @RequestBody AccountRequestDto updatedInformation) {
+    public AccountResponseDto updateAccount(@PathVariable String email, @RequestBody AccountRequestDto updatedInformation) {
+        Account account = accountService.getAccountByEmail(email);
         accountService.updateAccount(email, updatedInformation.getUsername(), 
             updatedInformation.getPassword(), 
             updatedInformation.getPhoneNumber(), 
             updatedInformation.getAddress());
+        return AccountResponseDto.create(account);
     }
 
     @PutMapping("account/employee/{email}")
-    public void archiveEmployeeAccount(@PathVariable String email){
-        accountService.archiveEmployee(email);
+    public EmployeeResponseDto archiveEmployeeAccount(@PathVariable String email){
+        Account employee = (Account) accountService.archiveEmployee(email);
+        return EmployeeResponseDto.create(employee);
     }
 
-    
     
     
 }
