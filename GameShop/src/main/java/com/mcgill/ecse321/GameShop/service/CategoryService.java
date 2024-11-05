@@ -65,6 +65,8 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(int categoryId) {
         Category category = getCategory(categoryId);
+        category.removeManager();
+        categoryRepository.save(category);
         categoryRepository.delete(category);
     }
 

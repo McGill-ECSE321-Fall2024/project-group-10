@@ -8,6 +8,8 @@ public class CategoryListDto {
     public CategoryListDto(List<CategorySummaryDto> categories) {
         this.categories = categories;
     }
+    public CategoryListDto() {
+    }
 
     public List<CategorySummaryDto> getCategories() {
         return categories;

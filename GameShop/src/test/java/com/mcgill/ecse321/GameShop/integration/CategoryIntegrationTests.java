@@ -138,43 +138,48 @@ public class CategoryIntegrationTests {
         assertEquals(MANAGER_EMAIL, updatedCategory.getManagerEmail());
     }
 
-    // @Test
-    // @Order(4)
-    // public void testGetAllCategories() {
-    //     // Arrange
-    //     // Create another category
-    //     CategoryRequestDto request = new CategoryRequestDto(SECOND_NAME, MANAGER_EMAIL);
-    //     ResponseEntity<CategoryResponseDto> createResponse = client.postForEntity("/categories", request, CategoryResponseDto.class);
-    //     assertNotNull(createResponse);
-    //     assertEquals(HttpStatus.OK, createResponse.getStatusCode());
-    //     // Act
-    //     ResponseEntity<CategoryListDto> response = client.getForEntity("/categories", CategoryListDto.class);
+    @Test
+    @Order(4)
+    public void testGetAllCategories() {
+        // Arrange
+        // Create another category
+        CategoryRequestDto request = new CategoryRequestDto(SECOND_NAME, MANAGER_EMAIL);
+        ResponseEntity<CategoryResponseDto> createResponse = client.postForEntity("/categories", request, CategoryResponseDto.class);
+        assertNotNull(createResponse);
+        assertEquals(HttpStatus.OK, createResponse.getStatusCode());
+        // Act
+        ResponseEntity<CategoryListDto> response = client.getForEntity("/categories", CategoryListDto.class);
 
-    //     // Assert
-    //     assertNotNull(response);
-        // assertEquals(HttpStatus.OK, response.getStatusCode());
-        // CategoryListDto categories = response.getBody();
-        // assertNotNull(categories);
-        // List<CategorySummaryDto> categoryList = categories.getCategories();
-        // assertNotNull(categoryList);
-        // assertTrue(categoryList.size() >= 2);
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        CategoryListDto categories = response.getBody();
+        assertNotNull(categories);
+        List<CategorySummaryDto> categoryList = categories.getCategories();
+        assertNotNull(categoryList);
+        assertTrue(categoryList.size() >= 2);}
+    
+
+    @Test
+    @Order(5)
+    public void testDeleteCategory() {
+        // Arrange
+        String url = String.format("/categories/%d", this.categoryId);
+    
+        // Act
+        ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);
+    
+        // Log for debugging
+        System.out.println("Response status code for DELETE: " + response.getStatusCode());
+    
+        // Assert
+        assertNotNull(response);
+    
+        // Verify Deletion by trying to fetch the category again
+        ResponseEntity<CategoryResponseDto> getResponse = client.getForEntity(url, CategoryResponseDto.class);
+        assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
     }
+    
 
-    // @Test
-    // @Order(5)
-    // public void testDeleteCategory() {
-    //     // Arrange
-    //     String url = String.format("/categories/%d", this.categoryId);
-
-    //     // Act
-    //     ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);
-
-    //     // Assert
-    //     assertNotNull(response);
-    //     assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-
-    //     // Verify Deletion
-    //     ResponseEntity<CategoryResponseDto> getResponse = client.getForEntity(url, CategoryResponseDto.class);
-    //     assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
-    // }
 }
+

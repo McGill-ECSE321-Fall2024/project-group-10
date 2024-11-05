@@ -13,6 +13,8 @@ public class CategorySummaryDto {
         this.categoryId = category.getCategory_id();
         this.manager = category.getManager();
     }
+    public CategorySummaryDto() {
+    }
 
     public String getCategoryName() {
         return categoryName;
