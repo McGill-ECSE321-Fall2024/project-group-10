@@ -90,4 +90,20 @@ public class WishListService {
         }
         return wishListRepository.save(wishList);
     }
+    @Transactional
+    public Game getGameInWishList(int wishlistId, int gameId) {
+        WishList wishList = findWishlistById(wishlistId);
+        if (wishList == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("There is no WishList with Id %d.",wishlistId));
+        }
+        Iterable<Game> games = wishList.getGames();
+        for (Game game : games) {
+            if (game.getGame_id() == gameId) {
+                return game;
+            }
+        }
+        throw new GameShopException(HttpStatus.NOT_FOUND,
+                String.format("There is no Game with Id %d in the WishList with Id %d.",gameId,wishlistId));
+    }
 }

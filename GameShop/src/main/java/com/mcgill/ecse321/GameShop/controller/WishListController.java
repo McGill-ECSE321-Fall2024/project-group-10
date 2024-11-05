@@ -56,15 +56,7 @@ public class WishListController {
     }
     @GetMapping("/wishlist/{wishlist_id}/{game_id}")
     public GameResponseDto getGameInWishList(@PathVariable int wishlist_id, @PathVariable int game_id) {
-        WishList wishList = wishListService.findWishlistById(wishlist_id);
-        Iterable<Game> games = wishList.getGames();
-        for (Game game : games) {
-            if (game.getGame_id() == game_id) {
-                return GameResponseDto.create(game);
-            }
-        }
-        throw new GameShopException(HttpStatus.NOT_FOUND,
-                String.format("There is no Game with Id %d in the WishList with Id %d.",game_id,wishlist_id));
+        Game game = wishListService.getGameInWishList(wishlist_id,game_id);
+        return new GameResponseDto(game);
     }
-    
 }

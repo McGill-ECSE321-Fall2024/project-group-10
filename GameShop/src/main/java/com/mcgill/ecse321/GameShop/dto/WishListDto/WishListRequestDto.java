@@ -1,6 +1,5 @@
 package com.mcgill.ecse321.GameShop.dto.WishListDto;
 
-import java.nio.file.attribute.GroupPrincipal;
 
 import jakarta.validation.constraints.NotBlank;
 
