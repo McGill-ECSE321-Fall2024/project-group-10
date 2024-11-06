@@ -152,6 +152,68 @@ public class CartService {
     }
 
     @Transactional
+    public Map<Game, Integer> getAllGamesFromCartWithQuantities(int cartId) {
+        // Retrieve the Cart to ensure it exists
+        Cart cart = getCartById(cartId);
+        if (cart == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("Cart with ID %d does not exist", cartId));
+        }
+
+        // Retrieve the map of gameId to quantity for the specified cart
+        Map<Integer, Integer> quantities = cartQuantities.get(cartId);
+        if (quantities == null || quantities.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<Game, Integer> gamesInCart = new HashMap<>();
+
+        for (Map.Entry<Integer, Integer> entry : quantities.entrySet()) {
+            int gameId = entry.getKey();
+            int quantity = entry.getValue();
+
+            Game game = gameRepository.findById(gameId);
+            if (game == null) {
+                throw new GameShopException(HttpStatus.NOT_FOUND,
+                        String.format("Game with ID %d does not exist", gameId));
+            }
+
+            gamesInCart.put(game, quantity);
+        }
+
+        return gamesInCart;
+    }
+
+    @Transactional
+    public Map.Entry<Game, Integer> getGameFromCart(int cartId, int gameId) {
+        Cart cart = getCartById(cartId);
+        if (cart == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("Cart with ID %d does not exist", cartId));
+        }
+
+        Map<Integer, Integer> quantities = cartQuantities.get(cartId);
+        if (quantities == null || quantities.isEmpty()) {
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("No games found in cart with ID %d", cartId));
+        }
+
+        Integer quantity = quantities.get(gameId);
+        if (quantity == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("Game with ID %d is not in cart with ID %d", gameId, cartId));
+        }
+        Game game = gameRepository.findById(gameId);
+        if (game == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("Game with ID %d does not exist", gameId));
+        }
+
+        // Return the Game and its quantity
+        return new AbstractMap.SimpleEntry<>(game, quantity);
+    }
+
+    @Transactional
     public Map<Integer, Integer> getQuantitiesForCart(int cartId) {
         Map<Integer, Integer> quantities = cartQuantities.get(cartId);
         if (quantities == null) {
@@ -163,5 +225,17 @@ public class CartService {
     @Transactional
     public Iterable<Cart> getAllCarts() {
         return cartRepository.findAll();
+    }
+
+    @Transactional
+    public Cart clearCart(int cartId) {
+        Cart cart = getCartById(cartId);
+        Map<Integer, Integer> quantities = cartQuantities.get(cartId);
+        if (quantities != null) {
+            quantities.clear();
+        }
+        cart.getGames().clear();
+        cartRepository.save(cart);
+        return cart;
     }
 }

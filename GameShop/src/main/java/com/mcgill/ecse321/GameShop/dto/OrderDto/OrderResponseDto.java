@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.dto.OrderDto;
 
 import com.mcgill.ecse321.GameShop.model.Order;
+import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameResponseDto;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,21 +10,15 @@ public class OrderResponseDto {
     private String trackingNumber;
     private Date orderDate;
     private String note;
-    private int paymentCard;
     private String customerEmail;
-    // private List<SpecificGameDto> specificGames;
+    private List<SpecificGameResponseDto> specificGames;
 
-    // Constructor that accepts an Order entity and maps SpecificGame list
     public OrderResponseDto(Order order) {
         this.trackingNumber = order.getTrackingNumber();
         this.orderDate = order.getOrderDate();
         this.note = order.getNote();
         this.customerEmail = order.getCustomer().getEmail();
-        /*
-         * this.specificGames = order.getSpecificGames().stream()
-         * .map(SpecificGameDto::new)
-         * .collect(Collectors.toList());
-         */
+
     }
 
     public String getTrackingNumber() {
@@ -38,14 +33,15 @@ public class OrderResponseDto {
         return note;
     }
 
-    public int getPaymentCard() {
-        return paymentCard;
-    }
-
     public String getCustomerEmail() {
         return customerEmail;
     }
 
+    public List<SpecificGameResponseDto> getSpecificGames() {
+        return specificGames;
+    }
+
+    // Setters
     public void setTrackingNumber(String trackingNumber) {
         this.trackingNumber = trackingNumber;
     }
@@ -61,9 +57,8 @@ public class OrderResponseDto {
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
     }
-    /*
-     * public List<SpecificGameDto> getSpecificGames() {
-     * return specificGames;
-     * }
-     */
+
+    public void setSpecificGames(List<SpecificGameResponseDto> specificGames) {
+        this.specificGames = specificGames;
+    }
 }
