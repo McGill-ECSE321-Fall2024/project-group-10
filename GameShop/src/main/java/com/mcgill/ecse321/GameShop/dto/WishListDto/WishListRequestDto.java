@@ -22,6 +22,5 @@ public class WishListRequestDto {
     public String getCustomerEmail() {
         return customerEmail;
     }
-
     //public Iterable<Gto> 
 }

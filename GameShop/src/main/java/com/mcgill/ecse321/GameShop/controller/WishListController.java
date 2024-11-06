@@ -11,16 +11,13 @@ import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.WishList;
-import com.mcgill.ecse321.GameShop.service.GameService;
 import com.mcgill.ecse321.GameShop.service.WishListService;
 
 public class WishListController {
     
     @Autowired
     private WishListService wishListService;
-    @Autowired
-    private GameService gameService;
-    
+
     @GetMapping("/wishlist/{wishlist_id}")
     public WishListResponseDto findWishlistById(@PathVariable int wishlist_id) {
         WishList wishList = wishListService.findWishlistById(wishlist_id);
@@ -29,16 +26,12 @@ public class WishListController {
 
     @PutMapping("/wishlist/{wishlist_id}/{game_id}")
     public WishListResponseDto addGameToWishlist(@PathVariable int wishlist_id, @PathVariable int game_id) {
-        Game game = gameService.findGameById(game_id);
-        WishList wishList = wishListService.findWishlistById(wishlist_id);
-        wishList.addGame(game);
+        WishList wishList = wishListService.addGameToWishlist(wishlist_id,game_id);
         return WishListResponseDto.create(wishList);
     }
     @DeleteMapping("/wishlist/{wishlist_id}/{game_id}")
     public WishListResponseDto removeGameFromWishlist(@PathVariable int wishlist_id, @PathVariable int game_id) {
-        Game game = gameService.findGameById(game_id);
-        WishList wishList = wishListService.findWishlistById(wishlist_id);
-        wishList.removeGame(game);
+        WishList wishList = wishListService.removeGameFromWishlist(wishlist_id,game_id);
         return WishListResponseDto.create(wishList);
     }
     @PutMapping("/wishlist/{wishlist_id}")

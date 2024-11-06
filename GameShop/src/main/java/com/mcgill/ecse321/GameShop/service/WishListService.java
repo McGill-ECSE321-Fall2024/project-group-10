@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
+import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.WishList;
 import com.mcgill.ecse321.GameShop.repository.WishListRepository;
@@ -16,7 +17,10 @@ import jakarta.transaction.Transactional;
 public class WishListService {
     @Autowired
     private WishListRepository wishListRepository;
-
+    @Autowired
+    private AccountService accountService;
+    
+    @Transactional
     public WishList findWishlistById(int id) {
         WishList wishList = wishListRepository.findById(id);
         if (wishList == null) {
@@ -24,6 +28,12 @@ public class WishListService {
                     String.format("There is no WishList with Id %d.",id));
         }
         return wishList;
+    }
+    @Transactional
+    public WishList createWishlist(String customerEmail, String title) {
+        Customer customer = accountService.getCustomerAccountByEmail(customerEmail);
+        WishList wishList = new WishList(title, customer);
+        return wishListRepository.save(wishList);
     }
     @Transactional
     public WishList addGameToWishlist(int wishlistId, int gameId) {
