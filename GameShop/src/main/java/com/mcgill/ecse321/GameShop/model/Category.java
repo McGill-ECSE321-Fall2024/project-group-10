@@ -118,6 +118,9 @@ public class Category {
     categorysByCategory_id.remove(getCategory_id());
     manager = null;
   }
+  public void removeManager() {
+    manager = null;
+  }
 
   public String toString() {
     return super.toString() + "[" +

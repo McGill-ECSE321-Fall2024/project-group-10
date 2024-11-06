@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Promotion;
+import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import com.mcgill.ecse321.GameShop.repository.PromotionRepository;
 
@@ -22,6 +23,8 @@ public class PromotionService {
 
     @Autowired
     private ManagerRepository managerRepository;
+    @Autowired
+    private GameRepository gameRepository;
 
     // Helper method to check if a string is empty or null
     private boolean isEmpty(String str) {

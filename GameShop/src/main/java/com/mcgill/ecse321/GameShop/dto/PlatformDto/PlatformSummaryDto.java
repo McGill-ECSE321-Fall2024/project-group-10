@@ -13,6 +13,8 @@ public class PlatformSummaryDto {
         this.platformId = platform.getPlatform_id();
         this.manager = platform.getManager();
     }
+    public PlatformSummaryDto() {
+    }
     public String getPlatformName() {
         return platformName;
     }

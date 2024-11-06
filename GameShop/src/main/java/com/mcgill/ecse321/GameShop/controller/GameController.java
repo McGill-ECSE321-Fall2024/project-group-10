@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 
@@ -48,8 +51,25 @@ public class GameController { // TODO, should we implement Delete for this contr
     @PostMapping("/games")
     public GameResponseDto createGame(@Valid @RequestBody GameRequestDto request) {
         Game createdGame = gameService.CreateGame(request.getaTitle(), request.getaDescription(), request.getaPrice(), request.getaGameStatus(), request.getaStockQuantity(), request.getaPhotoUrl());
+
+        if (request.getCategories() != null) {
+        
+            gameService.updateCategories(createdGame, request.getCategories());
+      
+        
+        }
+        if (request.getPlatforms() != null) {
+            gameService.updatePlatforms(createdGame, request.getPlatforms());
+        }
+  
         return GameResponseDto.create(createdGame);
     }
+
+    // @PutMapping("/games/categories/{game_id}")
+    // public GameResponseDto updateListOfCategories(@PathVariable int id,@RequestBody GameRequestDto request) {
+    //     Game game = gameService.updateCategories(id, request.getCategories());
+    //     return GameResponseDto.create(game);
+    // }
 
 
     // TODO still have to implement PUT mapping for update

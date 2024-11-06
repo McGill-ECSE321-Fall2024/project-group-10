@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.service;
 
 import java.beans.Transient;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.model.Platform;
+import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 
 import jakarta.transaction.Transactional;
@@ -17,6 +20,12 @@ public class GameService {
     
     @Autowired
     private GameRepository gameRepository;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private PlatformService platformService;
 
     public boolean isEmpty(String str){
         return str == null || str.trim().isEmpty();
@@ -108,6 +117,37 @@ public class GameService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Title cannot be empty or null");
         }
         game.setTitle(newTitle);
+        gameRepository.save(game);
+        return game;
+    }
+
+    @Transactional
+    public Game updateCategories(Game game, List<Integer> categories) {
+       
+        if (categories == null) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Categories cannot be null");
+        }
+  
+        for (int category_id : categories) {
+
+            Category category = categoryService.getCategory(category_id);
+       
+            game.addCategory(category);
+        }
+      
+        gameRepository.save(game);
+        return game;
+    }
+
+    @Transactional
+    public Game updatePlatforms(Game game, List<Integer> platforms) {
+        if (platforms == null) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platforms cannot be null");
+        }
+        for (int platform_id : platforms) {
+            Platform platform = platformService.getPlatform(platform_id);
+            game.addPlatform(platform);
+        }
         gameRepository.save(game);
         return game;
     }

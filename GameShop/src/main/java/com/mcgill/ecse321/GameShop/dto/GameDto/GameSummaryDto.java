@@ -8,12 +8,16 @@ public class GameSummaryDto {
     private String description;
     private int price;
     private String photoUrl;
+    private int gameId;
 
     public GameSummaryDto(Game game) {
         this.title = game.getTitle();
         this.description = game.getDescription();
         this.price = game.getPrice();
         this.photoUrl = game.getPhotoUrl();
+        this.gameId = game.getGame_id();
+    }
+    protected GameSummaryDto() {
     }
 
     public String getTitle() {
@@ -30,6 +34,12 @@ public class GameSummaryDto {
 
     public String getPhotoUrl() {
         return photoUrl;
+    }
+    public int getGameId() {
+        return gameId;
+    }
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
 
