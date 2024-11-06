@@ -132,7 +132,6 @@ public class CategoryIntegrationTests {
     public void testGetCategoryById() {
         // Arrange
         String url = String.format("/categories/%d", this.categoryId);
-        System.out.println(String.format("URL: %s", url));
         // Act
         ResponseEntity<CategoryResponseDto> response = client.getForEntity(url, CategoryResponseDto.class);
 
@@ -215,6 +214,7 @@ public class CategoryIntegrationTests {
         assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
     }
 
+    
     @SuppressWarnings("null")
     @Test
     @Order(6)
@@ -224,7 +224,8 @@ public class CategoryIntegrationTests {
         ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequest, CategoryResponseDto.class);
         assertEquals(HttpStatus.OK, categoryResponse.getStatusCode(), "Category creation failed");
         CategoryResponseDto initialCategory = categoryResponse.getBody();
-        assertNotNull(initialCategory);
+        assertNotNull(initialCategory, "Category is null");
+        assertNotNull( categoryResponse.getBody().getCategoryId(), "Category ID is null");
         int targetCategoryId  = categoryResponse.getBody().getCategoryId(); // Assign the created category ID
 
         CategoryRequestDto otherCategoryRequest = new CategoryRequestDto("Adventure Games", MANAGER_EMAIL);

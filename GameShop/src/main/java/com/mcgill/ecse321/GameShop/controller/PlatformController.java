@@ -48,6 +48,8 @@ public class PlatformController {
         }
         return new PlatformListDto(dtos);
     }
+
+    @GetMapping("/platforms/{pid}/games")
     public GameListDto getAllGamesInPlatform(@PathVariable int pid) {
         List<GameSummaryDto> dtos = new ArrayList<GameSummaryDto>();
         for (Game game : platformService.getAllGamesInPlatform(pid)) {
