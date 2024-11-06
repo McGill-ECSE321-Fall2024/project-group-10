@@ -26,11 +26,14 @@ public class PlatformService {
         if (platformName == null || platformName.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform name cannot be empty or null");
         }
+        if (managerEmail == null || managerEmail.trim().isEmpty()) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Manager email cannot be empty or null");
+        }
 
         Manager manager = managerRepository.findByEmail(managerEmail);
         if (manager == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no manager with email:", managerEmail));
+                    String.format("There is no manager with email: %s", managerEmail));
         }
         Platform platform = new Platform(platformName, manager);
         return platformRepository.save(platform);
@@ -39,10 +42,12 @@ public class PlatformService {
 
     @Transactional
     public Platform getPlatform(int platformId) {
+        if (platformId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform ID must be greater than 0");
+        }
         Platform platform = platformRepository.findById(platformId);
         if (platform == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("Platform does not exist"));
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Platform does not exist");
         }
         return platform;
     }
@@ -54,6 +59,7 @@ public class PlatformService {
 
     @Transactional
     public Platform updatePlatform(int platformId, String platformName) {
+        
         Platform platform = getPlatform(platformId);
         if (platformName == null || platformName.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform name cannot be empty or null");
@@ -64,6 +70,7 @@ public class PlatformService {
 
     @Transactional
     public void deletePlatform(int platformId) {
+
         Platform platform = getPlatform(platformId);
         platformRepository.delete(platform);
     }
