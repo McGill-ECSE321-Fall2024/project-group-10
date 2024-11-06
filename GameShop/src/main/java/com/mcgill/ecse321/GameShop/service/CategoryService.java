@@ -34,11 +34,14 @@ public class CategoryService {
         if (categoryName == null || categoryName.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Category name cannot be empty or null");
         }
+        if (managerEmail == null || managerEmail.trim().isEmpty()) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Manager email cannot be empty or null");
+        }
     
         Manager manager = managerRepository.findByEmail(managerEmail);
         if (manager == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no manager with email:", managerEmail));
+                    String.format("There is no manager with email: %s", managerEmail));
         }
         Category category = new Category(categoryName, manager);
         return categoryRepository.save(category);
@@ -46,12 +49,13 @@ public class CategoryService {
     
     @Transactional
     public Category getCategory(int categoryId) {
+        if (categoryId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Invalid category ID");
+        }
         Category category = categoryRepository.findById(categoryId);
         if (category == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("Category does not exist"));
+            throw new GameShopException(HttpStatus.NOT_FOUND,"Category does not exist");
         }
-        System.out.println("XIXI"+category.getCategoryName());
         return category;
     }
     
@@ -59,21 +63,12 @@ public class CategoryService {
     public Iterable<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
-    @Transactional
-    public Iterable<Game> getAllGamesInCategory(int categoryId) {
-        ArrayList<Game> games = new ArrayList<Game>();
-        for (Game game : gameRepository.findAll()) {
-            if (game.getCategory(categoryId).getCategory_id() == categoryId){
-            games.add(game);
-        }
-
-        
-    }
-    return games;
-}
     
     @Transactional
     public Category updateCategory(int categoryId, String categoryName) {
+        if (categoryId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Invalid category ID");
+        }
         Category category = getCategory(categoryId);
         if (categoryName == null || categoryName.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Category name cannot be empty or null");
@@ -84,10 +79,19 @@ public class CategoryService {
     
     @Transactional
     public void deleteCategory(int categoryId) {
+        if (categoryId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Invalid category ID");
+        }
         Category category = getCategory(categoryId);
         category.removeManager();
         categoryRepository.save(category);
         categoryRepository.delete(category);
+    }
+    @Transactional
+    public List<Game> getAllGamesInCategory(int categoryId) {
+        Category category = getCategory(categoryId); // Ensure category exists
+        List<Game> games = gameRepository.findAllByCategoriesContains(category);
+        return games;
     }
 
 
