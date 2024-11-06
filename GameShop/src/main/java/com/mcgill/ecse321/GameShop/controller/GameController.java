@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-public class GameController {
+public class GameController { // TODO still have to take into account inventory
     
     @Autowired
     private GameService gameService;
@@ -44,6 +44,8 @@ public class GameController {
     private PlatformService PlatformService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private SpecificGameService specificGameService;
 
     @GetMapping("/games/{game_id}")
     public GameResponseDto findGameById(@PathVariable int game_id) {
@@ -52,7 +54,7 @@ public class GameController {
     }
 
     @GetMapping("/games")
-    public GameListDto findAllGames() {
+    public GameListDto findAllGames() { // TODO needs to be checked for fixes
         List<GameSummaryDto> dtos = new ArrayList<GameSummaryDto>();
 
         for (Game game : gameService.getAllGames()) {
@@ -74,8 +76,8 @@ public class GameController {
         gameService.deleteGame(game_id);
     }
 
-    @PutMapping("games/{id}")
-    public Game putMethod(@PathVariable int id, @RequestBody String request) {
+    @PutMapping("/games/{id}")
+    public Game putMethod(@PathVariable int id, @RequestBody String request) { // TODO needs to be checked for fixes
         Game game = gameService.findGameById(id);
 
         game.setTitle(game.getTitle());
@@ -88,42 +90,49 @@ public class GameController {
         return game;
     }
 
-    @PutMapping("games/platform/{game_id}/{platform_id}")
+    @PutMapping("/games/platform/{game_id}/{platform_id}")
     public Boolean setPlatform(@PathVariable int game_id, @PathVariable int platform_id) {
         return gameService.setPlatform(game_id, platform_id);
     }
 
-    @PutMapping("games/category/{game_id}/{category_id}") 
+    @PutMapping("/games/category/{game_id}/{category_id}") 
     public Boolean setCategory(@PathVariable int game_id, @PathVariable int category_id) {
         return gameService.setCategory(game_id, category_id);
     }
     
-    @GetMapping("games/Title/{Title}")
+    @GetMapping("/games/Title/{Title}")
     public Iterable<Game> getGamesByTitle(@RequestParam String Title) {
         Iterable<Game> games = gameService.getGamesByTitle(Title);
         return games;
     }
 
-    @GetMapping("games/Category/{category_id}")
+    @GetMapping("/games/Category/{category_id}")
     public Iterable<Game> getGamesByCategory(@RequestParam int category_id) {
         Category category = categoryService.getCategory(category_id);
         Iterable<Game> games = gameService.getGamesByCategory(category);
         return games;
     }
 
-    @GetMapping("games/Platform/{platform_id}")
+    @GetMapping("/games/Platform/{platform_id}")
     public Iterable<Game> getGamesByPlatform(@RequestParam int platform_id) {
         Platform platform = PlatformService.getPlatform(platform_id);
         Iterable<Game> games = gameService.getGamesByPlatform(platform);
         return games;
     }
 
-    @GetMapping("games/Status/{status}")
+    @GetMapping("/games/Status/{status}")
     public Iterable<Game> getGamesByStatus(@RequestParam GameStatus status) {
         Iterable<Game> games = gameService.getGamesByStatus(status);
         return games;
     }
 
-    // AddSpecificGames to manage inventory.
+    @PostMapping("/games/specificGame/{game_id}")
+    public void postMethodName(@RequestParam int game_id, @RequestParam int numberOfCopies) {
+        Game game = gameService.findGameById(game_id);
+        for (int i = 0; i < numberOfCopies; i++) {
+            specificGameService.createSpecificGame(game);
+        }
+    }
+    
     
 }
