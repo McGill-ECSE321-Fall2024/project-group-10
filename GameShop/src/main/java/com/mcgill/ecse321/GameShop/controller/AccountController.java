@@ -9,10 +9,12 @@ import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
+import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Manager;
+import com.mcgill.ecse321.GameShop.model.WishList;
 import com.mcgill.ecse321.GameShop.service.AccountService;
 
 import jakarta.validation.Valid;
@@ -134,5 +136,12 @@ public class AccountController {
         return EmployeeResponseDto.create(employee);
     }
 
+    @GetMapping("/account/customer/{email}/wishlist")
+    public WishListResponseDto getCustomerWishlist(@PathVariable String email) {
+        Customer customer = (Customer) accountService.getAccountByEmail(email);
+        String title = String.format("%s's Wishlist", customer.getUsername());
+        WishList wishlist = accountService.createWishlist(email, title);
+        return new WishListResponseDto(wishlist);
+    }
     
 }
