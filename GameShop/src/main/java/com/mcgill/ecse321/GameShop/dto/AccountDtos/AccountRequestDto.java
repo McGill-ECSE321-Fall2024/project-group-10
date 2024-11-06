@@ -14,11 +14,7 @@ public class AccountRequestDto {
     private AccountType type;
     
   
-    public AccountRequestDto(@NotBlank(message = "Email is required.") String email,
-            @NotBlank(message = "Username is required.") String username,
-            @NotBlank(message = "Password is required.") String password,
-            String phoneNumber,
-            String address) {
+    public AccountRequestDto(String email, String username, String password, String phoneNumber, String address) {
         this.type = AccountType.EMPLOYEE;
         this.email = email;
         this.username = username;
