@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// get all orders/specific games, get gamebyid, add game to order,  
 @RestController
 public class OrderController {
 

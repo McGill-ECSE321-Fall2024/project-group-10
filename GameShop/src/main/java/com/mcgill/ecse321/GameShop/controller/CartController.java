@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.*;
 
-@RestController
+// createcart, addgametocart, getallgamesformcart, getcustomerid, getgamefromcart, set specific game(s)
 public class CartController {
 
     @Autowired
@@ -104,6 +104,12 @@ public class CartController {
         }
 
         return new CartResponseDto(cart.getCart_id(), games, totalItems, totalPrice);
+    }
+
+    @PostMapping("/carts/{cartId}/clear")
+    public CartResponseDto clearCart(@PathVariable int cartId) {
+        Cart cart = cartService.clearCart(cartId);
+        return buildCartResponseDto(cart);
     }
 
     @PostMapping("/carts/{cartId}/games/updateQuantity")
