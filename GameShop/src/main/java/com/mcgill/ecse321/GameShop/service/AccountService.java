@@ -1,6 +1,5 @@
 package com.mcgill.ecse321.GameShop.service;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,6 @@ import com.mcgill.ecse321.GameShop.repository.EmployeeRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import com.mcgill.ecse321.GameShop.repository.WishListRepository;
 
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -138,19 +136,7 @@ public class AccountService {
 
         //create the customer
         Customer customer = new Customer(email, username, password, phoneNumber, address, cart);
-
-       // WishList wishlist = customer.addWishList("Customer's wishlist");
-        //each customer needs a wishlist upon creation
-
-
-       // WishList wishlist = new WishList("Customer's wishlist", customer);
-        // wishListRepository.save(wishlist);
-         Customer savedCustomer = customerRepo.save(customer);
-
-
-        //wishListRepository.save(wishlist);
-
-        return savedCustomer;
+        return customerRepo.save(customer);
     }
 
     @Transactional
