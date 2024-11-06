@@ -83,6 +83,11 @@ public class CategoryService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Invalid category ID");
         }
         Category category = getCategory(categoryId);
+        List<Game> gamesInCategory = gameRepository.findAllByCategoriesContains(category);
+        for (Game game : gamesInCategory) {
+            game.getCategories().remove(category);
+            gameRepository.save(game);  // Save to update the association in the join table
+        }
         category.removeManager();
         categoryRepository.save(category);
         categoryRepository.delete(category);
