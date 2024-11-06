@@ -1,5 +1,6 @@
 package com.mcgill.ecse321.GameShop.service;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -39,10 +40,10 @@ public class AccountService {
     @Autowired
     private WishListRepository wishListRepository;
 
-
-
     @Autowired
     private AccountRepository accountRepository;
+
+
 
     @Transactional
     public Manager createManager(String email, String username, String password, String phoneNumber, String address){
@@ -135,12 +136,14 @@ public class AccountService {
 
         //create the customer
         Customer customer = new Customer(email, username, password, phoneNumber, address, cart);
-        
-        //each customer needs a wishlist upon creation
-        WishList wishlist = new WishList("Customer's wishlist", customer);
-        wishListRepository.save(wishlist);
-
         return customerRepo.save(customer);
+    }
+
+    @Transactional
+    public WishList createWishlist(String customerEmail, String title) {
+        Customer customer = (Customer)accountRepository.findByEmail(customerEmail);
+        WishList wishList = new WishList(title, customer);
+        return wishListRepository.save(wishList);
     }
 
 
@@ -223,5 +226,24 @@ public class AccountService {
             throw new GameShopException(HttpStatus.NOT_FOUND,
             String.format("Account with email %s does not exist.", email));
         }
+    }
+
+    @Transactional
+    public WishList getWishlistByCustomerEmail(String email){
+        //find the customer account using the email
+        Customer customer = customerRepo.findByEmail(email);
+        WishList wishlistToReturn = null;
+        if (customer == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+            String.format("Account with email %s does not exist.", email));
+        } else{
+            Iterable<WishList> wishlists = wishListRepository.findAll();
+            for (WishList wishlist: wishlists){
+            if (wishlist.getCustomer().getEmail().equals(email)){
+                wishlistToReturn = wishlist;
+            }
+        }
+        }
+                return wishlistToReturn;
     }
 }

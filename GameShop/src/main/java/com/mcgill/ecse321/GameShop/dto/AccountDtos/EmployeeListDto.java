@@ -4,7 +4,8 @@ import java.util.List;
 
 public class EmployeeListDto {
     private List<EmployeeResponseDto> accounts;
-
+    
+    protected EmployeeListDto(){}
    public EmployeeListDto(List<EmployeeResponseDto> accounts){
         this.accounts = accounts;
    }
