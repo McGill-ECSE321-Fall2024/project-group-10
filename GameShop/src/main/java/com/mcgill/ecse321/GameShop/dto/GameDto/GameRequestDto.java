@@ -30,6 +30,7 @@ public class GameRequestDto {
 
     // private List<Integer> aPlatform;
     private List<Integer> Categories;
+    private List<Integer> Platforms;
 
     protected GameRequestDto() {}
 
@@ -96,5 +97,11 @@ public class GameRequestDto {
 
     public List<Integer> getCategories() {
         return Categories;
+    }
+    public void setPlatforms(List<Integer> Platforms) {
+        this.Platforms = Platforms;
+    }
+    public List<Integer> getPlatforms() {
+        return Platforms;
     }
 }

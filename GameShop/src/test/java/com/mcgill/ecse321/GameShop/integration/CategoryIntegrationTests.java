@@ -23,8 +23,6 @@ import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.repository.CategoryRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
-import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
-import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -256,11 +254,6 @@ public class CategoryIntegrationTests {
         ResponseEntity<GameResponseDto> gameResponse3 = client.postForEntity("/games", gameRequest3, GameResponseDto.class);
         assertEquals(HttpStatus.OK, gameResponse3.getStatusCode(), "Failed to create Game 3");
         int gameId3 = gameResponse3.getBody().getaGame_id();
-
-
-
-
-
 
     
         // Act: Fetch all games within the category

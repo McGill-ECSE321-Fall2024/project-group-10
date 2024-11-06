@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
-import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Platform;
+import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import com.mcgill.ecse321.GameShop.repository.PlatformRepository;
 
@@ -33,6 +33,8 @@ public class PlatformServiceTests {
 
     @Mock
     private ManagerRepository managerRepository;
+    @Mock
+    private GameRepository gameRepository;
 
     @InjectMocks
     private PlatformService platformService;
@@ -353,7 +355,7 @@ public class PlatformServiceTests {
         });
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Platform ID must be greater than 0", exception.getMessage());
+        assertEquals("Invalid platform ID", exception.getMessage());
         verify(platformRepository, never()).findById(invalidId);
         verify(platformRepository, never()).delete(any(Platform.class));
     }

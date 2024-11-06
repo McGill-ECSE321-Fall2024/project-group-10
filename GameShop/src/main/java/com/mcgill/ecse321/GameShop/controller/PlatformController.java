@@ -3,10 +3,13 @@ package com.mcgill.ecse321.GameShop.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformListDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformSummaryDto;
+import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Platform;
 import com.mcgill.ecse321.GameShop.service.PlatformService;
 
@@ -44,6 +47,13 @@ public class PlatformController {
             dtos.add(new PlatformSummaryDto(platform));
         }
         return new PlatformListDto(dtos);
+    }
+    public GameListDto getAllGamesInPlatform(@PathVariable int pid) {
+        List<GameSummaryDto> dtos = new ArrayList<GameSummaryDto>();
+        for (Game game : platformService.getAllGamesInPlatform(pid)) {
+            dtos.add(new GameSummaryDto(game));
+        }
+        return new GameListDto(dtos);
     }
 
     /** Update a platform's name */
