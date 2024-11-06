@@ -240,7 +240,7 @@ public class CategoryIntegrationTests {
         String url = String.format("/categories/%d/games", targetCategoryId);
     
         GameRequestDto gameRequest1 = new GameRequestDto("Rambo 2", "This game is awesome", 59, GameStatus.InStock, 5, "www.game.com");
-        gameRequest1.setCategories(List.of(targetCategoryId));
+        gameRequest1.setCategories(List.of(targetCategoryId, otherCategoryId));
         ResponseEntity<GameResponseDto> gameResponse1 = client.postForEntity("/games", gameRequest1, GameResponseDto.class);
         assertEquals(HttpStatus.OK, gameResponse1.getStatusCode(), "Failed to create Game 1");
         int gameId1 = gameResponse1.getBody().getaGame_id();
@@ -289,6 +289,7 @@ public class CategoryIntegrationTests {
     assertFalse(returnedGameIds.contains(gameId3), "Did not expect to find game with ID: " + gameId3);
     
             }
+
     
 
 }
