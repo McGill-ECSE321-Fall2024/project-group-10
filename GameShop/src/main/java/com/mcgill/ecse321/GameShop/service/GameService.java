@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.service;
 
-import java.beans.Transient;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.model.Category;
+import com.mcgill.ecse321.GameShop.model.Platform;
+import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 
 import jakarta.transaction.Transactional;
@@ -17,6 +21,12 @@ public class GameService {
     
     @Autowired
     private GameRepository gameRepository;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private PlatformService platformService;
 
     public boolean isEmpty(String str){
         return str == null || str.trim().isEmpty();
@@ -40,6 +50,54 @@ public class GameService {
         }
         return game;
     }
+
+    @Transactional
+    public Iterable<Game> getGamesByTitle(String title) {
+        Iterable<Game> games = this.getAllGames();
+        for (Game game : games) {
+            if (game.getTitle().equals(title)) {
+                return games;
+            }
+        }
+        throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with title %s does not exist", title));
+    }
+
+    @Transactional 
+    public Iterable<Game> getGamesByCategory(Category category){
+        Iterable<Game> games = this.getAllGames();
+        List<Game> gamesByCategory = new ArrayList<Game>();
+        for (Game game : games) {
+            if (game.getCategories().contains(category)) {
+                gamesByCategory.add(game);
+            }
+        }
+        return gamesByCategory;
+    }
+
+    @Transactional
+    public Iterable<Game> getGamesByPlatform(Platform platform) {
+        Iterable<Game> games = this.getAllGames();
+        List<Game> gamesByPlatform = new ArrayList<Game>();
+        for (Game game : games) {
+            if (game.getPlatforms().contains(platform)) {
+                gamesByPlatform.add(game);
+            }
+        }
+        return gamesByPlatform;
+    }
+
+    @Transactional
+    public Iterable<Game> getGamesByStatus(GameStatus status){
+        Iterable<Game> games = this.getAllGames();
+        List<Game> gamesByStatus = new ArrayList<Game>();
+        for (Game game : games) {
+            if (game.getGameStatus().equals(status)) {
+                gamesByStatus.add(game);
+            }
+        }
+        return gamesByStatus;
+    }
+    
 
     @Transactional
     public Iterable<Game> getAllGames() {
@@ -112,6 +170,29 @@ public class GameService {
         return game;
     }
     
+    @Transactional 
+    public void deleteGame(int game_id) {
+        Game game = findGameById(game_id);
+        gameRepository.delete(game);
+    }
 
-    // set game platform and category
+    @Transactional
+    public boolean setCategory(int game_id, int category_id) {
+        Game game = findGameById(game_id);
+        Category category = categoryService.getCategory(category_id);
+        if (game.getCategories().contains(category)) {
+            return game.removeCategory(category);
+        }
+        return game.addCategory(category);
+    }
+
+    @Transactional
+    public boolean setPlatform(int game_id, int platform_id) {
+        Game game = findGameById(game_id);
+        Platform platform = platformService.getPlatform(platform_id);
+        if (game.getPlatforms().contains(platform)) {
+            return game.removePlatform(platform);
+        }
+        return game.addPlatform(platform);
+    }
 }

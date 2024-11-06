@@ -1,6 +1,11 @@
 package com.mcgill.ecse321.GameShop.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.rsocket.RSocketProperties.Server.Spec;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +21,9 @@ public class SpecificGameService {
 
     @Autowired
     private SpecificGameRepository specificGameRepository;
+    
+    @Autowired
+    private GameService gameService;
 
     @Transactional
     public SpecificGame createSpecificGame(Game game) {
@@ -31,6 +39,28 @@ public class SpecificGameService {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("SpecificGame does not exist"));
         }
         return specificGame;
+    }
+
+    @Transactional
+    public void updateSpecficGame(int specificGame_id, int game_id) {
+        SpecificGame specificGame = findSpecificGameById(specificGame_id);
+        Game game = gameService.findGameById(game_id);
+        specificGame.setGames(game);
+        specificGameRepository.save(specificGame);
+    }
+
+    @Transactional
+    public Iterable<SpecificGame> getSpecificGamesByGameId(int game_id) {
+        Iterable<SpecificGame> specificGames = this.getAllSpecificGames();
+        List<SpecificGame> specificGameList = new ArrayList<SpecificGame>();
+
+        for (SpecificGame specificGame : specificGames) {
+            if (specificGame.getGames().getGame_id() == game_id) {
+                specificGameList.add(specificGame);
+            }
+        }
+
+        return specificGameList;
     }
 
     @Transactional
