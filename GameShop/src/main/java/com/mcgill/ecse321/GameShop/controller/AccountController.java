@@ -42,6 +42,11 @@ public class AccountController {
             customerToCreate.getPassword(), 
             customerToCreate.getPhoneNumber(),
              customerToCreate.getAddress());
+        
+             Customer customer = (Customer) accountService.getAccountByEmail(customerToCreate.getEmail());
+             String title = String.format("%s's Wishlist", customer.getUsername());
+             WishList wishlist = accountService.createWishlist(customerToCreate.getEmail(), title);
+            WishListResponseDto savedWishList = new WishListResponseDto(wishlist);
         return AccountResponseDto.create(createdCustomer);
     }
 
@@ -139,8 +144,7 @@ public class AccountController {
     @GetMapping("/account/customer/{email}/wishlist")
     public WishListResponseDto getCustomerWishlist(@PathVariable String email) {
         Customer customer = (Customer) accountService.getAccountByEmail(email);
-        String title = String.format("%s's Wishlist", customer.getUsername());
-        WishList wishlist = accountService.createWishlist(email, title);
+        WishList wishlist = accountService.getWishlistByCustomerEmail(email);
         return new WishListResponseDto(wishlist);
     }
     
