@@ -272,7 +272,6 @@ public class Promotion {
   }
 
   public void setGames(List<Game> games2) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setGames'");
+    this.games = games2;
   }
 }
