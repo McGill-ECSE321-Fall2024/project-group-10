@@ -84,4 +84,12 @@ public class PromotionRequestDto {
     public void setManagerEmail(String managerEmail) {
         this.managerEmail = managerEmail;
     }
+
+    public List<Integer> getGameIds() {
+        return gameIds;
+    }
+
+    public void setGameIds(List<Integer> gameIds) {
+        this.gameIds = gameIds;
+    }
 }
