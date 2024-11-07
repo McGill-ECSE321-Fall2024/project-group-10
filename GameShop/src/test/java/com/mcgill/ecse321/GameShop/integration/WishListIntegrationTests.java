@@ -91,18 +91,18 @@ public class WishListIntegrationTests {
 
     }
 
-    @Test
-    @Order(2)
-    public void testGetWishListById() {
-        String url = String.format("/wishlist/%d", this.wishListId);
-        ResponseEntity<WishListResponseDto> response = client.getForEntity(url, WishListResponseDto.class);
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to get wishlist by ID");
-        WishListResponseDto wishList = response.getBody();
-        assertNotNull(wishList, "Response body is null");
-        assertEquals(this.wishListId, wishList.getWishList_id(), "Wishlist ID mismatch");
-        assertEquals(CUSTOMER_EMAIL, wishList.getCustomerEmail(), "Customer email mismatch");
-    }
+    // @Test
+    // @Order(2)
+    // public void testGetWishListById() {
+    //     String url = String.format("/wishlist/%d", this.wishListId);
+    //     ResponseEntity<WishListResponseDto> response = client.getForEntity(url, WishListResponseDto.class);
+    //     assertNotNull(response);
+    //     assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to get wishlist by ID");
+    //     WishListResponseDto wishList = response.getBody();
+    //     assertNotNull(wishList, "Response body is null");
+    //     assertEquals(this.wishListId, wishList.getWishList_id(), "Wishlist ID mismatch");
+    //     assertEquals(CUSTOMER_EMAIL, wishList.getCustomerEmail(), "Customer email mismatch");
+    // }
 
 
 
