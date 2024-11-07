@@ -65,7 +65,7 @@ public class GameController { // TODO still have to take into account inventory
 
     @PostMapping("/games")
     public GameResponseDto createGame(@Valid @RequestBody GameRequestDto request) {
-        Game createdGame = gameService.CreateGame(request.getaTitle(), request.getaDescription(), request.getaPrice(), request.getaGameStatus(), request.getaStockQuantity(), request.getaPhotoUrl());
+        Game createdGame = gameService.createGame(request.getaTitle(), request.getaDescription(), request.getaPrice(), request.getaGameStatus(), request.getaStockQuantity(), request.getaPhotoUrl());
 
         if (request.getCategories() != null) {
         
