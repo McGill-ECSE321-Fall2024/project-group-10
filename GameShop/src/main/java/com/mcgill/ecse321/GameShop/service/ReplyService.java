@@ -36,13 +36,6 @@ public class ReplyService {
 
     /**
      * Create a new Reply.
-     *
-     * @param replyDate     The date of the reply.
-     * @param description   The description of the reply.
-     * @param reviewRating  The rating of the review (Like or Dislike).
-     * @param reviewId      The ID of the review being replied to.
-     * @param managerEmail  The email of the manager creating the reply.
-     * @return The created Reply.
      */
     @Transactional
     public Reply createReply(Date replyDate, String description, ReviewRating reviewRating, int reviewId, String managerEmail) {
@@ -78,9 +71,6 @@ public class ReplyService {
 
     /**
      * Retrieve a Reply by its ID.
-     *
-     * @param replyId The ID of the reply.
-     * @return The Reply object.
      */
     @Transactional
     public Reply getReplyById(int replyId) {
@@ -93,11 +83,6 @@ public class ReplyService {
 
     /**
      * Update an existing Reply.
-     *
-     * @param replyId      The ID of the reply to update.
-     * @param description  The new description (optional).
-     * @param reviewRating The new review rating (optional).
-     * @return The updated Reply.
      */
     @Transactional
     public Reply updateReply(int replyId, String description, ReviewRating reviewRating) {
@@ -115,5 +100,14 @@ public class ReplyService {
 
         // Save and return the updated reply
         return replyRepository.save(reply);
+    }
+
+    /**
+     * Retrieve the Review associated with a Reply by Reply ID.
+     */
+    @Transactional
+    public Review getReviewByReplyId(int replyId) {
+        Reply reply = getReplyById(replyId);
+        return reply.getReview();
     }
 }

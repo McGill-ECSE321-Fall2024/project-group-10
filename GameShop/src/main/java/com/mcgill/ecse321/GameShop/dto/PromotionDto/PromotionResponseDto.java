@@ -1,7 +1,10 @@
 package com.mcgill.ecse321.GameShop.dto.PromotionDto;
 
 import java.sql.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Promotion;
 
 public class PromotionResponseDto {
@@ -12,7 +15,7 @@ public class PromotionResponseDto {
     private Date startDate;
     private Date endDate;
     private String managerEmail;
-    //private List<GameSummaryDto> games;
+    private List<GameSummaryDto> games;
 
     public PromotionResponseDto() {
     }
@@ -25,9 +28,9 @@ public class PromotionResponseDto {
         this.endDate = promotion.getEndDate();
         this.managerEmail = promotion.getManager().getEmail();
         // Convert associated games to GameSummaryDto
-        //this.games = promotion.getGames().stream()
-                //.map(GameSummaryDto::new)
-                //.collect(Collectors.toList());
+        this.games = promotion.getGames().stream()
+                .map(GameSummaryDto::new)
+                .collect(Collectors.toList());
     }
 
     // Getters and Setters

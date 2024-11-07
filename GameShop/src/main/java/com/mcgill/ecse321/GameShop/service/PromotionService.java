@@ -1,12 +1,15 @@
 package com.mcgill.ecse321.GameShop.service;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
+import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Promotion;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
@@ -23,6 +26,7 @@ public class PromotionService {
 
     @Autowired
     private ManagerRepository managerRepository;
+
     @Autowired
     private GameRepository gameRepository;
 
@@ -33,17 +37,10 @@ public class PromotionService {
 
     /**
      * Create a new Promotion.
-     *
-     * @param description  The description of the promotion.
-     * @param discountRate The discount rate (0-100).
-     * @param startDate    The start date of the promotion.
-     * @param endDate      The end date of the promotion.
-     * @param managerEmail The email of the manager creating the promotion.
-     * @return The created Promotion.
      */
     @Transactional
     public Promotion createPromotion(String description, int discountRate, Date startDate, Date endDate,
-            String managerEmail) {
+            String managerEmail, List<Integer> gameIds) {
 
         // Validate inputs
         if (isEmpty(description)) {
@@ -63,9 +60,21 @@ public class PromotionService {
             throw new GameShopException(HttpStatus.NOT_FOUND,
                     String.format("Manager with email %s not found", managerEmail));
         }
+        if (gameIds == null || gameIds.isEmpty()) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game IDs cannot be null or empty");
+        }
 
-        // Create the promotion
+        // Fetch games by IDs
+        List<Game> games = new ArrayList<>();
+        for (Integer gameId : gameIds) {
+            Game game = gameRepository.findById(gameId).orElseThrow(() -> 
+                new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId)));
+            games.add(game);
+        }
+
+        // Create the promotion with games
         Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setGames(games);
 
         // Save and return the promotion
         return promotionRepository.save(promotion);
@@ -73,9 +82,6 @@ public class PromotionService {
 
     /**
      * Retrieve a Promotion by its ID.
-     *
-     * @param promotionId The ID of the promotion.
-     * @return The Promotion object.
      */
     @Transactional
     public Promotion getPromotionById(int promotionId) {
@@ -88,8 +94,6 @@ public class PromotionService {
 
     /**
      * Retrieve all Promotions.
-     *
-     * @return An iterable of all Promotions.
      */
     @Transactional
     public Iterable<Promotion> getAllPromotions() {
@@ -98,17 +102,10 @@ public class PromotionService {
 
     /**
      * Update an existing Promotion.
-     *
-     * @param promotionId  The ID of the promotion to update.
-     * @param description  The new description (optional).
-     * @param discountRate The new discount rate (optional).
-     * @param startDate    The new start date (optional).
-     * @param endDate      The new end date (optional).
-     * @return The updated Promotion.
      */
     @Transactional
     public Promotion updatePromotion(int promotionId, String description, Integer discountRate, Date startDate,
-            Date endDate) {
+            Date endDate, List<Integer> gameIds) {
         Promotion promotion = getPromotionById(promotionId);
 
         // Update description if provided
@@ -138,7 +135,89 @@ public class PromotionService {
             promotion.setEndDate(endDate);
         }
 
+        // Update associated games if provided
+        if (gameIds != null) {
+            List<Game> games = new ArrayList<>();
+            for (Integer gameId : gameIds) {
+                Game game = gameRepository.findById(gameId).orElseThrow(() -> 
+                    new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId)));
+                if (game == null) {
+                    throw new GameShopException(HttpStatus.NOT_FOUND,
+                            String.format("Game with ID %d not found", gameId));
+                }
+                games.add(game);
+            }
+            promotion.setGames(games);
+        }
+
         // Save and return the updated promotion
         return promotionRepository.save(promotion);
+    }
+
+    /**
+     * Delete a Promotion by its ID.
+     */
+    @Transactional
+    public void deletePromotion(int promotionId) {
+        Promotion promotion = getPromotionById(promotionId);
+        promotionRepository.delete(promotion);
+    }
+
+    /**
+     * Get all games associated with a promotion.
+     */
+    @Transactional
+    public List<Game> getAllGamesFromPromotion(int promotionId) {
+        Promotion promotion = getPromotionById(promotionId);
+        return promotion.getGames();
+    }
+
+    /**
+     * Get a specific game by ID from a promotion.
+     */
+    @Transactional
+    public Game getGameByIdFromPromotion(int promotionId, int gameId) {
+        Promotion promotion = getPromotionById(promotionId);
+        for (Game game : promotion.getGames()) {
+            if (game.getGame_id() == gameId) {
+                return game;
+            }
+        }
+        throw new GameShopException(HttpStatus.NOT_FOUND,
+                String.format("Game with ID %d not found in Promotion %d", gameId, promotionId));
+    }
+
+    /**
+     * Add a game to a promotion.
+     */
+    @Transactional
+    public Promotion addGameToPromotion(int promotionId, int gameId) {
+        Promotion promotion = getPromotionById(promotionId);
+        Game game = gameRepository.findById(gameId);
+        if (game == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId));
+        }
+        if (!promotion.getGames().contains(game)) {
+            promotion.getGames().add(game);
+            promotionRepository.save(promotion);
+        }
+        return promotion;
+    }
+
+    /**
+     * Remove a game from a promotion.
+     */
+    @Transactional
+    public Promotion removeGameFromPromotion(int promotionId, int gameId) {
+        Promotion promotion = getPromotionById(promotionId);
+        Game game = gameRepository.findById(gameId);
+        if (game == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId));
+        }
+        if (promotion.getGames().contains(game)) {
+            promotion.getGames().remove(game);
+            promotionRepository.save(promotion);
+        }
+        return promotion;
     }
 }
