@@ -9,10 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryListDto;
-import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
-import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
-import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategorySummaryDto;
+
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
@@ -21,11 +18,11 @@ import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformListDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformSummaryDto;
-import com.mcgill.ecse321.GameShop.model.Category;
+
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.Platform;
-import com.mcgill.ecse321.GameShop.repository.CategoryRepository;
+
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import com.mcgill.ecse321.GameShop.repository.PlatformRepository;
