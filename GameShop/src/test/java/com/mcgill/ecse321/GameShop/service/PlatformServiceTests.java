@@ -265,6 +265,7 @@ public class PlatformServiceTests {
             platformService.updatePlatform(invalidId, UPDATED_PLATFORM_NAME);
         });
 
+
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Platform does not exist", exception.getMessage());
         verify(platformRepository, never()).save(any(Platform.class));
@@ -278,7 +279,7 @@ public class PlatformServiceTests {
                 "123 Manager Street");
         Platform platform = new Platform(VALID_PLATFORM_NAME, manager);
         platform.setPlatform_id(30);
-        when(platformRepository.findById(30)).thenReturn(platform);
+        // when(platformRepository.findById(30)).thenReturn(platform);
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
@@ -288,8 +289,8 @@ public class PlatformServiceTests {
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Platform name cannot be empty or null", exception.getMessage());
     verify(platformRepository, never()).save(any(Platform.class));
-    verify(platformRepository, times(1)).findById(30);
     }
+
     @Test
     public void testUpdatePlatformWithEmptyPlatformName() {
         // Arrange
@@ -297,7 +298,7 @@ public class PlatformServiceTests {
                 "123 Manager Street");
         Platform platform = new Platform(VALID_PLATFORM_NAME, manager);
         platform.setPlatform_id(307);
-        when(platformRepository.findById(307)).thenReturn(platform);
+        // when(platformRepository.findById(307)).thenReturn(platform);
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
@@ -307,7 +308,7 @@ public class PlatformServiceTests {
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Platform name cannot be empty or null", exception.getMessage());
         verify(platformRepository, never()).save(any(Platform.class));
-        verify(platformRepository, times(1)).findById(307);}
+}
 
     @Test
     public void testDeletePlatform() {

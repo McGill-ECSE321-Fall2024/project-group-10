@@ -3,6 +3,7 @@ package com.mcgill.ecse321.GameShop.service;
 
 import java.util.List;
 
+import org.antlr.v4.runtime.atn.ParseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -64,14 +65,16 @@ public class PlatformService {
 
     @Transactional
     public Platform updatePlatform(int platformId, String platformName) {
-
-        Platform platform = getPlatform(platformId);
-        if (platformName == null || platformName.trim().isEmpty()) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform name cannot be empty or null");
-        }
         if (platformId <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Invalid platform ID");
         }
+        if (platformName == null || platformName.trim().isEmpty()) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform name cannot be empty or null");
+        }
+
+        Platform platform = getPlatform(platformId);
+
+
         platform.setPlatformName(platformName);
         return platformRepository.save(platform);
     }
@@ -93,6 +96,9 @@ public class PlatformService {
 
     @Transactional
     public List<Game> getAllGamesInPlatform(int platformId) {
+        if (platformId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Invalid platform ID");
+        }
         Platform platform = getPlatform(platformId);
         List<Game> games = gameRepository.findAllByPlatformsContains(platform);
         return games;
