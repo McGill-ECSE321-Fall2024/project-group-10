@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.dto.PromotionDto;
 
 import java.sql.Date;
+import java.util.List;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -27,15 +28,19 @@ public class PromotionRequestDto {
     @NotBlank(message = "Manager email cannot be empty")
     private String managerEmail;
 
+    @NotNull(message = "Game IDs cannot be null")
+    private List<Integer> gameIds;
+
     public PromotionRequestDto() {
     }
 
-    public PromotionRequestDto(String description, int discountRate, Date startDate, Date endDate, String managerEmail) {
+    public PromotionRequestDto(String description, int discountRate, Date startDate, Date endDate, String managerEmail, List<Integer> gameIds) {
         this.description = description;
         this.discountRate = discountRate;
         this.startDate = startDate;
         this.endDate = endDate;
         this.managerEmail = managerEmail;
+        this.gameIds = gameIds;
     }
 
     // Getters and Setters
