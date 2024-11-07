@@ -254,8 +254,21 @@ public class GameService {
 
     @Transactional
     public boolean setCategory(int game_id, int category_id) {
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        if(category_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Category ID must be greater than 0");
+        }
         Game game = findGameById(game_id);
-        Category category = categoryService.getCategory(category_id);
+        if (game == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
+        }
+
+        Category category = categoryRepository.findById(category_id);
+        if (category == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Category with ID %d does not exist", category_id));
+        }
         if (game.getCategories().contains(category)) {
             return game.removeCategory(category);
         }
@@ -264,8 +277,21 @@ public class GameService {
 
     @Transactional
     public boolean setPlatform(int game_id, int platform_id) {
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        if(platform_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform ID must be greater than 0");
+        }
+
         Game game = findGameById(game_id);
-        Platform platform = platformService.getPlatform(platform_id);
+        if(game == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
+        }
+        Platform platform = platformRepository.findById(platform_id);
+        if(platform == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Platform with ID %d does not exist", platform_id));
+        }
         if (game.getPlatforms().contains(platform)) {
             return game.removePlatform(platform);
         }
