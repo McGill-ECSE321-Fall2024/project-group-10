@@ -7,26 +7,24 @@ import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
-import com.mcgill.ecse321.GameShop.model.Platform;
+
 import com.mcgill.ecse321.GameShop.model.WishList;
 import com.mcgill.ecse321.GameShop.repository.WishListRepository;
 import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import java.util.*;
-import org.junit.jupiter.api.Test;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.jupiter.MockitoSettings;
+
 import org.mockito.quality.Strictness;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
+
 
 @SpringBootTest
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)

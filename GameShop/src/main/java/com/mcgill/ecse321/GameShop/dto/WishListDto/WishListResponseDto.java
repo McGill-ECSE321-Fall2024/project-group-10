@@ -23,7 +23,9 @@ public class WishListResponseDto {
             gameSummaryList.add(new GameSummaryDto(game));
         }
         this.games = new GameListDto(gameSummaryList);
-        this.customerEmail = wishList.getCustomer().getAddress();
+        this.customerEmail = wishList.getCustomer().getEmail();
+    }
+    protected WishListResponseDto() {
     }
 
     public String getCustomerEmail() {

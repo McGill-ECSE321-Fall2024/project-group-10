@@ -13,6 +13,8 @@ import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.WishList;
 import com.mcgill.ecse321.GameShop.service.WishListService;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 public class WishListController {
     
     @Autowired
@@ -20,10 +22,15 @@ public class WishListController {
 
     @GetMapping("/wishlist/{wishlist_id}")
     public WishListResponseDto findWishlistById(@PathVariable int wishlist_id) {
+
         WishList wishList = wishListService.findWishlistById(wishlist_id);
         return WishListResponseDto.create(wishList);
     }
-
+    @PutMapping("/wishlist/{wishlist_id}/title")
+    public WishListResponseDto updateWishlistTitle(@PathVariable int wishlist_id, @RequestBody String newTitle) {
+        WishList updatedWishlist = wishListService.updateWishlListTitle(wishlist_id, newTitle);
+        return WishListResponseDto.create(updatedWishlist);
+    }
     @PutMapping("/wishlist/{wishlist_id}/{game_id}")
     public WishListResponseDto addGameToWishlist(@PathVariable int wishlist_id, @PathVariable int game_id) {
         WishList wishList = wishListService.addGameToWishlist(wishlist_id,game_id);
