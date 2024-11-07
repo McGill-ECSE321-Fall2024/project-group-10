@@ -19,6 +19,9 @@ public class CategoryResponseDto {
         this.manager = category.getManager();
         this.categoryId = category.getCategory_id();
     }
+    public static CategoryResponseDto create(Category category) {
+        return new CategoryResponseDto(category);
+    }
 
     public String getCategoryName() {
         return categoryName;

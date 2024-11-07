@@ -270,4 +270,8 @@ public class Promotion {
         "  " + "manager = "
         + (getManager() != null ? Integer.toHexString(System.identityHashCode(getManager())) : "null");
   }
+
+  public void setGames(List<Game> games2) {
+    this.games = games2;
+  }
 }

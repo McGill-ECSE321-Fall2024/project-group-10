@@ -9,6 +9,8 @@ public class GameListDto {
     public GameListDto(List<GameSummaryDto> games) {
         this.games = games;
     }
+    protected GameListDto() {
+    }
 
     public List<GameSummaryDto> getGames() {
         return games;

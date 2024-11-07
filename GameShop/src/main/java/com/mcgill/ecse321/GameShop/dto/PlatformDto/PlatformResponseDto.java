@@ -18,6 +18,9 @@ public class PlatformResponseDto {
         this.manager = platform.getManager();
         this.platformId = platform.getPlatform_id();
     }
+    public static PlatformResponseDto create(Platform platform) {
+        return new PlatformResponseDto(platform);
+    }
 
 
 

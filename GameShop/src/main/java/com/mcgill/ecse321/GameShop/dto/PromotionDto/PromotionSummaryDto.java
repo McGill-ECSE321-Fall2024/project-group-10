@@ -8,6 +8,9 @@ public class PromotionSummaryDto {
     private String description;
     private int discountRate;
 
+    public PromotionSummaryDto() {
+    }
+
     public PromotionSummaryDto(Promotion promotion) {
         this.promotionId = promotion.getPromotion_id();
         this.description = promotion.getDescription();

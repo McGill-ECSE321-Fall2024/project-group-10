@@ -9,11 +9,15 @@ import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
+import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Manager;
+import com.mcgill.ecse321.GameShop.model.WishList;
 import com.mcgill.ecse321.GameShop.service.AccountService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +36,7 @@ public class AccountController {
     private AccountService accountService;
 
     @PostMapping("/account/customer")
-    public AccountResponseDto createCustomer(@RequestBody AccountRequestDto customerToCreate) {
+    public AccountResponseDto createCustomer(@Valid @RequestBody AccountRequestDto customerToCreate) {
         Customer createdCustomer = accountService.createCustomer(customerToCreate.getEmail(), 
             customerToCreate.getUsername(), 
             customerToCreate.getPassword(), 
@@ -43,7 +47,7 @@ public class AccountController {
 
 
     @PostMapping("/account/manager")
-    public AccountResponseDto createManager(@RequestBody AccountRequestDto managerToCreate) {
+    public AccountResponseDto createManager(@Valid @RequestBody AccountRequestDto managerToCreate) {
         Account createdManager = accountService.createManager(managerToCreate.getEmail(), 
             managerToCreate.getUsername(), 
             managerToCreate.getPassword(), 
@@ -53,7 +57,7 @@ public class AccountController {
     }
 
     @PostMapping("/account/employee")
-    public EmployeeResponseDto createEmployee(@RequestBody AccountRequestDto employeeToCreate) {
+    public EmployeeResponseDto createEmployee(@Valid @RequestBody AccountRequestDto employeeToCreate) {
         Account createdEmployee = accountService.createEmployee(employeeToCreate.getEmail(), 
             employeeToCreate.getUsername(), 
             employeeToCreate.getPassword(), 
@@ -132,6 +136,12 @@ public class AccountController {
         return EmployeeResponseDto.create(employee);
     }
 
-    
+    @GetMapping("/account/customer/{email}/wishlist")
+    public WishListResponseDto getCustomerWishlist(@PathVariable String email) {
+        Customer customer = (Customer) accountService.getAccountByEmail(email);
+        String title = String.format("%s's Wishlist", customer.getUsername());
+        WishList wishlist = accountService.createWishlist(email, title);
+        return new WishListResponseDto(wishlist);
+    }
     
 }

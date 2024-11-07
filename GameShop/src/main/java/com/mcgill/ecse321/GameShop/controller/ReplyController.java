@@ -1,16 +1,13 @@
 package com.mcgill.ecse321.GameShop.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyRequestDto;
 import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyResponseDto;
+import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewResponseDto;
 import com.mcgill.ecse321.GameShop.model.Reply;
+import com.mcgill.ecse321.GameShop.model.Review;
 import com.mcgill.ecse321.GameShop.service.ReplyService;
 
 import jakarta.validation.Valid;
@@ -50,5 +47,12 @@ public class ReplyController {
                 request.getReviewRating()
         );
         return new ReplyResponseDto(reply);
+    }
+
+    /** Get the review associated with a reply */
+    @GetMapping("/replies/{replyId}/review")
+    public ReviewResponseDto getReviewByReplyId(@PathVariable int replyId) {
+        Review review = replyService.getReviewByReplyId(replyId);
+        return new ReviewResponseDto(review);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mcgill.ecse321.GameShop.model.Category;
+import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -64,6 +66,17 @@ public class GameController { // TODO still have to take into account inventory
     @PostMapping("/games")
     public GameResponseDto createGame(@Valid @RequestBody GameRequestDto request) {
         Game createdGame = gameService.CreateGame(request.getaTitle(), request.getaDescription(), request.getaPrice(), request.getaGameStatus(), request.getaStockQuantity(), request.getaPhotoUrl());
+
+        if (request.getCategories() != null) {
+        
+            gameService.updateCategories(createdGame, request.getCategories());
+      
+        
+        }
+        if (request.getPlatforms() != null) {
+            gameService.updatePlatforms(createdGame, request.getPlatforms());
+        }
+  
         return GameResponseDto.create(createdGame);
     }
 
@@ -86,6 +99,11 @@ public class GameController { // TODO still have to take into account inventory
 
         return game;
     }
+    // @PutMapping("/games/categories/{game_id}")
+    // public GameResponseDto updateListOfCategories(@PathVariable int id,@RequestBody GameRequestDto request) {
+    //     Game game = gameService.updateCategories(id, request.getCategories());
+    //     return GameResponseDto.create(game);
+    // }
 
     @PutMapping("/games/platform/{game_id}/{platform_id}")
     public Boolean setPlatform(@PathVariable int game_id, @PathVariable int platform_id) {
