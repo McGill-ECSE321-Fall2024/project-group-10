@@ -33,7 +33,6 @@ public class CartService {
             throw new GameShopException(HttpStatus.NOT_FOUND,
                     String.format("Cart with ID %d does not exist", cartId));
         }
-        // Initialize quantities map for this cart if not present
         cartQuantities.computeIfAbsent(cartId, k -> new ConcurrentHashMap<>());
         return cart;
     }
@@ -139,15 +138,16 @@ public class CartService {
         if (quantity == 0) {
             cart.removeGame(game);
             quantities.remove(gameId);
-            cartRepository.save(cart);
+
         } else {
             if (quantity > game.getStockQuantity()) {
                 throw new GameShopException(HttpStatus.BAD_REQUEST,
                         String.format("Only %d units of Game ID %d are available", game.getStockQuantity(), gameId));
             }
             quantities.put(gameId, quantity);
-        }
 
+        }
+        cartRepository.save(cart);
         return cart;
     }
 
@@ -185,41 +185,25 @@ public class CartService {
     }
 
     @Transactional
-    public Map.Entry<Game, Integer> getGameFromCart(int cartId, int gameId) {
+    public Game getGameFromCart(int cartId, int gameId) {
         Cart cart = getCartById(cartId);
-        if (cart == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("Cart with ID %d does not exist", cartId));
+        Game gameOpt = null;
+        for (Game game : cart.getGames()) {
+            if (game.getGame_id() == gameId) {
+                gameOpt = game;
+                break;
+            }
         }
-
-        Map<Integer, Integer> quantities = cartQuantities.get(cartId);
-        if (quantities == null || quantities.isEmpty()) {
+        if (gameOpt == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("No games found in cart with ID %d", cartId));
+                    String.format("Game with ID %d does not exist in the cart", gameId));
         }
-
-        Integer quantity = quantities.get(gameId);
-        if (quantity == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("Game with ID %d is not in cart with ID %d", gameId, cartId));
-        }
-        Game game = gameRepository.findById(gameId);
-        if (game == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("Game with ID %d does not exist", gameId));
-        }
-
-        // Return the Game and its quantity
-        return new AbstractMap.SimpleEntry<>(game, quantity);
+        return gameOpt;
     }
 
     @Transactional
     public Map<Integer, Integer> getQuantitiesForCart(int cartId) {
-        Map<Integer, Integer> quantities = cartQuantities.get(cartId);
-        if (quantities == null) {
-            return Collections.emptyMap();
-        }
-        return new HashMap<>(quantities);
+        return cartQuantities.getOrDefault(cartId, Collections.emptyMap());
     }
 
     @Transactional
