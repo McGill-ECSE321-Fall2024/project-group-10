@@ -73,7 +73,8 @@ public class PromotionService {
         }
 
         // Create the promotion with games
-        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager, games);
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setGames(games);
 
         // Save and return the promotion
         return promotionRepository.save(promotion);
