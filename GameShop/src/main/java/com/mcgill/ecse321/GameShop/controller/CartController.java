@@ -2,7 +2,9 @@
 package com.mcgill.ecse321.GameShop.controller;
 
 import com.mcgill.ecse321.GameShop.dto.CartDto.*;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.service.CartService;
@@ -117,11 +119,13 @@ public class CartController {
         return GameResponseDto.create(game);
     }
 
-    // Get all games from the cart with quantities
-    @GetMapping("/carts/{cartId}/gamesWithQuantities")
-    public CartResponseDto getAllGamesFromCartWithQuantities(@PathVariable int cartId) {
-        Cart cart = cartService.getCartById(cartId);
-        Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cartId);
-        return CartResponseDto.create(cart, quantities);
+    // Get all games from the cart
+    @GetMapping("/carts/{cartId}/games")
+    public GameListDto getGamesInCart(@PathVariable int cartId) {
+        Map<Game, Integer> gamesWithQuantities = cartService.getAllGamesFromCartWithQuantities(cartId);
+        List<GameSummaryDto> gameSummaries = gamesWithQuantities.entrySet().stream()
+                .map(entry -> new GameSummaryDto(entry.getKey()))
+                .collect(Collectors.toList());
+        return new GameListDto(gameSummaries);
     }
 }
