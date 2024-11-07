@@ -67,11 +67,8 @@ public class PromotionService {
         // Fetch games by IDs
         List<Game> games = new ArrayList<>();
         for (Integer gameId : gameIds) {
-            Game game = gameRepository.findById(gameId);
-            if (game == null) {
-                throw new GameShopException(HttpStatus.NOT_FOUND,
-                        String.format("Game with ID %d not found", gameId));
-            }
+            Game game = gameRepository.findById(gameId).orElseThrow(() -> 
+                new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId)));
             games.add(game);
         }
 
@@ -141,7 +138,8 @@ public class PromotionService {
         if (gameIds != null) {
             List<Game> games = new ArrayList<>();
             for (Integer gameId : gameIds) {
-                Game game = gameRepository.findById(gameId);
+                Game game = gameRepository.findById(gameId).orElseThrow(() -> 
+                    new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId)));
                 if (game == null) {
                     throw new GameShopException(HttpStatus.NOT_FOUND,
                             String.format("Game with ID %d not found", gameId));

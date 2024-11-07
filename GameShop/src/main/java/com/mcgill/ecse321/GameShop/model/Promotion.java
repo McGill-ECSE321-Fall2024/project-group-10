@@ -270,4 +270,9 @@ public class Promotion {
         "  " + "manager = "
         + (getManager() != null ? Integer.toHexString(System.identityHashCode(getManager())) : "null");
   }
+
+  public void setGames(List<Game> games2) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setGames'");
+  }
 }
