@@ -3,9 +3,6 @@ package com.mcgill.ecse321.GameShop.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.catalog.CatalogFeatures;
-
-import org.glassfish.jaxb.core.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 

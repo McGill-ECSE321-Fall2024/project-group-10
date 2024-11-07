@@ -3,9 +3,7 @@ package com.mcgill.ecse321.GameShop.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.rsocket.RSocketProperties.Server.Spec;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
