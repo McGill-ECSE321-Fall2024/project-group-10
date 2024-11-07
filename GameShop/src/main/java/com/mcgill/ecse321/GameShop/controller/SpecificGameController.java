@@ -8,6 +8,7 @@ import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameListDto;
 import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameSummaryDto;
+import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.SpecificGame;
 import com.mcgill.ecse321.GameShop.service.GameService;
 import com.mcgill.ecse321.GameShop.service.SpecificGameService;
@@ -17,6 +18,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,7 +54,10 @@ public class SpecificGameController {
         return SpecificGameResponseDto.create(createdSpecificGame);
     }
 
-    // TODO still have to implement PUT mapping for update
+    @PutMapping("/specificGames/{id}")
+    public void putMethod(@PathVariable int id, @PathVariable int game_id) {
+        specificGameService.updateSpecficGame(id, game_id);
+    }
 
-    // Return Specific Game (customer_id, specificGame_id)
+    // Return Specific Game for return request taking as args (customer_id, specificGame_id)
 }
