@@ -94,29 +94,29 @@ public class GameService {
         // throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with title %s does not exist", title));
     }
 
-    @Transactional 
-    public Iterable<Game> getGamesByCategory(Category category){
-        Iterable<Game> games = this.getAllGames();
-        List<Game> gamesByCategory = new ArrayList<Game>();
-        for (Game game : games) {
-            if (game.getCategories().contains(category)) {
-                gamesByCategory.add(game);
-            }
-        }
-        return gamesByCategory;
-    }
+    // @Transactional 
+    // public Iterable<Game> getGamesByCategory(Category category){
+    //     Iterable<Game> games = this.getAllGames();
+    //     List<Game> gamesByCategory = new ArrayList<Game>();
+    //     for (Game game : games) {
+    //         if (game.getCategories().contains(category)) {
+    //             gamesByCategory.add(game);
+    //         }
+    //     }
+    //     return gamesByCategory;
+    // }
 
-    @Transactional
-    public Iterable<Game> getGamesByPlatform(Platform platform) {
-        Iterable<Game> games = this.getAllGames();
-        List<Game> gamesByPlatform = new ArrayList<Game>();
-        for (Game game : games) {
-            if (game.getPlatforms().contains(platform)) {
-                gamesByPlatform.add(game);
-            }
-        }
-        return gamesByPlatform;
-    }
+    // @Transactional
+    // public Iterable<Game> getGamesByPlatform(Platform platform) {
+    //     Iterable<Game> games = this.getAllGames();
+    //     List<Game> gamesByPlatform = new ArrayList<Game>();
+    //     for (Game game : games) {
+    //         if (game.getPlatforms().contains(platform)) {
+    //             gamesByPlatform.add(game);
+    //         }
+    //     }
+    //     return gamesByPlatform;
+    // }
 
     @Transactional
     public Iterable<Game> getGamesByStatus(GameStatus status){

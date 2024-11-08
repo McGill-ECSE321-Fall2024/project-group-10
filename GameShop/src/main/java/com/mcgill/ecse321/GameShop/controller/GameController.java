@@ -121,19 +121,7 @@ public class GameController { // TODO still have to take into account inventory
         return games;
     }
 
-    @GetMapping("/games/Category/{category_id}")
-    public Iterable<Game> getGamesByCategory(@RequestParam int category_id) {
-        Category category = categoryService.getCategory(category_id);
-        Iterable<Game> games = gameService.getGamesByCategory(category);
-        return games;
-    }
 
-    @GetMapping("/games/Platform/{platform_id}")
-    public Iterable<Game> getGamesByPlatform(@RequestParam int platform_id) {
-        Platform platform = PlatformService.getPlatform(platform_id);
-        Iterable<Game> games = gameService.getGamesByPlatform(platform);
-        return games;
-    }
 
     @GetMapping("/games/Status/{status}")
     public Iterable<Game> getGamesByStatus(@RequestParam GameStatus status) {
