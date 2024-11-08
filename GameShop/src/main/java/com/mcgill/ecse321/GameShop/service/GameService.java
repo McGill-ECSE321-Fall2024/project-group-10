@@ -199,11 +199,15 @@ public class GameService {
     }
 
     @Transactional
-    public Game updateCategories(Game game, List<Integer> categories) {
+    public Game updateCategories(int gameId, List<Integer> categories) {
        
         if (categories == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Categories cannot be null");
         }
+        if (gameId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        Game game = findGameById(gameId);
   
         for (int category_id : categories) {
             if (category_id <= 0) {
@@ -225,10 +229,14 @@ public class GameService {
     }
 
     @Transactional
-    public Game updatePlatforms(Game game, List<Integer> platforms) {
+    public Game updatePlatforms(int gameId, List<Integer> platforms) {
         if (platforms == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Platforms cannot be null");
         }
+        if (gameId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        Game game = findGameById(gameId);
         for (int platform_id : platforms) {
             if (platform_id <= 0) {
                 throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform ID must be greater than 0");
