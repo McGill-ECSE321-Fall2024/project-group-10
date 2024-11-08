@@ -73,8 +73,8 @@ public class PromotionServiceTests {
         game2.setGame_id(2);
 
         when(managerRepository.findByEmail(VALID_MANAGER_EMAIL)).thenReturn(manager);
-        when(gameRepository.findById(1)).thenReturn(Optional.of(game1));
-        when(gameRepository.findById(2)).thenReturn(Optional.of(game2));
+        when(gameRepository.findById(1)).thenReturn(game1);
+        when(gameRepository.findById(2)).thenReturn(game2);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> {
             Promotion savedPromotion = invocation.getArgument(0);
             savedPromotion.setPromotion_id(VALID_PROMOTION_ID);
@@ -249,7 +249,7 @@ public class PromotionServiceTests {
         // Arrange
         Manager manager = new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
         when(managerRepository.findByEmail(VALID_MANAGER_EMAIL)).thenReturn(manager);
-        when(gameRepository.findById(1)).thenReturn(Optional.<Game>empty());
+        when(gameRepository.findById(1)).thenReturn(null);
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
@@ -324,7 +324,7 @@ public class PromotionServiceTests {
         game1.setGame_id(1);
 
         when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-        when(gameRepository.findById(1)).thenReturn(Optional.of(game1));
+        when(gameRepository.findById(1)).thenReturn(game1);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         // Act
@@ -547,7 +547,7 @@ public class PromotionServiceTests {
         promotion.setGames(new ArrayList<>());
 
         when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(Optional.of(game));
+        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         // Act
@@ -573,7 +573,7 @@ public class PromotionServiceTests {
         promotion.setGames(new ArrayList<>(Arrays.asList(game)));
 
         when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(Optional.of(game));
+        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
 
         // Act
         Promotion updatedPromotion = promotionService.addGameToPromotion(VALID_PROMOTION_ID, VALID_GAME_ID);
@@ -601,7 +601,7 @@ public class PromotionServiceTests {
         promotion.setGames(new ArrayList<>(Arrays.asList(game)));
 
         when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(Optional.of(game));
+        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         // Act
@@ -627,7 +627,7 @@ public class PromotionServiceTests {
         promotion.setGames(new ArrayList<>());
 
         when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(Optional.of(game));
+        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
 
         // Act
         Promotion updatedPromotion = promotionService.removeGameFromPromotion(VALID_PROMOTION_ID, VALID_GAME_ID);
