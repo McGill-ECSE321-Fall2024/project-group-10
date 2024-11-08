@@ -89,6 +89,7 @@ public class WishListIntegrationTests {
         this.wishListId = wishList.getWishList_id();
         assertEquals(CUSTOMER_EMAIL, wishList.getCustomerEmail(), "Customer email mismatch");
 
+
     }
 
     // @Test

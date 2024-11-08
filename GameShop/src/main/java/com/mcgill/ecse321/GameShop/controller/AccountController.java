@@ -140,7 +140,7 @@ public class AccountController {
     public WishListResponseDto getCustomerWishlist(@PathVariable String email) {
         Customer customer = (Customer) accountService.getAccountByEmail(email);
         String title = String.format("%s's Wishlist", customer.getUsername());
-        WishList wishlist = accountService.createWishlist(email, title);
+        WishList wishlist = accountService.getWishlistByCustomerEmail(email);
         return new WishListResponseDto(wishlist);
     }
     
