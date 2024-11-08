@@ -231,7 +231,7 @@ public class GameServiceTests {
         });
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Game ID must be greater than 0", exception.getMessage());
-    }
+   verify(gameRepository, times(0)).findById(anyInt()); }
 
     @Test
     public void testGetAllGames() {

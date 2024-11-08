@@ -100,57 +100,61 @@ public class SpecificGameServiceTests {
         verify(specificGameRepository, times(1)).findById(VALID_SPECIFIC_GAME_ID);
     }
 
-    // @Test
-    // public void testFindSpecificGameById_NotFound() {
-    //     // Arrange
-    //     when(specificGameRepository.findById(INVALID_SPECIFIC_GAME_ID)).thenReturn(null);
+    @Test
+    public void testFindSpecificGameByInvalidId_NotFound() {
+        // Arrange
+        when(specificGameRepository.findById(INVALID_SPECIFIC_GAME_ID)).thenReturn(null);
 
-    //     // Act & Assert
-    //     GameShopException exception = assertThrows(GameShopException.class, () -> {
-    //         specificGameService.findSpecificGameById(INVALID_SPECIFIC_GAME_ID);
-    //     });
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            specificGameService.findSpecificGameById(INVALID_SPECIFIC_GAME_ID);
+        });
 
-    //     assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-    //     assertEquals("SpecificGame does not exist", exception.getMessage());
-    //     verify(specificGameRepository, times(1)).findById(INVALID_SPECIFIC_GAME_ID);
-    // }
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("SpecificGame does not exist", exception.getMessage());
+        verify(specificGameRepository, times(1)).findById(INVALID_SPECIFIC_GAME_ID);
+    }
 
-    // @Test
-    // public void testFindSpecificGameById_InvalidId() {
-    //     // Act & Assert
-    //     GameShopException exception = assertThrows(GameShopException.class, () -> {
-    //         specificGameService.findSpecificGameById(INVALID_SPECIFIC_GAME_ID_NEGATIVE);
-    //     });
+    @Test
+    public void testFindSpecificGameById_InvalidIdValue() {
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            specificGameService.findSpecificGameById(INVALID_SPECIFIC_GAME_ID_NEGATIVE);
+        });
 
-    //     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    //     assertEquals("SpecificGame ID must be greater than 0", exception.getMessage());
-    //     verify(specificGameRepository, never()).findById(anyInt());
-    // }
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("SpecificGame ID must be greater than 0", exception.getMessage());
+        verify(specificGameRepository, never()).findById(anyInt());
+    }
+
 
     // // --- Tests for updateSpecificGame ---
 
-    // @Test
-    // public void testUpdateSpecificGame_Successful() {
-    //     // Arrange
-    //     SpecificGame specificGame = new SpecificGame(VALID_GAME);
-    //     specificGame.setSpecificGame_id(VALID_SPECIFIC_GAME_ID);
+    @Test
+    public void testUpdateSpecificGame_Successful() {
+        VALID_SPECIFIC_GAME_ID = 3;
+        VALID_GAME_ID = 3;
+        // Arrange
+        SpecificGame specificGame = new SpecificGame(VALID_GAME);
+        specificGame.setSpecificGame_id(VALID_SPECIFIC_GAME_ID);
 
-    //     Game newGame = new Game("New Game", "New description", 60, Game.GameStatus.InStock, 50, "http://example.com/newgame.jpg");
-    //     newGame.setGame_id(VALID_GAME_ID);
+        Game newGame = new Game("New Game", "New description", 60, Game.GameStatus.InStock, 50, "http://example.com/newgame.jpg");
+        newGame.setGame_id(VALID_GAME_ID);
 
-    //     when(specificGameRepository.findById(VALID_SPECIFIC_GAME_ID)).thenReturn(specificGame);
-    //     when(gameService.findGameById(VALID_GAME_ID)).thenReturn(newGame);
-    //     when(specificGameRepository.save(any(SpecificGame.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
+        when(specificGameRepository.findById(VALID_SPECIFIC_GAME_ID)).thenReturn(specificGame);
+        when(gameService.findGameById(VALID_GAME_ID)).thenReturn(newGame);
+        when(specificGameRepository.save(any(SpecificGame.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
-    //     // Act
-    //     specificGameService.updateSpecificGame(VALID_SPECIFIC_GAME_ID, VALID_GAME_ID);
+        // Act
+        SpecificGame updatedGame = specificGameService.updateSpecificGame(VALID_SPECIFIC_GAME_ID, VALID_GAME_ID);
 
-    //     // Assert
-    //     assertEquals(newGame, specificGame.getGames());
-    //     verify(specificGameRepository, times(1)).findById(VALID_SPECIFIC_GAME_ID);
-    //     verify(gameService, times(1)).findGameById(VALID_GAME_ID);
-    //     verify(specificGameRepository, times(1)).save(specificGame);
-    // }
+        // Assert
+        assertNotNull(updatedGame);
+        assertEquals(newGame, specificGame.getGames());
+        verify(specificGameRepository, times(1)).findById(VALID_SPECIFIC_GAME_ID);
+        verify(gameService, times(1)).findGameById(VALID_GAME_ID);
+        verify(specificGameRepository, times(1)).save(specificGame);
+    }
 
     // @Test
     // public void testUpdateSpecificGame_NonExistentSpecificGameId() {
