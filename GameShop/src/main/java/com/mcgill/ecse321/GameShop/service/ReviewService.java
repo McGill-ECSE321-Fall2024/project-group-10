@@ -52,7 +52,7 @@ public class ReviewService {
      * @return The created Review.
      */
     @Transactional
-    public Review createReview(Date reviewDate, String description, int rating, GameRating gameRating, int gameId, String customerEmail) {
+    public Review createReview(Date reviewDate, String description, GameRating gameRating, int gameId, String customerEmail) {
 
         // Validate inputs
         if (reviewDate == null) {
@@ -60,9 +60,6 @@ public class ReviewService {
         }
         if (isEmpty(description)) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Description cannot be empty or null");
-        }
-        if (rating < 1 || rating > 5) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Rating must be between 1 and 5");
         }
         if (gameRating == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game rating cannot be null");
@@ -78,6 +75,7 @@ public class ReviewService {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Customer with email %s not found", customerEmail));
         }
 
+        int rating = 0;
         // Create the review
         Review review = new Review(reviewDate, description, rating, gameRating, game, customer);
 
@@ -180,47 +178,17 @@ public class ReviewService {
         throw new GameShopException(HttpStatus.NOT_FOUND, "No reply to given review");
         
     }
-
-    /**
-     * Update an existing Review.
-     *
-     * @param reviewId    The ID of the review to update.
-     * @param description The new description (optional).
-     * @param rating      The new numerical rating (optional).
-     * @param gameRating  The new game rating enum (optional).
-     * @return The updated Review.
-     */
     
-     @Transactional
-    public Review updateReview(int reviewId, String description, Integer rating, GameRating gameRating) {
+    @Transactional
+    public Review updateReviewRating(int reviewId, int rating) {
         if(reviewId <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Review ID must be positive");
         }
-        if(isEmpty(description) && rating == null && gameRating == null) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "At least one field must be provided to update");
+        if(rating != -1 && rating != 1){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Rating must be either 1 or -1");
         }
         Review review = getReviewById(reviewId);
-
-        // Update description if provided
-        if (!isEmpty(description)) {
-            review.setDescription(description);
-        }
-
-        // Update rating if provided
-        if (rating != null) {
-            if (rating < 1 || rating > 5) {
-                throw new GameShopException(HttpStatus.BAD_REQUEST, "Rating must be between 1 and 5");
-            }
-            review.setRating(rating);
-        }
-
-        // Update game rating if provided
-        if (gameRating != null) {
-            review.setGameRating(gameRating);
-        }
-
-        // Save and return the updated review
+        review.setRating(review.getRating() + rating);
         return reviewRepository.save(review);
     }
-    
 }
