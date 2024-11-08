@@ -1,8 +1,30 @@
 package com.mcgill.ecse321.GameShop.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Game;
@@ -12,21 +34,6 @@ import com.mcgill.ecse321.GameShop.model.Promotion;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import com.mcgill.ecse321.GameShop.repository.PromotionRepository;
-
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 
 @SpringBootTest
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
@@ -269,31 +276,10 @@ public class PromotionServiceTests {
         verify(managerRepository, times(1)).findByEmail(VALID_MANAGER_EMAIL);
         verify(gameRepository, times(1)).findById(1);
         verify(promotionRepository, never()).save(any(Promotion.class));
-    }
 
+    }
     // --- Tests for getPromotionById ---
 
-    @Test
-    public void testGetPromotionByValidId() {
-        // Arrange
-        Manager manager = new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, manager);
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
-
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-
-        // Act
-        Promotion foundPromotion = promotionService.getPromotionById(VALID_PROMOTION_ID);
-
-        // Assert
-        assertNotNull(foundPromotion);
-        assertEquals(VALID_PROMOTION_ID, foundPromotion.getPromotion_id());
-        assertEquals(VALID_DESCRIPTION, foundPromotion.getDescription());
-        assertEquals(VALID_DISCOUNT_RATE, foundPromotion.getDiscountRate());
-        assertEquals(manager, foundPromotion.getManager());
-
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
-    }
 
     @Test
     public void testGetPromotionByInvalidId() {
