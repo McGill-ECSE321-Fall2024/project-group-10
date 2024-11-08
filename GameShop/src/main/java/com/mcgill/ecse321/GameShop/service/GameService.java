@@ -70,7 +70,7 @@ public class GameService {
         }
         Game game = gameRepository.findById(game_id);
         if (game == null) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, String.format("Game with ID %d does not exist", game_id));
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
         }
         return game;
     }
@@ -95,41 +95,29 @@ public class GameService {
         // throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with title %s does not exist", title));
     }
 
-    @Transactional 
-    public Iterable<Game> getGamesByCategory(Category category){
-        if(category == null){
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Category cannot be null");
-        }
-        Iterable<Game> games = this.getAllGames();
-        List<Game> gamesByCategory = new ArrayList<Game>();
-        for (Game game : games) {
-            if (game.getCategories().contains(category)) {
-                gamesByCategory.add(game);
-            }
-        }
-        if (gamesByCategory.isEmpty()) {
-            throw new GameShopException(HttpStatus.NOT_FOUND, "No games with the given category");
-        }
-        return gamesByCategory;
-    }
+    // @Transactional 
+    // public Iterable<Game> getGamesByCategory(Category category){
+    //     Iterable<Game> games = this.getAllGames();
+    //     List<Game> gamesByCategory = new ArrayList<Game>();
+    //     for (Game game : games) {
+    //         if (game.getCategories().contains(category)) {
+    //             gamesByCategory.add(game);
+    //         }
+    //     }
+    //     return gamesByCategory;
+    // }
 
-    @Transactional
-    public Iterable<Game> getGamesByPlatform(Platform platform) {
-        if (platform == null) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform cannot be null");
-        }
-        Iterable<Game> games = this.getAllGames();
-        List<Game> gamesByPlatform = new ArrayList<Game>();
-        for (Game game : games) {
-            if (game.getPlatforms().contains(platform)) {
-                gamesByPlatform.add(game);
-            }
-        }
-        if (gamesByPlatform.isEmpty()) {
-            throw new GameShopException(HttpStatus.NOT_FOUND, "No games with the given platform");
-        }
-        return gamesByPlatform;
-    }
+    // @Transactional
+    // public Iterable<Game> getGamesByPlatform(Platform platform) {
+    //     Iterable<Game> games = this.getAllGames();
+    //     List<Game> gamesByPlatform = new ArrayList<Game>();
+    //     for (Game game : games) {
+    //         if (game.getPlatforms().contains(platform)) {
+    //             gamesByPlatform.add(game);
+    //         }
+    //     }
+    //     return gamesByPlatform;
+    // }
 
     @Transactional
     public Iterable<Game> getGamesByStatus(GameStatus status){
@@ -309,7 +297,7 @@ public class GameService {
     }
 
     @Transactional
-    public boolean setCategory(int game_id, int category_id) {
+    public Game addCategory(int game_id, int category_id) {
         if(game_id <= 0){
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
         }
@@ -326,13 +314,15 @@ public class GameService {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Category with ID %d does not exist", category_id));
         }
         if (game.getCategories().contains(category)) {
-            return game.removeCategory(category);
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Category is already in the game");
         }
-        return game.addCategory(category);
+         game.addCategory(category);
+         gameRepository.save(game);
+         return game;
     }
 
     @Transactional
-    public boolean setPlatform(int game_id, int platform_id) {
+    public Game addPlatform(int game_id, int platform_id) {
         if(game_id <= 0){
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
         }
@@ -349,8 +339,10 @@ public class GameService {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Platform with ID %d does not exist", platform_id));
         }
         if (game.getPlatforms().contains(platform)) {
-            return game.removePlatform(platform);
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform is already in the game");
         }
-        return game.addPlatform(platform);
+        game.addPlatform(platform);
+        gameRepository.save(game);
+        return game;
     }
 }
