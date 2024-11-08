@@ -1,4 +1,3 @@
-// CartSummaryDto.java
 package com.mcgill.ecse321.GameShop.dto.CartDto;
 
 import com.mcgill.ecse321.GameShop.model.Cart;

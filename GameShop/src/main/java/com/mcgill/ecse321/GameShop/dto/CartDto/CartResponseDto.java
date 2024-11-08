@@ -1,4 +1,3 @@
-// CartResponseDto.java
 package com.mcgill.ecse321.GameShop.dto.CartDto;
 
 import java.util.List;
