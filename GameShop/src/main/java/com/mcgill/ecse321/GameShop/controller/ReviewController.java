@@ -31,7 +31,6 @@ public class ReviewController {
         Review review = reviewService.createReview(
                 request.getReviewDate(),
                 request.getDescription(),
-                request.getRating(),
                 request.getGameRating(),
                 request.getGameId(),
                 request.getCustomerEmail()
@@ -81,16 +80,11 @@ public class ReviewController {
         Reply reply = reviewService.getReplyToReview(reviewId);
         return new ReplyResponseDto(reply);
     }
-    
-    /** Update a review */
-    @PutMapping("/reviews/{id}")
-    public ReviewResponseDto updateReview(@PathVariable int id, @RequestBody ReviewRequestDto request) {
-        Review review = reviewService.updateReview(
-                id,
-                request.getDescription(),
-                request.getRating(),
-                request.getGameRating()
-        );
+
+
+    @PutMapping("/reviews/review/{id}/{rating}")
+    public ReviewResponseDto updateRating(@PathVariable int id, @PathVariable int rating) {
+        Review review = reviewService.updateReviewRating(id, rating);
         return new ReviewResponseDto(review);
     }
 }

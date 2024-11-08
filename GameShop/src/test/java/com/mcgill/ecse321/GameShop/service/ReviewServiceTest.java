@@ -5,6 +5,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 import com.mcgill.ecse321.GameShop.repository.ReviewRepository;
 
 @SpringBootTest
@@ -16,7 +17,8 @@ public class ReviewServiceTest {
 
     @Mock ReviewService reviewService;
     
-    private static final int VALID_WISHLIST_ID = 1;
-    private static final String VALID_CUSTOMER_EMAIL = "customer@example.com";
-    private static int VALID_GAME_ID;
+    private static final String VALID_DESCRIPTION = "This is a valid description";
+    private static final GameRating VALID_GAME_RATING = GameRating.Five;
+    private static int VALID_RATING = 1;
+    
 }
