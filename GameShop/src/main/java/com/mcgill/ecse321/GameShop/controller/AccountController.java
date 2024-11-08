@@ -42,9 +42,6 @@ public class AccountController {
             customerToCreate.getPassword(), 
             customerToCreate.getPhoneNumber(),
              customerToCreate.getAddress());
-        
-            //  String title = String.format("%s's Wishlist", customerToCreate.getUsername());
-            //  WishList wishlist = accountService.createWishlist(customerToCreate.getEmail(), title);
         return AccountResponseDto.create(createdCustomer);
     }
 
