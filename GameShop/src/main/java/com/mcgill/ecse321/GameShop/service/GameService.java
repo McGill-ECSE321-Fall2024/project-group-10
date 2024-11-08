@@ -146,8 +146,8 @@ public class GameService {
     @Transactional
     public Game updateGamePrice(int game_id, int newPrice) {
         Game game = findGameById(game_id);
-        if (newPrice < 0) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Price cannot be negative");
+        if (newPrice <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Price cannot be negative nor null");
         }
         game.setPrice(newPrice);
         gameRepository.save(game);
