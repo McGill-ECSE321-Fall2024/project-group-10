@@ -120,12 +120,18 @@ public class GameService {
 
     @Transactional
     public Iterable<Game> getGamesByStatus(GameStatus status){
+        if(status == null){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game status cannot be null");
+        }
         Iterable<Game> games = this.getAllGames();
         List<Game> gamesByStatus = new ArrayList<Game>();
         for (Game game : games) {
             if (game.getGameStatus().equals(status)) {
                 gamesByStatus.add(game);
             }
+        }
+        if(gamesByStatus.isEmpty()){
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No games with the given status");
         }
         return gamesByStatus;
     }

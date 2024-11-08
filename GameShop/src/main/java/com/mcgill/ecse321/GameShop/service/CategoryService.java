@@ -85,7 +85,9 @@ public class CategoryService {
         Category category = getCategory(categoryId);
         List<Game> gamesInCategory = gameRepository.findAllByCategoriesContains(category);
         for (Game game : gamesInCategory) {
-            game.getCategories().remove(category);
+            List<Category> categories = new ArrayList<>(game.getCategories());
+            categories.remove(category);
+            game.setCategories(categories);
             gameRepository.save(game);  // Save to update the association in the join table
         }
         category.removeManager();

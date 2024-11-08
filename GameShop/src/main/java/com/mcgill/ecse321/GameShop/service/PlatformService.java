@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.atn.ParseInfo;
@@ -87,7 +88,11 @@ public class PlatformService {
         Platform platform = getPlatform(platformId);
         List<Game> gamesInPlatform = gameRepository.findAllByPlatformsContains(platform);
         for(Game game : gamesInPlatform){
-            game.getPlatforms().remove(platform);
+            List<Platform> platforms = new ArrayList<>( game.getPlatforms());
+            platforms.remove(platform);
+            game.setPlatforms(platforms);
+
+           
             gameRepository.save(game);
         }
         

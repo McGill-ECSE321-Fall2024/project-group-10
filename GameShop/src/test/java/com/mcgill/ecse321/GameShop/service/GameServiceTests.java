@@ -961,6 +961,68 @@ public void testFindGamesByTitle_notFound() {
     assertEquals("Game with title mario cart does not exist", exception.getMessage());
     verify(gameRepository, times(1)).findAllByTitle(title);
 }
+@Test
+public void testGetGamesByStatus_InvalidStatus() {
+    // Arrange
+    Game game1 = new Game("Game 1", "Description 1", 50, GameStatus.InStock, 10, "http://example.com/game1.jpg");
+    game1.setGame_id(38);
+    Game game2 = new Game("Game 2", "Description 2", 60, GameStatus.InStock, 5, "http://example.com/game2.jpg");
+    game2.setGame_id(39);
+
+    List<Game> games = Arrays.asList(game1, game2);
+    when(gameRepository.findAll()).thenReturn(games);
+    // Act
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        gameService.getGamesByStatus(GameStatus.OutOfStock);
+    });
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertEquals("No games with the given status", exception.getMessage());
+    verify(gameRepository, times(1)).findAll();
+
+    
+
+
+}
+@Test
+public void testGetGamesByStatus_ValidResults() {
+    // Arrange
+    Game game1 = new Game("Game 1", "Description 1", 50, GameStatus.InStock, 10, "http://example.com/game1.jpg");
+    game1.setGame_id(40);
+    Game game2 = new Game("Game 2", "Description 2", 60, GameStatus.InStock, 5, "http://example.com/game2.jpg");
+    game2.setGame_id(41);
+
+    List<Game> games = Arrays.asList(game1, game2);
+    when(gameRepository.findAll()).thenReturn(games);
+
+    // Act
+    Iterable<Game> foundGames = gameService.getGamesByStatus(GameStatus.InStock);
+
+    // Assert
+    assertNotNull(foundGames);
+    List<Game> gamesList = new ArrayList<>();
+    foundGames.forEach(gamesList::add);
+
+    assertEquals(2, gamesList.size());
+    assertTrue(gamesList.contains(game1));
+    assertTrue(gamesList.contains(game2));
+    verify(gameRepository, times(1)).findAll();
+}
+
+@Test
+public void testGetGamesByStatus_NullStatus() {
+    // Act & Assert
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        gameService.getGamesByStatus(null);
+    });
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Game status cannot be null", exception.getMessage());
+    verify(gameRepository, never()).findAll();
+}
+
+
+
 
 }
 // THese are methods taht should be implemented wehn saade splits his methods of set category and set platform 
