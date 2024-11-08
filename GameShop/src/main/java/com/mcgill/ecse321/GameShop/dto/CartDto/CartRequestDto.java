@@ -1,4 +1,3 @@
-// CartRequestDto.java
 package com.mcgill.ecse321.GameShop.dto.CartDto;
 
 import jakarta.validation.constraints.Min;

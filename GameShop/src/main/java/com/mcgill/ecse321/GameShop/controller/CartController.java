@@ -1,4 +1,3 @@
-// CartController.java
 package com.mcgill.ecse321.GameShop.controller;
 
 import com.mcgill.ecse321.GameShop.dto.CartDto.*;
