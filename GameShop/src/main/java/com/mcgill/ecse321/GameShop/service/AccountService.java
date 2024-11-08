@@ -136,15 +136,12 @@ public class AccountService {
 
         //create the customer
         Customer customer = new Customer(email, username, password, phoneNumber, address, cart);
-        return customerRepo.save(customer);
+        Customer savedCustomer = customerRepo.save(customer);
+        WishList wishList = new WishList("customer", savedCustomer);
+        wishListRepository.save(wishList);
+        return savedCustomer;
     }
 
-    @Transactional
-    public WishList createWishlist(String customerEmail, String title) {
-        Customer customer = (Customer)accountRepository.findByEmail(customerEmail);
-        WishList wishList = new WishList(title, customer);
-        return wishListRepository.save(wishList);
-    }
 
 
     @Transactional

@@ -16,6 +16,7 @@ import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
 import com.mcgill.ecse321.GameShop.model.Employee.EmployeeStatus;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
+import com.mcgill.ecse321.GameShop.repository.WishListRepository;
 
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -40,6 +41,9 @@ public class AccountIntegrationTests {
 
     @Autowired
 	private TestRestTemplate client;
+
+    @Autowired
+    private WishListRepository wishListRepository;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -87,6 +91,7 @@ public class AccountIntegrationTests {
 
     @AfterAll
     public void clearDatabase(){
+        wishListRepository.deleteAll();
         accountRepository.deleteAll();
     }
 

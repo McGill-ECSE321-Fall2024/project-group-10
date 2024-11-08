@@ -136,15 +136,6 @@ public class AccountController {
         return EmployeeResponseDto.create(employee);
     }
 
-    @PostMapping("/account/customer/wishlist/{email}")
-    public WishListResponseDto postMethodName(@Valid @PathVariable String email) {
-        Customer customer = (Customer) accountService.getAccountByEmail(email);
-        String title = String.format("%s's Wishlist", customer.getUsername());
-        WishList wishlist = accountService.createWishlist(email, title);
-        return new WishListResponseDto(wishlist);
-    }
-    
-
     @GetMapping("/account/customer/{email}/wishlist")
     public WishListResponseDto getCustomerWishlist(@PathVariable String email) {
         Customer customer = (Customer) accountService.getAccountByEmail(email);
