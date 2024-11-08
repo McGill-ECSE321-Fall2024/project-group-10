@@ -322,7 +322,6 @@ public class GameServiceTests {
         Game game = new Game("Old Title", "Description", 30, Game.GameStatus.InStock, 100,
                 "http://example.com/image1.jpg");
         game.setGame_id(VALID_GAME_ID);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
 
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             gameService.updateGameTitle(VALID_GAME_ID, null);
@@ -339,7 +338,6 @@ public class GameServiceTests {
         Game game = new Game("Old Title", "Description", 30, Game.GameStatus.InStock, 100,
                 "http://example.com/image1.jpg");
         game.setGame_id(VALID_GAME_ID);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
 
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             gameService.updateGameTitle(VALID_GAME_ID, "  ");
@@ -421,8 +419,6 @@ public void testUpdateGamePrice_NegativePrice() {
     Game game = new Game("Game Title", "Description", 30, Game.GameStatus.InStock, 100, "http://example.com/image1.jpg");
     game.setGame_id(VALID_GAME_ID);
     
-    when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
-    
     GameShopException exception = assertThrows(GameShopException.class, () -> {
         gameService.updateGamePrice(VALID_GAME_ID, -20);
     });
@@ -430,15 +426,13 @@ public void testUpdateGamePrice_NegativePrice() {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     assertEquals("Price cannot be negative nor null", exception.getMessage());
     verify(gameRepository, never()).save(any(Game.class));
-    verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+    verify(gameRepository, times(0)).findById(VALID_GAME_ID);
 }
 @Test
 public void testUpdateGamePrice_ZeroPrice() {
     VALID_GAME_ID = 35;
     Game game = new Game("Game Title", "Description", 30, Game.GameStatus.InStock, 100, "http://example.com/image.jpg");
     game.setGame_id(VALID_GAME_ID);
-    
-    when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
     
     GameShopException exception = assertThrows(GameShopException.class, () -> {
         gameService.updateGamePrice(VALID_GAME_ID, 0);
@@ -472,8 +466,7 @@ public void testUpdateGameStockQuantityWithNegativeValue() {
     VALID_GAME_ID = 13;
     Game game = new Game("Game Title", "Description", 30, Game.GameStatus.InStock, 100, "http://example.com/image1.jpg");
     game.setGame_id(VALID_GAME_ID);
-    
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+
     GameShopException exception = assertThrows(GameShopException.class, () -> {
         gameService.updateGameStockQuantity(VALID_GAME_ID, -1);
     });
@@ -481,7 +474,7 @@ public void testUpdateGameStockQuantityWithNegativeValue() {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     assertEquals("Stock quantity cannot be negative", exception.getMessage());
     verify(gameRepository, never()).save(any(Game.class));
-    verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+    verify(gameRepository, times(0)).findById(VALID_GAME_ID);
 }
 @Test
 public void testUpdateGameStatus() {
@@ -506,7 +499,6 @@ public void testUpdateGameStatusWithNullStatus() {
     VALID_GAME_ID = 15;
     Game game = new Game("Game Title", "Description", 30, Game.GameStatus.InStock, 100, "http://example.com/image1.jpg");
     game.setGame_id(VALID_GAME_ID);
-    when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
 
     GameShopException exception = assertThrows(GameShopException.class, () -> {
         gameService.updateGameStatus(VALID_GAME_ID, null);
@@ -515,7 +507,7 @@ public void testUpdateGameStatusWithNullStatus() {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     assertEquals("Game status cannot be null", exception.getMessage());
     verify(gameRepository, never()).save(any(Game.class));
-    verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+    verify(gameRepository, times(0)).findById(VALID_GAME_ID);
 }
 
 @Test
@@ -541,7 +533,6 @@ public void testUpdateGamePhotoUrlWithNullPhotoUrl() {
     VALID_GAME_ID = 17;
     Game game = new Game("Game Title", "Description", 30, Game.GameStatus.InStock, 100, "http://example.com/oldImage.jpg");
     game.setGame_id(VALID_GAME_ID);
-    when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
     GameShopException exception = assertThrows(GameShopException.class, () -> {
         gameService.updateGamePhotoUrl(VALID_GAME_ID, null);
     });
@@ -549,7 +540,7 @@ public void testUpdateGamePhotoUrlWithNullPhotoUrl() {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     assertEquals("Photo URL cannot be empty or null", exception.getMessage());
     verify(gameRepository, never()).save(any(Game.class));
-    verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+    verify(gameRepository, times(0)).findById(VALID_GAME_ID);
 }
 
 @Test
@@ -557,7 +548,6 @@ public void testUpdateGamePhotoUrlWithEmptyPhotoUrl() {
     VALID_GAME_ID = 18;
     Game game = new Game("Game Title", "Description", 30, Game.GameStatus.InStock, 100, "http://example.com/oldImage.jpg");
     game.setGame_id(VALID_GAME_ID);
-    when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
     GameShopException exception = assertThrows(GameShopException.class, () -> {
         gameService.updateGamePhotoUrl(VALID_GAME_ID, "  ");
     });
@@ -565,7 +555,7 @@ public void testUpdateGamePhotoUrlWithEmptyPhotoUrl() {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     assertEquals("Photo URL cannot be empty or null", exception.getMessage());
     verify(gameRepository, never()).save(any(Game.class));
-    verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+    verify(gameRepository, times(0)).findById(VALID_GAME_ID);
 }
 /// check betweeen theeese e ttwooooo
 
@@ -965,7 +955,7 @@ public void testUpdateCategories_CategoryNotFound() {
         gameService.updateCategories(VALID_GAME_ID, categoryIds);
     });
     
-    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     assertEquals("Category does not exist", exception.getMessage());
     verify(gameRepository, times(1)).findById(VALID_GAME_ID);
     verify(gameRepository, never()).save(any(Game.class));
@@ -1058,7 +1048,7 @@ public void testUpdatePlatforms_PlatformNotFound() {
         gameService.updatePlatforms(VALID_GAME_ID, platformIds);
     });
     
-    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     assertEquals("Platform does not exist", exception.getMessage());
     verify(gameRepository, times(1)).findById(VALID_GAME_ID);
     verify(gameRepository, never()).save(any(Game.class));
@@ -1217,7 +1207,7 @@ public void testFindGamesByTitle_notFound() {
         gameService.getGamesByTitle(title);
     });
 
-    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     assertEquals("Game with title mario cart does not exist", exception.getMessage());
     verify(gameRepository, times(1)).findAllByTitle(title);
 }
