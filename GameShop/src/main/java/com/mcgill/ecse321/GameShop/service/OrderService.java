@@ -143,7 +143,7 @@ public class OrderService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game not in order");
         }
         specificGame.setItemStatus(SpecificGame.ItemStatus.Returned);
-        specificGameService.updateSpecficGame(specificGame.getSpecificGame_id(), specificGame.getGames().getGame_id());
+        specificGameService.updateSpecificGame(specificGame.getSpecificGame_id(), specificGame.getGames().getGame_id());
 
         Game game = specificGame.getGames();
         game.setStockQuantity(game.getStockQuantity() + 1);
