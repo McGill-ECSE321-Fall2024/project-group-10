@@ -83,6 +83,9 @@ public class WishList {
     wishlistsByWishList_id.put(aWishList_id, this);
     return wasSet;
   }
+  public void setGames(List<Game> games) {
+    this.games = games;
+}
 
   public boolean setTitle(String aTitle) {
     boolean wasSet = false;

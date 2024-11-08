@@ -1,5 +1,6 @@
 package com.mcgill.ecse321.GameShop.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -112,6 +113,7 @@ public class WishListService {
                     String.format("There is no WishList with Id %d.",wishlistId));
         }
         List<Game> games = wishList.getGames();
+        System.out.println(games);
         for (Game game : games) {
             if (game.getGame_id() == gameId) {
                 wishList.removeGame(game);
@@ -158,9 +160,7 @@ public class WishListService {
             throw new GameShopException(HttpStatus.NOT_FOUND,
                     String.format("There is no WishList with Id %d.",wishlistId));
         }
-        for (Game game : wishList.getGames()) {
-            wishList.removeGame(game);
-        }
+        wishList.setGames(new ArrayList<>());
         return wishListRepository.save(wishList);
     }
     @Transactional
