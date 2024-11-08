@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.service;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,10 +10,12 @@ import org.springframework.stereotype.Service;
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.model.Reply;
 import com.mcgill.ecse321.GameShop.model.Review;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
+import com.mcgill.ecse321.GameShop.repository.ReplyRepository;
 import com.mcgill.ecse321.GameShop.repository.ReviewRepository;
 
 import jakarta.transaction.Transactional;
@@ -28,6 +31,9 @@ public class ReviewService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     // Helper method to check if a string is empty or null
     private boolean isEmpty(String str) {
@@ -78,7 +84,7 @@ public class ReviewService {
         // Save and return the review
         return reviewRepository.save(review);
     }
-
+    
     /**
      * Retrieve a Review by its ID.
      *
@@ -87,21 +93,92 @@ public class ReviewService {
      */
     @Transactional
     public Review getReviewById(int reviewId) {
+        if(reviewId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Review ID must be positive");
+        }
         Review review = reviewRepository.findById(reviewId);
         if (review == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Review not found");
         }
         return review;
+    }  
+
+    /**
+     * Retrieve the Customer that wrote a Review.
+     *
+     * @param reviewId The ID of the review.
+     * @return The Customer object.
+     */
+    @Transactional
+    public Customer getCustomerByReviewID(int reviewId) {
+        if(reviewId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Review ID must be positive");
+        }
+        Review review = getReviewById(reviewId);
+        if(review == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Review not found");
+        }
+        return review.getCustomer();
     }
 
     /**
-     * Retrieve all Reviews.
+     * Retrieve all Reviews for a Game.
      *
-     * @return An iterable of all Reviews.
+     * @param gameId The ID of the game.
+     * @return An Iterable of Review objects.
      */
     @Transactional
-    public Iterable<Review> getAllReviews() {
-        return reviewRepository.findAll();
+    public Iterable<Review> getReviewsByGame(int gameId) {
+        if(gameId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be positive");
+        }
+        ArrayList<Review> reviews = new ArrayList<>();
+        for (Review review : reviewRepository.findAll()) {
+            if (review.getGame().getGame_id() == gameId) {
+                reviews.add(review);
+            }
+        }
+        return reviews;
+    }
+    
+    @Transactional
+    public Iterable<Review> getReviewsByCustomer(String email){
+        if(isEmpty(email)) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Email cannot be empty or null");
+        }
+        Customer customer = customerRepository.findByEmail(email);
+        if(customer == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
+        }
+        ArrayList<Review> reviews = new ArrayList<>();
+        for (Review review : reviewRepository.findAll()) {
+            if (review.getCustomer().getEmail().equals(email)) {
+                reviews.add(review);
+            }
+        }
+        if (reviews.isEmpty()) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No reviews found for given customer");
+        }
+        return reviews;
+    }
+    
+    @Transactional
+    public Reply getReplyToReview(int reviewId) {
+        if(reviewId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Review ID must be positive");
+        }
+        Review review = getReviewById(reviewId);
+        if(review == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Review not found");
+        }
+        
+        for(Reply reply : replyRepository.findAll()) {
+            if(reply.getReview().getReview_id() == reviewId) {
+                return reply;
+            }
+        }
+        throw new GameShopException(HttpStatus.NOT_FOUND, "No reply to given review");
+        
     }
 
     /**
@@ -113,8 +190,15 @@ public class ReviewService {
      * @param gameRating  The new game rating enum (optional).
      * @return The updated Review.
      */
-    @Transactional
+    
+     @Transactional
     public Review updateReview(int reviewId, String description, Integer rating, GameRating gameRating) {
+        if(reviewId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Review ID must be positive");
+        }
+        if(isEmpty(description) && rating == null && gameRating == null) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "At least one field must be provided to update");
+        }
         Review review = getReviewById(reviewId);
 
         // Update description if provided
