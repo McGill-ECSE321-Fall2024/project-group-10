@@ -13,4 +13,5 @@ public interface GameRepository extends CrudRepository<Game, Integer> {
    public Game findById(int game_id);
    public List<Game> findAllByCategoriesContains(Category category);
    public List<Game> findAllByPlatformsContains(Platform platform);
+   public List<Game> findAllByTitle(String title);
 }

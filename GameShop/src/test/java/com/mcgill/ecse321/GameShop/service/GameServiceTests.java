@@ -218,7 +218,7 @@ public class GameServiceTests {
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             gameService.findGameById(INVALID_GAME_ID);
         });
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Game with ID 799 does not exist", exception.getMessage());
         verify(gameRepository, times(1)).findById(INVALID_GAME_ID);
     }
@@ -310,7 +310,7 @@ public class GameServiceTests {
             gameService.updateGameTitle(invalidId, "New Title");
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Game with ID 9877 does not exist", exception.getMessage());
         verify(gameRepository, never()).save(any(Game.class));
         verify(gameRepository, times(1)).findById(invalidId);
@@ -600,7 +600,7 @@ public void testUpdateGamePhotoUrlWithEmptyPhotoUrl() {
 //         gameService.addCategoryToGame(VALID_GAME_ID, 1014);
 //     });
     
-//     assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+//     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
 //     assertEquals("Game with ID 50 does not exist", exception.getMessage());
 //     verify(gameRepository, times(1)).findById(VALID_GAME_ID);
 //     verify(categoryService, never()).getCategory(anyInt());
@@ -638,7 +638,7 @@ public void testUpdateGamePhotoUrlWithEmptyPhotoUrl() {
 //         gameService.addPlatformToGame(VALID_GAME_ID, 2011);
 //     });
     
-//     assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+//     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
 //     assertEquals("Game with ID 52 does not exist", exception.getMessage());
 //     verify(gameRepository, times(1)).findById(VALID_GAME_ID);
 //     verify(platformService, never()).getPlatform(anyInt());
@@ -705,7 +705,7 @@ public void testUpdateCategories_CategoryNotFound() {
         gameService.updateCategories(VALID_GAME_ID, categoryIds);
     });
     
-    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     assertEquals("Category does not exist", exception.getMessage());
     verify(gameRepository, times(1)).findById(VALID_GAME_ID);
     verify(gameRepository, never()).save(any(Game.class));
@@ -798,7 +798,7 @@ public void testUpdatePlatforms_PlatformNotFound() {
         gameService.updatePlatforms(VALID_GAME_ID, platformIds);
     });
     
-    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     assertEquals("Platform does not exist", exception.getMessage());
     verify(gameRepository, times(1)).findById(VALID_GAME_ID);
     verify(gameRepository, never()).save(any(Game.class));
@@ -877,4 +877,261 @@ public void testUpdateGameCategories_EmptyCategories() {
     verify(gameRepository, times(1)).save(game);
 }
 
+@Test
+public void testDeleteGame_Successful() {
+    VALID_GAME_ID = 34;
+    Game game = new Game("Game Title", "Description", 30, Game.GameStatus.InStock, 100, "http://example.com/image.jpg");
+    game.setGame_id(VALID_GAME_ID);
+
+    when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+
+    gameService.deleteGame(VALID_GAME_ID);
+
+    verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+    verify(gameRepository, times(1)).delete(game);
 }
+
+@Test
+public void testDeleteGame_GameNotFound() {
+    when(gameRepository.findById(INVALID_GAME_ID)).thenReturn(null);
+
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        gameService.deleteGame(INVALID_GAME_ID);
+    });
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Game with ID 799 does not exist", exception.getMessage());
+    verify(gameRepository, times(1)).findById(INVALID_GAME_ID);
+    verify(gameRepository, never()).delete(any(Game.class));
+}
+@Test
+public void testFindGamesByTitle() {
+    String title = "mario cart";
+    Game game1 = new Game(title, "Description 1", 50, GameStatus.InStock, 10, "http://example.com/game1.jpg");
+    game1.setGame_id(35);
+    Game game2 = new Game(title, "Description 2", 60, GameStatus.OutOfStock, 5, "http://example.com/game2.jpg");
+    game2.setGame_id(36);
+
+    List<Game> games = Arrays.asList(game1, game2);
+    when(gameRepository.findAllByTitle(title)).thenReturn(games);
+
+    Iterable<Game> gameList = gameService.getGamesByTitle(title);
+    List<Game> foundGames = new ArrayList<>();
+    gameList.forEach(foundGames::add);
+
+    assertNotNull(foundGames);
+    assertEquals(2, foundGames.size());
+    assertTrue(foundGames.contains(game1));
+    assertTrue(foundGames.contains(game2));
+    verify(gameRepository, times(1)).findAllByTitle(title);
+}
+@Test
+public void testFindGamesByTitle_EmptyTitle() {
+    String title = " ";
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        gameService.getGamesByTitle(title);
+    });
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Title cannot be empty or null", exception.getMessage());
+    verify(gameRepository, never()).findAllByTitle(title);
+
+}
+@Test
+public void testFindGamesByTitle_NullTitle() {
+    String title = null;
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        gameService.getGamesByTitle(title);
+    });
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Title cannot be empty or null", exception.getMessage());
+    verify(gameRepository, never()).findAllByTitle(title);
+}
+@Test
+public void testFindGamesByTitle_notFound() {
+    String title = "mario cart";
+    when(gameRepository.findAllByTitle(title)).thenReturn(new ArrayList<>());
+
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        gameService.getGamesByTitle(title);
+    });
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Game with title mario cart does not exist", exception.getMessage());
+    verify(gameRepository, times(1)).findAllByTitle(title);
+}
+
+}
+// THese are methods taht should be implemented wehn saade splits his methods of set category and set platform 
+// @Test
+// public void testAddCategoryToGame_Successful() {
+//     int gameId = 19;
+//     int categoryId = 1013;
+//     Game game = new Game("Game Title", "Description", 30, GameStatus.InStock, 100, "http://example.com/image.jpg");
+//     game.setGame_id(gameId);
+//     Category category = new Category("Category Name", VALID_MANAGER);
+//     category.setCategory_id(categoryId);
+
+//     when(gameRepository.findById(gameId)).thenReturn(Optional.of(game));
+//     when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+//     when(gameRepository.save(any(Game.class))).thenReturn(game);
+
+//     Game updatedGame = gameService.addCategoryToGame(gameId, categoryId);
+
+//     assertNotNull(updatedGame);
+//     assertTrue(updatedGame.getCategories().contains(category));
+//     verify(gameRepository, times(1)).findById(gameId);
+//     verify(categoryRepository, times(1)).findById(categoryId);
+//     verify(gameRepository, times(1)).save(game);
+// }
+
+// @Test
+// public void testAddCategoryToGame_GameNotFound() {
+//     int gameId = 20;
+//     int categoryId = 1014;
+
+//     when(gameRepository.findById(gameId)).thenReturn(Optional.empty());
+
+//     GameShopException exception = assertThrows(GameShopException.class, () -> {
+//         gameService.addCategoryToGame(gameId, categoryId);
+//     });
+
+//     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+//     assertEquals("Game with ID 20 does not exist", exception.getMessage());
+//     verify(gameRepository, times(1)).findById(gameId);
+//     verify(categoryRepository, never()).findById(anyInt());
+//     verify(gameRepository, never()).save(any(Game.class));
+// }
+
+// @Test
+// public void testAddCategoryToGame_CategoryNotFound() {
+//     int gameId = 21;
+//     int categoryId = 1015;
+//     Game game = new Game("Game Title", "Description", 30, GameStatus.InStock, 100, "http://example.com/image.jpg");
+//     game.setGame_id(gameId);
+
+//     when(gameRepository.findById(gameId)).thenReturn(Optional.of(game));
+//     when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
+
+//     GameShopException exception = assertThrows(GameShopException.class, () -> {
+//         gameService.addCategoryToGame(gameId, categoryId);
+//     });
+
+//     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+//     assertEquals("Category with ID 1015 does not exist", exception.getMessage());
+//     verify(gameRepository, times(1)).findById(gameId);
+//     verify(categoryRepository, times(1)).findById(categoryId);
+//     verify(gameRepository, never()).save(any(Game.class));
+// }
+
+// @Test
+// public void testAddPlatformToGame_Successful() {
+//     int gameId = 22;
+//     int platformId = 2010;
+//     Game game = new Game("Game Title", "Description", 30, GameStatus.InStock, 100, "http://example.com/image.jpg");
+//     game.setGame_id(gameId);
+//     Platform platform = new Platform("Platform Name", VALID_MANAGER);
+//     platform.setPlatform_id(platformId);
+
+//     when(gameRepository.findById(gameId)).thenReturn(Optional.of(game));
+//     when(platformRepository.findById(platformId)).thenReturn(Optional.of(platform));
+//     when(gameRepository.save(any(Game.class))).thenReturn(game);
+
+//     Game updatedGame = gameService.addPlatformToGame(gameId, platformId);
+
+//     assertNotNull(updatedGame);
+//     assertTrue(updatedGame.getPlatforms().contains(platform));
+//     verify(gameRepository, times(1)).findById(gameId);
+//     verify(platformRepository, times(1)).findById(platformId);
+//     verify(gameRepository, times(1)).save(game);
+// }
+
+// @Test
+// public void testAddPlatformToGame_GameNotFound() {
+//     int gameId = 23;
+//     int platformId = 2011;
+
+//     when(gameRepository.findById(gameId)).thenReturn(Optional.empty());
+
+//     GameShopException exception = assertThrows(GameShopException.class, () -> {
+//         gameService.addPlatformToGame(gameId, platformId);
+//     });
+
+//     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+//     assertEquals("Game with ID 23 does not exist", exception.getMessage());
+//     verify(gameRepository, times(1)).findById(gameId);
+//     verify(platformRepository, never()).findById(anyInt());
+//     verify(gameRepository, never()).save(any(Game.class));
+// }
+
+// @Test
+// public void testAddPlatformToGame_PlatformNotFound() {
+//     int gameId = 24;
+//     int platformId = 2012;
+//     Game game = new Game("Game Title", "Description", 30, GameStatus.InStock, 100, "http://example.com/image.jpg");
+//     game.setGame_id(gameId);
+
+//     when(gameRepository.findById(gameId)).thenReturn(Optional.of(game));
+//     when(platformRepository.findById(platformId)).thenReturn(Optional.empty());
+
+//     GameShopException exception = assertThrows(GameShopException.class, () -> {
+//         gameService.addPlatformToGame(gameId, platformId);
+//     });
+
+//     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+//     assertEquals("Platform with ID 2012 does not exist", exception.getMessage());
+//     verify(gameRepository, times(1)).findById(gameId);
+//     verify(platformRepository, times(1)).findById(platformId);
+//     verify(gameRepository, never()).save(any(Game.class));
+// }
+
+// @Test
+// public void testAddCategoryToGame_DuplicateCategory() {
+//     int gameId = 25;
+//     int categoryId = 1016;
+//     Game game = new Game("Game Title", "Description", 30, GameStatus.InStock, 100, "http://example.com/image.jpg");
+//     game.setGame_id(gameId);
+//     Category category = new Category("Category Name", VALID_MANAGER);
+//     category.setCategory_id(categoryId);
+
+//     game.addCategory(category);
+
+//     when(gameRepository.findById(gameId)).thenReturn(Optional.of(game));
+//     when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+//     when(gameRepository.save(any(Game.class))).thenReturn(game);
+
+//     Game updatedGame = gameService.addCategoryToGame(gameId, categoryId);
+
+//     assertNotNull(updatedGame);
+//     assertEquals(1, updatedGame.getCategories().size());
+//     verify(gameRepository, times(1)).findById(gameId);
+//     verify(categoryRepository, times(1)).findById(categoryId);
+//     verify(gameRepository, times(1)).save(game);
+// }
+
+// @Test
+// public void testAddPlatformToGame_DuplicatePlatform() {
+//     int gameId = 26;
+//     int platformId = 2013;
+//     Game game = new Game("Game Title", "Description", 30, GameStatus.InStock, 100, "http://example.com/image.jpg");
+//     game.setGame_id(gameId);
+//     Platform platform = new Platform("Platform Name", VALID_MANAGER);
+//     platform.setPlatform_id(platformId);
+
+//     game.addPlatform(platform);
+
+//     when(gameRepository.findById(gameId)).thenReturn(Optional.of(game));
+//     when(platformRepository.findById(platformId)).thenReturn(Optional.of(platform));
+//     when(gameRepository.save(any(Game.class))).thenReturn(game);
+
+//     Game updatedGame = gameService.addPlatformToGame(gameId, platformId);
+
+//     assertNotNull(updatedGame);
+//     assertEquals(1, updatedGame.getPlatforms().size());
+//     verify(gameRepository, times(1)).findById(gameId);
+//     verify(platformRepository, times(1)).findById(platformId);
+//     verify(gameRepository, times(1)).save(game);
+// }
+// }
+
