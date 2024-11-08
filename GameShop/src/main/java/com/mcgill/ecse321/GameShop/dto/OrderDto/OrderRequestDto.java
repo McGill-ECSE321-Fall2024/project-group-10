@@ -1,10 +1,6 @@
 package com.mcgill.ecse321.GameShop.dto.OrderDto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import java.util.Date;
 import java.util.List;
 
@@ -21,11 +17,25 @@ public class OrderRequestDto {
     private int paymentCard;
 
     @NotEmpty(message = "Customer email cannot be empty")
-    @Email(message = "Customer email should be valid")
     private String customerEmail;
 
-    @NotEmpty(message = "Specific game IDs cannot be empty")
+    // New Field
+    @NotNull(message = "Specific game IDs cannot be null")
+    @Size(min = 1, message = "At least one specific game ID must be provided")
     private List<Integer> specificGameIds;
+
+    // Constructors
+    public OrderRequestDto() {
+    }
+
+    public OrderRequestDto(Date orderDate, String note, int paymentCard, String customerEmail,
+            List<Integer> specificGameIds) {
+        this.orderDate = orderDate;
+        this.note = note;
+        this.paymentCard = paymentCard;
+        this.customerEmail = customerEmail;
+        this.specificGameIds = specificGameIds;
+    }
 
     public Date getOrderDate() {
         return orderDate;

@@ -4,7 +4,6 @@ import com.mcgill.ecse321.GameShop.model.Order;
 import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameResponseDto;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrderResponseDto {
     private String trackingNumber;
@@ -13,12 +12,16 @@ public class OrderResponseDto {
     private String customerEmail;
     private List<SpecificGameResponseDto> specificGames;
 
-    public OrderResponseDto(Order order) {
+    public OrderResponseDto(Order order, List<SpecificGameResponseDto> specificGames) {
         this.trackingNumber = order.getTrackingNumber();
         this.orderDate = order.getOrderDate();
         this.note = order.getNote();
         this.customerEmail = order.getCustomer().getEmail();
+        this.specificGames = specificGames;
+    }
 
+    public static OrderResponseDto create(Order order, List<SpecificGameResponseDto> specificGames) {
+        return new OrderResponseDto(order, specificGames);
     }
     protected OrderResponseDto() {
     }
@@ -43,7 +46,6 @@ public class OrderResponseDto {
         return specificGames;
     }
 
-    // Setters
     public void setTrackingNumber(String trackingNumber) {
         this.trackingNumber = trackingNumber;
     }
