@@ -69,12 +69,12 @@ public class GameController { // TODO still have to take into account inventory
 
         if (request.getCategories() != null) {
         
-            gameService.updateCategories(createdGame, request.getCategories());
+            gameService.updateCategories(createdGame.getGame_id(), request.getCategories());
       
         
         }
         if (request.getPlatforms() != null) {
-            gameService.updatePlatforms(createdGame, request.getPlatforms());
+            gameService.updatePlatforms(createdGame.getGame_id(), request.getPlatforms());
         }
   
         return GameResponseDto.create(createdGame);
