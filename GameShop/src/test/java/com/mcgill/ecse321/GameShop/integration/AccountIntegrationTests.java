@@ -171,7 +171,7 @@ public class AccountIntegrationTests {
         assertEquals(CUSTOMER_USERNAME, response.getBody().getUsername());
         assertEquals(CUSTOMER_PHONENUM, response.getBody().getPhoneNumber());
         assertEquals(CUSTOMER_ADDRESS, response.getBody().getAddress());
-        //assertEquals(AccountType.CUSTOMER, response.getBody().getAccountType());
+        assertEquals(AccountType.CUSTOMER, response.getBody().getAccountType());
     }
 
 

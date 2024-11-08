@@ -7,7 +7,7 @@ import com.mcgill.ecse321.GameShop.model.Manager;
 
 
 public class AccountResponseDto {
-    private AccountType type;
+    private AccountType accountType;
     private String email;
     private String username;
     private String phoneNumber;
@@ -17,14 +17,14 @@ public class AccountResponseDto {
 
     public AccountResponseDto(Account account){
         if (account instanceof Employee){
-            this.type = AccountType.EMPLOYEE;
+            this.accountType = AccountType.EMPLOYEE;
         }
         else if (account instanceof Manager){
             System.out.println("Manager IN THE RESPONSE DTO");
-            this.type = AccountType.MANAGER;
+            this.accountType = AccountType.MANAGER;
         }
         else{
-            this.type = AccountType.CUSTOMER;
+            this.accountType = AccountType.CUSTOMER;
         }
         this.email = account.getEmail();
         this.username = account.getUsername();
@@ -42,7 +42,7 @@ public class AccountResponseDto {
     }
 
     public AccountType getAccountType(){
-        return type;
+        return accountType;
     }
 
     public String getEmail(){
