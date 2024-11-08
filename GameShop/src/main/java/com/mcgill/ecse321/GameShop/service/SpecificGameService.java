@@ -73,6 +73,9 @@ public class SpecificGameService {
                 specificGameList.add(specificGame);
             }
         }
+        if (specificGameList.isEmpty()) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found for this Game ID");
+        }
 
         return specificGameList;
     }
@@ -91,6 +94,10 @@ public class SpecificGameService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "ItemStatus cannot be null");
         }
         SpecificGame specificGame = findSpecificGameById(specificGame_id);
+
+        if (specificGame == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "SpecificGame does not exist");
+        }
 
         specificGame.setItemStatus(newItemStatus);
         specificGameRepository.save(specificGame);
