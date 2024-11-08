@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountType;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
 import com.mcgill.ecse321.GameShop.model.Employee.EmployeeStatus;
@@ -24,7 +25,9 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 
 import java.util.List;
 
@@ -95,27 +98,30 @@ public class AccountIntegrationTests {
         accountRepository.deleteAll();
     }
 
-    @SuppressWarnings("null")
+   
     @Test
     @Order(1)
     public void testCreateValidManager(){
         //Arrange
         AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONENUM, MANAGER_ADDRESS);
-
+        
         //Act
         ResponseEntity<AccountResponseDto> response = client.postForEntity("/account/manager", manager, AccountResponseDto.class);
-
+        
         //Assert
-
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         AccountResponseDto fetchedManager = response.getBody();
         assertNotNull(fetchedManager);
-        assertEquals(MANAGER_EMAIL, response.getBody().getEmail());
-        this.managerEmail = response.getBody().getEmail();
-        assertEquals(MANAGER_USERNAME, response.getBody().getUsername());
-        assertEquals(MANAGER_PHONENUM, response.getBody().getPhoneNumber());
-        assertEquals(MANAGER_ADDRESS, response.getBody().getAddress());
+        AccountResponseDto manager1 = response.getBody();
+        assertNotNull(manager1);
+        System.out.println(manager1.getEmail());
+        System.out.println(manager1.getAccountType());
+        assertEquals(MANAGER_EMAIL, manager1.getEmail());
+        this.managerEmail = manager1.getEmail();
+        assertEquals(MANAGER_USERNAME, manager1.getUsername());
+        assertEquals(MANAGER_PHONENUM, manager1.getPhoneNumber());
+        assertEquals(MANAGER_ADDRESS, manager1.getAddress());
         //assertEquals(AccountType.MANAGER, response.getBody().getAccountType());
     }
 

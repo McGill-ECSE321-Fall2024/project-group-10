@@ -54,15 +54,15 @@ public class AccountService {
         }
 
         //input validation to ensure email, username, and password are not null
-        if (email.trim().isEmpty() || email == null){
+        if (email == null || email.trim().isEmpty() ){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-					String.format("Email is invalid"));
+					String.format("Email is invalid."));
         }
-        if (username.trim().isEmpty() || username == null){
+        if (username == null || username.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
         }
-        if (password.trim().isEmpty() || password == null){
+        if (password == null || password.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid password"));
         }
@@ -82,15 +82,15 @@ public class AccountService {
     @Transactional
     public Employee createEmployee(String email, String username, String password, String phoneNumber, String address){
         //input validation
-        if (email.trim().isEmpty() || email == null){
+        if (email == null || email.trim().isEmpty() ){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-					String.format("Email is invalid"));
+					String.format("Email is invalid."));
         }
-        if (username.trim().isEmpty() || username == null){
+        if (username == null || username.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
         }
-        if (password.trim().isEmpty() || password == null){
+        if (password == null || password.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid password"));
         }
@@ -110,15 +110,15 @@ public class AccountService {
     @Transactional
     public Customer createCustomer(String email, String username, String password, String phoneNumber, String address){
         //input validation
-        if (email.trim().isEmpty() || email == null){
+        if (email == null || email.trim().isEmpty() ){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-					String.format("Email is invalid"));
+					String.format("Email is invalid."));
         }
-        if (username.trim().isEmpty() || username == null){
+        if (username == null || username.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
         }
-        if (password.trim().isEmpty() || password == null){
+        if (password == null || password.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid password"));
         }
