@@ -64,11 +64,11 @@ public class GameService {
     }
 
     @Transactional
-    public Game findGameById(int game_id) { // TODO should we validate the game id > 0?
+    public Game findGameById(int game_id) {
         if (game_id <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
         }
-        Game game = gameRepository.findById(game_id); // check diff with findbyPersonId
+        Game game = gameRepository.findById(game_id);
         if (game == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, String.format("Game with ID %d does not exist", game_id));
         }
@@ -81,10 +81,11 @@ public class GameService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Title cannot be empty or null");
         }
         Iterable<Game> games = gameRepository.findAllByTitle(title);
-        if (!games.iterator().hasNext()) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, String.format("Game with title %s does not exist", title));
+        if (!games.iterator().hasNext()) { // Checks if games list is empty
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with title %s does not exist", title));
         }
         return games;
+        // PAST METHOD
         // Iterable<Game> games = this.getAllGames();
         // for (Game game : games) {
         //     if (game.getTitle().equals(title)) {
@@ -96,6 +97,9 @@ public class GameService {
 
     @Transactional 
     public Iterable<Game> getGamesByCategory(Category category){
+        if(category == null){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Category cannot be null");
+        }
         Iterable<Game> games = this.getAllGames();
         List<Game> gamesByCategory = new ArrayList<Game>();
         for (Game game : games) {
@@ -103,17 +107,26 @@ public class GameService {
                 gamesByCategory.add(game);
             }
         }
+        if (gamesByCategory.isEmpty()) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No games with the given category");
+        }
         return gamesByCategory;
     }
 
     @Transactional
     public Iterable<Game> getGamesByPlatform(Platform platform) {
+        if (platform == null) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform cannot be null");
+        }
         Iterable<Game> games = this.getAllGames();
         List<Game> gamesByPlatform = new ArrayList<Game>();
         for (Game game : games) {
             if (game.getPlatforms().contains(platform)) {
                 gamesByPlatform.add(game);
             }
+        }
+        if (gamesByPlatform.isEmpty()) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No games with the given platform");
         }
         return gamesByPlatform;
     }
@@ -159,10 +172,14 @@ public class GameService {
 
     @Transactional
     public Game updateGamePrice(int game_id, int newPrice) {
-        Game game = findGameById(game_id);
         if (newPrice <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Price cannot be negative nor null");
         }
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        Game game = findGameById(game_id);
+
         game.setPrice(newPrice);
         gameRepository.save(game);
         return game;
@@ -170,10 +187,14 @@ public class GameService {
 
     @Transactional
     public Game updateGameStockQuantity(int game_id, int newStockQuantity) {
-        Game game = findGameById(game_id);
         if (newStockQuantity < 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Stock quantity cannot be negative");
         }
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        Game game = findGameById(game_id);
+
         game.setStockQuantity(newStockQuantity);
         gameRepository.save(game);
         return game;
@@ -181,10 +202,14 @@ public class GameService {
 
     @Transactional
     public Game updateGameStatus(int game_id, Game.GameStatus newGameStatus) {
-        Game game = findGameById(game_id);
         if (newGameStatus == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game status cannot be null");
         }
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        Game game = findGameById(game_id);
+
         game.setGameStatus(newGameStatus);
         gameRepository.save(game);
         return game;
@@ -192,10 +217,14 @@ public class GameService {
 
     @Transactional
     public Game updateGamePhotoUrl(int game_id, String newPhotoUrl) {
-        Game game = findGameById(game_id);
         if (isEmpty(newPhotoUrl)) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Photo URL cannot be empty or null");
         }
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        Game game = findGameById(game_id);
+
         game.setPhotoUrl(newPhotoUrl);
         gameRepository.save(game);
         return game;
@@ -203,10 +232,14 @@ public class GameService {
 
     @Transactional
     public Game updateGameTitle(int game_id, String newTitle) {
-        Game game = findGameById(game_id);
         if (isEmpty(newTitle)) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Title cannot be empty or null");
         }
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        Game game = findGameById(game_id);
+
         game.setTitle(newTitle);
         gameRepository.save(game);
         return game;
@@ -229,7 +262,7 @@ public class GameService {
             }
             Category category = categoryRepository.findById(category_id);
             if (category == null) {
-                throw new GameShopException(HttpStatus.BAD_REQUEST,"Category does not exist");
+                throw new GameShopException(HttpStatus.NOT_FOUND,"Category does not exist");
             }
             if (!game.getCategories().contains(category)) {
                 game.addCategory(category);
@@ -257,7 +290,7 @@ public class GameService {
             }
             Platform platform = platformRepository.findById(platform_id);
             if (platform == null) {
-                throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform does not exist");
+                throw new GameShopException(HttpStatus.NOT_FOUND, "Platform does not exist");
             }
             if(!game.getPlatforms().contains(platform)){
                 game.addPlatform(platform);
