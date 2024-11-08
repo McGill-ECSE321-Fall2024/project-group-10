@@ -218,6 +218,9 @@ public class Game {
     List<Platform> newPlatforms = Collections.unmodifiableList(platforms);
     return newPlatforms;
   }
+  public void setPlatforms(List<Platform> platforms) {
+    this.platforms = platforms;
+  }
 
   public int numberOfPlatforms() {
     int number = platforms.size();
@@ -334,6 +337,9 @@ public class Game {
       wasAdded = true;
     }
     return wasAdded;
+  }
+  public void setCategories(List<Category> categories) {
+    this.categories = categories;
   }
 
   public boolean addOrMovePlatformAt(Platform aPlatform, int index) {

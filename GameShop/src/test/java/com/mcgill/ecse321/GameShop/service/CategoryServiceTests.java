@@ -245,6 +245,23 @@ public class CategoryServiceTests {
 
         verify(categoryRepository, times(1)).findAll();
     }
+    @Test
+public void testGetAllCategoriesEmpty() {
+    // Arrange
+    when(categoryRepository.findAll()).thenReturn(new ArrayList<>());
+
+    // Act
+    Iterable<Category> result = categoryService.getAllCategories();
+
+    // Assert
+    assertNotNull(result);
+    List<Category> resultList = new ArrayList<>();
+    result.forEach(resultList::add);
+    assertTrue(resultList.isEmpty());
+
+    verify(categoryRepository, times(1)).findAll();
+}
+
 
     // --- Tests for getAllGamesInCategory ---
 
@@ -478,4 +495,33 @@ public class CategoryServiceTests {
         verify(categoryRepository, never()).findById(anyInt());
         verify(categoryRepository, never()).delete(any(Category.class));
     }
+
+    @Test
+public void testDeleteCategoryWithAssociatedGames() {
+    // Arrange
+    Manager manager = new Manager(VALID_MANAGER_EMAIL + "assocGames", "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
+    Category category = new Category("Action", manager);
+    category.setCategory_id(20);
+
+    Game game1 = new Game("Game1", "Description1", 60, GameStatus.InStock, 5, "photo1.jpg");
+    game1.addCategory(category);
+    Game game2 = new Game("Game2", "Description2", 70, GameStatus.InStock, 10, "photo2.jpg");
+    game2.addCategory(category);
+
+    List<Game> gamesInCategory = Arrays.asList(game1, game2);
+    
+    when(categoryRepository.findById(20)).thenReturn(category);
+    when(gameRepository.findAllByCategoriesContains(category)).thenReturn(gamesInCategory);
+
+    // Act
+    categoryService.deleteCategory(20);
+
+    // Assert
+    for (Game game : gamesInCategory) {
+        assertFalse(game.getCategories().contains(category));
+        verify(gameRepository, times(1)).save(game);
+    }
+    verify(categoryRepository, times(1)).delete(category);
+    verify(categoryRepository, times(1)).findById(20);
+}
 }

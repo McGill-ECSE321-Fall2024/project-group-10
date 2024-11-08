@@ -56,7 +56,7 @@ public class SpecificGameController {
 
     @PutMapping("/specificGames/{id}")
     public void putMethod(@PathVariable int id, @PathVariable int game_id) {
-        specificGameService.updateSpecficGame(id, game_id);
+        specificGameService.updateSpecificGame(id, game_id);
     }
 
     // Return Specific Game for return request taking as args (customer_id, specificGame_id)

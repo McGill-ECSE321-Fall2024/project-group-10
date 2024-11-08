@@ -106,13 +106,13 @@ public class GameController { // TODO still have to take into account inventory
     // }
 
     @PutMapping("/games/platform/{game_id}/{platform_id}")
-    public Boolean setPlatform(@PathVariable int game_id, @PathVariable int platform_id) {
-        return gameService.setPlatform(game_id, platform_id);
+    public Game addPlatform(@PathVariable int game_id, @PathVariable int platform_id) {
+        return gameService.addPlatform(game_id, platform_id);
     }
 
     @PutMapping("/games/category/{game_id}/{category_id}") 
-    public Boolean setCategory(@PathVariable int game_id, @PathVariable int category_id) {
-        return gameService.setCategory(game_id, category_id);
+    public Game addCategory(@PathVariable int game_id, @PathVariable int category_id) {
+        return gameService.addCategory(game_id, category_id);
     }
     
     @GetMapping("/games/Title/{Title}")
@@ -121,19 +121,7 @@ public class GameController { // TODO still have to take into account inventory
         return games;
     }
 
-    @GetMapping("/games/Category/{category_id}")
-    public Iterable<Game> getGamesByCategory(@RequestParam int category_id) {
-        Category category = categoryService.getCategory(category_id);
-        Iterable<Game> games = gameService.getGamesByCategory(category);
-        return games;
-    }
 
-    @GetMapping("/games/Platform/{platform_id}")
-    public Iterable<Game> getGamesByPlatform(@RequestParam int platform_id) {
-        Platform platform = PlatformService.getPlatform(platform_id);
-        Iterable<Game> games = gameService.getGamesByPlatform(platform);
-        return games;
-    }
 
     @GetMapping("/games/Status/{status}")
     public Iterable<Game> getGamesByStatus(@RequestParam GameStatus status) {

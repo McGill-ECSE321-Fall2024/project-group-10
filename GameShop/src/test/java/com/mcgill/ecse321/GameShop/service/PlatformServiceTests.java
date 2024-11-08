@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
+import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Platform;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
@@ -360,4 +362,91 @@ public class PlatformServiceTests {
         verify(platformRepository, never()).findById(invalidId);
         verify(platformRepository, never()).delete(any(Platform.class));
     }
+    @Test
+public void testGetAllGamesInPlatform_Successful() {
+    // Arrange
+    Manager manager = new Manager(VALID_MANAGER_EMAIL+"qwsa", "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
+    Platform platform = new Platform(VALID_PLATFORM_NAME, manager);
+    platform.setPlatform_id(70);
+
+    Game game1 = new Game("Game Title 1", "Description 1", 50, Game.GameStatus.InStock, 100, "http://example.com/image1.jpg");
+    Game game2 = new Game("Game Title 2", "Description 2", 60, Game.GameStatus.InStock, 50, "http://example.com/image2.jpg");
+
+    when(platformRepository.findById(70)).thenReturn(platform);
+    when(gameRepository.findAllByPlatformsContains(platform)).thenReturn(Arrays.asList(game1, game2));
+
+    // Act
+    List<Game> gamesInPlatform = platformService.getAllGamesInPlatform(70);
+
+    // Assert
+    assertNotNull(gamesInPlatform);
+    assertEquals(2, gamesInPlatform.size());
+    assertTrue(gamesInPlatform.contains(game1));
+    assertTrue(gamesInPlatform.contains(game2));
+    verify(platformRepository, times(1)).findById(70);
+    verify(gameRepository, times(1)).findAllByPlatformsContains(platform);
+}
+@Test
+public void testGetAllGamesInPlatformWithInvalidId() {
+    // Arrange
+    int invalidPlatformId = 999;
+    when(platformRepository.findById(invalidPlatformId)).thenReturn(null);
+
+    // Act & Assert
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        platformService.getAllGamesInPlatform(invalidPlatformId);
+    });
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertEquals("Platform does not exist", exception.getMessage());
+    verify(platformRepository, times(1)).findById(invalidPlatformId);
+    verify(gameRepository, never()).findAllByPlatformsContains(any(Platform.class));
+}
+@Test
+public void testGetAllGamesInPlatformWithInvalidIdValue() {
+    // Arrange
+    int invalidPlatformId = -1;
+
+    // Act & Assert
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        platformService.getAllGamesInPlatform(invalidPlatformId);
+    });
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Invalid platform ID", exception.getMessage());
+    verify(platformRepository, never()).findById(invalidPlatformId);
+    verify(gameRepository, never()).findAllByPlatformsContains(any(Platform.class));
+}
+
+@Test
+public void testDeletePlatformWithAssociatedGames(){
+    // Arrange
+    Manager manager = new Manager(VALID_MANAGER_EMAIL + "assocGames", "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
+    Platform platform = new Platform("PlayStation 5", manager);
+    platform.setPlatform_id(79);
+
+    Game game1 = new Game("Game1", "Description1", 60, GameStatus.InStock, 5, "photo1.jpg");
+    game1.addPlatform(platform);
+    Game game2 = new Game("Game2", "Description2", 70, GameStatus.InStock, 10, "photo2.jpg");
+    game2.addPlatform(platform);
+
+    List<Game> gamesInPlatform = Arrays.asList(game1, game2);
+    
+    when(platformRepository.findById(79)).thenReturn(platform);
+    when(gameRepository.findAllByPlatformsContains(platform)).thenReturn(gamesInPlatform);
+
+    // Act
+    platformService.deletePlatform(79);
+
+    // Assert
+    for (Game game : gamesInPlatform) {
+        assertFalse(game.getPlatforms().contains(platform));
+        verify(gameRepository, times(1)).save(game);
+    }
+    verify(platformRepository, times(1)).delete(platform);
+    verify(platformRepository, times(1)).findById(79);
+}
+
+
+
 }
