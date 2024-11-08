@@ -80,8 +80,13 @@ public class WishListIntegrationTests {
         assertEquals(HttpStatus.OK, customerResponse.getStatusCode(), "Failed to create customer account");
         assertEquals(CUSTOMER_EMAIL, customer.getEmail(), "Customer email mismatch");
         // Create wishlist
-        String url = String.format("/account/customer/%s/wishlist", CUSTOMER_EMAIL);
-        ResponseEntity<WishListResponseDto> response = client.getForEntity(url, WishListResponseDto.class);
+        String url = String.format("/account/customer/wishlist/%s", CUSTOMER_EMAIL);
+        ResponseEntity<WishListResponseDto> wishlistResponse = client.postForEntity(
+                url, null, WishListResponseDto.class);
+        assertNotNull(wishlistResponse);
+        assertEquals(HttpStatus.OK, wishlistResponse.getStatusCode(), "Failed to create wishlist for customer");
+        String getUrl = String.format("/account/customer/%s/wishlist", CUSTOMER_EMAIL);
+        ResponseEntity<WishListResponseDto> response = client.getForEntity(getUrl, WishListResponseDto.class);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to get wishlist for customer");
         WishListResponseDto wishList = response.getBody();
