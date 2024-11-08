@@ -1,7 +1,9 @@
 package com.mcgill.ecse321.GameShop.controller;
 
 import com.mcgill.ecse321.GameShop.dto.OrderDto.*;
+import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameListDto;
 import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameResponseDto;
+import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Order;
 import com.mcgill.ecse321.GameShop.model.SpecificGame;
 import com.mcgill.ecse321.GameShop.service.OrderService;
@@ -70,24 +72,39 @@ public class OrderController {
     }
 
     @PostMapping("/orders/{trackingNumber}/games")
-    public void addGameToOrder(
+    public OrderResponseDto addGameToOrder(
             @PathVariable String trackingNumber,
             @RequestBody OrderAddGameRequestDto request) {
         orderService.addGameToOrder(trackingNumber, request.getGameId(), request.getQuantity());
+        Order order = orderService.getOrderById(trackingNumber);
+        List<SpecificGameResponseDto> specificGames = orderService.getSpecificGamesByOrder(trackingNumber).stream()
+                .map(SpecificGameResponseDto::new)
+                .collect(Collectors.toList());
+        return OrderResponseDto.create(order, specificGames);
+
     }
 
     @GetMapping("/orders/{trackingNumber}/specific-games")
-    public List<SpecificGameResponseDto> getSpecificGamesByOrder(@PathVariable String trackingNumber) {
+    public SpecificGameListDto getSpecificGamesByOrder(@PathVariable String trackingNumber) {
         List<SpecificGame> specificGames = orderService.getSpecificGamesByOrder(trackingNumber);
-        return specificGames.stream()
-                .map(SpecificGameResponseDto::new)
+
+        // Map SpecificGame to SpecificGameSummaryDto
+        List<SpecificGameSummaryDto> gameSummaries = specificGames.stream()
+                .map(SpecificGameSummaryDto::new)
                 .collect(Collectors.toList());
+
+        return new SpecificGameListDto(gameSummaries);
     }
 
     @PostMapping("/orders/{trackingNumber}/return/{specificGameId}")
-    public void returnGame(
+    public OrderResponseDto returnGame(
             @PathVariable String trackingNumber,
             @PathVariable int specificGameId) {
         orderService.returnGame(trackingNumber, specificGameId);
+        Order order = orderService.getOrderById(trackingNumber);
+        List<SpecificGameResponseDto> specificGames = orderService.getSpecificGamesByOrder(trackingNumber).stream()
+                .map(SpecificGameResponseDto::new)
+                .collect(Collectors.toList());
+        return OrderResponseDto.create(order, specificGames);
     }
 }
