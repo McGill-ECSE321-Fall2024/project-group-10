@@ -51,82 +51,82 @@ public class PromotionServiceTests {
     @InjectMocks
     private PromotionService promotionService;
 
-    // Constants for testing
-    private static final int VALID_PROMOTION_ID = 1;
-    private static final int INVALID_PROMOTION_ID = 999;
-    private static final String VALID_DESCRIPTION = "Summer Sale";
-    private static final String UPDATED_DESCRIPTION = "Winter Sale";
-    private static final int VALID_DISCOUNT_RATE = 20;
-    private static final int UPDATED_DISCOUNT_RATE = 30;
-    private static final Date VALID_START_DATE = Date.valueOf("2023-07-01");
-    private static final Date VALID_END_DATE = Date.valueOf("2023-07-31");
-    private static final Date UPDATED_START_DATE = Date.valueOf("2023-08-01");
-    private static final Date UPDATED_END_DATE = Date.valueOf("2023-08-31");
-    private static final String VALID_MANAGER_EMAIL = "manager@example.com";
-    private static final String INVALID_MANAGER_EMAIL = "invalid@example.com";
-    private static final List<Integer> VALID_GAME_IDS = Arrays.asList(1, 2);
-    private static final int VALID_GAME_ID = 1;
-    private static final int INVALID_GAME_ID = 999;
-
     // --- Tests for createPromotion ---
 
     @Test
     public void testCreateValidPromotion() {
         // Arrange
-        Manager manager = new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
-        Game game1 = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game1.setGame_id(1);
-        Game game2 = new Game("Game2", "Description2", 60, GameStatus.InStock, 20, "photoUrl2");
-        game2.setGame_id(2);
+        int promotionId = 1;
+        String managerEmail = "manager1@example.com";
+        String description = "Summer Sale";
+        int discountRate = 20;
+        Date startDate = Date.valueOf("2023-07-01");
+        Date endDate = Date.valueOf("2023-07-31");
+        List<Integer> gameIds = Arrays.asList(101, 102);
 
-        when(managerRepository.findByEmail(VALID_MANAGER_EMAIL)).thenReturn(manager);
-        when(gameRepository.findById(1)).thenReturn(game1);
-        when(gameRepository.findById(2)).thenReturn(game2);
+        Manager manager = new Manager(managerEmail, "managerUser1", "managerPass1", "123-456-7890", "123 Manager Street");
+        Game game1 = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
+        game1.setGame_id(101);
+        Game game2 = new Game("Game2", "Description2", 60, GameStatus.InStock, 20, "photoUrl2");
+        game2.setGame_id(102);
+
+        when(managerRepository.findByEmail(managerEmail)).thenReturn(manager);
+        when(gameRepository.findById(101)).thenReturn(game1);
+        when(gameRepository.findById(102)).thenReturn(game2);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> {
             Promotion savedPromotion = invocation.getArgument(0);
-            savedPromotion.setPromotion_id(VALID_PROMOTION_ID);
+            savedPromotion.setPromotion_id(promotionId);
             return savedPromotion;
         });
 
         // Act
         Promotion createdPromotion = promotionService.createPromotion(
-                VALID_DESCRIPTION,
-                VALID_DISCOUNT_RATE,
-                VALID_START_DATE,
-                VALID_END_DATE,
-                VALID_MANAGER_EMAIL,
-                VALID_GAME_IDS
+                description,
+                discountRate,
+                startDate,
+                endDate,
+                managerEmail,
+                gameIds
         );
 
         // Assert
         assertNotNull(createdPromotion);
-        assertEquals(VALID_PROMOTION_ID, createdPromotion.getPromotion_id());
-        assertEquals(VALID_DESCRIPTION, createdPromotion.getDescription());
-        assertEquals(VALID_DISCOUNT_RATE, createdPromotion.getDiscountRate());
-        assertEquals(VALID_START_DATE, createdPromotion.getStartDate());
-        assertEquals(VALID_END_DATE, createdPromotion.getEndDate());
+        assertEquals(promotionId, createdPromotion.getPromotion_id());
+        assertEquals(description, createdPromotion.getDescription());
+        assertEquals(discountRate, createdPromotion.getDiscountRate());
+        assertEquals(startDate, createdPromotion.getStartDate());
+        assertEquals(endDate, createdPromotion.getEndDate());
         assertEquals(manager, createdPromotion.getManager());
         assertEquals(2, createdPromotion.getGames().size());
         assertTrue(createdPromotion.getGames().contains(game1));
         assertTrue(createdPromotion.getGames().contains(game2));
 
-        verify(managerRepository, times(1)).findByEmail(VALID_MANAGER_EMAIL);
-        verify(gameRepository, times(1)).findById(1);
-        verify(gameRepository, times(1)).findById(2);
+        verify(managerRepository, times(1)).findByEmail(managerEmail);
+        verify(gameRepository, times(1)).findById(101);
+        verify(gameRepository, times(1)).findById(102);
         verify(promotionRepository, times(1)).save(any(Promotion.class));
     }
 
     @Test
     public void testCreatePromotionWithNullDescription() {
+        // Arrange
+        int promotionId = 2;
+        String managerEmail = "manager2@example.com";
+        String description = null;
+        int discountRate = 20;
+        Date startDate = Date.valueOf("2023-07-01");
+        Date endDate = Date.valueOf("2023-07-31");
+        List<Integer> gameIds = Arrays.asList(103, 104);
+
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             promotionService.createPromotion(
-                    null,
-                    VALID_DISCOUNT_RATE,
-                    VALID_START_DATE,
-                    VALID_END_DATE,
-                    VALID_MANAGER_EMAIL,
-                    VALID_GAME_IDS
+                    description,
+                    discountRate,
+                    startDate,
+                    endDate,
+                    managerEmail,
+                    gameIds
             );
         });
 
@@ -140,15 +140,24 @@ public class PromotionServiceTests {
 
     @Test
     public void testCreatePromotionWithInvalidDiscountRate() {
+        // Arrange
+        int promotionId = 3;
+        String managerEmail = "manager3@example.com";
+        String description = "Autumn Sale";
+        int discountRate = -10; // Invalid
+        Date startDate = Date.valueOf("2023-09-01");
+        Date endDate = Date.valueOf("2023-09-30");
+        List<Integer> gameIds = Arrays.asList(105, 106);
+
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             promotionService.createPromotion(
-                    VALID_DESCRIPTION,
-                    -10,
-                    VALID_START_DATE,
-                    VALID_END_DATE,
-                    VALID_MANAGER_EMAIL,
-                    VALID_GAME_IDS
+                    description,
+                    discountRate,
+                    startDate,
+                    endDate,
+                    managerEmail,
+                    gameIds
             );
         });
 
@@ -162,15 +171,24 @@ public class PromotionServiceTests {
 
     @Test
     public void testCreatePromotionWithNullStartDate() {
+        // Arrange
+        int promotionId = 4;
+        String managerEmail = "manager4@example.com";
+        String description = "Winter Sale";
+        int discountRate = 20;
+        Date startDate = null;
+        Date endDate = Date.valueOf("2023-12-31");
+        List<Integer> gameIds = Arrays.asList(107, 108);
+
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             promotionService.createPromotion(
-                    VALID_DESCRIPTION,
-                    VALID_DISCOUNT_RATE,
-                    null,
-                    VALID_END_DATE,
-                    VALID_MANAGER_EMAIL,
-                    VALID_GAME_IDS
+                    description,
+                    discountRate,
+                    startDate,
+                    endDate,
+                    managerEmail,
+                    gameIds
             );
         });
 
@@ -184,15 +202,24 @@ public class PromotionServiceTests {
 
     @Test
     public void testCreatePromotionWithStartDateAfterEndDate() {
+        // Arrange
+        int promotionId = 5;
+        String managerEmail = "manager5@example.com";
+        String description = "Flash Sale";
+        int discountRate = 25;
+        Date startDate = Date.valueOf("2023-10-01");
+        Date endDate = Date.valueOf("2023-09-30"); // End date before start date
+        List<Integer> gameIds = Arrays.asList(109, 110);
+
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             promotionService.createPromotion(
-                    VALID_DESCRIPTION,
-                    VALID_DISCOUNT_RATE,
-                    VALID_END_DATE,
-                    VALID_START_DATE,
-                    VALID_MANAGER_EMAIL,
-                    VALID_GAME_IDS
+                    description,
+                    discountRate,
+                    startDate,
+                    endDate,
+                    managerEmail,
+                    gameIds
             );
         });
 
@@ -207,39 +234,55 @@ public class PromotionServiceTests {
     @Test
     public void testCreatePromotionWithInvalidManagerEmail() {
         // Arrange
-        when(managerRepository.findByEmail(INVALID_MANAGER_EMAIL)).thenReturn(null);
+        String invalidManagerEmail = "invalidmanager@example.com";
+        String description = "Summer Sale";
+        int discountRate = 20;
+        Date startDate = Date.valueOf("2023-07-01");
+        Date endDate = Date.valueOf("2023-07-31");
+        List<Integer> gameIds = Arrays.asList(111, 112);
+
+        when(managerRepository.findByEmail(invalidManagerEmail)).thenReturn(null);
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             promotionService.createPromotion(
-                    VALID_DESCRIPTION,
-                    VALID_DISCOUNT_RATE,
-                    VALID_START_DATE,
-                    VALID_END_DATE,
-                    INVALID_MANAGER_EMAIL,
-                    VALID_GAME_IDS
+                    description,
+                    discountRate,
+                    startDate,
+                    endDate,
+                    invalidManagerEmail,
+                    gameIds
             );
         });
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals(String.format("Manager with email %s not found", INVALID_MANAGER_EMAIL), exception.getMessage());
+        assertEquals(String.format("Manager with email %s not found", invalidManagerEmail), exception.getMessage());
 
-        verify(managerRepository, times(1)).findByEmail(INVALID_MANAGER_EMAIL);
+        verify(managerRepository, times(1)).findByEmail(invalidManagerEmail);
         verify(gameRepository, never()).findById(anyInt());
         verify(promotionRepository, never()).save(any(Promotion.class));
     }
 
     @Test
     public void testCreatePromotionWithNullGameIds() {
+        // Arrange
+        int promotionId = 6;
+        String managerEmail = "manager6@example.com";
+        String description = "Black Friday Sale";
+        int discountRate = 30;
+        Date startDate = Date.valueOf("2023-11-25");
+        Date endDate = Date.valueOf("2023-11-30");
+        List<Integer> gameIds = null;
+
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             promotionService.createPromotion(
-                    VALID_DESCRIPTION,
-                    VALID_DISCOUNT_RATE,
-                    VALID_START_DATE,
-                    VALID_END_DATE,
-                    VALID_MANAGER_EMAIL,
-                    null
+                    description,
+                    discountRate,
+                    startDate,
+                    endDate,
+                    managerEmail,
+                    gameIds
             );
         });
 
@@ -254,47 +297,55 @@ public class PromotionServiceTests {
     @Test
     public void testCreatePromotionWithNonexistentGameId() {
         // Arrange
-        Manager manager = new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
-        when(managerRepository.findByEmail(VALID_MANAGER_EMAIL)).thenReturn(manager);
-        when(gameRepository.findById(1)).thenReturn(null);
+        int promotionId = 7;
+        String managerEmail = "manager7@example.com";
+        String description = "Cyber Monday Sale";
+        int discountRate = 35;
+        Date startDate = Date.valueOf("2023-11-27");
+        Date endDate = Date.valueOf("2023-12-02");
+        List<Integer> gameIds = Arrays.asList(113); // Game ID 113 does not exist
+
+        Manager manager = new Manager(managerEmail, "managerUser7", "managerPass7", "123-456-7890", "123 Manager Street");
+        when(managerRepository.findByEmail(managerEmail)).thenReturn(manager);
+        when(gameRepository.findById(113)).thenReturn(null); // Nonexistent game
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             promotionService.createPromotion(
-                    VALID_DESCRIPTION,
-                    VALID_DISCOUNT_RATE,
-                    VALID_START_DATE,
-                    VALID_END_DATE,
-                    VALID_MANAGER_EMAIL,
-                    Arrays.asList(1)
+                    description,
+                    discountRate,
+                    startDate,
+                    endDate,
+                    managerEmail,
+                    gameIds
             );
         });
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals("Game with ID 1 not found", exception.getMessage());
+        assertEquals("Game with ID 113 not found", exception.getMessage());
 
-        verify(managerRepository, times(1)).findByEmail(VALID_MANAGER_EMAIL);
-        verify(gameRepository, times(1)).findById(1);
+        verify(managerRepository, times(1)).findByEmail(managerEmail);
+        verify(gameRepository, times(1)).findById(113);
         verify(promotionRepository, never()).save(any(Promotion.class));
-
     }
-    // --- Tests for getPromotionById ---
 
+    // --- Tests for getPromotionById ---
 
     @Test
     public void testGetPromotionByInvalidId() {
         // Arrange
-        when(promotionRepository.findById(INVALID_PROMOTION_ID)).thenReturn(null);
+        int invalidPromotionId = 999;
+        when(promotionRepository.findById(invalidPromotionId)).thenReturn(null);
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            promotionService.getPromotionById(INVALID_PROMOTION_ID);
+            promotionService.getPromotionById(invalidPromotionId);
         });
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Promotion not found", exception.getMessage());
 
-        verify(promotionRepository, times(1)).findById(INVALID_PROMOTION_ID);
+        verify(promotionRepository, times(1)).findById(invalidPromotionId);
     }
 
     // --- Tests for updatePromotion ---
@@ -302,63 +353,87 @@ public class PromotionServiceTests {
     @Test
     public void testUpdatePromotion() {
         // Arrange
-        Manager manager = new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, manager);
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
+        int promotionId = 8;
+        String managerEmail = "manager8@example.com";
+        String description = "Holiday Sale";
+        int discountRate = 40;
+        Date startDate = Date.valueOf("2024-12-01");
+        Date endDate = Date.valueOf("2024-12-31");
+        List<Integer> gameIds = Arrays.asList(114);
 
-        Game game1 = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game1.setGame_id(1);
+        String updatedDescription = "New Year Sale";
+        int updatedDiscountRate = 50;
+        Date updatedStartDate = Date.valueOf("2024-01-01");
+        Date updatedEndDate = Date.valueOf("2024-01-31");
+        List<Integer> updatedGameIds = Arrays.asList(114);
 
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-        when(gameRepository.findById(1)).thenReturn(game1);
+        Manager manager = new Manager(managerEmail, "managerUser8", "managerPass8", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        Game game1 = new Game("Game3", "Description3", 70, GameStatus.InStock, 15, "photoUrl3");
+        game1.setGame_id(114);
+        promotion.setGames(Arrays.asList(game1));
+
+        Game game2 = new Game("Game4", "Description4", 80, GameStatus.InStock, 25, "photoUrl4");
+        game2.setGame_id(115);
+
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
+        when(gameRepository.findById(114)).thenReturn(game1);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         // Act
         Promotion updatedPromotion = promotionService.updatePromotion(
-                VALID_PROMOTION_ID,
-                UPDATED_DESCRIPTION,
-                UPDATED_DISCOUNT_RATE,
-                UPDATED_START_DATE,
-                UPDATED_END_DATE,
-                Arrays.asList(1)
+                promotionId,
+                updatedDescription,
+                updatedDiscountRate,
+                updatedStartDate,
+                updatedEndDate,
+                updatedGameIds
         );
 
         // Assert
         assertNotNull(updatedPromotion);
-        assertEquals(VALID_PROMOTION_ID, updatedPromotion.getPromotion_id());
-        assertEquals(UPDATED_DESCRIPTION, updatedPromotion.getDescription());
-        assertEquals(UPDATED_DISCOUNT_RATE, updatedPromotion.getDiscountRate());
-        assertEquals(UPDATED_START_DATE, updatedPromotion.getStartDate());
-        assertEquals(UPDATED_END_DATE, updatedPromotion.getEndDate());
+        assertEquals(promotionId, updatedPromotion.getPromotion_id());
+        assertEquals(updatedDescription, updatedPromotion.getDescription());
+        assertEquals(updatedDiscountRate, updatedPromotion.getDiscountRate());
+        assertEquals(updatedStartDate, updatedPromotion.getStartDate());
+        assertEquals(updatedEndDate, updatedPromotion.getEndDate());
         assertEquals(1, updatedPromotion.getGames().size());
         assertTrue(updatedPromotion.getGames().contains(game1));
 
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
-        verify(gameRepository, times(1)).findById(1);
+        verify(promotionRepository, times(1)).findById(promotionId);
+        verify(gameRepository, times(1)).findById(114);
         verify(promotionRepository, times(1)).save(promotion);
     }
 
     @Test
     public void testUpdatePromotionWithInvalidId() {
         // Arrange
-        when(promotionRepository.findById(INVALID_PROMOTION_ID)).thenReturn(null);
+        int invalidPromotionId = 1000;
+        String updatedDescription = "New Year Sale";
+        int updatedDiscountRate = 50;
+        Date updatedStartDate = Date.valueOf("2024-01-01");
+        Date updatedEndDate = Date.valueOf("2024-01-31");
+        List<Integer> updatedGameIds = Arrays.asList(116);
+
+        when(promotionRepository.findById(invalidPromotionId)).thenReturn(null);
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             promotionService.updatePromotion(
-                    INVALID_PROMOTION_ID,
-                    UPDATED_DESCRIPTION,
-                    UPDATED_DISCOUNT_RATE,
-                    UPDATED_START_DATE,
-                    UPDATED_END_DATE,
-                    VALID_GAME_IDS
+                    invalidPromotionId,
+                    updatedDescription,
+                    updatedDiscountRate,
+                    updatedStartDate,
+                    updatedEndDate,
+                    updatedGameIds
             );
         });
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Promotion not found", exception.getMessage());
 
-        verify(promotionRepository, times(1)).findById(INVALID_PROMOTION_ID);
+        verify(promotionRepository, times(1)).findById(invalidPromotionId);
         verify(gameRepository, never()).findById(anyInt());
         verify(promotionRepository, never()).save(any(Promotion.class));
     }
@@ -366,28 +441,45 @@ public class PromotionServiceTests {
     @Test
     public void testUpdatePromotionWithInvalidDiscountRate() {
         // Arrange
-        Manager manager = new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, manager);
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
+        int promotionId = 9;
+        String managerEmail = "manager9@example.com";
+        String description = "Spring Sale";
+        int discountRate = 15;
+        Date startDate = Date.valueOf("2024-03-01");
+        Date endDate = Date.valueOf("2024-03-31");
+        List<Integer> gameIds = Arrays.asList(117);
 
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
+        String updatedDescription = "Updated Spring Sale";
+        int invalidDiscountRate = -5;
+        Date updatedStartDate = Date.valueOf("2024-04-01");
+        Date updatedEndDate = Date.valueOf("2024-04-30");
+        List<Integer> updatedGameIds = Arrays.asList(117);
+
+        Manager manager = new Manager(managerEmail, "managerUser9", "managerPass9", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        Game game1 = new Game("Game5", "Description5", 90, GameStatus.InStock, 35, "photoUrl5");
+        game1.setGame_id(117);
+        promotion.setGames(Arrays.asList(game1));
+
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             promotionService.updatePromotion(
-                    VALID_PROMOTION_ID,
-                    UPDATED_DESCRIPTION,
-                    -10,
-                    UPDATED_START_DATE,
-                    UPDATED_END_DATE,
-                    VALID_GAME_IDS
+                    promotionId,
+                    updatedDescription,
+                    invalidDiscountRate,
+                    updatedStartDate,
+                    updatedEndDate,
+                    updatedGameIds
             );
         });
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Discount rate must be between 0 and 100", exception.getMessage());
 
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
+        verify(promotionRepository, times(1)).findById(promotionId);
         verify(gameRepository, never()).findById(anyInt());
         verify(promotionRepository, never()).save(any(Promotion.class));
     }
@@ -397,33 +489,48 @@ public class PromotionServiceTests {
     @Test
     public void testDeletePromotion() {
         // Arrange
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street"));
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
+        int promotionId = 10;
+        String managerEmail = "manager10@example.com";
+        String description = "Mega Sale";
+        int discountRate = 50;
+        Date startDate = Date.valueOf("2024-05-01");
+        Date endDate = Date.valueOf("2024-05-31");
+        List<Integer> gameIds = Arrays.asList(118, 119);
 
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
+        Manager manager = new Manager(managerEmail, "managerUser10", "managerPass10", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        Game game1 = new Game("Game6", "Description6", 100, GameStatus.InStock, 50, "photoUrl6");
+        game1.setGame_id(118);
+        Game game2 = new Game("Game7", "Description7", 110, GameStatus.InStock, 60, "photoUrl7");
+        game2.setGame_id(119);
+        promotion.setGames(Arrays.asList(game1, game2));
+
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
 
         // Act
-        promotionService.deletePromotion(VALID_PROMOTION_ID);
+        promotionService.deletePromotion(promotionId);
 
         // Assert
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
+        verify(promotionRepository, times(1)).findById(promotionId);
         verify(promotionRepository, times(1)).delete(promotion);
     }
 
     @Test
     public void testDeletePromotionWithInvalidId() {
         // Arrange
-        when(promotionRepository.findById(INVALID_PROMOTION_ID)).thenReturn(null);
+        int invalidPromotionId = 1001;
+        when(promotionRepository.findById(invalidPromotionId)).thenReturn(null);
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            promotionService.deletePromotion(INVALID_PROMOTION_ID);
+            promotionService.deletePromotion(invalidPromotionId);
         });
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Promotion not found", exception.getMessage());
 
-        verify(promotionRepository, times(1)).findById(INVALID_PROMOTION_ID);
+        verify(promotionRepository, times(1)).findById(invalidPromotionId);
         verify(promotionRepository, never()).delete(any(Promotion.class));
     }
 
@@ -432,21 +539,28 @@ public class PromotionServiceTests {
     @Test
     public void testGetAllGamesFromPromotion() {
         // Arrange
-        Game game1 = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game1.setGame_id(1);
-        Game game2 = new Game("Game2", "Description2", 60, GameStatus.InStock, 20, "photoUrl2");
-        game2.setGame_id(2);
+        int promotionId = 11;
+        String managerEmail = "manager11@example.com";
+        String description = "Holiday Sale";
+        int discountRate = 45;
+        Date startDate = Date.valueOf("2024-12-01");
+        Date endDate = Date.valueOf("2024-12-31");
+        List<Integer> gameIds = Arrays.asList(120, 121);
 
-        List<Game> games = Arrays.asList(game1, game2);
+        Manager manager = new Manager(managerEmail, "managerUser11", "managerPass11", "123-456-7890", "123 Manager Street");
+        Game game1 = new Game("Game8", "Description8", 120, GameStatus.InStock, 70, "photoUrl8");
+        game1.setGame_id(120);
+        Game game2 = new Game("Game9", "Description9", 130, GameStatus.InStock, 80, "photoUrl9");
+        game2.setGame_id(121);
 
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street"));
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
-        promotion.setGames(games);
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        promotion.setGames(Arrays.asList(game1, game2));
 
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
 
         // Act
-        List<Game> result = promotionService.getAllGamesFromPromotion(VALID_PROMOTION_ID);
+        List<Game> result = promotionService.getAllGamesFromPromotion(promotionId);
 
         // Assert
         assertNotNull(result);
@@ -454,23 +568,24 @@ public class PromotionServiceTests {
         assertTrue(result.contains(game1));
         assertTrue(result.contains(game2));
 
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
+        verify(promotionRepository, times(1)).findById(promotionId);
     }
 
     @Test
     public void testGetAllGamesFromPromotionWithInvalidId() {
         // Arrange
-        when(promotionRepository.findById(INVALID_PROMOTION_ID)).thenReturn(null);
+        int invalidPromotionId = 1002;
+        when(promotionRepository.findById(invalidPromotionId)).thenReturn(null);
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            promotionService.getAllGamesFromPromotion(INVALID_PROMOTION_ID);
+            promotionService.getAllGamesFromPromotion(invalidPromotionId);
         });
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Promotion not found", exception.getMessage());
 
-        verify(promotionRepository, times(1)).findById(INVALID_PROMOTION_ID);
+        verify(promotionRepository, times(1)).findById(invalidPromotionId);
     }
 
     // --- Tests for getGameByIdFromPromotion ---
@@ -478,46 +593,62 @@ public class PromotionServiceTests {
     @Test
     public void testGetGameByIdFromPromotion() {
         // Arrange
-        Game game = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game.setGame_id(VALID_GAME_ID);
+        int promotionId = 12;
+        String managerEmail = "manager12@example.com";
+        String description = "Clearance Sale";
+        int discountRate = 60;
+        Date startDate = Date.valueOf("2024-06-01");
+        Date endDate = Date.valueOf("2024-06-30");
+        List<Integer> gameIds = Arrays.asList(122);
 
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street"));
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
+        Game game = new Game("Game10", "Description10", 140, GameStatus.InStock, 90, "photoUrl10");
+        game.setGame_id(122);
+
+        Manager manager = new Manager(managerEmail, "managerUser12", "managerPass12", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
         promotion.setGames(Arrays.asList(game));
 
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
 
         // Act
-        Game result = promotionService.getGameByIdFromPromotion(VALID_PROMOTION_ID, VALID_GAME_ID);
+        Game result = promotionService.getGameByIdFromPromotion(promotionId, 122);
 
         // Assert
         assertNotNull(result);
         assertEquals(game, result);
 
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
+        verify(promotionRepository, times(1)).findById(promotionId);
     }
 
     @Test
     public void testGetGameByIdFromPromotionGameNotInPromotion() {
         // Arrange
-        Game game = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game.setGame_id(VALID_GAME_ID);
+        int promotionId = 13;
+        String managerEmail = "manager13@example.com";
+        String description = "Exclusive Sale";
+        int discountRate = 55;
+        Date startDate = Date.valueOf("2024-07-01");
+        Date endDate = Date.valueOf("2024-07-31");
+        List<Integer> gameIds = Arrays.asList(123);
 
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street"));
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
-        promotion.setGames(new ArrayList<>());
+        Manager manager = new Manager(managerEmail, "managerUser13", "managerPass13", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        promotion.setGames(new ArrayList<>()); // No games in promotion
 
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
 
         // Act & Assert
+        int gameId = 123;
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            promotionService.getGameByIdFromPromotion(VALID_PROMOTION_ID, VALID_GAME_ID);
+            promotionService.getGameByIdFromPromotion(promotionId, gameId);
         });
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals(String.format("Game with ID %d not found in Promotion %d", VALID_GAME_ID, VALID_PROMOTION_ID), exception.getMessage());
+        assertEquals(String.format("Game with ID %d not found in Promotion %d", gameId, promotionId), exception.getMessage());
 
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
+        verify(promotionRepository, times(1)).findById(promotionId);
     }
 
     // --- Tests for addGameToPromotion ---
@@ -525,52 +656,70 @@ public class PromotionServiceTests {
     @Test
     public void testAddGameToPromotion() {
         // Arrange
-        Game game = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game.setGame_id(VALID_GAME_ID);
+        int promotionId = 14;
+        String managerEmail = "manager14@example.com";
+        String description = "New Product Launch Sale";
+        int discountRate = 25;
+        Date startDate = Date.valueOf("2024-09-01");
+        Date endDate = Date.valueOf("2024-09-30");
+        List<Integer> gameIds = Arrays.asList(124);
 
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street"));
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
-        promotion.setGames(new ArrayList<>());
+        Game game = new Game("Game11", "Description11", 150, GameStatus.InStock, 100, "photoUrl11");
+        game.setGame_id(124);
 
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+        Manager manager = new Manager(managerEmail, "managerUser14", "managerPass14", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        promotion.setGames(new ArrayList<>()); // Empty game list
+
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
+        when(gameRepository.findById(124)).thenReturn(game);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         // Act
-        Promotion updatedPromotion = promotionService.addGameToPromotion(VALID_PROMOTION_ID, VALID_GAME_ID);
+        Promotion updatedPromotion = promotionService.addGameToPromotion(promotionId, 124);
 
         // Assert
         assertNotNull(updatedPromotion);
         assertTrue(updatedPromotion.getGames().contains(game));
 
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
-        verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+        verify(promotionRepository, times(1)).findById(promotionId);
+        verify(gameRepository, times(1)).findById(124);
         verify(promotionRepository, times(1)).save(promotion);
     }
 
     @Test
     public void testAddGameToPromotionGameAlreadyInPromotion() {
         // Arrange
-        Game game = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game.setGame_id(VALID_GAME_ID);
+        int promotionId = 15;
+        String managerEmail = "manager15@example.com";
+        String description = "Limited Time Offer";
+        int discountRate = 35;
+        Date startDate = Date.valueOf("2024-10-01");
+        Date endDate = Date.valueOf("2024-10-31");
+        List<Integer> gameIds = Arrays.asList(125);
 
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street"));
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
-        promotion.setGames(new ArrayList<>(Arrays.asList(game)));
+        Game game = new Game("Game12", "Description12", 160, GameStatus.InStock, 110, "photoUrl12");
+        game.setGame_id(125);
 
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+        Manager manager = new Manager(managerEmail, "managerUser15", "managerPass15", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        promotion.setGames(new ArrayList<>(Arrays.asList(game))); // Game already in promotion
+
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
+        when(gameRepository.findById(125)).thenReturn(game);
 
         // Act
-        Promotion updatedPromotion = promotionService.addGameToPromotion(VALID_PROMOTION_ID, VALID_GAME_ID);
+        Promotion updatedPromotion = promotionService.addGameToPromotion(promotionId, 125);
 
         // Assert
         assertNotNull(updatedPromotion);
         assertEquals(1, updatedPromotion.getGames().size());
         assertTrue(updatedPromotion.getGames().contains(game));
 
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
-        verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+        verify(promotionRepository, times(1)).findById(promotionId);
+        verify(gameRepository, times(1)).findById(125);
         verify(promotionRepository, never()).save(any(Promotion.class));
     }
 
@@ -579,52 +728,69 @@ public class PromotionServiceTests {
     @Test
     public void testRemoveGameFromPromotion() {
         // Arrange
-        Game game = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game.setGame_id(VALID_GAME_ID);
+        int promotionId = 16;
+        String managerEmail = "manager16@example.com";
+        String description = "Flash Discount";
+        int discountRate = 40;
+        Date startDate = Date.valueOf("2024-11-01");
+        Date endDate = Date.valueOf("2024-11-30");
+        List<Integer> gameIds = Arrays.asList(126);
 
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street"));
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
-        promotion.setGames(new ArrayList<>(Arrays.asList(game)));
+        Game game = new Game("Game13", "Description13", 170, GameStatus.InStock, 120, "photoUrl13");
+        game.setGame_id(126);
 
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+        Manager manager = new Manager(managerEmail, "managerUser16", "managerPass16", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        promotion.setGames(new ArrayList<>(Arrays.asList(game))); // Game in promotion
+
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
+        when(gameRepository.findById(126)).thenReturn(game);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         // Act
-        Promotion updatedPromotion = promotionService.removeGameFromPromotion(VALID_PROMOTION_ID, VALID_GAME_ID);
+        Promotion updatedPromotion = promotionService.removeGameFromPromotion(promotionId, 126);
 
         // Assert
         assertNotNull(updatedPromotion);
         assertFalse(updatedPromotion.getGames().contains(game));
 
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
-        verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+        verify(promotionRepository, times(1)).findById(promotionId);
+        verify(gameRepository, times(1)).findById(126);
         verify(promotionRepository, times(1)).save(promotion);
     }
 
     @Test
     public void testRemoveGameFromPromotionGameNotInPromotion() {
         // Arrange
-        Game game = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game.setGame_id(VALID_GAME_ID);
+        int promotionId = 17;
+        String managerEmail = "manager17@example.com";
+        String description = "Mega Discount";
+        int discountRate = 50;
+        Date startDate = Date.valueOf("2024-12-01");
+        Date endDate = Date.valueOf("2024-12-31");
+        List<Integer> gameIds = Arrays.asList(127);
 
-        Promotion promotion = new Promotion(VALID_DESCRIPTION, VALID_DISCOUNT_RATE, VALID_START_DATE, VALID_END_DATE, new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street"));
-        promotion.setPromotion_id(VALID_PROMOTION_ID);
-        promotion.setGames(new ArrayList<>());
+        Game game = new Game("Game14", "Description14", 180, GameStatus.InStock, 130, "photoUrl14");
+        game.setGame_id(127);
 
-        when(promotionRepository.findById(VALID_PROMOTION_ID)).thenReturn(promotion);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+        Manager manager = new Manager(managerEmail, "managerUser17", "managerPass17", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        promotion.setGames(new ArrayList<>()); // No games in promotion
+
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
+        when(gameRepository.findById(127)).thenReturn(game);
 
         // Act
-        Promotion updatedPromotion = promotionService.removeGameFromPromotion(VALID_PROMOTION_ID, VALID_GAME_ID);
+        Promotion updatedPromotion = promotionService.removeGameFromPromotion(promotionId, 127);
 
         // Assert
         assertNotNull(updatedPromotion);
         assertFalse(updatedPromotion.getGames().contains(game));
 
-        verify(promotionRepository, times(1)).findById(VALID_PROMOTION_ID);
-        verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+        verify(promotionRepository, times(1)).findById(promotionId);
+        verify(gameRepository, times(1)).findById(127);
         verify(promotionRepository, never()).save(any(Promotion.class));
     }
 }
-
