@@ -57,9 +57,6 @@ public class WishListService {
     }
     @Transactional
     public WishList updateWishlListTitle(int wishlistId, String newTitle) {
-        if (wishlistId <= 0) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
-        }
         if (newTitle == null || newTitle.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist title cannot be empty or null");
         }
@@ -70,17 +67,10 @@ public class WishListService {
 
     @Transactional
     public WishList addGameToWishlist(int wishlistId, int gameId) {
-        if (wishlistId <= 0) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
-        }
         if (gameId <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
         List<Game> games = wishList.getGames();
         for (Game game : games) {
             if (game.getGame_id() == gameId) {
@@ -101,17 +91,10 @@ public class WishListService {
 
     @Transactional
     public WishList removeGameFromWishlist(int wishlistId, int gameId) {
-        if (wishlistId <= 0) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
-        }
         if (gameId <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
         List<Game> games = wishList.getGames();
         for (Game game : games) {
             if (game.getGame_id() == gameId) {
@@ -125,14 +108,7 @@ public class WishListService {
 
     @Transactional
     public int getWishlistSize(int wishlistId) {
-        if (wishlistId <= 0) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
-        }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
         return wishList.getGames().size();
     }
 
@@ -142,10 +118,6 @@ public class WishListService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
         return wishList.getGames();
     }
 
@@ -155,26 +127,15 @@ public class WishListService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
         wishList.setGames(new ArrayList<>());
         return wishListRepository.save(wishList);
     }
     @Transactional
     public Game getGameInWishList(int wishlistId, int gameId) {
-        if (wishlistId <= 0) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
-        }
         if (gameId <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
         Iterable<Game> games = wishList.getGames();
         for (Game game : games) {
             if (game.getGame_id() == gameId) {
