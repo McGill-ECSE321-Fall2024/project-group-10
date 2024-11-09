@@ -124,4 +124,9 @@ public class Platform {
         "  " + "manager = "
         + (getManager() != null ? Integer.toHexString(System.identityHashCode(getManager())) : "null");
   }
+
+  public void removeManager() {
+    this.manager = null;
+  }
+  
 }

@@ -62,8 +62,16 @@ public class GameResponseDto {
             return aStockQuantity;
         }
 
-        public String getaPhotoUr() {
+        public String getaPhotoUrl() {
             return aPhotoUrl;
+        }
+
+        public CategoryListDto getCategories() {
+            return categories;
+        }
+
+        public PlatformListDto getPlatforms() {
+            return platforms;
         }
     
 }
