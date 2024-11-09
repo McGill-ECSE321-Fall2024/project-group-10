@@ -29,7 +29,6 @@ public class ReviewController {
     @PostMapping("/reviews")
     public ReviewResponseDto createReview(@Valid @RequestBody ReviewRequestDto request) {
         Review review = reviewService.createReview(
-                request.getReviewDate(),
                 request.getDescription(),
                 request.getGameRating(),
                 request.getGameId(),
