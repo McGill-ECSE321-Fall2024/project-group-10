@@ -28,11 +28,15 @@ import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Review;
+import com.mcgill.ecse321.GameShop.model.Reply;
+import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ReviewRepository;
+import com.mcgill.ecse321.GameShop.repository.ReplyRepository;
+import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 
 
 @SpringBootTest
@@ -50,6 +54,12 @@ public class ReviewServiceTest {
     @Mock
     private GameRepository gameRepository;  
 
+    @Mock
+    private ReplyRepository replyRepository;
+
+    @Mock
+    private ManagerRepository managerRepository;
+
     private static int INVALID_RATING;
     private static int INVALID_REVIEW_ID;
     private static int INVALID_GAME_ID;
@@ -59,12 +69,15 @@ public class ReviewServiceTest {
     private static int VALID_RATING ;
     private static  int VALID_GAME_ID;
     private static final String VALID_CUSTOMER_EMAIL = "validcustomer@mail.com";
+    private static final String VALID_CUSTOMER_EMAIL2 = "valid2customer2@gmail.com";
     private static final String INVALID_CUSTOMER_EMAIL = "invalidmail@gmail.com";
     private static final Customer customer = new Customer(VALID_CUSTOMER_EMAIL,"customerUserm","password","37465","montral",new Cart());
+    private static final Customer customer2 = new Customer(VALID_CUSTOMER_EMAIL2,"customerUserm2","password2","37465099","montraJAKl",new Cart());
     private static final Game game = new Game("title", "VALID_DESCRIPTION", 5, GameStatus.InStock, 10, "urls");
-
-
-    @Test
+    private static Manager VALID_MANAGER = new Manager("manageeeremailofgame@example.com", "usernameof maneger",
+            "ManagerPassqoesd", "154142365", "montreal");
+    
+            @Test
     public void testCreateReview() {
         VALID_REVIEW_ID = 1;
         VALID_RATING = 0;
@@ -463,5 +476,73 @@ public class ReviewServiceTest {
         Iterable<Review> reviews = reviewService.getReviewsByGame(VALID_GAME_ID);
         assertNotNull(reviews);
         assertEquals(0, ((ArrayList<Review>) reviews).size());
+    }
+
+
+    @Test 
+    public void testGetReplyToReview(){
+        VALID_REVIEW_ID = 3230;
+        VALID_RATING = 0;
+        VALID_GAME_ID = 2976;
+        game.setGame_id(VALID_GAME_ID);
+        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+        when(customerRepository.findByEmail(VALID_CUSTOMER_EMAIL)).thenReturn(customer);
+        when(reviewRepository.save(any(Review.class))).thenAnswer((InvocationOnMock invocation) -> {
+            Review review = invocation.getArgument(0);
+            review.setReview_id(VALID_REVIEW_ID);
+            return review;
+        });
+        Review review = reviewService.createReview(VALID_DESCRIPTION, VALID_GAME_RATING, VALID_GAME_ID, VALID_CUSTOMER_EMAIL);
+        when(reviewRepository.findById(VALID_REVIEW_ID)).thenReturn(review);
+        Date today = Date.valueOf(LocalDate.now());
+        Reply reply = new Reply(today,"This is a reply", review, VALID_MANAGER);
+        when(replyRepository.findAll()).thenReturn(java.util.Arrays.asList(reply));
+        Reply foundReply = reviewService.getReplyToReview(VALID_REVIEW_ID);
+        assertNotNull(foundReply);
+        assertEquals("This is a reply", foundReply.getDescription());    
+        assertEquals(VALID_MANAGER.getEmail(), foundReply.getManager().getEmail()); 
+        assertEquals(VALID_REVIEW_ID, foundReply.getReview().getReview_id());
+
+    }
+    
+    @Test
+    public void testGetReplyToReviewInvalidReviewId(){
+        VALID_REVIEW_ID = 3231;
+        VALID_RATING = 0;
+        VALID_GAME_ID = 2977;
+        INVALID_REVIEW_ID = -1091;
+        game.setGame_id(VALID_GAME_ID);
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            reviewService.getReplyToReview(INVALID_REVIEW_ID);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Review ID must be positive", exception.getMessage());
+    }
+    @Test
+    public void testGetReplyToReviewNotFound(){
+        VALID_REVIEW_ID = 3232;
+        VALID_RATING = 0;
+        VALID_GAME_ID = 2978;
+        INVALID_REVIEW_ID = 1092;
+        game.setGame_id(VALID_GAME_ID);
+        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+        when(customerRepository.findByEmail(VALID_CUSTOMER_EMAIL)).thenReturn(customer);
+        when(customerRepository.findByEmail(VALID_CUSTOMER_EMAIL2)).thenReturn(customer2);
+        when(reviewRepository.save(any(Review.class))).thenAnswer((InvocationOnMock invocation) -> {
+            Review review = invocation.getArgument(0);
+            review.setReview_id(VALID_REVIEW_ID);
+            return review;
+        });
+        Review review = reviewService.createReview(VALID_DESCRIPTION, VALID_GAME_RATING, VALID_GAME_ID, VALID_CUSTOMER_EMAIL);
+        Review review2 = reviewService.createReview(VALID_DESCRIPTION+"extra", VALID_GAME_RATING, VALID_GAME_ID, VALID_CUSTOMER_EMAIL2);
+        
+        when(reviewRepository.findById(VALID_REVIEW_ID)).thenReturn(review);
+        Reply reply = new Reply(Date.valueOf(LocalDate.now()), "This is a reply", review2, VALID_MANAGER);
+        when(replyRepository.findAll()).thenReturn(java.util.Arrays.asList(reply));
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            reviewService.getReplyToReview(VALID_REVIEW_ID);
+        });
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("No reply to given review", exception.getMessage());
     }
 }
