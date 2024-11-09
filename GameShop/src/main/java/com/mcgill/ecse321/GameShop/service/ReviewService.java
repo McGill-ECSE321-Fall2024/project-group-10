@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.service;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,33 +53,32 @@ public class ReviewService {
      * @return The created Review.
      */
     @Transactional
-    public Review createReview(Date reviewDate, String description, GameRating gameRating, int gameId, String customerEmail) {
-
-        // Validate inputs
-        if (reviewDate == null) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Review date cannot be null");
-        }
-        if (isEmpty(description)) {
+    public Review createReview( String description, GameRating gameRating, int gameId, String customerEmail) {
+        if (description == null || description.trim().isEmpty()) {  
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Description cannot be empty or null");
         }
         if (gameRating == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game rating cannot be null");
         }
-
+        if(gameId <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be positive");
+        }
         Game game = gameRepository.findById(gameId);
         if (game == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId));
         }
-
+        if(isEmpty(customerEmail)) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Email cannot be empty or null");
+        }
         Customer customer = customerRepository.findByEmail(customerEmail);
         if (customer == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Customer with email %s not found", customerEmail));
         }
-
+        Date reviewDate = Date.valueOf(LocalDate.now());
         int rating = 0;
         // Create the review
         Review review = new Review(reviewDate, description, rating, gameRating, game, customer);
-
+        System.out.println("here");
         // Save and return the review
         return reviewRepository.save(review);
     }
