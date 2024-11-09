@@ -20,7 +20,6 @@ public class AccountResponseDto {
             this.accountType = AccountType.EMPLOYEE;
         }
         else if (account instanceof Manager){
-            System.out.println("Manager IN THE RESPONSE DTO");
             this.accountType = AccountType.MANAGER;
         }
         else{
