@@ -293,6 +293,44 @@ public class WishListServiceTests {
         verify(wishListRepository, never()).save(any(WishList.class));
     }
     @Test
+    public void testAddGameToWishlistWithInvalidGameIdNegative(){
+        int invalidId2 = -2;
+        Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "tbn", "customerUser", "customerPass", "123-456-7890",
+                "123 Fake StMontreal", new Cart());
+        WishList wishList = new WishList(VALID_TITLE, customer);
+        wishList.setWishList_id(55);
+        // when(wishListRepository.findById(55)).thenReturn(wishList);
+        // when(gameRepository.findById(invalidId2)).thenReturn(null);
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            wishListService.addGameToWishlist(55, invalidId2);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Game Id must be greater than 0", exception.getMessage());
+        verify(wishListRepository, times(0)).findById(55);
+        verify(gameRepository, times(0)).findById(invalidId2);
+        verify(wishListRepository, never()).save(any(WishList.class));
+    }
+    @Test
+    public void testAddGameToWishlistWithInvalidWishlistIdNegative(){
+        int invalidId2 = -2;
+        Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "tbsn", "customerUser", "customerPass", "123-456-7890",
+                "123 Fake StMontreal", new Cart());
+        WishList wishList = new WishList(VALID_TITLE, customer);
+        wishList.setWishList_id(invalidId2);
+        
+        // when(wishListRepository.findById(55)).thenReturn(wishList);
+        // when(gameRepository.findById(invalidId2)).thenReturn(null);
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            wishListService.addGameToWishlist(invalidId2, 55);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Wishlist Id must be greater than 0", exception.getMessage());
+        verify(wishListRepository, times(0)).findById(invalidId2);
+        verify(gameRepository, times(0)).findById(55);
+        verify(wishListRepository, never()).save(any(WishList.class));
+    }
+
+    @Test
     public void testAddGameToWishlist_GameAlreadyInWishlist() {
         Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "y", "customerUser", "customerPass", "123-456-7890",
                 "123 Fake StMontreal", new Cart());
@@ -399,6 +437,64 @@ public void testRemoveGameFromWishlistInvalidGame() {
     // verify(gameRepository, times(1)).findById(gameId);
     verify(wishListRepository, never()).save(any(WishList.class));
 }
+@Test
+public void testRemoveGameFromWishlistInvalidGameNegative() {
+    // Arrange
+    int wishlistId = 89;
+    int gameId = -2;
+    Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "ossdfgs", "customerUser", "customerPass", "123-456-7890",
+    "123 Fake StMontreal", new Cart());
+
+    WishList wishlist = new WishList("Wishlist", customer);
+    wishlist.setWishList_id(wishlistId);
+
+    // Mock repository to return the wishlist but no game
+    // when(wishListRepository.findById(wishlistId)).thenReturn(wishlist);
+    // when(gameRepository.findById(gameId)).thenReturn(null);
+
+    // Act & Assert
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        wishListService.removeGameFromWishlist(wishlistId, gameId);
+    });
+
+    // Verify the exception details
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Game Id must be greater than 0", exception.getMessage());
+
+    // Verify repository interactions
+    verify(wishListRepository, times(0)).findById(wishlistId);
+    // verify(gameRepository, times(1)).findById(gameId);
+    verify(wishListRepository, never()).save(any(WishList.class));
+}
+@Test
+public void testRemoveGameFromWishlistInvalidWishlistNegative() {
+    // Arrange
+    int wishlistId = -3;
+    int gameId = 71;
+    Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "osstjyutyujidfgs", "customerUser", "customerPass", "123-456-7890",
+    "123 Fake StMontreal", new Cart());
+
+    WishList wishlist = new WishList("Wishlist", customer);
+    wishlist.setWishList_id(wishlistId);
+
+    // Mock repository to return the wishlist but no game
+    // when(wishListRepository.findById(wishlistId)).thenReturn(wishlist);
+    // when(gameRepository.findById(gameId)).thenReturn(null);
+
+    // Act & Assert
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        wishListService.removeGameFromWishlist(wishlistId, gameId);
+    });
+
+    // Verify the exception details
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Wishlist Id must be greater than 0", exception.getMessage());
+
+    // Verify repository interactions
+    verify(wishListRepository, times(0)).findById(wishlistId);
+    // verify(gameRepository, times(1)).findById(gameId);
+    verify(wishListRepository, never()).save(any(WishList.class));
+}
 
 @Test
 public void testGetWishlistSize_Successful() {
@@ -466,6 +562,20 @@ public void testGetGamesInWishList_InvalidWishlistId() {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     assertEquals("Wishlist Id must be greater than 0", exception.getMessage());
     verify(wishListRepository, never()).findById(invalidWishlistId);
+}
+@Test
+public void testGetGamesInWishList_InvalidWishlistIdNotFound() {
+    int invalidWishlistId = 4513;
+    
+        when(wishListRepository.findById(invalidWishlistId)).thenReturn(null);
+
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        wishListService.getGamesInWishList(invalidWishlistId);
+    });
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertEquals("There is no WishList with Id 4513.", exception.getMessage());
+    verify(wishListRepository, times(1)).findById(invalidWishlistId);
 }
 @Test
 public void testRemoveAllGamesFromWishlist_Successful() {

@@ -223,5 +223,148 @@ public class SpecificGameIntegrationTests {
         assertEquals(specificGameId, updatedSpecificGame.getSpecificGame_id());
         assertEquals(newGameId, updatedSpecificGame.getGame_id());
     }
+    @Test
+    @Order(7)
+    public void testCreateSpecificGameMissingItemStatus() {
+
+        // Arrange: Create a SpecificGameRequestDto with null itemStatus
+        SpecificGameRequestDto request = new SpecificGameRequestDto(null, new ArrayList<>(), newGameId);
+
+        // Act
+        ResponseEntity<String> response = client.postForEntity("/specificGames", request, String.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        String responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertTrue(responseBody.contains("Item status cannot be null"));
+    }
+    @Test
+    @Order(8)
+    public void testFindSpecificGameByNonExistentId() {
+        // Arrange
+        int nonExistentId = 9999;
+        String url = String.format("/specificGames/%d", nonExistentId);
+
+        // Act
+        ResponseEntity<String> response = client.getForEntity(url, String.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        String responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertTrue(responseBody.contains("SpecificGame does not exist"));
+    }
+    @Test
+    @Order(9)
+    public void testUpdateSpecificGameItemStatusInvalidId() {
+        // Arrange
+        int invalidId = -1;
+        String url = String.format("/specificGames/%d/itemStatus", invalidId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String newStatus = String.format("\"%s\"", UPDATED_SPECIFIC_GAME_ITEM_STATUS.toString());
+        HttpEntity<String> requestEntity = new HttpEntity<>(newStatus, headers);
+
+        // Act
+        ResponseEntity<String> response = client.exchange(url, HttpMethod.PUT, requestEntity, String.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        String responseBody = response.getBody();
+        assertNotNull(responseBody);
+        System.out.println(responseBody);
+        assertTrue(responseBody.contains("SpecificGame ID must be greater than 0"));
+    }
+    @Test
+    @Order(10)
+    public void testGetAllSpecificGamesEmpty() {
+        // Arrange: Clear all SpecificGames
+        specificGameRepo.deleteAll();
+        gameRepo.deleteAll();
+
+        // Act
+        ResponseEntity<SpecificGameListDto> response = client.getForEntity("/specificGames", SpecificGameListDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        SpecificGameListDto specificGames = response.getBody();
+        assertNotNull(specificGames);
+        assertTrue(specificGames.getGames() == null || specificGames.getGames().isEmpty(), 
+        "Expected no SpecificGames to be found");
+
+    }
+
+    @Test
+    @Order(11)
+    public void testGetSpecificGamesByNonExistentGameId() {
+        // Arrange
+        int nonExistentGameId = 9999;
+        String url = String.format("/games/%d/specificGames", nonExistentGameId);
+
+        // Act
+        ResponseEntity<String> response = client.getForEntity(url, String.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        String responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertTrue(responseBody.contains("Game does not exist"));
+    }
+
+    @Test
+    @Order(12)
+    public void testUpdateSpecificGameAssociatedGameInvalid() {
+
+        // Arrange: Create a valid SpecificGame first
+        GameRequestDto newGameRequest = new GameRequestDto(
+            "New Test Game for test 12",
+            "A new game for testing associations.",
+            70,
+            GameStatus.InStock,
+            50,
+            "http://example.com/newgame.jpg"
+        );
+        ResponseEntity<GameResponseDto> newGameResponse = client.postForEntity("/games", newGameRequest, GameResponseDto.class);
+
+        // Assert New Game Creation
+        assertNotNull(newGameResponse);
+        assertEquals(HttpStatus.OK, newGameResponse.getStatusCode());
+        GameResponseDto newGameRes = newGameResponse.getBody();
+        assertNotNull(newGameRes);
+         int lastNewGameId = newGameRes.getaGame_id();
+        assertTrue(newGameId > 0);
+
+        SpecificGameRequestDto specificGameRequest = new SpecificGameRequestDto(SPECIFIC_GAME_ITEM_STATUS, new ArrayList<>(), lastNewGameId);
+        ResponseEntity<SpecificGameResponseDto> specificGameResponse = client.postForEntity("/specificGames", specificGameRequest, SpecificGameResponseDto.class);
+        assertNotNull(specificGameResponse);
+        assertEquals(HttpStatus.OK, specificGameResponse.getStatusCode(), specificGameResponse.getBody().toString());
+        SpecificGameResponseDto specificGame = specificGameResponse.getBody();
+        assertNotNull(specificGame);
+        int lastSpecificGameId = specificGame.getSpecificGame_id();
+
+        // Act: Attempt to associate with a non-existent Game ID
+        int nonExistentGameId = 9999;
+        String url = String.format("/specificGames/%d/game/%d", specificGameId, nonExistentGameId);
+        ResponseEntity<String> response = client.exchange(url, HttpMethod.PUT, null, String.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        String responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertTrue(responseBody.contains("Game does not exist"));
+    }
 
 }
+
+
+
+
+
+

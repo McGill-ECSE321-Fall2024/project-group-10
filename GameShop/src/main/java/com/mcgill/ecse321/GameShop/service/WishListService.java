@@ -77,10 +77,7 @@ public class WishListService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
+
         List<Game> games = wishList.getGames();
         for (Game game : games) {
             if (game.getGame_id() == gameId) {
@@ -108,10 +105,7 @@ public class WishListService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
+
         List<Game> games = wishList.getGames();
         for (Game game : games) {
             if (game.getGame_id() == gameId) {
@@ -129,10 +123,6 @@ public class WishListService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
         return wishList.getGames().size();
     }
 
@@ -142,10 +132,6 @@ public class WishListService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
         return wishList.getGames();
     }
 
@@ -155,10 +141,6 @@ public class WishListService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
         wishList.setGames(new ArrayList<>());
         return wishListRepository.save(wishList);
     }
@@ -171,10 +153,6 @@ public class WishListService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
-        if (wishList == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",wishlistId));
-        }
         Iterable<Game> games = wishList.getGames();
         for (Game game : games) {
             if (game.getGame_id() == gameId) {

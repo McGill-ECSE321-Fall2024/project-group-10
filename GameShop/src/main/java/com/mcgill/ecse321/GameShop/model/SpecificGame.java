@@ -55,6 +55,7 @@ public class SpecificGame {
   // ------------------------
 
   public SpecificGame(Game aGames) {
+    itemStatus = ItemStatus.Confirmed;
 
     order = new ArrayList<Order>();
     if (!setGames(aGames)) {
