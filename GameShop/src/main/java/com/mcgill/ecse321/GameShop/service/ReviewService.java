@@ -161,7 +161,7 @@ public class ReviewService {
         if(reviewId <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Review ID must be positive");
         }
-        Review review = getReviewById(reviewId);
+        getReviewById(reviewId);
         
         for(Reply reply : replyRepository.findAll()) {
             if(reply.getReview().getReview_id() == reviewId) {
