@@ -2,7 +2,9 @@ package com.mcgill.ecse321.GameShop.service;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Cart;
+import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CartRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,24 @@ public class CartService {
 
     @Autowired
     private GameRepository gameRepository;
+    @Autowired
+    private AccountRepository customerRepository;
 
     // In-memory map to track quantities per cart - Key: cartId, Value: Map of
     // gameId to quantity
     private Map<Integer, Map<Integer, Integer>> cartQuantities = new ConcurrentHashMap<>();
+
+    public Cart getCartByCustomerEmail(String email) {
+        Customer customer = (Customer) customerRepository.findByEmail(email);
+        if (customer == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
+        }
+        Cart cart = customer.getCart();
+        if (cart == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Cart not found for the customer");
+        }
+        return cart;
+    }
 
     @Transactional
     public Cart getCartById(int cartId) {
@@ -34,14 +50,6 @@ public class CartService {
                     String.format("Cart with ID %d does not exist", cartId));
         }
         cartQuantities.computeIfAbsent(cartId, k -> new ConcurrentHashMap<>());
-        return cart;
-    }
-
-    @Transactional
-    public Cart createCart() {
-        Cart cart = new Cart();
-        cartRepository.save(cart);
-        cartQuantities.put(cart.getCart_id(), new ConcurrentHashMap<>());
         return cart;
     }
 

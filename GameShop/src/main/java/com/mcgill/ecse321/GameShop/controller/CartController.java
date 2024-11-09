@@ -4,10 +4,14 @@ import com.mcgill.ecse321.GameShop.dto.CartDto.*;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
+import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Cart;
+import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.service.CartService;
+import com.mcgill.ecse321.GameShop.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -20,11 +24,20 @@ public class CartController {
 
     @Autowired
     private CartService cartService;
+    @Autowired
+    private AccountService customerService;
 
-    // Create a new cart
-    @PostMapping("/carts")
-    public CartResponseDto createCart() {
-        Cart cart = cartService.createCart();
+    // Get the cart associated with a customer
+    @GetMapping("/carts/{customerEmail}")
+    public CartResponseDto getCartByCustomerEmail(@PathVariable String customerEmail) {
+        Customer customer = customerService.getCustomerAccountByEmail(customerEmail);
+        if (customer == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
+        }
+        Cart cart = customer.getCart();
+        if (cart == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Cart not found for the customer");
+        }
         Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cart.getCart_id());
         return CartResponseDto.create(cart, quantities);
     }
