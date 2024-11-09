@@ -57,7 +57,7 @@ public class PromotionServiceTests {
     @Test
     public void testCreateValidPromotion() {
         // 
-        
+        int ID1 = 10001;
         int promotionId = 1;
         String managerEmail = "manager1@example.com";
         String description = "Summer Sale";
@@ -73,7 +73,7 @@ public class PromotionServiceTests {
         game2.setGame_id(10002);
 
         when(managerRepository.findByEmail(managerEmail)).thenReturn(manager);
-        when(gameRepository.findById(10001)).thenReturn(game1);
+        when(gameRepository.findById(ID1)).thenReturn(game1);
         when(gameRepository.findById(10002)).thenReturn(game2);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> {
             Promotion savedPromotion = invocation.getArgument(0);
@@ -381,6 +381,7 @@ public class PromotionServiceTests {
 
         when(promotionRepository.findById(promotionId)).thenReturn(promotion);
         when(gameRepository.findById(114)).thenReturn(game1);
+
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         // Act
