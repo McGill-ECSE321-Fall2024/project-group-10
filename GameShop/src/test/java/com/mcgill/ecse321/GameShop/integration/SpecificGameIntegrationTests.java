@@ -50,6 +50,7 @@ public class SpecificGameIntegrationTests {
     private int specificGameId;
     private int gameId;
     private int specificGameId2;
+    private int newGameId;
 
 
     private static final String GAME_TITLE = "Test Gameaa";
@@ -187,6 +188,40 @@ public class SpecificGameIntegrationTests {
         assertTrue(specificGameList.size() >= 2, "Size: " + specificGameList.size());
         assertTrue(specificGameList.stream().anyMatch(sg -> sg.getSpecificGame_id() == specificGameId), "SpecificGameId: " + specificGameId);
         assertTrue(specificGameList.stream().anyMatch(sg -> sg.getSpecificGame_id() == specificGameId2), "SpecificGameId2: " + specificGameId2);
+    }
+    @Test
+    @Order(6)
+    public void testUpdateSpecificGameAssociatedGame() {
+        // Arrange: Create a new Game to associate
+        GameRequestDto newGameRequest = new GameRequestDto(
+            "New Test Game",
+            "A new game for testing associations.",
+            70,
+            GameStatus.InStock,
+            50,
+            "http://example.com/newgame.jpg"
+        );
+        ResponseEntity<GameResponseDto> newGameResponse = client.postForEntity("/games", newGameRequest, GameResponseDto.class);
+
+        // Assert New Game Creation
+        assertNotNull(newGameResponse);
+        assertEquals(HttpStatus.OK, newGameResponse.getStatusCode());
+        GameResponseDto newGameRes = newGameResponse.getBody();
+        assertNotNull(newGameRes);
+        newGameId = newGameRes.getaGame_id();
+        assertTrue(newGameId > 0);
+
+        // Act: Update SpecificGame to associate with the new Game
+        String url = String.format("/specificGames/%d/game/%d", specificGameId, newGameId);
+        ResponseEntity<SpecificGameResponseDto> response = client.exchange(url, HttpMethod.PUT, null, SpecificGameResponseDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        SpecificGameResponseDto updatedSpecificGame = response.getBody();
+        assertNotNull(updatedSpecificGame);
+        assertEquals(specificGameId, updatedSpecificGame.getSpecificGame_id());
+        assertEquals(newGameId, updatedSpecificGame.getGame_id());
     }
 
     // @Test
