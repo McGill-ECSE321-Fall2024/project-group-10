@@ -289,6 +289,23 @@ public void testGetSpecificGamesByGameId_Successful() {
     }
 
     @Test
+    public void testGetSpecificGamesByGameId_NoGameFound() {
+        // Arrange
+        // when(specificGameRepository.findAll()).thenReturn(new ArrayList<>());
+        int VALID_GAME_ID = 10103; // Ensure this is consistent with the ID in the service method
+        VALID_GAME.setGame_id(VALID_GAME_ID);
+        assertEquals(VALID_GAME_ID, VALID_GAME.getGame_id());
+        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(null);
+        GameShopException exception1 = assertThrows(GameShopException.class, () -> {
+            specificGameService.getSpecificGamesByGameId(VALID_GAME_ID);
+        });
+        assertEquals(HttpStatus.NOT_FOUND, exception1.getStatus());
+        assertEquals("Game does not exist", exception1.getMessage());
+        verify(specificGameRepository, times(0)).findAll();
+        verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+    }
+
+    @Test
     public void testGetSpecificGamesByGameId_InvalidGameId() {
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
