@@ -547,65 +547,7 @@ public class ReviewServiceTest {
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("No reply to given review", exception.getMessage());
     }
-
-    // @Test
-    // public void testGetReviewsByCustomer(){
-    //     VALID_GAME_ID = 2979;
-    //     Game game1 = new Game("Game1", "Description1", 50, Game.GameStatus.InStock, 10, "photo1.jpg");
-    //     Game game2 = new Game("Game2", "Description2", 50, Game.GameStatus.InStock, 10, "photo2.jpg");
-    //     Date today = Date.valueOf(LocalDate.now());
-    //     game1.setGame_id(VALID_GAME_ID);
-         
-    //     when(customerRepository.findByEmail(VALID_CUSTOMER_EMAIL)).thenReturn(customer);
-    //     when(reviewRepository.save(any(Review.class))).thenAnswer((InvocationOnMock invocation) -> {
-    //         Review review = invocation.getArgument(0);
-    //         review.setReview_id(VALID_REVIEW_ID);
-    //         return review;
-    //     });
-    //     Review review1 = new Review(today, "desc1",0, GameRating.Five, game1, customer);
-    //     Review review2 = new Review(today, "desc2",0, GameRating.Four, game2, customer);
-    //     review1.setReview_id(1);
-    //     review2.setReview_id(2); 
-    //     when(reviewRepository.findById(1)).thenReturn(review1);
-    //     when(reviewRepository.findById(2)).thenReturn(review2);
-    //     when(reviewRepository.findAll()).thenReturn(java.util.Arrays.asList(review1, review2));
-    //     Iterable<Review> reviews = reviewService.getReviewsByCustomer(VALID_CUSTOMER_EMAIL);
-    //     assertNotNull(reviews);
-    //     assertEquals(2, ((ArrayList<Review>) reviews).size());
-    //     boolean foundReview = false;
-    //     for (Review review : reviews) {
-            
-    //         if(review.getReview_id() == 1) {
-    //             foundReview = true;
-    //             assertEquals("desc1", review.getDescription());
-    //             assertEquals(GameRating.Five, review.getGameRating());
-    //             assertEquals(0, review.getRating());
-    //             assertEquals(VALID_GAME_ID, review.getGame().getGame_id());
-    //         }
-            
-    //     }
-    //     assertTrue(foundReview);
-    //     foundReview = false;   
-    //     for (Review review : reviews) {
-    //         if(review.getReview_id() == 2) {
-    //             foundReview = true;
-    //             assertEquals("desc2", review.getDescription());
-    //             assertEquals(GameRating.Four, review.getGameRating());
-    //             assertEquals(0, review.getRating());
-    //             assertEquals(VALID_GAME_ID, review.getGame().getGame_id());
-    //         }
-    //     }
-    //     assertTrue(foundReview);
-    //     boolean foundWrongReview = false;
-    //     for (Review review : reviews) {
-    //         if(review.getReview_id() == 3) {
-    //             foundWrongReview = true;
-    //         }
-    //     }
-    //     assertFalse(foundWrongReview);
-
-    //}
-
+    
     @Test
     public void testGetReviewsByCustomer(){
         Game game1 = new Game("Game1", "Description1", 50, Game.GameStatus.InStock, 10, "photo1.jpg");
