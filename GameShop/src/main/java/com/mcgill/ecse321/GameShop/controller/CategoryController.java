@@ -72,5 +72,4 @@ public class CategoryController {
 
 
 }
-// what is needed 
-// getallgamesincategory
+

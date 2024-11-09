@@ -95,6 +95,7 @@ public class WishListService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game Id must be greater than 0");
         }
         WishList wishList = findWishlistById(wishlistId);
+
         List<Game> games = wishList.getGames();
         for (Game game : games) {
             if (game.getGame_id() == gameId) {

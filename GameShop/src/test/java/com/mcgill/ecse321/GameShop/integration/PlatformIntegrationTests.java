@@ -249,6 +249,142 @@ public void testFindAllGamesInPlatform() {
     assertFalse(returnedGameIds.contains(gameId3), "Did not expect to find game with ID: " + gameId3);
 }
 
+@Test
+@Order(7)
+public void testCreatePlatformMissingName() {
+
+
+    // Arrange: Create a PlatformRequestDto with null platformName
+    PlatformRequestDto request = new PlatformRequestDto(null, MANAGER_EMAIL);
+
+    // Act
+    ResponseEntity<String> response = client.postForEntity("/platforms", request, String.class);
+
+    // Assert
+    assertNotNull(response);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    String platform = response.getBody();
+    assertNotNull(platform);
+    assertTrue(platform.contains("Platform name cannot be empty"));
+}
+
+/**
+ * Test retrieving a Platform by an invalid ID (non-existent)
+ */
+@Test
+@Order(8)
+public void testGetPlatformByNonExistentId() {
+    // Arrange
+    int nonExistentId = 9999;
+    String url = String.format("/platforms/%d", nonExistentId);
+
+    // Act
+    ResponseEntity<String> response = client.getForEntity(url, String.class);
+
+    // Assert
+    assertNotNull(response);
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    String platform = response.getBody();
+    assertNotNull(platform);
+    assertTrue(platform.contains("Platform does not exist"));
+}
+
+/**
+ * Test updating a Platform with invalid input: invalid ID
+ */
+@Test
+@Order(9)
+public void testUpdatePlatformInvalidId() {
+    // Arrange
+    int invalidId = -1;
+    String url = String.format("/platforms/%d", invalidId);
+    PlatformRequestDto updateRequest = new PlatformRequestDto("New Platform Name", MANAGER_EMAIL);
+    HttpEntity<PlatformRequestDto> requestEntity = new HttpEntity<>(updateRequest);
+
+    // Act
+    ResponseEntity<String> response = client.exchange(url, HttpMethod.PUT, requestEntity, String.class);
+
+    // Assert
+    assertNotNull(response);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    String platform = response.getBody();
+    assertNotNull(platform);
+    assertTrue(platform.contains("Invalid platform ID"));
+}
+
+/**
+ * Test retrieving all Platforms when none exist
+ */
+@Test
+@Order(10)
+public void testGetAllPlatformsEmpty() {
+    for (Game game : gameRepo.findAll()) {
+        List<Platform> platforms = new ArrayList<>(game.getPlatforms());
+        for (Platform platform : platforms) {
+            game.removePlatform(platform);
+        }
+        gameRepo.save(game);
+    }
+    // Arrange: Clear all platforms
+    platformRepo.deleteAll();
+
+    // Act
+    ResponseEntity<PlatformListDto> response = client.getForEntity("/platforms", PlatformListDto.class);
+
+    // Assert
+    assertNotNull(response);
+    // Assuming your API returns 200 OK with an empty list when no platforms exist
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    PlatformListDto platforms = response.getBody();
+    assertNotNull(platforms);
+    List<PlatformSummaryDto> platformList = platforms.getPlatforms();
+    assertNotNull(platformList);
+    assertTrue(platformList.isEmpty(), "Expected no platforms in the list");
+}
+
+/**
+ * Test deleting a Platform with non-existent ID
+ */
+@Test
+@Order(11)
+public void testDeletePlatformNonExistentId() {
+    // Arrange
+    int nonExistentId = 9999;
+    String url = String.format("/platforms/%d", nonExistentId);
+
+    // Act
+    ResponseEntity<String> response = client.exchange(url, HttpMethod.DELETE, null, String.class);
+
+    // Assert
+    assertNotNull(response);
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    String platform = response.getBody();
+
+    assertNotNull(platform);
+    assertTrue(platform.contains("Platform does not exist"));
+}
+
+/**
+ * Test retrieving all Games in a Platform with non-existent ID
+ */
+@Test
+@Order(12)
+public void testFindAllGamesInPlatformNonExistentId() {
+    // Arrange
+    int nonExistentId = 9999;
+    String url = String.format("/platforms/%d/games", nonExistentId);
+
+    // Act
+    ResponseEntity<String> response = client.getForEntity(url, String.class);
+
+    // Assert
+    assertNotNull(response);
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    String platform = response.getBody();
+    assertNotNull(platform);
+    assertTrue(platform.contains("Platform does not exist"));
+}
+
 
 
 
