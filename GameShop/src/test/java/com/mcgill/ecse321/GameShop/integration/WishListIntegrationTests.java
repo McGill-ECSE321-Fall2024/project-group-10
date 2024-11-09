@@ -88,8 +88,6 @@ public class WishListIntegrationTests {
         assertNotNull(wishList, "Response body is null");
         this.wishListId = wishList.getWishList_id();
         assertEquals(CUSTOMER_EMAIL, wishList.getCustomerEmail(), "Customer email mismatch");
-
-
     }
 
     // @Test
