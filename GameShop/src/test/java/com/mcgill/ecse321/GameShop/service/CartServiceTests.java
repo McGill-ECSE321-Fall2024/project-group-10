@@ -23,7 +23,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.Assert;
 
 @SpringBootTest
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
@@ -47,8 +46,8 @@ public class CartServiceTests {
     private static final int INVALID_GAME_ID = 999;
     private static final Integer VALID_QUANTITY = 2;
     private static final Integer INVALID_QUANTITY = -1;
-    private static final String VALID_CUSTOMER_EMAIL = "customer@example.com";
-    private static final String INVALID_CUSTOMER_EMAIL = "invalid@example.com";
+    private static final String VALID_CUSTOMER_EMAIL = "customer@gmail.ca";
+    private static final String INVALID_CUSTOMER_EMAIL = "invalid@ca.ca";
 
     // --- Tests for getCartByCustomerEmail ---
 
@@ -203,29 +202,29 @@ public class CartServiceTests {
     public void testUpdateGameQuantityInCartValid() {
         // Arrange
         Cart cart = new Cart();
-        cart.setCart_id(VALID_CART_ID);
+        cart.setCart_id(7301);
 
         Game game = new Game("Title", "Description", 50, GameStatus.InStock, 10, "photoUrl");
-        game.setGame_id(VALID_GAME_ID);
+        game.setGame_id(7302);
 
-        when(cartRepository.findById(VALID_CART_ID)).thenReturn(cart);
-        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+        when(cartRepository.findById(7301)).thenReturn(cart);
+        when(gameRepository.findById(7302)).thenReturn(game);
         when(cartRepository.save(any(Cart.class)))
                 .thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         // Simulate adding the game to the cart first
-        cartService.addGameToCart(VALID_CART_ID, VALID_GAME_ID, 5);
+        cartService.addGameToCart(7301, 7302, 5);
 
         // Act
-        Cart updatedCart = cartService.updateGameQuantityInCart(VALID_CART_ID, VALID_GAME_ID, 7);
+        Cart updatedCart = cartService.updateGameQuantityInCart(7301, 7302, 7);
 
         // Assert
         assertNotNull(updatedCart);
-        Map<Integer, Integer> updatedQuantities = cartService.getQuantitiesForCart(VALID_CART_ID);
-        assertEquals(7, updatedQuantities.get(VALID_GAME_ID));
+        Map<Integer, Integer> updatedQuantities = cartService.getQuantitiesForCart(7301);
+        assertEquals(7, updatedQuantities.get(7302));
 
-        verify(cartRepository, atLeast(1)).findById(VALID_CART_ID);
-        verify(gameRepository, atLeast(1)).findById(VALID_GAME_ID);
+        verify(cartRepository, atLeast(1)).findById(7301);
+        verify(gameRepository, atLeast(1)).findById(7302);
         verify(cartRepository, atLeast(1)).save(cart);
     }
 
@@ -235,19 +234,19 @@ public class CartServiceTests {
     public void testGetAllGamesFromCartWithQuantitiesValid() {
         // Arrange
         Cart cart = new Cart();
-        cart.setCart_id(VALID_CART_ID);
+        cart.setCart_id(19);
 
         Game game1 = new Game("Title1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game1.setGame_id(VALID_GAME_ID);
+        game1.setGame_id(891);
         Game game2 = new Game("Title2", "Description2", 60, GameStatus.InStock, 15, "photoUrl2");
-        game2.setGame_id(VALID_GAME_ID + 1);
+        game2.setGame_id(891 + 1);
 
-        when(cartRepository.findById(VALID_CART_ID)).thenReturn(cart);
+        when(cartRepository.findById(19)).thenReturn(cart);
         when(gameRepository.findById(anyInt())).thenAnswer(invocation -> {
             int gameId = invocation.getArgument(0);
-            if (gameId == VALID_GAME_ID) {
+            if (gameId == 891) {
                 return game1;
-            } else if (gameId == VALID_GAME_ID + 1) {
+            } else if (gameId == 891 + 1) {
                 return game2;
             }
             return null;
@@ -256,11 +255,11 @@ public class CartServiceTests {
                 .thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         // Simulate adding games to the cart
-        cartService.addGameToCart(VALID_CART_ID, game1.getGame_id(), 3);
-        cartService.addGameToCart(VALID_CART_ID, game2.getGame_id(), 5);
+        cartService.addGameToCart(19, game1.getGame_id(), 3);
+        cartService.addGameToCart(19, game2.getGame_id(), 5);
 
         // Act
-        Map<Game, Integer> result = cartService.getAllGamesFromCartWithQuantities(VALID_CART_ID);
+        Map<Game, Integer> result = cartService.getAllGamesFromCartWithQuantities(19);
 
         // Assert
         assertNotNull(result);
@@ -268,7 +267,7 @@ public class CartServiceTests {
         assertEquals(3, result.get(game1));
         assertEquals(5, result.get(game2));
 
-        verify(cartRepository, atLeast(1)).findById(VALID_CART_ID);
+        verify(cartRepository, atLeast(1)).findById(19);
     }
 
     // --- Tests for getGameFromCart ---
@@ -277,24 +276,25 @@ public class CartServiceTests {
     public void testGetGameFromCartValid() {
         // Arrange
         Cart cart = new Cart();
-        cart.setCart_id(VALID_CART_ID);
+        cart.setCart_id(29);
 
         Game game = new Game("Title", "Description", 50, GameStatus.InStock, 10, "photoUrl");
-        game.setGame_id(VALID_GAME_ID);
+        game.setGame_id(283);
 
-        when(cartRepository.findById(VALID_CART_ID)).thenReturn(cart);
+        when(cartRepository.findById(29)).thenReturn(cart);
+        when(gameRepository.findById(283)).thenReturn(game);
 
         // Simulate adding the game to the cart
-        cartService.addGameToCart(VALID_CART_ID, VALID_GAME_ID, 1);
+        cartService.addGameToCart(29, 283, 1);
 
         // Act
-        Game resultGame = cartService.getGameFromCart(VALID_CART_ID, VALID_GAME_ID);
+        Game resultGame = cartService.getGameFromCart(29, 283);
 
         // Assert
         assertNotNull(resultGame);
-        assertEquals(VALID_GAME_ID, resultGame.getGame_id());
+        assertEquals(283, resultGame.getGame_id());
 
-        verify(cartRepository, atLeast(1)).findById(VALID_CART_ID);
+        verify(cartRepository, atLeast(1)).findById(29);
     }
 
     // --- Tests for clearCart ---
@@ -303,31 +303,34 @@ public class CartServiceTests {
     public void testClearCartValid() {
         // Arrange
         Cart cart = new Cart();
-        cart.setCart_id(VALID_CART_ID);
+        cart.setCart_id(279);
 
         Game game1 = new Game("Title1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game1.setGame_id(VALID_GAME_ID);
+        game1.setGame_id(341);
         Game game2 = new Game("Title2", "Description2", 60, GameStatus.InStock, 15, "photoUrl2");
-        game2.setGame_id(VALID_GAME_ID + 1);
+        game2.setGame_id(342);
 
-        when(cartRepository.findById(VALID_CART_ID)).thenReturn(cart);
+        when(cartRepository.findById(279)).thenReturn(cart);
         when(cartRepository.save(any(Cart.class)))
                 .thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
+        when(gameRepository.findById(341)).thenReturn(game1);
+        when(gameRepository.findById(342)).thenReturn(game2);
+
         // Simulate adding games to the cart
-        cartService.addGameToCart(VALID_CART_ID, game1.getGame_id(), 3);
-        cartService.addGameToCart(VALID_CART_ID, game2.getGame_id(), 5);
+        cartService.addGameToCart(279, game1.getGame_id(), 3);
+        cartService.addGameToCart(279, game2.getGame_id(), 5);
 
         // Act
-        Cart clearedCart = cartService.clearCart(VALID_CART_ID);
+        Cart clearedCart = cartService.clearCart(279);
 
         // Assert
         assertNotNull(clearedCart);
         assertTrue(clearedCart.getGames().isEmpty());
-        Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(VALID_CART_ID);
+        Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(279);
         assertTrue(quantities.isEmpty());
 
-        verify(cartRepository, atLeast(1)).findById(VALID_CART_ID);
+        verify(cartRepository, atLeast(1)).findById(279);
         verify(cartRepository, atLeast(1)).save(cart);
     }
 
@@ -337,9 +340,9 @@ public class CartServiceTests {
     public void testGetAllCarts() {
         // Arrange
         Cart cart1 = new Cart();
-        cart1.setCart_id(VALID_CART_ID);
+        cart1.setCart_id(652);
         Cart cart2 = new Cart();
-        cart2.setCart_id(VALID_CART_ID + 1);
+        cart2.setCart_id(653);
 
         List<Cart> carts = Arrays.asList(cart1, cart2);
 
