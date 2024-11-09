@@ -2,34 +2,26 @@ package com.mcgill.ecse321.GameShop.integration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
-import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
-import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
-import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
-import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
-import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
-import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListRequestDto;
-import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
-import com.mcgill.ecse321.GameShop.model.Customer;
-import com.mcgill.ecse321.GameShop.model.WishList;
-import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
-import com.mcgill.ecse321.GameShop.repository.WishListRepository;
-import com.mcgill.ecse321.GameShop.repository.GameRepository;
-import com.mcgill.ecse321.GameShop.repository.AccountRepository;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-
 import org.springframework.http.*;
 
-import java.util.List;
+import com.mcgill.ecse321.GameShop.dto.WishListDto.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.*;
+import com.mcgill.ecse321.GameShop.dto.GameDto.*;
+import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
+import com.mcgill.ecse321.GameShop.model.WishList;
+import com.mcgill.ecse321.GameShop.repository.*;
+import com.mcgill.ecse321.GameShop.model.Customer;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class WishListIntegrationTests {
@@ -44,212 +36,335 @@ public class WishListIntegrationTests {
     private GameRepository gameRepo;
 
     @Autowired
+    private CustomerRepository customerRepo;
+
+    @Autowired
     private AccountRepository accountRepo;
 
-    private int wishListId;
-    private int gameId1;
-    private int gameId2;
-
-    private static final String CUSTOMER_EMAIL = "customerofWishlist@example.com";
+    private static final String CUSTOMER_EMAIL = "customerforintegrationst@example.com";
     private static final String CUSTOMER_USERNAME = "customerUser";
     private static final String CUSTOMER_PASSWORD = "customerPass";
     private static final String CUSTOMER_PHONE = "123-456-7890";
     private static final String CUSTOMER_ADDRESS = "123 Customer Street";
-    private static final String GAME_TITLE_1 = "Game One";
-    private static final String GAME_TITLE_2 = "Game Two";
 
-    @BeforeAll
-    @AfterAll
-    public void clearDatabase() {
-        wishListRepo.deleteAll();
-        gameRepo.deleteAll();
-        accountRepo.deleteAll();
+    private int wishListId;
+    private int gameId1;
+    private int gameId2;
+    private int gameId3;
+    
+    
+        @BeforeAll
+        @AfterAll
+        public void clearDatabase() {
+            wishListRepo.deleteAll();
+            gameRepo.deleteAll();
+            customerRepo.deleteAll();
+            accountRepo.deleteAll();
+        }
+    
+        /*** Helper Method to Retrieve Wishlist ID by Customer Email ***/
+        private int getWishlistIdByCustomerEmail(String email) {
+            Customer customer = customerRepo.findByEmail(email);
+            assertNotNull(customer, "Customer should exist");
+            WishList wishList = wishListRepo.findByCustomer(customer);
+            assertNotNull(wishList, "Wishlist should be created automatically for the customer");
+            return wishList.getWishList_id();
+        }
+    
+        /*** Create Customer (Implicitly Creates Wishlist) ***/
+    
+        @Test
+        @Order(1)
+        public void testCreateCustomerAndImplicitlyCreateWishList() {
+            // Create customer
+            AccountRequestDto customerDto = new AccountRequestDto(
+                CUSTOMER_EMAIL, CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE, CUSTOMER_ADDRESS);
+            ResponseEntity<AccountResponseDto> customerResponse = client.postForEntity(
+                "/account/customer", customerDto, AccountResponseDto.class);
+    
+            assertNotNull(customerResponse);
+            assertEquals(HttpStatus.OK, customerResponse.getStatusCode());
+            AccountResponseDto customer = customerResponse.getBody();
+            assertNotNull(customer);
+            assertEquals(CUSTOMER_EMAIL, customer.getEmail());
+    
+            // Retrieve wishlist ID associated with the customer
+            this.wishListId = getWishlistIdByCustomerEmail(CUSTOMER_EMAIL);
+            assertTrue(this.wishListId > 0, "Wishlist ID should be greater than 0");
+            System.out.println("Wishlist ID: " + this.wishListId);
+            assertNotNull(wishListRepo.findById(this.wishListId));
+        }
+    
+    @Test
+    @Order(2)
+    public void testFindWishlistById() {
+        assertNotNull(wishListRepo.findById(this.wishListId), "Wishlist should exist");
+        String url = String.format("/wishlists/%d", this.wishListId); // Correct path
+        ResponseEntity<WishListResponseDto> response = client.getForEntity(url, WishListResponseDto.class);
+    
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        WishListResponseDto wishList = response.getBody();
+        assertNotNull(wishList);
+        assertEquals(this.wishListId, wishList.getWishlistId());
+        assertEquals("customer", wishList.getTitle());
+        assertEquals(CUSTOMER_EMAIL, wishList.getCustomerEmail());
+    }
+    
+        @Test
+        @Order(3)
+        public void testFindWishlistByNonExistentId() {
+            int nonExistentId = 9999;
+            String url = String.format("/wishlists/%d", nonExistentId);
+            ResponseEntity<String> response = client.getForEntity(url, String.class);
+    
+            assertNotNull(response);
+            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+            String responseBody = response.getBody();
+            assertNotNull(responseBody);
+            assertTrue(responseBody.contains("There is no WishList with Id"));
+        }
+    
+        // /*** Update Wishlist Title ***/
+        // @Test
+        // @Order(4)
+        // public void testUpdateWishlistTitle() {
+        //     String newTitle = "My Wishlist";
+        //     String url = String.format("/wishlist/%d/title", this.wishListId);
+        //     System.out.println("URL: " + url);
+        //     System.out.println(wishListId +"the new wishlist id");
+        //     WishListResponseDto request = new WishListResponseDto();
+        //     request.setTitle(newTitle);
+        //     HttpEntity<WishListResponseDto> requestEntity = new HttpEntity<>(request);
+    
+        //     ResponseEntity<WishListResponseDto> response = client.exchange(
+        //         url, HttpMethod.PUT, requestEntity, WishListResponseDto.class);
+    
+        //     assertNotNull(response);
+        //     assertEquals(HttpStatus.OK, response.getStatusCode());
+        //     WishListResponseDto wishList = response.getBody();
+        //     assertNotNull(wishList);
+        //     assertEquals(this.wishListId, wishList.getWishlistId());
+        //     assertEquals(newTitle, wishList.getTitle());
+        // }
+
+    
+        @Test
+        @Order(5)
+        public void testUpdateWishlistTitleMissingNewTitle() {
+            String url = String.format("/wishlist/%d/title", this.wishListId);
+            HttpEntity<String> requestEntity = new HttpEntity<>(null, getJsonHeaders());
+    
+            ResponseEntity<String> response = client.exchange(
+                url, HttpMethod.PUT, requestEntity, String.class);
+    
+            assertNotNull(response);
+            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            String responseBody = response.getBody();
+            assertNotNull(responseBody);
+            assertTrue(responseBody.contains("Wishlist title cannot be empty or null"));
+        }
+    
+        // /*** Add Game to Wishlist ***/
+    
+        @Test
+        @Order(6)
+        public void testAddGameToWishlist() {
+            // Create a game
+            GameRequestDto gameRequest = new GameRequestDto(
+                "Test Game", "A test game", 59, GameStatus.InStock, 10, "www.testgame.com");
+            ResponseEntity<GameResponseDto> gameResponse = client.postForEntity(
+                "/games", gameRequest, GameResponseDto.class);
+    
+            assertNotNull(gameResponse);
+            assertEquals(HttpStatus.OK, gameResponse.getStatusCode());
+            GameResponseDto game = gameResponse.getBody();
+            assertNotNull(game);
+            assertTrue(game.getaGame_id() > 0);
+            this.gameId1 = game.getaGame_id();
+    
+            // Add game to wishlist
+            String url = String.format("/wishlist/%d/%d", this.wishListId, this.gameId1);
+            ResponseEntity<WishListResponseDto> response = client.exchange(
+                url, HttpMethod.PUT, null, WishListResponseDto.class);
+    
+            assertNotNull(response);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            WishListResponseDto wishList = response.getBody();
+            assertNotNull(wishList);
+            assertTrue(wishList.getGames().getGames().stream().anyMatch(g -> g.getGameId() == this.gameId1));
+        }
+    
+        @Test
+        @Order(7)
+        public void testAddGameToWishlistAlreadyInWishlist() {
+            String url = String.format("/wishlist/%d/%d", this.wishListId, this.gameId1);
+            ResponseEntity<String> response = client.exchange(url, HttpMethod.PUT, null, String.class);
+    
+            assertNotNull(response);
+            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            String responseBody = response.getBody();
+            assertNotNull(responseBody);
+            assertTrue(responseBody.contains("Game is already in the wishlist"));
+        }
+    
+        // /*** Get All Games in Wishlist ***/
+    
+        @Test
+        @Order(8)
+        public void testGetAllGamesInWishlist() {
+            GameRequestDto gameRequest2 = new GameRequestDto(
+                "Test Game 2 ", "A test game2", 59, GameStatus.InStock, 10, "www.testgame.com");
+            ResponseEntity<GameResponseDto> gameResponse2 = client.postForEntity(
+                "/games", gameRequest2, GameResponseDto.class);
+    
+            assertNotNull(gameResponse2);
+            assertEquals(HttpStatus.OK, gameResponse2.getStatusCode(), "Failed to create game 2");
+            GameResponseDto game2 = gameResponse2.getBody();
+            assertNotNull(game2);
+            assertTrue(game2.getaGame_id() > 0);
+            this.gameId2 = game2.getaGame_id();
+    
+            // Add game to wishlist
+            String url = String.format("/wishlist/%d/%d", this.wishListId, this.gameId2);
+            ResponseEntity<WishListResponseDto> response = client.exchange(
+                url, HttpMethod.PUT, null, WishListResponseDto.class);
+    
+            assertNotNull(response);
+            assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to add game to wishlist");
+            WishListResponseDto wishList = response.getBody();
+            assertNotNull(wishList);
+            assertTrue(wishList.getGames().getGames().stream().anyMatch(g -> g.getGameId() == this.gameId2));
+        
+            String url2 = String.format("/wishlist/%d/", this.wishListId);
+            ResponseEntity<GameListDto> response2 = client.getForEntity(url2, GameListDto.class);
+    
+            assertNotNull(response2);
+            assertEquals(HttpStatus.OK, response2.getStatusCode(), "Failed to get games in wishlist");
+            GameListDto games = response2.getBody();
+            assertNotNull(games);
+            assertTrue(games.getGames().stream().anyMatch(g -> g.getGameId() == this.gameId1));
+            assertTrue(games.getGames().stream().anyMatch(g -> g.getGameId() == this.gameId2));
+        }
+    
+        @Test
+        @Order(14)
+        public void testGetAllGamesInWishlistEmpty() {
+            // Remove all games first
+
+    
+            String url = String.format("/wishlist/%d/", this.wishListId);
+            ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
+    
+            assertNotNull(response);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            GameListDto games = response.getBody();
+            assertNotNull(games);
+            assertTrue(games.getGames().isEmpty(), "Expected no games in the wishlist");
+        }
+    
+        // /*** Get Specific Game in Wishlist ***/
+    
+        @Test
+        @Order(9)
+        public void testGetGameInWishlist() {
+            String url = String.format("/wishlist/%d/%d", this.wishListId, this.gameId1);
+            ResponseEntity<GameResponseDto> response = client.getForEntity(url, GameResponseDto.class);
+    
+            assertNotNull(response);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            GameResponseDto game = response.getBody();
+            assertNotNull(game);
+            assertEquals(this.gameId1, game.getaGame_id());
+        }
+    
+        @Test
+        @Order(10)
+        public void testGetGameInWishlistNotInWishlist() {
+            // Create a new game not in wishlist
+            GameRequestDto gameRequest = new GameRequestDto(
+                "Another Test Game", "Another test game", 49, GameStatus.InStock, 5, "www.anothertestgame.com");
+            ResponseEntity<GameResponseDto> gameResponse = client.postForEntity(
+                "/games", gameRequest, GameResponseDto.class);
+    
+            assertNotNull(gameResponse);
+            assertEquals(HttpStatus.OK, gameResponse.getStatusCode());
+            GameResponseDto game = gameResponse.getBody();
+            assertNotNull(game);
+            assertTrue(game.getaGame_id() > 0);
+            this.gameId3 = game.getaGame_id();
+
+        String url = String.format("/wishlist/%d/%d", this.wishListId, this.gameId3);
+        ResponseEntity<String> response = client.getForEntity(url, String.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        String responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertTrue(responseBody.contains("There is no Game with Id"));
+    }
+
+    // /*** Remove Game from Wishlist ***/
+
+    @Test
+    @Order(11)
+    public void testRemoveGameFromWishlist() {
+        String url = String.format("/wishlist/%d/%d", this.wishListId, this.gameId1);
+        ResponseEntity<WishListResponseDto> response = client.exchange(
+            url, HttpMethod.DELETE, null, WishListResponseDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        WishListResponseDto wishList = response.getBody();
+        assertNotNull(wishList);
+        assertFalse(wishList.getGames().getGames().stream().anyMatch(g -> g.getGameId() == this.gameId1));
     }
 
     @Test
-    @Order(1)
-    public void testGetWishListForCustomer() {
-        // Create customer account
-        AccountRequestDto customerRequest = new AccountRequestDto(
-                CUSTOMER_EMAIL, CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE, CUSTOMER_ADDRESS);
-        ResponseEntity<AccountResponseDto> customerResponse = client.postForEntity(
-                "/account/customer", customerRequest, AccountResponseDto.class);
-        assertNotNull(customerResponse);
-        AccountResponseDto customer = customerResponse.getBody();
-        assertNotNull(customer);
-        assertEquals(HttpStatus.OK, customerResponse.getStatusCode(), "Failed to create customer account");
-        assertEquals(CUSTOMER_EMAIL, customer.getEmail(), "Customer email mismatch");
-        // Create wishlist
-        String url = String.format("/account/customer/%s/wishlist", CUSTOMER_EMAIL);
-        ResponseEntity<WishListResponseDto> response = client.getForEntity(url, WishListResponseDto.class);
+    @Order(12)
+    public void testRemoveGameFromWishlistNotInWishlist() {
+        String url = String.format("/wishlist/%d/%d", this.wishListId, this.gameId1);
+        ResponseEntity<String> response = client.exchange(url, HttpMethod.DELETE, null, String.class);
+
         assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to get wishlist for customer");
-        WishListResponseDto wishList = response.getBody();
-        assertNotNull(wishList, "Response body is null");
-        this.wishListId = wishList.getWishList_id();
-        assertEquals(CUSTOMER_EMAIL, wishList.getCustomerEmail(), "Customer email mismatch");
-
-
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        String responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertTrue(responseBody.contains("There is no Game with Id"));
     }
 
-    // @Test
-    // @Order(2)
-    // public void testGetWishListById() {
-    //     String url = String.format("/wishlist/%d", this.wishListId);
-    //     ResponseEntity<WishListResponseDto> response = client.getForEntity(url, WishListResponseDto.class);
-    //     assertNotNull(response);
-    //     assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to get wishlist by ID");
-    //     WishListResponseDto wishList = response.getBody();
-    //     assertNotNull(wishList, "Response body is null");
-    //     assertEquals(this.wishListId, wishList.getWishList_id(), "Wishlist ID mismatch");
-    //     assertEquals(CUSTOMER_EMAIL, wishList.getCustomerEmail(), "Customer email mismatch");
-    // }
+    // /*** Remove All Games from Wishlist ***/
+
+    @Test
+    @Order(13)
+    public void testRemoveAllGamesFromWishlist() {
+        // Add game to wishlist
+        String addUrl = String.format("/wishlist/%d/%d", this.wishListId, this.gameId3);
+        ResponseEntity<WishListResponseDto> addResponse = client.exchange(
+            addUrl, HttpMethod.PUT, null, WishListResponseDto.class);
+
+        assertNotNull(addResponse);
+        assertEquals(HttpStatus.OK, addResponse.getStatusCode());
+
+        String url = String.format("/wishlist/%d", this.wishListId);
+        HttpEntity<Void> requestEntity = new HttpEntity<>(null, getJsonHeaders());
+        ResponseEntity<WishListResponseDto> response = client.exchange(
+            url, HttpMethod.PUT, requestEntity, WishListResponseDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        WishListResponseDto wishList = response.getBody();
+        assertNotNull(wishList);
+        assertTrue(wishList.getGames().getGames().isEmpty(), "Expected all games to be removed from the wishlist");
+    }
 
 
-
-
-
-
-
-
-
+    /*** Helper Method to Set JSON Headers ***/
+    private HttpHeaders getJsonHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
+    }
 }
 
 
-    // }
-//     @Test
-//     @Order(2)
-//     public void testGetWishListById(){
-//         String url = String.format("/wishlist/%d", this.wishListId);
-//         ResponseEntity<WishListResponseDto> response = client.getForEntity(url, WishListResponseDto.class);
-//         assertNotNull(response);
-//         assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to get wishlist by ID");
-//         WishListResponseDto wishList = response.getBody();
-//         assertNotNull(wishList, "Response body is null");
-//         assertEquals(this.wishListId, wishList.getWishList_id(), "Wishlist ID mismatch");
-//         assertEquals(WISHLIST_TITLE, wishList.getTitle(), "Wishlist title mismatch");
-//         assertEquals(CUSTOMER_EMAIL, wishList.getCustomerEmail(), "Customer email mismatch");
-//     }
-//     @Test
-//     @Order(3)
-//     public void testUpdateWishList(){
-//         String newTitle = "My New Favorite Games";
-//         String url = String.format("/wishlist/%d", this.wishListId);
-//         WishListRequestDto wishListRequest = new WishListRequestDto(newTitle, CUSTOMER_EMAIL);
-//         HttpEntity<WishListRequestDto> request = new HttpEntity<>(wishListRequest);
-//         ResponseEntity<WishListResponseDto> response = client.exchange(
-//                 url, HttpMethod.PUT, request, WishListResponseDto.class);
-        
-//         assertNotNull(response);
-//         assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to update wishlist");
-//         WishListResponseDto wishList = response.getBody();
-//         assertNotNull(wishList, "Response body is null");
-//         assertEquals(this.wishListId, wishList.getWishList_id(), "Wishlist ID mismatch");
-//         assertEquals(newTitle, wishList.getTitle(), "Wishlist title mismatch");
-//         assertEquals(CUSTOMER_EMAIL, wishList.getCustomerEmail(), "Customer email mismatch");
-//     }
-
-//     // @Test
-//     // @Order(2)
-//     // public void testAddGameToWishlist() {
-//     //     // Create games
-//     //     GameRequestDto gameRequest1 = new GameRequestDto(
-//     //             GAME_TITLE_1, "First game description", 59.99, GameStatus.InStock, 10, "game1.jpg");
-//     //     ResponseEntity<GameResponseDto> gameResponse1 = client.postForEntity(
-//     //             "/games", gameRequest1, GameResponseDto.class);
-
-//     //     assertEquals(HttpStatus.OK, gameResponse1.getStatusCode(), "Failed to create game 1");
-//     //     assertNotNull(gameResponse1.getBody(), "Game 1 response body is null");
-//     //     gameId1 = gameResponse1.getBody().getaGame_id();
-
-//     //     GameRequestDto gameRequest2 = new GameRequestDto(
-//     //             GAME_TITLE_2, "Second game description", 49.99, GameStatus.InStock, 5, "game2.jpg");
-//     //     ResponseEntity<GameResponseDto> gameResponse2 = client.postForEntity(
-//     //             "/games", gameRequest2, GameResponseDto.class);
-
-//     //     assertEquals(HttpStatus.OK, gameResponse2.getStatusCode(), "Failed to create game 2");
-//     //     assertNotNull(gameResponse2.getBody(), "Game 2 response body is null");
-//     //     gameId2 = gameResponse2.getBody().getaGame_id();
-
-//     //     // Add games to wishlist
-//     //     String url = String.format("/wishlist/%d/%d", wishListId, gameId1);
-//     //     ResponseEntity<WishListResponseDto> addGameResponse = client.exchange(
-//     //             url, HttpMethod.PUT, null, WishListResponseDto.class);
-
-//     //     assertEquals(HttpStatus.OK, addGameResponse.getStatusCode(), "Failed to add game 1 to wishlist");
-
-//     //     url = String.format("/wishlist/%d/%d", wishListId, gameId2);
-//     //     addGameResponse = client.exchange(
-//     //             url, HttpMethod.PUT, null, WishListResponseDto.class);
-
-//     //     assertEquals(HttpStatus.OK, addGameResponse.getStatusCode(), "Failed to add game 2 to wishlist");
-//     // }
-
-//     // @Test
-//     // @Order(3)
-//     // public void testGetAllGamesInWishlist() {
-//     //     String url = String.format("/wishlist/%d/", wishListId);
-//     //     ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
-
-//     //     assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to get games in wishlist");
-//     //     assertNotNull(response.getBody(), "Response body is null");
-
-//     //     List<GameSummaryDto> games = response.getBody().getGames();
-//     //     assertNotNull(games, "Games list is null");
-//     //     assertEquals(2, games.size(), "Expected 2 games in wishlist");
-
-//     //     // Verify that the games are the ones we added
-//     //     assertTrue(games.stream().anyMatch(game -> game.getGameId() == gameId1), "Game 1 not found in wishlist");
-//     //     assertTrue(games.stream().anyMatch(game -> game.getGameId() == gameId2), "Game 2 not found in wishlist");
-//     // }
-
-//     // @Test
-//     // @Order(4)
-//     // public void testGetGameInWishlist() {
-//     //     String url = String.format("/wishlist/%d/%d", wishListId, gameId1);
-//     //     ResponseEntity<GameResponseDto> response = client.getForEntity(url, GameResponseDto.class);
-
-//     //     assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to get game from wishlist");
-//     //     assertNotNull(response.getBody(), "Response body is null");
-//     //     assertEquals(gameId1, response.getBody().getaGame_id(), "Game ID mismatch");
-//     // }
-
-//     // @Test
-//     // @Order(5)
-//     // public void testRemoveGameFromWishlist() {
-//     //     String url = String.format("/wishlist/%d/%d", wishListId, gameId1);
-//     //     ResponseEntity<WishListResponseDto> response = client.exchange(
-//     //             url, HttpMethod.DELETE, null, WishListResponseDto.class);
-
-//     //     assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to remove game from wishlist");
-
-//     //     // Verify that the game is removed
-//     //     String getUrl = String.format("/wishlist/%d/", wishListId);
-//     //     ResponseEntity<GameListDto> getResponse = client.getForEntity(getUrl, GameListDto.class);
-
-//     //     assertEquals(HttpStatus.OK, getResponse.getStatusCode(), "Failed to get games in wishlist after removal");
-//     //     List<GameSummaryDto> games = getResponse.getBody().getGames();
-
-//     //     assertEquals(1, games.size(), "Expected 1 game in wishlist after removal");
-//     //     assertFalse(games.stream().anyMatch(game -> game.getGameId() == gameId1), "Game 1 still present in wishlist");
-//     // }
-
-//     // @Test
-//     // @Order(6)
-//     // public void testRemoveAllGamesFromWishlist() {
-//     //     String url = String.format("/wishlist/%d", wishListId);
-//     //     ResponseEntity<WishListResponseDto> response = client.exchange(
-//     //             url, HttpMethod.PUT, null, WishListResponseDto.class);
-
-//     //     assertEquals(HttpStatus.OK, response.getStatusCode(), "Failed to remove all games from wishlist");
-
-//     //     // Verify that the wishlist is empty
-//     //     String getUrl = String.format("/wishlist/%d/", wishListId);
-//     //     ResponseEntity<GameListDto> getResponse = client.getForEntity(getUrl, GameListDto.class);
-
-//     //     assertEquals(HttpStatus.OK, getResponse.getStatusCode(), "Failed to get games in wishlist after clearing");
-//     //     List<GameSummaryDto> games = getResponse.getBody().getGames();
-
-//     //     assertEquals(0, games.size(), "Expected 0 games in wishlist after clearing");
-//     // }
-// }
