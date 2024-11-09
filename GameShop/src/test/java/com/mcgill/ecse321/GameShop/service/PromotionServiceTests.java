@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -55,7 +56,8 @@ public class PromotionServiceTests {
 
     @Test
     public void testCreateValidPromotion() {
-        // Arrange
+        // 
+        
         int promotionId = 1;
         String managerEmail = "manager1@example.com";
         String description = "Summer Sale";
@@ -372,7 +374,7 @@ public class PromotionServiceTests {
         promotion.setPromotion_id(promotionId);
         Game game1 = new Game("Game3", "Description3", 70, GameStatus.InStock, 15, "photoUrl3");
         game1.setGame_id(114);
-        promotion.setGames(Arrays.asList(game1));
+        promotion.setGames(new ArrayList<>(Arrays.asList(game1))); // Use mutable list
 
         Game game2 = new Game("Game4", "Description4", 80, GameStatus.InStock, 25, "photoUrl4");
         game2.setGame_id(115);
