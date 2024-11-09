@@ -179,8 +179,6 @@ public class PlatformIntegrationTests {
     
         ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);
     
-        System.out.println("Response status code for DELETE: " + response.getStatusCode());
-    
         assertNotNull(response);
     
         ResponseEntity<PlatformResponseDto> getResponse = client.getForEntity(url, PlatformResponseDto.class);

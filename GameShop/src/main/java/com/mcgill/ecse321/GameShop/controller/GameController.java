@@ -68,9 +68,7 @@ public class GameController { // TODO still have to take into account inventory
         Game createdGame = gameService.createGame(request.getaTitle(), request.getaDescription(), request.getaPrice(), request.getaGameStatus(), request.getaStockQuantity(), request.getaPhotoUrl());
 
         if (request.getCategories() != null) {
-        
             gameService.updateCategories(createdGame.getGame_id(), request.getCategories());
-      
         
         }
         if (request.getPlatforms() != null) {

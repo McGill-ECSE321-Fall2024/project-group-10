@@ -113,7 +113,6 @@ public class WishListService {
                     String.format("There is no WishList with Id %d.",wishlistId));
         }
         List<Game> games = wishList.getGames();
-        System.out.println(games);
         for (Game game : games) {
             if (game.getGame_id() == gameId) {
                 wishList.removeGame(game);
