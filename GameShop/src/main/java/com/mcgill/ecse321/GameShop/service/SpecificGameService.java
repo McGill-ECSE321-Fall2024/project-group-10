@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.SpecificGame;
+import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.SpecificGameRepository;
 
 import jakarta.transaction.Transactional;
@@ -22,6 +23,8 @@ public class SpecificGameService {
     
     @Autowired
     private GameService gameService;
+    @Autowired
+    private GameRepository gameRepository;
 
     @Transactional
     public SpecificGame createSpecificGame(Game game) {
@@ -54,7 +57,13 @@ public class SpecificGameService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
         }
         SpecificGame specificGame = findSpecificGameById(specificGame_id);
+        if(specificGame == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "SpecificGame does not exist");
+        }
         Game game = gameService.findGameById(game_id);
+        if(game == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Game does not exist");
+        }
         specificGame.setGames(game);
         specificGameRepository.save(specificGame);
         return specificGame;
@@ -65,24 +74,39 @@ public class SpecificGameService {
         if (game_id <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
         }
-        Iterable<SpecificGame> specificGames = this.getAllSpecificGames();
-        List<SpecificGame> specificGameList = new ArrayList<SpecificGame>();
-
-        for (SpecificGame specificGame : specificGames) {
-            if (specificGame.getGames().getGame_id() == game_id) {
-                specificGameList.add(specificGame);
-            }
+        if (gameRepository.findById(game_id) == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Game does not exist");
         }
-        if (specificGameList.isEmpty()) {
-            throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found for this Game ID");
-        }
-
-        return specificGameList;
+    
+    Iterable<SpecificGame> specificGames = this.getAllSpecificGames();
+    if (specificGames == null) {
+        throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found at all");
+        
     }
+    List<SpecificGame> specificGameList = new ArrayList<>();
+
+    for (SpecificGame specificGame : specificGames) {
+        if (specificGame.getGames().getGame_id() == game_id) {
+            specificGameList.add(specificGame);
+        }
+    }
+
+    // Throw an exception only if no specific games match the given game_id
+    if (specificGameList.isEmpty()) {
+        throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found for this Game ID");
+    }
+
+    return specificGameList;
+}
+    
 
     @Transactional
     public Iterable<SpecificGame> getAllSpecificGames() {
-        return specificGameRepository.findAll();
+        Iterable<SpecificGame> specificGames=specificGameRepository.findAll();
+        if (!specificGames.iterator().hasNext()) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found at all");
+        }
+        return specificGames;
     }
 
     @Transactional
