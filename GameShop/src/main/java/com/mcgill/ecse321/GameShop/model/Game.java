@@ -378,4 +378,10 @@ public class Game {
             ? !getGameStatus().equals(this) ? getGameStatus().toString().replaceAll("  ", "    ") : "this"
             : "null");
   }
+
+  public static void clearTestEmails(List<Integer> test_integers) {
+    for (Integer test_integer : test_integers) {
+      gamesByGame_id.remove(test_integer);
+    }
+  }
 }

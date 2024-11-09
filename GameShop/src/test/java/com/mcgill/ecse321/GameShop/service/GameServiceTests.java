@@ -510,6 +510,7 @@ public void testUpdateGameStatusWithNullStatus() {
     verify(gameRepository, times(0)).findById(VALID_GAME_ID);
 }
 
+
 @Test
 public void testUpdateGamePhotoUrl() {
     VALID_GAME_ID = 16;
@@ -596,6 +597,24 @@ public void testAddCategoryToGame_GameNotFound() {
     assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     assertEquals("Game with ID 20 does not exist", exception.getMessage());
     verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+    verify(gameRepository, never()).save(any(Game.class));
+    verify(categoryRepository, times(0)).findById(anyInt());
+}
+@Test
+public void testAddCategoryToGame_invalidGameId() {
+    INVALID_GAME_ID2=-2;
+    Category category = new Category("Category Name", VALID_MANAGER);
+    category.setCategory_id(10142);
+    // when(categoryRepository.findById(1014)).thenReturn(category);
+    // when(gameRepository.findById(INVALID_GAME_ID2)).thenReturn(null);
+    
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        gameService.addCategory(INVALID_GAME_ID2, 10142);
+    });
+    
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Game ID must be greater than 0", exception.getMessage());
+    verify(gameRepository, times(0)).findById(INVALID_GAME_ID2);
     verify(gameRepository, never()).save(any(Game.class));
     verify(categoryRepository, times(0)).findById(anyInt());
 }
