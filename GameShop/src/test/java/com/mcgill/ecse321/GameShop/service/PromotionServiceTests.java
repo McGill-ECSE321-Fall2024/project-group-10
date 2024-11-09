@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -56,8 +55,7 @@ public class PromotionServiceTests {
 
     @Test
     public void testCreateValidPromotion() {
-        // 
-        int ID1 = 10001;
+        // Arrange
         int promotionId = 1;
         String managerEmail = "manager1@example.com";
         String description = "Summer Sale";
@@ -66,14 +64,15 @@ public class PromotionServiceTests {
         Date endDate = Date.valueOf("2023-07-31");
         List<Integer> gameIds = Arrays.asList(10001, 10002);
 
-        Manager manager = new Manager(managerEmail, "managerUser1", "managerPass1", "123-456-7890", "123 Manager Street");
+        Manager manager = new Manager(managerEmail, "managerUser1", "managerPass1", "123-456-7890",
+                "123 Manager Street");
         Game game1 = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
         game1.setGame_id(10001);
         Game game2 = new Game("Game2", "Description2", 60, GameStatus.InStock, 20, "photoUrl2");
         game2.setGame_id(10002);
 
         when(managerRepository.findByEmail(managerEmail)).thenReturn(manager);
-        when(gameRepository.findById(ID1)).thenReturn(game1);
+        when(gameRepository.findById(10001)).thenReturn(game1);
         when(gameRepository.findById(10002)).thenReturn(game2);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> {
             Promotion savedPromotion = invocation.getArgument(0);
@@ -350,6 +349,28 @@ public class PromotionServiceTests {
         verify(promotionRepository, times(1)).findById(invalidPromotionId);
     }
 
+    @Test
+    public void testGetPromotionByIdValid() {
+        // Arrange
+        int promotionId = 1004;
+        String managerEmail = "manager1004@example.com";
+        Manager manager = new Manager(managerEmail, "managerUser1004", "managerPass1004", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion("Promo1004", 15, Date.valueOf("2023-03-01"), Date.valueOf("2023-03-31"), manager);
+        promotion.setPromotion_id(promotionId);
+
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
+
+        // Act
+        Promotion retrievedPromotion = promotionService.getPromotionById(promotionId);
+
+        // Assert
+        assertNotNull(retrievedPromotion);
+        assertEquals(promotionId, retrievedPromotion.getPromotion_id());
+        assertEquals("Promo1004", retrievedPromotion.getDescription());
+        assertEquals(manager, retrievedPromotion.getManager());
+        verify(promotionRepository, times(1)).findById(promotionId);
+    }
+
     // --- Tests for updatePromotion ---
 
     @Test
@@ -536,6 +557,50 @@ public class PromotionServiceTests {
         verify(promotionRepository, times(1)).findById(invalidPromotionId);
         verify(promotionRepository, never()).delete(any(Promotion.class));
     }
+
+    // --- Tests for getAllPromotions ---
+
+    @Test
+    public void testGetAllPromotionsEmpty() {
+        // Arrange
+        when(promotionRepository.findAll()).thenReturn(new ArrayList<>());
+
+        // Act
+        Iterable<Promotion> promotions = promotionService.getAllPromotions();
+
+        // Assert
+        assertNotNull(promotions);
+        assertFalse(promotions.iterator().hasNext());
+        verify(promotionRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void testGetAllPromotionsNonEmpty() {
+        // Arrange
+        int promotionId1 = 2001;
+        int promotionId2 = 2002;
+        Manager manager = new Manager("managerAll@example.com", "managerAll", "passAll", "123-456-7890", "123 All Street");
+        Promotion promotion1 = new Promotion("Promo1", 10, Date.valueOf("2023-01-01"), Date.valueOf("2023-01-31"), manager);
+        promotion1.setPromotion_id(promotionId1);
+        Promotion promotion2 = new Promotion("Promo2", 20, Date.valueOf("2023-02-01"), Date.valueOf("2023-02-28"), manager);
+        promotion2.setPromotion_id(promotionId2);
+        List<Promotion> promotionList = Arrays.asList(promotion1, promotion2);
+
+        when(promotionRepository.findAll()).thenReturn(promotionList);
+
+        // Act
+        Iterable<Promotion> promotions = promotionService.getAllPromotions();
+
+        // Assert
+        assertNotNull(promotions);
+        List<Promotion> resultList = new ArrayList<>();
+        promotions.forEach(resultList::add);
+        assertEquals(2, resultList.size());
+        assertTrue(resultList.contains(promotion1));
+        assertTrue(resultList.contains(promotion2));
+        verify(promotionRepository, times(1)).findAll();
+    }
+
 
     // --- Tests for getAllGamesFromPromotion ---
 
@@ -726,6 +791,26 @@ public class PromotionServiceTests {
         verify(promotionRepository, never()).save(any(Promotion.class));
     }
 
+    @Test
+    public void testAddGameToPromotionPromotionNotFound() {
+        // Arrange
+        int promotionId = 100;
+        int gameId = 200;
+        when(promotionRepository.findById(promotionId)).thenReturn(null);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            promotionService.addGameToPromotion(promotionId, gameId);
+        });
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Promotion not found", exception.getMessage());
+
+        verify(promotionRepository, times(1)).findById(promotionId);
+        verify(gameRepository, never()).findById(anyInt());
+        verify(promotionRepository, never()).save(any(Promotion.class));
+    }
+
     // --- Tests for removeGameFromPromotion ---
 
     @Test
@@ -761,6 +846,26 @@ public class PromotionServiceTests {
         verify(promotionRepository, times(1)).findById(promotionId);
         verify(gameRepository, times(1)).findById(126);
         verify(promotionRepository, times(1)).save(promotion);
+    }
+
+    @Test
+    public void testRemoveGameFromPromotionPromotionNotFound() {
+        // Arrange
+        int promotionId = 102;
+        int gameId = 202;
+        when(promotionRepository.findById(promotionId)).thenReturn(null);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            promotionService.removeGameFromPromotion(promotionId, gameId);
+        });
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Promotion not found", exception.getMessage());
+
+        verify(promotionRepository, times(1)).findById(promotionId);
+        verify(gameRepository, never()).findById(anyInt());
+        verify(promotionRepository, never()).save(any(Promotion.class));
     }
 
     @Test
