@@ -62,17 +62,17 @@ public class PromotionServiceTests {
         int discountRate = 20;
         Date startDate = Date.valueOf("2023-07-01");
         Date endDate = Date.valueOf("2023-07-31");
-        List<Integer> gameIds = Arrays.asList(101, 102);
+        List<Integer> gameIds = Arrays.asList(10001, 10002);
 
         Manager manager = new Manager(managerEmail, "managerUser1", "managerPass1", "123-456-7890", "123 Manager Street");
         Game game1 = new Game("Game1", "Description1", 50, GameStatus.InStock, 10, "photoUrl1");
-        game1.setGame_id(101);
+        game1.setGame_id(10001);
         Game game2 = new Game("Game2", "Description2", 60, GameStatus.InStock, 20, "photoUrl2");
-        game2.setGame_id(102);
+        game2.setGame_id(10002);
 
         when(managerRepository.findByEmail(managerEmail)).thenReturn(manager);
-        when(gameRepository.findById(101)).thenReturn(game1);
-        when(gameRepository.findById(102)).thenReturn(game2);
+        when(gameRepository.findById(10001)).thenReturn(game1);
+        when(gameRepository.findById(10002)).thenReturn(game2);
         when(promotionRepository.save(any(Promotion.class))).thenAnswer((InvocationOnMock invocation) -> {
             Promotion savedPromotion = invocation.getArgument(0);
             savedPromotion.setPromotion_id(promotionId);
@@ -102,8 +102,8 @@ public class PromotionServiceTests {
         assertTrue(createdPromotion.getGames().contains(game2));
 
         verify(managerRepository, times(1)).findByEmail(managerEmail);
-        verify(gameRepository, times(1)).findById(101);
-        verify(gameRepository, times(1)).findById(102);
+        verify(gameRepository, times(1)).findById(10001);
+        verify(gameRepository, times(1)).findById(10002);
         verify(promotionRepository, times(1)).save(any(Promotion.class));
     }
 
