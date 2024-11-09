@@ -126,9 +126,15 @@ public class AccountService {
         //check if the account already exists
         Account account = accountRepository.findByEmail(email);
         if (account != null){
+            System.out.println("Account already exists");
             throw new GameShopException(HttpStatus.NOT_FOUND,
             String.format("Account with email %s already exists.", email));
         }
+        //Customer customer2 = customerRepo.findByEmail(email);
+        // if (customer2 != null){
+        //     throw new GameShopException(HttpStatus.NOT_FOUND,
+        //     String.format("Account with email %s already exists.", email));
+        // }
 
         //a cart is mandatory when creating a customer
         Cart cart = new Cart();

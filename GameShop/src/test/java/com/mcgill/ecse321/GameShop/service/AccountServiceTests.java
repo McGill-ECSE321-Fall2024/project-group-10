@@ -24,7 +24,9 @@ import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
+import com.mcgill.ecse321.GameShop.model.Employee.EmployeeStatus;
 import com.mcgill.ecse321.GameShop.model.Manager;
+import com.mcgill.ecse321.GameShop.model.WishList;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CartRepository;
 import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
@@ -111,6 +113,31 @@ public class AccountServiceTests {
     }
 
     @Test
+    public void testDuplicateCustomer(){
+        //Arrange
+
+        when(mockAccountRepository.findByEmail(CUSTOMER_EMAIL+"z")).thenReturn(new Customer(CUSTOMER_EMAIL+"z", CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS, new Cart()));
+        //Act
+        //Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createCustomer(CUSTOMER_EMAIL+"z", CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Account with email " + CUSTOMER_EMAIL+"z" + " already exists.", exception.getMessage());
+        verify(mockCustomerRepository, never()).save(any(Customer.class));
+    }
+
+    @Test
+    public void testDuplicateEmployee(){
+        //Arrange
+        when(mockAccountRepository.findByEmail(EMPLOYEE_EMAIL+"z")).thenReturn(new Employee(EMPLOYEE_EMAIL+"z", EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
+        //Act
+        //Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createEmployee(EMPLOYEE_EMAIL+"z", EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Account with email " + EMPLOYEE_EMAIL+"z" + " already exists.", exception.getMessage());
+        verify(mockEmployeeRepository, never()).save(any(Employee.class));
+    }
+
+    @Test
     public void testCreateValidManager() {
         //Arrange
         when(mockManagerRepository.save(any(Manager.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -127,6 +154,7 @@ public class AccountServiceTests {
         verify(mockManagerRepository, times(1)).save(createdManager);
     }
 
+
     @Test
     public void testCreateValidEmployee() {
         //Arrange
@@ -140,6 +168,7 @@ public class AccountServiceTests {
         assertEquals(EMPLOYEE_PASSWORD, createdEmployee.getPassword());
         assertEquals(EMPLOYEE_PHONE_NUMBER, createdEmployee.getPhoneNumber());
         assertEquals(EMPLOYEE_ADDRESS, createdEmployee.getAddress());
+        assertEquals(EmployeeStatus.Active, ((Employee) createdEmployee).getEmployeeStatus());
 
         verify(mockEmployeeRepository, times(1)).save(createdEmployee);
     }
@@ -399,7 +428,7 @@ public class AccountServiceTests {
     @Test
     public void testGetManager(){
         //Arrange
-        Manager manager = new Manager(MANAGER_EMAIL + "x", MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS);
+        Manager manager = new Manager(MANAGER_EMAIL + "xy", MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS);
         when(mockManagerRepository.findAll()).thenReturn(java.util.List.of(manager));
 
         //Act
@@ -409,7 +438,7 @@ public class AccountServiceTests {
         //Assert
         assertNotNull(managers);
         assertEquals(1, ((java.util.List<Account>) managers).size());
-        assertEquals(MANAGER_EMAIL + "x", ((java.util.List<Account>) managers).get(0).getEmail());
+        assertEquals(MANAGER_EMAIL + "xy", ((java.util.List<Account>) managers).get(0).getEmail());
         assertEquals(MANAGER_USERNAME, ((java.util.List<Account>) managers).get(0).getUsername());
         assertEquals(MANAGER_PHONE_NUMBER, ((java.util.List<Account>) managers).get(0).getPhoneNumber());
         assertEquals(MANAGER_ADDRESS, ((java.util.List<Account>) managers).get(0).getAddress());
@@ -490,6 +519,41 @@ public class AccountServiceTests {
         assertEquals("There is no account with email " + CUSTOMER_EMAIL + "s.", exception.getMessage());
         verify(mockAccountRepository, times(1)).findByEmail(CUSTOMER_EMAIL + "s");
     }
+
+    @Test
+    public void testArchiveEmployeeWithValidEmail(){
+        //Arrange
+        Employee employee = new Employee(EMPLOYEE_EMAIL + "la", EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS);
+        when(mockEmployeeRepository.findByEmail(EMPLOYEE_EMAIL + "la")).thenReturn(employee);
+
+        //Act
+        accountService.archiveEmployee(EMPLOYEE_EMAIL + "la");
+
+        assertNotNull(employee);
+        assertEquals(EMPLOYEE_EMAIL + "la", employee.getEmail());
+        assertEquals(EMPLOYEE_USERNAME, employee.getUsername());
+        assertEquals(EMPLOYEE_PHONE_NUMBER, employee.getPhoneNumber());
+        assertEquals(EMPLOYEE_ADDRESS, employee.getAddress());
+        assertEquals(EmployeeStatus.Archived, employee.getEmployeeStatus());
+
+        //Assert
+        //verify(mockEmployeeRepository, times(1)).delete(employee);
+    }
+
+    @Test
+    public void testArchiveEmployeeWithInvalidEmail(){
+        //Arrange
+        when(mockEmployeeRepository.findByEmail(EMPLOYEE_EMAIL + "org")).thenReturn(null);
+
+        //Act
+        //Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> accountService.archiveEmployee(EMPLOYEE_EMAIL + "org"));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Account with email " + EMPLOYEE_EMAIL + "org does not exist.", exception.getMessage());
+        verify(mockEmployeeRepository, times(1)).findByEmail(EMPLOYEE_EMAIL + "org");
+    }
+
+
 
 
 
