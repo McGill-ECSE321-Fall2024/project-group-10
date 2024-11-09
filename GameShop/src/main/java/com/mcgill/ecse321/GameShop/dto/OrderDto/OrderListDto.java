@@ -8,6 +8,8 @@ public class OrderListDto {
     public OrderListDto(List<OrderSummaryDto> orders) {
         this.orders = orders;
     }
+    protected OrderListDto() {
+    }
 
     public List<OrderSummaryDto> getOrders() {
         return orders;
