@@ -113,9 +113,7 @@ public class ReviewService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Review ID must be positive");
         }
         Review review = getReviewById(reviewId);
-        if(review == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND, "Review not found");
-        }
+
         return review.getCustomer();
     }
 
@@ -127,9 +125,7 @@ public class ReviewService {
      */
     @Transactional
     public Iterable<Review> getReviewsByGame(int gameId) {
-        if(gameId <= 0) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be positive");
-        }
+        gameRepository.findById(gameId);
         ArrayList<Review> reviews = new ArrayList<>();
         for (Review review : reviewRepository.findAll()) {
             if (review.getGame().getGame_id() == gameId) {
@@ -166,9 +162,6 @@ public class ReviewService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Review ID must be positive");
         }
         Review review = getReviewById(reviewId);
-        if(review == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND, "Review not found");
-        }
         
         for(Reply reply : replyRepository.findAll()) {
             if(reply.getReview().getReview_id() == reviewId) {
