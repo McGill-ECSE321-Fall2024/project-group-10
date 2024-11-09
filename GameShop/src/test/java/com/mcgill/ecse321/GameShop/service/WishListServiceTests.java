@@ -484,7 +484,6 @@ public void testRemoveAllGamesFromWishlist_Successful() {
             .thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
     WishList updatedWishlist = wishListService.removeAllGamesFromWishlist(14);
-    System.out.println(updatedWishlist.getGames() + "this print");
 
     assertNotNull(updatedWishlist);
     assertEquals(0, updatedWishlist.getGames().size());

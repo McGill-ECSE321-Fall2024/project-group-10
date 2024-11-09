@@ -150,7 +150,6 @@ public class CategoryIntegrationTests {
     public void testUpdateCategory() {
         // Arrange
         String url = String.format("/categories/%d", this.categoryId);
-        System.out.println(String.format("URL: %s", url));
         CategoryRequestDto updateRequest = new CategoryRequestDto(UPDATED_CATEGORY_NAME, MANAGER_EMAIL);
         HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<>(updateRequest);
 

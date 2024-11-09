@@ -243,7 +243,6 @@ public class GameService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
         }
         Game game = findGameById(gameId);
-  
         for (int category_id : categories) {
             if (category_id <= 0) {
                 throw new GameShopException(HttpStatus.BAD_REQUEST, "Invalid category ID");
@@ -255,8 +254,6 @@ public class GameService {
             if (!game.getCategories().contains(category)) {
                 game.addCategory(category);
             }
-       
-          
         }
       
         gameRepository.save(game);

@@ -119,7 +119,7 @@ public class Category {
     manager = null;
   }
   public void removeManager() {
-    manager = null;
+    this.manager = null;
   }
 
   public String toString() {
