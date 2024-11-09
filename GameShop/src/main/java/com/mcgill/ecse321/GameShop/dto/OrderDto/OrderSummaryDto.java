@@ -14,6 +14,8 @@ public class OrderSummaryDto {
         this.orderDate = order.getOrderDate();
         this.customerEmail = order.getCustomer().getEmail();
     }
+    protected OrderSummaryDto() {
+    }
 
     public String getTrackingNumber() {
         return trackingNumber;

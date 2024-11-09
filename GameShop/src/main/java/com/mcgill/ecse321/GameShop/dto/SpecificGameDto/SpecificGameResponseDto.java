@@ -44,6 +44,8 @@ public class SpecificGameResponseDto {
         public static SpecificGameResponseDto create(SpecificGame specificGame) {
             return new SpecificGameResponseDto(specificGame);
         }
+        protected SpecificGameResponseDto() {
+        }
 
         public int getSpecificGame_id() {
             return specificGame_id;

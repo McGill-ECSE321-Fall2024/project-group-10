@@ -38,6 +38,8 @@ public class OrderRequestDto {
     public String getNote() {
         return note;
     }
+    protected OrderRequestDto() {
+    }
 
     public void setNote(String note) {
         this.note = note;

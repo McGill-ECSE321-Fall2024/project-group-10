@@ -19,6 +19,8 @@ public class SpecificGameSummaryDto {
     public int getSpecificGame_id() {
         return specificGame_id;
     }
+    protected SpecificGameSummaryDto() {
+    }
 
     public ItemStatus getItemStatus() {
         return itemStatus;

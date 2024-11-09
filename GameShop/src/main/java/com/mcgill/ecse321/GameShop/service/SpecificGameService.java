@@ -31,7 +31,9 @@ public class SpecificGameService {
         if(game == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game cannot be null");
         }
+       
         SpecificGame specificGame = new SpecificGame(game);
+        specificGame.setItemStatus(SpecificGame.ItemStatus.Confirmed);
         specificGameRepository.save(specificGame);
         return specificGame;
     }

@@ -9,6 +9,8 @@ public class SpecificGameListDto {
     public SpecificGameListDto(List<SpecificGameSummaryDto> games) {
         this.games = games;
     }
+    protected SpecificGameListDto() {
+    }
 
     public List<SpecificGameSummaryDto> getGames() {
         return games;

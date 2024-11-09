@@ -25,6 +25,8 @@ public class OrderResponseDto {
          * .collect(Collectors.toList());
          */
     }
+    protected OrderResponseDto() {
+    }
 
     public String getTrackingNumber() {
         return trackingNumber;
