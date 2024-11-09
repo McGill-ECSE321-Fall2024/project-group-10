@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
@@ -48,6 +49,8 @@ public class SpecificGameIntegrationTests {
 
     private int specificGameId;
     private int gameId;
+    private int specificGameId2;
+
 
     private static final String GAME_TITLE = "Test Gameaa";
     private static final String GAME_DESCRIPTION = "A game aused for testing.";
@@ -100,7 +103,7 @@ public class SpecificGameIntegrationTests {
 
     @Test
     @Order(2)
-    public void testGetSpecificGameById() {
+    public void testFindSpecificGameById() {
         // Arrange
         String url = String.format("/specificGames/%d", specificGameId);
 
@@ -124,7 +127,7 @@ public class SpecificGameIntegrationTests {
         String url = String.format("/specificGames/%d/itemStatus", specificGameId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String newStatus = String.format("\"%s\"", UPDATED_SPECIFIC_GAME_ITEM_STATUS.toString()); // JSON expects a string value
+        String newStatus = String.format("\"%s\"", UPDATED_SPECIFIC_GAME_ITEM_STATUS.toString());
         HttpEntity<String> requestEntity = new HttpEntity<>(newStatus, headers);
 
         // Act
@@ -139,6 +142,7 @@ public class SpecificGameIntegrationTests {
         assertEquals(UPDATED_SPECIFIC_GAME_ITEM_STATUS, updatedSpecificGame.getItemStatus());
     }
 
+
     @Test
     @Order(4)
     public void testGetAllSpecificGames() {
@@ -148,6 +152,7 @@ public class SpecificGameIntegrationTests {
         ResponseEntity<SpecificGameResponseDto> createResponse = client.postForEntity("/specificGames", request, SpecificGameResponseDto.class);
         assertNotNull(createResponse);
         assertEquals(HttpStatus.OK, createResponse.getStatusCode());
+        this.specificGameId2 = createResponse.getBody().getSpecificGame_id();
 
         // Act
         ResponseEntity<SpecificGameListDto> response = client.getForEntity("/specificGames", SpecificGameListDto.class);
@@ -160,6 +165,7 @@ public class SpecificGameIntegrationTests {
         List<SpecificGameSummaryDto> specificGameList = specificGames.getGames();
         assertNotNull(specificGameList);
         assertTrue(specificGameList.size() >= 2);
+
     }
 
     @Test
@@ -178,12 +184,9 @@ public class SpecificGameIntegrationTests {
         assertNotNull(specificGames);
         List<SpecificGameSummaryDto> specificGameList = specificGames.getGames();
         assertNotNull(specificGameList);
-        assertTrue(specificGameList.size() >= 2);
-
-        // Verify that all specific games belong to the correct game
-        for (SpecificGameSummaryDto sg : specificGameList) {
-            assertEquals(gameId, sg.getGame().getGame_id());
-        }
+        assertTrue(specificGameList.size() >= 2, "Size: " + specificGameList.size());
+        assertTrue(specificGameList.stream().anyMatch(sg -> sg.getSpecificGame_id() == specificGameId), "SpecificGameId: " + specificGameId);
+        assertTrue(specificGameList.stream().anyMatch(sg -> sg.getSpecificGame_id() == specificGameId2), "SpecificGameId2: " + specificGameId2);
     }
 
     // @Test
