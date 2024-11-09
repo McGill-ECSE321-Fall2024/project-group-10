@@ -53,7 +53,7 @@ public class ReplyServiceTests {
         // Arrange
         int replyId = 1001; // Unique reply ID
         int reviewId = 2001; // Unique review ID
-        String managerEmail = "manager1@example.com"; // Unique manager email
+        String managerEmail = "manager1034879@example.com"; // Unique manager email
         Date replyDate = Date.valueOf("2023-10-10");
         String description = "Thank you for your feedback!";
         ReviewRating reviewRating = ReviewRating.Like;
@@ -99,7 +99,7 @@ public class ReplyServiceTests {
     public void testCreateReplyWithNullDate() {
         // Arrange
         int reviewId = 2002; // Unique review ID
-        String managerEmail = "manager2@example.com"; // Unique manager email
+        String managerEmail = "manager243874638@example.com"; // Unique manager email
         Date replyDate = null; // Null date
         String description = "We appreciate your feedback!";
         ReviewRating reviewRating = ReviewRating.Like;
@@ -127,7 +127,7 @@ public class ReplyServiceTests {
     public void testCreateReplyWithNullDescription() {
         // Arrange
         int reviewId = 2003; // Unique review ID
-        String managerEmail = "manager3@example.com"; // Unique manager email
+        String managerEmail = "manager293873@example.com"; // Unique manager email
         Date replyDate = Date.valueOf("2023-10-11");
         String description = null; // Null description
         ReviewRating reviewRating = ReviewRating.Like;
@@ -155,7 +155,7 @@ public class ReplyServiceTests {
     public void testCreateReplyWithNullReviewRating() {
         // Arrange
         int reviewId = 2004; // Unique review ID
-        String managerEmail = "manager4@example.com"; // Unique manager email
+        String managerEmail = "manager44339476@example.com"; // Unique manager email
         Date replyDate = Date.valueOf("2023-10-12");
         String description = "Thank you!";
         ReviewRating reviewRating = null; // Null review rating
@@ -183,7 +183,7 @@ public class ReplyServiceTests {
     public void testCreateReplyWithInvalidManagerEmail() {
         // Arrange
         int reviewId = 2005; // Unique review ID
-        String managerEmail = "invalidmanager@example.com"; // Invalid manager email
+        String managerEmail = "invalidmanager473846@example.com"; // Invalid manager email
         Date replyDate = Date.valueOf("2023-10-13");
         String description = "Thanks for your review!";
         ReviewRating reviewRating = ReviewRating.Like;
@@ -213,7 +213,7 @@ public class ReplyServiceTests {
     public void testCreateReplyWithInvalidReviewId() {
         // Arrange
         int reviewId = 2006; // Invalid review ID
-        String managerEmail = "manager6@example.com"; // Unique manager email
+        String managerEmail = "manager34348766@example.com"; // Unique manager email
         Date replyDate = Date.valueOf("2023-10-14");
         String description = "We're sorry to hear that.";
         ReviewRating reviewRating = ReviewRating.Dislike;
@@ -248,7 +248,7 @@ public class ReplyServiceTests {
         // Arrange
         int replyId = 1007; // Unique reply ID
         int reviewId = 2007; // Unique review ID
-        String managerEmail = "manager7@example.com"; // Unique manager email
+        String managerEmail = "manager7384765@example.com"; // Unique manager email
 
         Manager manager = new Manager(managerEmail, "managerUser7", "managerPass7", "123-456-7890", "123 Manager Street");
         Review review = new Review(Date.valueOf("2023-10-15"), "Not bad", 3, Review.GameRating.Three, null, null);
@@ -297,7 +297,7 @@ public class ReplyServiceTests {
         // Arrange
         int replyId = 1009; // Unique reply ID
         int reviewId = 2009; // Unique review ID
-        String managerEmail = "manager9@example.com"; // Unique manager email
+        String managerEmail = "manager384765349@example.com"; // Unique manager email
 
         Manager manager = new Manager(managerEmail, "managerUser9", "managerPass9", "123-456-7890", "123 Manager Street");
         Review review = new Review(Date.valueOf("2023-10-17"), "Great game!", 5, Review.GameRating.Five, null, null);
@@ -329,7 +329,7 @@ public class ReplyServiceTests {
         // Arrange
         int replyId = 1010; // Unique reply ID
         int reviewId = 2010; // Unique review ID
-        String managerEmail = "manager10@example.com"; // Unique manager email
+        String managerEmail = "manager13847630@example.com"; // Unique manager email
 
         Manager manager = new Manager(managerEmail, "managerUser10", "managerPass10", "123-456-7890", "123 Manager Street");
         Review review = new Review(Date.valueOf("2023-10-19"), "Average game", 3, Review.GameRating.Three, null, null);
@@ -382,7 +382,7 @@ public class ReplyServiceTests {
         // Arrange
         int replyId = 1012; // Unique reply ID
         int reviewId = 2012; // Unique review ID
-        String managerEmail = "manager12@example.com"; // Unique manager email
+        String managerEmail = "manager1398462@example.com"; // Unique manager email
 
         Manager manager = new Manager(managerEmail, "managerUser12", "managerPass12", "123-456-7890", "123 Manager Street");
         Review review = new Review(Date.valueOf("2023-10-21"), "Fantastic game", 5, Review.GameRating.Five, null, null);
