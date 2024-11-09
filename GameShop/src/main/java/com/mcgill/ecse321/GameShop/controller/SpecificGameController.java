@@ -10,11 +10,13 @@ import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.SpecificGame;
+import com.mcgill.ecse321.GameShop.model.SpecificGame.ItemStatus;
 import com.mcgill.ecse321.GameShop.service.GameService;
 import com.mcgill.ecse321.GameShop.service.SpecificGameService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,17 +31,26 @@ public class SpecificGameController {
     private SpecificGameService specificGameService;
 
     @Autowired
-    private GameService GameService;
+    private GameService gameService;
 
+        /** Create a new SpecificGame */
+    @PostMapping("/specificGames")
+    public SpecificGameResponseDto createSpecificGame(@Valid @RequestBody SpecificGameRequestDto request) {
+        SpecificGame createdSpecificGame = specificGameService.createSpecificGame(gameService.findGameById(request.getGame_id()));
+        return SpecificGameResponseDto.create(createdSpecificGame);
+    }
+
+    /** Get a SpecificGame by ID */
     @GetMapping("/specificGames/{specificGame_id}")
     public SpecificGameResponseDto findSpecificGameById(@PathVariable int specificGame_id) {
         SpecificGame specificGame = specificGameService.findSpecificGameById(specificGame_id);
         return SpecificGameResponseDto.create(specificGame);
     }
 
+    /** Get all SpecificGames */
     @GetMapping("/specificGames")
     public SpecificGameListDto findAllSpecificGames() {
-        List<SpecificGameSummaryDto> dtos = new ArrayList<SpecificGameSummaryDto>();
+        List<SpecificGameSummaryDto> dtos = new ArrayList<>();
 
         for (SpecificGame specificGame : specificGameService.getAllSpecificGames()) {
             dtos.add(new SpecificGameSummaryDto(specificGame));
@@ -48,16 +59,66 @@ public class SpecificGameController {
         return new SpecificGameListDto(dtos);
     }
 
-    @PostMapping("/specificGames")
-    public SpecificGameResponseDto createSpecificGame(@Valid @RequestBody SpecificGameRequestDto request) {
-        SpecificGame createdSpecificGame = specificGameService.createSpecificGame(GameService.findGameById(request.getGame_id()));
-        return SpecificGameResponseDto.create(createdSpecificGame);
+    /** Update SpecificGame ItemStatus */
+    @PutMapping("/specificGames/{specificGame_id}/itemStatus")
+    public SpecificGameResponseDto updateSpecificGameItemStatus(
+            @PathVariable int specificGame_id,
+            @RequestBody ItemStatus newItemStatus) {
+        SpecificGame updatedSpecificGame = specificGameService.updateSpecificGameItemStatus(specificGame_id, newItemStatus);
+        return SpecificGameResponseDto.create(updatedSpecificGame);
     }
 
-    @PutMapping("/specificGames/{id}")
-    public void putMethod(@PathVariable int id, @PathVariable int game_id) {
-        specificGameService.updateSpecificGame(id, game_id);
+    // /** Delete a SpecificGame */
+    // @DeleteMapping("/specificGames/{specificGame_id}")
+    // public void deleteSpecificGame(@PathVariable int specificGame_id) {
+    //     specificGameService.deleteSpecificGame(specificGame_id);
+    // }
+
+    /** Get SpecificGames by Game ID */
+    @GetMapping("/games/{game_id}/specificGames")
+    public SpecificGameListDto getSpecificGamesByGameId(@PathVariable int game_id) {
+        Iterable<SpecificGame> specificGames = specificGameService.getSpecificGamesByGameId(game_id);
+        List<SpecificGameSummaryDto> dtos = new ArrayList<>();
+        for (SpecificGame specificGame : specificGames) {
+            dtos.add(new SpecificGameSummaryDto(specificGame));
+        }
+        return new SpecificGameListDto(dtos);
     }
+
+    /** (Optional) Update the associated Game of a SpecificGame */
+    @PutMapping("/specificGames/{specificGame_id}/game/{game_id}")
+    public SpecificGameResponseDto updateSpecificGame(@PathVariable int specificGame_id, @PathVariable int game_id) {
+        SpecificGame updatedSpecificGame = specificGameService.updateSpecificGame(specificGame_id, game_id);
+        return SpecificGameResponseDto.create(updatedSpecificGame);
+    }
+
+    // @GetMapping("/specificGames/{specificGame_id}")
+    // public SpecificGameResponseDto findSpecificGameById(@PathVariable int specificGame_id) {
+    //     SpecificGame specificGame = specificGameService.findSpecificGameById(specificGame_id);
+    //     return SpecificGameResponseDto.create(specificGame);
+    // }
+
+    // @GetMapping("/specificGames")
+    // public SpecificGameListDto findAllSpecificGames() {
+    //     List<SpecificGameSummaryDto> dtos = new ArrayList<SpecificGameSummaryDto>();
+
+    //     for (SpecificGame specificGame : specificGameService.getAllSpecificGames()) {
+    //         dtos.add(new SpecificGameSummaryDto(specificGame));
+    //     }
+
+    //     return new SpecificGameListDto(dtos);
+    // }
+
+    // @PostMapping("/specificGames")
+    // public SpecificGameResponseDto createSpecificGame(@Valid @RequestBody SpecificGameRequestDto request) {
+    //     SpecificGame createdSpecificGame = specificGameService.createSpecificGame(GameService.findGameById(request.getGame_id()));
+    //     return SpecificGameResponseDto.create(createdSpecificGame);
+    // }
+
+    // @PutMapping("/specificGames/{id}")
+    // public void putMethod(@PathVariable int id, @PathVariable int game_id) {
+    //     specificGameService.updateSpecificGame(id, game_id);
+    // }
 
     // Return Specific Game for return request taking as args (customer_id, specificGame_id)
 }

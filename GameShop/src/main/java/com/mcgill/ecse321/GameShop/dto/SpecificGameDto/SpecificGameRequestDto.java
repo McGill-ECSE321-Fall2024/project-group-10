@@ -9,11 +9,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public class SpecificGameRequestDto {
-    
-        @NotNull(message = "Specific game item status cannot be null")
+
         private ItemStatus itemStatus;
 
-        @NotEmpty(message = "Specific game linked order tracking numbers cannot be empty")
         private List<String> trackingNumbers;
         @Positive(message = "Associated Game ID cannot be negative")
         private int game_id;
@@ -22,6 +20,8 @@ public class SpecificGameRequestDto {
             this.itemStatus = itemStatus;
             this.trackingNumbers = trackingNumber;
             this.game_id = game_id;
+        }
+        protected SpecificGameRequestDto() {
         }
 
         public ItemStatus getItemStatus() {
