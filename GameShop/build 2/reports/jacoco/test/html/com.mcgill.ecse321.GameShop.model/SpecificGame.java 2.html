@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpecificGame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.model</a> &gt; <span class="el_source">SpecificGame.java</span></div><h1>SpecificGame.java</h1><pre class="source lang-java linenums">/*PLEASE DO NOT EDIT THIS CODE*/
+/*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
+
+package com.mcgill.ecse321.GameShop.model;
+
+import java.util.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+
+// line 94 &quot;../../../../../../model.ump&quot;
+// line 245 &quot;../../../../../../model.ump&quot;
+@Entity
+public class SpecificGame {
+
+  // ------------------------
+  // ENUMERATIONS
+  // ------------------------
+
+<span class="fc" id="L26">  public enum ItemStatus {</span>
+<span class="fc" id="L27">    Confirmed, Returned</span>
+  }
+
+  // ------------------------
+  // STATIC VARIABLES
+  // ------------------------
+
+<span class="fc" id="L34">  private static Map&lt;Integer, SpecificGame&gt; specificgamesBySpecificGame_id = new HashMap&lt;Integer, SpecificGame&gt;();</span>
+
+  // ------------------------
+  // MEMBER VARIABLES
+  // ------------------------
+
+  // SpecificGame Attributes
+  @Id
+  @GeneratedValue
+  private int specificGame_id;
+  private ItemStatus itemStatus;
+
+  // SpecificGame Associations
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = &quot;specificGame_jt&quot;, joinColumns = @JoinColumn(name = &quot;specificGame_id&quot;), inverseJoinColumns = @JoinColumn(name = &quot;order_id&quot;))
+  private List&lt;Order&gt; order;
+  @ManyToOne
+  private Game games;
+
+  // ------------------------
+  // CONSTRUCTOR
+  // ------------------------
+
+<span class="fc" id="L57">  public SpecificGame(Game aGames) {</span>
+
+<span class="fc" id="L59">    order = new ArrayList&lt;Order&gt;();</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">    if (!setGames(aGames)) {</span>
+<span class="nc" id="L61">      throw new RuntimeException(</span>
+          &quot;Unable to create SpecificGame due to aGames. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html&quot;);
+    }
+<span class="fc" id="L64">  }</span>
+
+<span class="fc" id="L66">  protected SpecificGame() {</span>
+<span class="fc" id="L67">  }</span>
+
+  // ------------------------
+  // INTERFACE
+  // ------------------------
+
+  public boolean setSpecificGame_id(int aSpecificGame_id) {
+<span class="fc" id="L74">    boolean wasSet = false;</span>
+<span class="fc" id="L75">    Integer anOldSpecificGame_id = getSpecificGame_id();</span>
+<span class="pc bpc" id="L76" title="2 of 4 branches missed.">    if (anOldSpecificGame_id != null &amp;&amp; anOldSpecificGame_id.equals(aSpecificGame_id)) {</span>
+<span class="nc" id="L77">      return true;</span>
+    }
+<span class="fc bfc" id="L79" title="All 2 branches covered.">    if (hasWithSpecificGame_id(aSpecificGame_id)) {</span>
+<span class="fc" id="L80">      return wasSet;</span>
+    }
+<span class="fc" id="L82">    specificGame_id = aSpecificGame_id;</span>
+<span class="fc" id="L83">    wasSet = true;</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">    if (anOldSpecificGame_id != null) {</span>
+<span class="fc" id="L85">      specificgamesBySpecificGame_id.remove(anOldSpecificGame_id);</span>
+    }
+<span class="fc" id="L87">    specificgamesBySpecificGame_id.put(aSpecificGame_id, this);</span>
+<span class="fc" id="L88">    return wasSet;</span>
+  }
+
+  public boolean setItemStatus(ItemStatus aItemStatus) {
+<span class="fc" id="L92">    boolean wasSet = false;</span>
+<span class="fc" id="L93">    itemStatus = aItemStatus;</span>
+<span class="fc" id="L94">    wasSet = true;</span>
+<span class="fc" id="L95">    return wasSet;</span>
+  }
+
+  public int getSpecificGame_id() {
+<span class="fc" id="L99">    return specificGame_id;</span>
+  }
+
+  /* Code from template attribute_GetUnique */
+  public static SpecificGame getWithSpecificGame_id(int aSpecificGame_id) {
+<span class="fc" id="L104">    return specificgamesBySpecificGame_id.get(aSpecificGame_id);</span>
+  }
+
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithSpecificGame_id(int aSpecificGame_id) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">    return getWithSpecificGame_id(aSpecificGame_id) != null;</span>
+  }
+
+  public ItemStatus getItemStatus() {
+<span class="fc" id="L113">    return itemStatus;</span>
+  }
+
+  /* Code from template association_GetMany */
+  public Order getOrder(int index) {
+<span class="nc" id="L118">    Order aOrder = order.get(index);</span>
+<span class="nc" id="L119">    return aOrder;</span>
+  }
+
+  public List&lt;Order&gt; getOrder() {
+<span class="fc" id="L123">    List&lt;Order&gt; newOrder = Collections.unmodifiableList(order);</span>
+<span class="fc" id="L124">    return newOrder;</span>
+  }
+
+  public int numberOfOrder() {
+<span class="nc" id="L128">    int number = order.size();</span>
+<span class="nc" id="L129">    return number;</span>
+  }
+
+  public boolean hasOrder() {
+<span class="nc bnc" id="L133" title="All 2 branches missed.">    boolean has = order.size() &gt; 0;</span>
+<span class="nc" id="L134">    return has;</span>
+  }
+
+  public int indexOfOrder(Order aOrder) {
+<span class="nc" id="L138">    int index = order.indexOf(aOrder);</span>
+<span class="nc" id="L139">    return index;</span>
+  }
+
+  /* Code from template association_GetOne */
+  public Game getGames() {
+<span class="fc" id="L144">    return games;</span>
+  }
+
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfOrder() {
+<span class="nc" id="L149">    return 0;</span>
+  }
+
+  /* Code from template association_AddUnidirectionalMany */
+  public boolean addOrder(Order aOrder) {
+<span class="fc" id="L154">    boolean wasAdded = false;</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">    if (order.contains(aOrder)) {</span>
+<span class="nc" id="L156">      return false;</span>
+    }
+<span class="fc" id="L158">    order.add(aOrder);</span>
+<span class="fc" id="L159">    wasAdded = true;</span>
+<span class="fc" id="L160">    return wasAdded;</span>
+  }
+
+  public boolean removeOrder(Order aOrder) {
+<span class="nc" id="L164">    boolean wasRemoved = false;</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">    if (order.contains(aOrder)) {</span>
+<span class="nc" id="L166">      order.remove(aOrder);</span>
+<span class="nc" id="L167">      wasRemoved = true;</span>
+    }
+<span class="nc" id="L169">    return wasRemoved;</span>
+  }
+
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addOrderAt(Order aOrder, int index) {
+<span class="nc" id="L174">    boolean wasAdded = false;</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">    if (addOrder(aOrder)) {</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">      if (index &lt; 0) {</span>
+<span class="nc" id="L177">        index = 0;</span>
+      }
+<span class="nc bnc" id="L179" title="All 2 branches missed.">      if (index &gt; numberOfOrder()) {</span>
+<span class="nc" id="L180">        index = numberOfOrder() - 1;</span>
+      }
+<span class="nc" id="L182">      order.remove(aOrder);</span>
+<span class="nc" id="L183">      order.add(index, aOrder);</span>
+<span class="nc" id="L184">      wasAdded = true;</span>
+    }
+<span class="nc" id="L186">    return wasAdded;</span>
+  }
+
+  public boolean addOrMoveOrderAt(Order aOrder, int index) {
+<span class="nc" id="L190">    boolean wasAdded = false;</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">    if (order.contains(aOrder)) {</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">      if (index &lt; 0) {</span>
+<span class="nc" id="L193">        index = 0;</span>
+      }
+<span class="nc bnc" id="L195" title="All 2 branches missed.">      if (index &gt; numberOfOrder()) {</span>
+<span class="nc" id="L196">        index = numberOfOrder() - 1;</span>
+      }
+<span class="nc" id="L198">      order.remove(aOrder);</span>
+<span class="nc" id="L199">      order.add(index, aOrder);</span>
+<span class="nc" id="L200">      wasAdded = true;</span>
+    } else {
+<span class="nc" id="L202">      wasAdded = addOrderAt(aOrder, index);</span>
+    }
+<span class="nc" id="L204">    return wasAdded;</span>
+  }
+
+  /* Code from template association_SetUnidirectionalOne */
+  public boolean setGames(Game aNewGames) {
+<span class="fc" id="L209">    boolean wasSet = false;</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">    if (aNewGames != null) {</span>
+<span class="fc" id="L211">      games = aNewGames;</span>
+<span class="fc" id="L212">      wasSet = true;</span>
+    }
+<span class="fc" id="L214">    return wasSet;</span>
+  }
+
+  public void delete() {
+<span class="nc" id="L218">    specificgamesBySpecificGame_id.remove(getSpecificGame_id());</span>
+<span class="nc" id="L219">    order.clear();</span>
+<span class="nc" id="L220">    games = null;</span>
+<span class="nc" id="L221">  }</span>
+
+  public String toString() {
+<span class="nc" id="L224">    return super.toString() + &quot;[&quot; +</span>
+<span class="nc" id="L225">        &quot;specificGame_id&quot; + &quot;:&quot; + getSpecificGame_id() + &quot;]&quot; + System.getProperties().getProperty(&quot;line.separator&quot;) +</span>
+        &quot;  &quot; + &quot;itemStatus&quot; + &quot;=&quot;
+<span class="nc bnc" id="L227" title="All 2 branches missed.">        + (getItemStatus() != null</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">            ? !getItemStatus().equals(this) ? getItemStatus().toString().replaceAll(&quot;  &quot;, &quot;    &quot;) : &quot;this&quot;</span>
+<span class="nc" id="L229">            : &quot;null&quot;)</span>
+<span class="nc" id="L230">        + System.getProperties().getProperty(&quot;line.separator&quot;) +</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        &quot;  &quot; + &quot;games = &quot; + (getGames() != null ? Integer.toHexString(System.identityHashCode(getGames())) : &quot;null&quot;);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

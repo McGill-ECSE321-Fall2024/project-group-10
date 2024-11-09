@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpecificGameRequestDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.dto.SpecificGameDto</a> &gt; <span class="el_source">SpecificGameRequestDto.java</span></div><h1>SpecificGameRequestDto.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.dto.SpecificGameDto;
+
+import java.util.List;
+
+import com.mcgill.ecse321.GameShop.model.SpecificGame.ItemStatus;
+
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+public class SpecificGameRequestDto {
+    
+        @NotNull(message = &quot;Specific game item status cannot be null&quot;)
+        private ItemStatus itemStatus;
+
+        @NotEmpty(message = &quot;Specific game linked order tracking numbers cannot be empty&quot;)
+        private List&lt;String&gt; trackingNumbers;
+        @Positive(message = &quot;Associated Game ID cannot be negative&quot;)
+        private int game_id;
+
+<span class="nc" id="L21">        public SpecificGameRequestDto(ItemStatus itemStatus, List&lt;String&gt; trackingNumber, int game_id) {</span>
+<span class="nc" id="L22">            this.itemStatus = itemStatus;</span>
+<span class="nc" id="L23">            this.trackingNumbers = trackingNumber;</span>
+<span class="nc" id="L24">            this.game_id = game_id;</span>
+<span class="nc" id="L25">        }</span>
+
+        public ItemStatus getItemStatus() {
+<span class="nc" id="L28">            return itemStatus;</span>
+        }
+
+        public void setItemStatus(ItemStatus itemStatus) {
+<span class="nc" id="L32">            this.itemStatus = itemStatus;</span>
+<span class="nc" id="L33">        }</span>
+
+        public List&lt;String&gt; getTrackingNumbers() {
+<span class="nc" id="L36">            return trackingNumbers;</span>
+        }
+
+        public void setTrackingNumbers(List&lt;String&gt; trackingNumber) {
+<span class="nc" id="L40">            this.trackingNumbers = trackingNumber;</span>
+<span class="nc" id="L41">        }</span>
+
+        public int getGame_id() {
+<span class="nc" id="L44">            return game_id;</span>
+        }
+
+        public void setGame_id(int game_id) {
+<span class="nc" id="L48">            this.game_id = game_id;</span>
+<span class="nc" id="L49">        }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

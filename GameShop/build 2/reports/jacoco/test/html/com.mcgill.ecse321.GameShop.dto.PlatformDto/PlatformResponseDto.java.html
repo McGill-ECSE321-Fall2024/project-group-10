@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlatformResponseDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.dto.PlatformDto</a> &gt; <span class="el_source">PlatformResponseDto.java</span></div><h1>PlatformResponseDto.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.dto.PlatformDto;
+
+import com.mcgill.ecse321.GameShop.model.Manager;
+import com.mcgill.ecse321.GameShop.model.Platform;
+
+public class PlatformResponseDto {
+
+    private String platformName;
+    private int platformId;
+    private String managerEmail;
+    private Manager manager;
+
+<span class="fc" id="L13">    public PlatformResponseDto() {</span>
+<span class="fc" id="L14">    }</span>
+<span class="fc" id="L15">        public PlatformResponseDto(Platform platform) {</span>
+<span class="fc" id="L16">        this.platformName = platform.getPlatformName();</span>
+<span class="fc" id="L17">        this.managerEmail = platform.getManager().getEmail();</span>
+<span class="fc" id="L18">        this.manager = platform.getManager();</span>
+<span class="fc" id="L19">        this.platformId = platform.getPlatform_id();</span>
+<span class="fc" id="L20">    }</span>
+    public static PlatformResponseDto create(Platform platform) {
+<span class="fc" id="L22">        return new PlatformResponseDto(platform);</span>
+    }
+
+
+
+    public String getPlatformName() {
+<span class="fc" id="L28">        return platformName;</span>
+    }
+
+
+    public void setPlatformName(String platformName) {
+<span class="fc" id="L33">        this.platformName = platformName;</span>
+<span class="fc" id="L34">    }</span>
+
+    public String getManagerEmail() {
+<span class="fc" id="L37">        return managerEmail;</span>
+    }
+
+    public void setManagerEmail(String managerEmail) {
+<span class="fc" id="L41">        this.managerEmail = managerEmail;</span>
+<span class="fc" id="L42">    }</span>
+    public Manager getManager() {
+<span class="fc" id="L44">        return manager;</span>
+    }
+    public int getPlatformId() {
+<span class="fc" id="L47">        return platformId;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

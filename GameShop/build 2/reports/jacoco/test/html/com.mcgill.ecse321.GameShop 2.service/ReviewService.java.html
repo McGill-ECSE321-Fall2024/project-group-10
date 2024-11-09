@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.service</a> &gt; <span class="el_source">ReviewService.java</span></div><h1>ReviewService.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.service;
+
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import com.mcgill.ecse321.GameShop.exception.GameShopException;
+import com.mcgill.ecse321.GameShop.model.Customer;
+import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.model.Reply;
+import com.mcgill.ecse321.GameShop.model.Review;
+import com.mcgill.ecse321.GameShop.model.Review.GameRating;
+import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
+import com.mcgill.ecse321.GameShop.repository.GameRepository;
+import com.mcgill.ecse321.GameShop.repository.ReplyRepository;
+import com.mcgill.ecse321.GameShop.repository.ReviewRepository;
+
+import jakarta.transaction.Transactional;
+
+@Service
+<span class="fc" id="L25">public class ReviewService {</span>
+
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Autowired
+    private GameRepository gameRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
+
+    // Helper method to check if a string is empty or null
+    private boolean isEmpty(String str) {
+<span class="fc bfc" id="L41" title="All 4 branches covered.">        return str == null || str.trim().isEmpty();</span>
+    }
+
+    /**
+     * Create a new Review.
+     *
+     * @param reviewDate    The date of the review.
+     * @param description   The description of the review.
+     * @param rating        The numerical rating of the review (1-5).
+     * @param gameRating    The game rating enum (One to Five).
+     * @param gameId        The ID of the game being reviewed.
+     * @param customerEmail The email of the customer creating the review.
+     * @return The created Review.
+     */
+    @Transactional
+    public Review createReview( String description, GameRating gameRating, int gameId, String customerEmail) {
+<span class="fc bfc" id="L57" title="All 4 branches covered.">        if (description == null || description.trim().isEmpty()) {  </span>
+<span class="fc" id="L58">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Description cannot be empty or null&quot;);</span>
+        }
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (gameRating == null) {</span>
+<span class="fc" id="L61">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Game rating cannot be null&quot;);</span>
+        }
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if(gameId &lt;= 0) {</span>
+<span class="fc" id="L64">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Game ID must be positive&quot;);</span>
+        }
+<span class="fc" id="L66">        Game game = gameRepository.findById(gameId);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (game == null) {</span>
+<span class="fc" id="L68">            throw new GameShopException(HttpStatus.NOT_FOUND, String.format(&quot;Game with ID %d not found&quot;, gameId));</span>
+        }
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if(isEmpty(customerEmail)) {</span>
+<span class="fc" id="L71">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Email cannot be empty or null&quot;);</span>
+        }
+<span class="fc" id="L73">        Customer customer = customerRepository.findByEmail(customerEmail);</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (customer == null) {</span>
+<span class="fc" id="L75">            throw new GameShopException(HttpStatus.NOT_FOUND, String.format(&quot;Customer with email %s not found&quot;, customerEmail));</span>
+        }
+<span class="fc" id="L77">        Date reviewDate = Date.valueOf(LocalDate.now());</span>
+<span class="fc" id="L78">        int rating = 0;</span>
+        // Create the review
+<span class="fc" id="L80">        Review review = new Review(reviewDate, description, rating, gameRating, game, customer);</span>
+<span class="fc" id="L81">        System.out.println(&quot;here&quot;);</span>
+        // Save and return the review
+<span class="fc" id="L83">        return reviewRepository.save(review);</span>
+    }
+    
+    /**
+     * Retrieve a Review by its ID.
+     *
+     * @param reviewId The ID of the review.
+     * @return The Review object.
+     */
+    @Transactional
+    public Review getReviewById(int reviewId) {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if(reviewId &lt;= 0) {</span>
+<span class="fc" id="L95">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Review ID must be positive&quot;);</span>
+        }
+<span class="fc" id="L97">        Review review = reviewRepository.findById(reviewId);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (review == null) {</span>
+<span class="fc" id="L99">            throw new GameShopException(HttpStatus.NOT_FOUND, &quot;Review not found&quot;);</span>
+        }
+<span class="fc" id="L101">        return review;</span>
+    }  
+
+    /**
+     * Retrieve the Customer that wrote a Review.
+     *
+     * @param reviewId The ID of the review.
+     * @return The Customer object.
+     */
+    @Transactional
+    public Customer getCustomerByReviewID(int reviewId) {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if(reviewId &lt;= 0) {</span>
+<span class="fc" id="L113">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Review ID must be positive&quot;);</span>
+        }
+<span class="fc" id="L115">        Review review = getReviewById(reviewId);</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if(review == null) {</span>
+<span class="nc" id="L117">            throw new GameShopException(HttpStatus.NOT_FOUND, &quot;Review not found&quot;);</span>
+        }
+<span class="fc" id="L119">        return review.getCustomer();</span>
+    }
+
+    /**
+     * Retrieve all Reviews for a Game.
+     *
+     * @param gameId The ID of the game.
+     * @return An Iterable of Review objects.
+     */
+    @Transactional
+    public Iterable&lt;Review&gt; getReviewsByGame(int gameId) {
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if(gameId &lt;= 0) {</span>
+<span class="nc" id="L131">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Game ID must be positive&quot;);</span>
+        }
+<span class="nc" id="L133">        ArrayList&lt;Review&gt; reviews = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        for (Review review : reviewRepository.findAll()) {</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            if (review.getGame().getGame_id() == gameId) {</span>
+<span class="nc" id="L136">                reviews.add(review);</span>
+            }
+<span class="nc" id="L138">        }</span>
+<span class="nc" id="L139">        return reviews;</span>
+    }
+    
+    @Transactional
+    public Iterable&lt;Review&gt; getReviewsByCustomer(String email){
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if(isEmpty(email)) {</span>
+<span class="nc" id="L145">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Email cannot be empty or null&quot;);</span>
+        }
+<span class="nc" id="L147">        Customer customer = customerRepository.findByEmail(email);</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if(customer == null) {</span>
+<span class="nc" id="L149">            throw new GameShopException(HttpStatus.NOT_FOUND, &quot;Customer not found&quot;);</span>
+        }
+<span class="nc" id="L151">        ArrayList&lt;Review&gt; reviews = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        for (Review review : reviewRepository.findAll()) {</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">            if (review.getCustomer().getEmail().equals(email)) {</span>
+<span class="nc" id="L154">                reviews.add(review);</span>
+            }
+<span class="nc" id="L156">        }</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (reviews.isEmpty()) {</span>
+<span class="nc" id="L158">            throw new GameShopException(HttpStatus.NOT_FOUND, &quot;No reviews found for given customer&quot;);</span>
+        }
+<span class="nc" id="L160">        return reviews;</span>
+    }
+    
+    @Transactional
+    public Reply getReplyToReview(int reviewId) {
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        if(reviewId &lt;= 0) {</span>
+<span class="nc" id="L166">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Review ID must be positive&quot;);</span>
+        }
+<span class="nc" id="L168">        Review review = getReviewById(reviewId);</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        if(review == null) {</span>
+<span class="nc" id="L170">            throw new GameShopException(HttpStatus.NOT_FOUND, &quot;Review not found&quot;);</span>
+        }
+        
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        for(Reply reply : replyRepository.findAll()) {</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">            if(reply.getReview().getReview_id() == reviewId) {</span>
+<span class="nc" id="L175">                return reply;</span>
+            }
+<span class="nc" id="L177">        }</span>
+<span class="nc" id="L178">        throw new GameShopException(HttpStatus.NOT_FOUND, &quot;No reply to given review&quot;);</span>
+        
+    }
+    
+    @Transactional
+    public Review updateReviewRating(int reviewId, int rating) {
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        if(reviewId &lt;= 0) {</span>
+<span class="fc" id="L185">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Review ID must be positive&quot;);</span>
+        }
+<span class="pc bpc" id="L187" title="1 of 4 branches missed.">        if(rating != -1 &amp;&amp; rating != 1){</span>
+<span class="nc" id="L188">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Rating must be either 1 or -1&quot;);</span>
+        }
+<span class="fc" id="L190">        Review review = getReviewById(reviewId);</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (review == null) {</span>
+<span class="nc" id="L192">            throw new GameShopException(HttpStatus.NOT_FOUND, &quot;Review not found&quot;);</span>
+        }
+<span class="fc" id="L194">        review.setRating(review.getRating() + rating);</span>
+<span class="fc" id="L195">        return reviewRepository.save(review);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

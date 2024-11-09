@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mcgill.ecse321.GameShop.repository.GameRepositoryTests" tests="2" skipped="0" failures="0" errors="0" timestamp="2024-11-09T02:16:21" hostname="Marcs-MacBook.local" time="0.094">
+  <properties/>
+  <testcase name="testCreateAndReadGame()" classname="com.mcgill.ecse321.GameShop.repository.GameRepositoryTests" time="0.07"/>
+  <testcase name="testCreateAndRetrieveGameWithMultipleCategoriesAndPlatforms()" classname="com.mcgill.ecse321.GameShop.repository.GameRepositoryTests" time="0.023"/>
+  <system-out><![CDATA[2024-11-08T21:16:21.273-05:00  INFO 86700 --- [GameShop] [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.mcgill.ecse321.GameShop.repository.GameRepositoryTests]: GameRepositoryTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-11-08T21:16:21.274-05:00  INFO 86700 --- [GameShop] [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.mcgill.ecse321.GameShop.GameShopApplication for test class com.mcgill.ecse321.GameShop.repository.GameRepositoryTests
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

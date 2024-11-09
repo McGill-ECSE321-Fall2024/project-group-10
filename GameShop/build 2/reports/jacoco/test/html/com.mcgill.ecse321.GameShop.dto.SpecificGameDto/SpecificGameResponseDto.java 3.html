@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpecificGameResponseDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.dto.SpecificGameDto</a> &gt; <span class="el_source">SpecificGameResponseDto.java</span></div><h1>SpecificGameResponseDto.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.dto.SpecificGameDto;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mcgill.ecse321.GameShop.dto.OrderDto.OrderListDto;
+import com.mcgill.ecse321.GameShop.dto.OrderDto.OrderResponseDto;
+import com.mcgill.ecse321.GameShop.dto.OrderDto.OrderSummaryDto;
+import com.mcgill.ecse321.GameShop.model.Order;
+import com.mcgill.ecse321.GameShop.model.SpecificGame;
+import com.mcgill.ecse321.GameShop.model.SpecificGame.ItemStatus;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+public class SpecificGameResponseDto {
+    
+        @Positive(message = &quot;Specific game ID cannot be negative&quot;)
+        private int specificGame_id;
+        @NotNull(message = &quot;Specific game item status cannot be null&quot;)
+        private ItemStatus itemStatus;
+
+        @NotBlank(message = &quot;Specific game linked orders cannot be empty&quot;)
+        private OrderListDto orders;
+        @Positive(message = &quot;Specific game ID cannot be negative&quot;)
+        private int game_id;
+
+<span class="nc" id="L29">        public SpecificGameResponseDto(SpecificGame specificGame) {</span>
+<span class="nc" id="L30">            this.specificGame_id = specificGame.getSpecificGame_id();</span>
+<span class="nc" id="L31">            this.itemStatus = specificGame.getItemStatus();</span>
+<span class="nc" id="L32">            this.game_id = specificGame.getGames().getGame_id();</span>
+
+<span class="nc" id="L34">            List&lt;Order&gt; orderList = specificGame.getOrder();</span>
+<span class="nc" id="L35">            List&lt;OrderSummaryDto&gt; orders = new ArrayList&lt;OrderSummaryDto&gt;();</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">            for (Order order : orderList) { </span>
+<span class="nc" id="L37">                orders.add(new OrderSummaryDto(order));</span>
+<span class="nc" id="L38">            }</span>
+<span class="nc" id="L39">            OrderListDto listOfOrders = new OrderListDto(orders);</span>
+
+<span class="nc" id="L41">            this.orders = listOfOrders;</span>
+<span class="nc" id="L42">        }</span>
+
+        public static SpecificGameResponseDto create(SpecificGame specificGame) {
+<span class="nc" id="L45">            return new SpecificGameResponseDto(specificGame);</span>
+        }
+
+        public int getSpecificGame_id() {
+<span class="nc" id="L49">            return specificGame_id;</span>
+        }
+
+        public ItemStatus getItemStatus() {
+<span class="nc" id="L53">            return itemStatus;</span>
+        }
+
+        public OrderListDto getOrders() {
+<span class="nc" id="L57">            return orders;</span>
+        }
+
+        public int getGame_id() {
+<span class="nc" id="L61">            return game_id;</span>
+        }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

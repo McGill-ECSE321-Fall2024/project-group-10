@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameRequestDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.dto.GameDto</a> &gt; <span class="el_source">GameRequestDto.java</span></div><h1>GameRequestDto.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.dto.GameDto;
+
+import java.util.List;
+
+import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+public class GameRequestDto {
+    
+    @NotBlank(message = &quot;Game title cannot be empty&quot;)
+    private String aTitle;
+
+    @NotBlank(message = &quot;Game description cannot be empty&quot;)
+    private String aDescription;
+
+    @Positive(message = &quot;Game price cannot be negative&quot;)
+    private int aPrice;
+
+    @NotNull(message = &quot;Game status cannot be null&quot;)
+    private GameStatus aGameStatus;
+
+    @Positive(message = &quot;Game stock quantity cannot be negative&quot;)
+    private int aStockQuantity;
+
+    @NotBlank(message = &quot;Game photo URL cannot be empty&quot;)
+    private String aPhotoUrl;
+
+    // private List&lt;Integer&gt; aPlatform;
+    private List&lt;Integer&gt; Categories;
+    private List&lt;Integer&gt; Platforms;
+
+<span class="fc" id="L35">    protected GameRequestDto() {}</span>
+
+<span class="fc" id="L37">    public GameRequestDto(String aTitle, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl) {</span>
+<span class="fc" id="L38">        this.aTitle = aTitle;</span>
+<span class="fc" id="L39">        this.aDescription = aDescription;</span>
+<span class="fc" id="L40">        this.aPrice = aPrice;</span>
+<span class="fc" id="L41">        this.aGameStatus = aGameStatus;</span>
+<span class="fc" id="L42">        this.aStockQuantity = aStockQuantity;</span>
+<span class="fc" id="L43">        this.aPhotoUrl = aPhotoUrl;</span>
+<span class="fc" id="L44">    }</span>
+
+    public String getaTitle() {
+<span class="fc" id="L47">        return aTitle;</span>
+    }
+
+    public void setaTitle(String aTitle) {
+<span class="fc" id="L51">        this.aTitle = aTitle;</span>
+<span class="fc" id="L52">    }</span>
+
+    public String getaDescription() {
+<span class="fc" id="L55">        return aDescription;</span>
+    }
+
+    public void setaDescription(String aDescription) {
+<span class="fc" id="L59">        this.aDescription = aDescription;</span>
+<span class="fc" id="L60">    }</span>
+
+    public int getaPrice() {
+<span class="fc" id="L63">        return aPrice;</span>
+    }  
+
+    public void setaPrice(int aPrice) {
+<span class="fc" id="L67">        this.aPrice = aPrice;</span>
+<span class="fc" id="L68">    }</span>
+
+    public GameStatus getaGameStatus() {
+<span class="fc" id="L71">        return aGameStatus;</span>
+    }
+
+    public void setaGameStatus(GameStatus aGameStatus) {
+<span class="fc" id="L75">        this.aGameStatus = aGameStatus;</span>
+<span class="fc" id="L76">    }</span>
+
+    public int getaStockQuantity() {
+<span class="fc" id="L79">        return aStockQuantity;</span>
+    }  
+
+    public void setaStockQuantity(int aStockQuantity) {
+<span class="fc" id="L83">        this.aStockQuantity = aStockQuantity;</span>
+<span class="fc" id="L84">    }</span>
+
+    public String getaPhotoUrl() {
+<span class="fc" id="L87">        return aPhotoUrl;</span>
+    }
+
+    public void setaPhotoUrl(String aPhotoUrl) {
+<span class="fc" id="L91">        this.aPhotoUrl = aPhotoUrl;</span>
+<span class="fc" id="L92">    }</span>
+
+    public void setCategories(List&lt;Integer&gt; Categories) {
+<span class="fc" id="L95">        this.Categories = Categories;</span>
+<span class="fc" id="L96">    }</span>
+
+    public List&lt;Integer&gt; getCategories() {
+<span class="fc" id="L99">        return Categories;</span>
+    }
+    public void setPlatforms(List&lt;Integer&gt; Platforms) {
+<span class="fc" id="L102">        this.Platforms = Platforms;</span>
+<span class="fc" id="L103">    }</span>
+    public List&lt;Integer&gt; getPlatforms() {
+<span class="fc" id="L105">        return Platforms;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

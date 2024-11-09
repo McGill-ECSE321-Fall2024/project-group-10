@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mcgill.ecse321.GameShop.integration.WishListIntegrationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-11-09T02:09:06" hostname="Marcs-MacBook.local" time="0.016">
+  <properties/>
+  <testcase name="testGetWishListForCustomer()" classname="com.mcgill.ecse321.GameShop.integration.WishListIntegrationTests" time="0.016"/>
+  <system-out><![CDATA[2024-11-08T21:09:06.620-05:00  INFO 85838 --- [GameShop] [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.mcgill.ecse321.GameShop.integration.WishListIntegrationTests]: WishListIntegrationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-11-08T21:09:06.620-05:00  INFO 85838 --- [GameShop] [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.mcgill.ecse321.GameShop.GameShopApplication for test class com.mcgill.ecse321.GameShop.integration.WishListIntegrationTests
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

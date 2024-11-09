@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameSummaryDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.dto.GameDto</a> &gt; <span class="el_source">GameSummaryDto.java</span></div><h1>GameSummaryDto.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.dto.GameDto;
+
+import com.mcgill.ecse321.GameShop.model.Game;
+
+public class GameSummaryDto {
+    
+    private String title;
+    private String description;
+    private int price;
+    private String photoUrl;
+    private int gameId;
+
+<span class="fc" id="L13">    public GameSummaryDto(Game game) {</span>
+<span class="fc" id="L14">        this.title = game.getTitle();</span>
+<span class="fc" id="L15">        this.description = game.getDescription();</span>
+<span class="fc" id="L16">        this.price = game.getPrice();</span>
+<span class="fc" id="L17">        this.photoUrl = game.getPhotoUrl();</span>
+<span class="fc" id="L18">        this.gameId = game.getGame_id();</span>
+<span class="fc" id="L19">    }</span>
+<span class="fc" id="L20">    protected GameSummaryDto() {</span>
+<span class="fc" id="L21">    }</span>
+
+    public String getTitle() {
+<span class="fc" id="L24">        return title;</span>
+    }
+
+    public String getDescription() {
+<span class="fc" id="L28">        return description;</span>
+    }
+
+    public int getPrice() {
+<span class="fc" id="L32">        return price;</span>
+    }
+
+    public String getPhotoUrl() {
+<span class="fc" id="L36">        return photoUrl;</span>
+    }
+    public int getGameId() {
+<span class="fc" id="L39">        return gameId;</span>
+    }
+    public void setGameId(int gameId) {
+<span class="fc" id="L42">        this.gameId = gameId;</span>
+<span class="fc" id="L43">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

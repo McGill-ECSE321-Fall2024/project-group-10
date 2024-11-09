@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlatformService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.service</a> &gt; <span class="el_source">PlatformService.java</span></div><h1>PlatformService.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.service;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.antlr.v4.runtime.atn.ParseInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import com.mcgill.ecse321.GameShop.exception.GameShopException;
+import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.model.Manager;
+import com.mcgill.ecse321.GameShop.model.Platform;
+import com.mcgill.ecse321.GameShop.repository.GameRepository;
+import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
+import com.mcgill.ecse321.GameShop.repository.PlatformRepository;
+
+import jakarta.transaction.Transactional;
+
+@Service
+<span class="fc" id="L23">public class PlatformService {</span>
+    @Autowired
+    private PlatformRepository platformRepository;
+    @Autowired
+    private ManagerRepository managerRepository;
+    @Autowired
+    private GameRepository gameRepository;
+
+    @Transactional
+    public Platform createPlatform(String platformName, String managerEmail) {
+<span class="pc bpc" id="L33" title="1 of 4 branches missed.">        if (platformName == null || platformName.trim().isEmpty()) {</span>
+<span class="fc" id="L34">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Platform name cannot be empty or null&quot;);</span>
+        }
+<span class="fc bfc" id="L36" title="All 4 branches covered.">        if (managerEmail == null || managerEmail.trim().isEmpty()) {</span>
+<span class="fc" id="L37">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Manager email cannot be empty or null&quot;);</span>
+        }
+
+<span class="fc" id="L40">        Manager manager = managerRepository.findByEmail(managerEmail);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (manager == null) {</span>
+<span class="fc" id="L42">            throw new GameShopException(HttpStatus.NOT_FOUND,</span>
+<span class="fc" id="L43">                    String.format(&quot;There is no manager with email: %s&quot;, managerEmail));</span>
+        }
+<span class="fc" id="L45">        Platform platform = new Platform(platformName, manager);</span>
+<span class="fc" id="L46">        return platformRepository.save(platform);</span>
+
+    }
+
+    @Transactional
+    public Platform getPlatform(int platformId) {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (platformId &lt;= 0) {</span>
+<span class="fc" id="L53">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Platform ID must be greater than 0&quot;);</span>
+        }
+<span class="fc" id="L55">        Platform platform = platformRepository.findById(platformId);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (platform == null) {</span>
+<span class="fc" id="L57">            throw new GameShopException(HttpStatus.NOT_FOUND, &quot;Platform does not exist&quot;);</span>
+        }
+<span class="fc" id="L59">        return platform;</span>
+    }
+
+    @Transactional
+    public Iterable&lt;Platform&gt; getAllPlatforms() {
+<span class="fc" id="L64">        return platformRepository.findAll();</span>
+    }
+
+    @Transactional
+    public Platform updatePlatform(int platformId, String platformName) {
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if (platformId &lt;= 0) {</span>
+<span class="nc" id="L70">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Invalid platform ID&quot;);</span>
+        }
+<span class="fc bfc" id="L72" title="All 4 branches covered.">        if (platformName == null || platformName.trim().isEmpty()) {</span>
+<span class="fc" id="L73">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Platform name cannot be empty or null&quot;);</span>
+        }
+
+<span class="fc" id="L76">        Platform platform = getPlatform(platformId);</span>
+
+
+<span class="fc" id="L79">        platform.setPlatformName(platformName);</span>
+<span class="fc" id="L80">        return platformRepository.save(platform);</span>
+    }
+
+    @Transactional
+    public void deletePlatform(int platformId) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if(platformId &lt;= 0){</span>
+<span class="fc" id="L86">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Invalid platform ID&quot;);</span>
+        }
+<span class="fc" id="L88">        Platform platform = getPlatform(platformId);</span>
+<span class="fc" id="L89">        List&lt;Game&gt; gamesInPlatform = gameRepository.findAllByPlatformsContains(platform);</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        for(Game game : gamesInPlatform){</span>
+<span class="fc" id="L91">            List&lt;Platform&gt; platforms = new ArrayList&lt;&gt;( game.getPlatforms());</span>
+<span class="fc" id="L92">            platforms.remove(platform);</span>
+<span class="fc" id="L93">            game.setPlatforms(platforms);</span>
+
+           
+<span class="fc" id="L96">            gameRepository.save(game);</span>
+<span class="fc" id="L97">        }</span>
+        
+<span class="fc" id="L99">        platformRepository.delete(platform);</span>
+<span class="fc" id="L100">    }</span>
+
+    @Transactional
+    public List&lt;Game&gt; getAllGamesInPlatform(int platformId) {
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (platformId &lt;= 0) {</span>
+<span class="fc" id="L105">            throw new GameShopException(HttpStatus.BAD_REQUEST, &quot;Invalid platform ID&quot;);</span>
+        }
+<span class="fc" id="L107">        Platform platform = getPlatform(platformId);</span>
+<span class="fc" id="L108">        List&lt;Game&gt; games = gameRepository.findAllByPlatformsContains(platform);</span>
+<span class="fc" id="L109">        return games;</span>
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

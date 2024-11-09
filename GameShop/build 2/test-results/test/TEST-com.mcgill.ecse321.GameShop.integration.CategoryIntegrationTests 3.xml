@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mcgill.ecse321.GameShop.integration.CategoryIntegrationTests" tests="6" skipped="0" failures="0" errors="0" timestamp="2024-11-09T02:11:19" hostname="Marcs-MacBook.local" time="0.13">
+  <properties/>
+  <testcase name="testCreateValidCategory()" classname="com.mcgill.ecse321.GameShop.integration.CategoryIntegrationTests" time="0.028"/>
+  <testcase name="testGetCategoryById()" classname="com.mcgill.ecse321.GameShop.integration.CategoryIntegrationTests" time="0.005"/>
+  <testcase name="testUpdateCategory()" classname="com.mcgill.ecse321.GameShop.integration.CategoryIntegrationTests" time="0.006"/>
+  <testcase name="testGetAllCategories()" classname="com.mcgill.ecse321.GameShop.integration.CategoryIntegrationTests" time="0.014"/>
+  <testcase name="testDeleteCategory()" classname="com.mcgill.ecse321.GameShop.integration.CategoryIntegrationTests" time="0.021"/>
+  <testcase name="testFindAllGamesInCategory()" classname="com.mcgill.ecse321.GameShop.integration.CategoryIntegrationTests" time="0.054"/>
+  <system-out><![CDATA[2024-11-08T21:11:19.284-05:00  INFO 86047 --- [GameShop] [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.mcgill.ecse321.GameShop.integration.CategoryIntegrationTests]: CategoryIntegrationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-11-08T21:11:19.285-05:00  INFO 86047 --- [GameShop] [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.mcgill.ecse321.GameShop.GameShopApplication for test class com.mcgill.ecse321.GameShop.integration.CategoryIntegrationTests
+URL: /categories/4502
+Response status code for DELETE: 200 OK
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

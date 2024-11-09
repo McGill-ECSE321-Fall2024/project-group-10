@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Order.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.model</a> &gt; <span class="el_source">Order.java</span></div><h1>Order.java</h1><pre class="source lang-java linenums">/*PLEASE DO NOT EDIT THIS CODE*/
+/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
+
+package com.mcgill.ecse321.GameShop.model;
+
+import java.util.*;
+
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+// line 41 &quot;../../../../../../model.ump&quot;
+// line 212 &quot;../../../../../../model.ump&quot;
+@Entity
+@Table(name = &quot;\&quot;order\&quot;&quot;)
+public class Order {
+
+  // ------------------------
+  // STATIC VARIABLES
+  // ------------------------
+
+<span class="fc" id="L26">  private static Map&lt;String, Order&gt; ordersByTrackingNumber = new HashMap&lt;String, Order&gt;();</span>
+
+  // ------------------------
+  // MEMBER VARIABLES
+  // ------------------------
+
+  // Order Attributes
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String trackingNumber;
+  private Date orderDate;
+  private String note;
+  private int paymentCard;
+
+  // Order Associations
+  @ManyToOne(cascade = CascadeType.ALL)
+  private Customer customer;
+
+  // ------------------------
+  // CONSTRUCTOR
+  // ------------------------
+<span class="fc" id="L47">  public Order(Date aOrderDate, String aNote, int aPaymentCard, Customer aCustomer) {</span>
+<span class="fc" id="L48">    orderDate = aOrderDate;</span>
+<span class="fc" id="L49">    note = aNote;</span>
+<span class="fc" id="L50">    paymentCard = aPaymentCard;</span>
+
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">    if (!setCustomer(aCustomer)) {</span>
+<span class="nc" id="L53">      throw new RuntimeException(</span>
+          &quot;Unable to create Order due to aCustomer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html&quot;);
+    }
+<span class="fc" id="L56">  }</span>
+
+  // ------------------------
+  // INTERFACE
+  // ------------------------
+
+  public boolean setTrackingNumber(String aTrackingNumber) {
+<span class="nc" id="L63">    boolean wasSet = false;</span>
+<span class="nc" id="L64">    String anOldTrackingNumber = getTrackingNumber();</span>
+<span class="nc bnc" id="L65" title="All 4 branches missed.">    if (anOldTrackingNumber != null &amp;&amp; anOldTrackingNumber.equals(aTrackingNumber)) {</span>
+<span class="nc" id="L66">      return true;</span>
+    }
+<span class="nc bnc" id="L68" title="All 2 branches missed.">    if (hasWithTrackingNumber(aTrackingNumber)) {</span>
+<span class="nc" id="L69">      return wasSet;</span>
+    }
+<span class="nc" id="L71">    trackingNumber = aTrackingNumber;</span>
+<span class="nc" id="L72">    wasSet = true;</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">    if (anOldTrackingNumber != null) {</span>
+<span class="nc" id="L74">      ordersByTrackingNumber.remove(anOldTrackingNumber);</span>
+    }
+<span class="nc" id="L76">    ordersByTrackingNumber.put(aTrackingNumber, this);</span>
+<span class="nc" id="L77">    return wasSet;</span>
+  }
+
+  public boolean setOrderDate(Date aOrderDate) {
+<span class="nc" id="L81">    boolean wasSet = false;</span>
+<span class="nc" id="L82">    orderDate = aOrderDate;</span>
+<span class="nc" id="L83">    wasSet = true;</span>
+<span class="nc" id="L84">    return wasSet;</span>
+  }
+
+  public boolean setNote(String aNote) {
+<span class="nc" id="L88">    boolean wasSet = false;</span>
+<span class="nc" id="L89">    note = aNote;</span>
+<span class="nc" id="L90">    wasSet = true;</span>
+<span class="nc" id="L91">    return wasSet;</span>
+  }
+
+  public boolean setPaymentCard(int aPaymentCard) {
+<span class="nc" id="L95">    boolean wasSet = false;</span>
+<span class="nc" id="L96">    paymentCard = aPaymentCard;</span>
+<span class="nc" id="L97">    wasSet = true;</span>
+<span class="nc" id="L98">    return wasSet;</span>
+  }
+
+  public String getTrackingNumber() {
+<span class="fc" id="L102">    return trackingNumber;</span>
+  }
+
+  /* Code from template attribute_GetUnique */
+  public static Order getWithTrackingNumber(String aTrackingNumber) {
+<span class="nc" id="L107">    return ordersByTrackingNumber.get(aTrackingNumber);</span>
+  }
+
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithTrackingNumber(String aTrackingNumber) {
+<span class="nc bnc" id="L112" title="All 2 branches missed.">    return getWithTrackingNumber(aTrackingNumber) != null;</span>
+  }
+
+  public Date getOrderDate() {
+<span class="fc" id="L116">    return orderDate;</span>
+  }
+
+  public String getNote() {
+<span class="fc" id="L120">    return note;</span>
+  }
+
+  public int getPaymentCard() {
+<span class="fc" id="L124">    return paymentCard;</span>
+  }
+
+  /* Code from template association_GetOne */
+  public Customer getCustomer() {
+<span class="fc" id="L129">    return customer;</span>
+  }
+
+  /* Code from template association_SetUnidirectionalOne */
+  public boolean setCustomer(Customer aNewCustomer) {
+<span class="fc" id="L134">    boolean wasSet = false;</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">    if (aNewCustomer != null) {</span>
+<span class="fc" id="L136">      customer = aNewCustomer;</span>
+<span class="fc" id="L137">      wasSet = true;</span>
+    }
+<span class="fc" id="L139">    return wasSet;</span>
+  }
+
+  public void delete() {
+<span class="nc" id="L143">    ordersByTrackingNumber.remove(getTrackingNumber());</span>
+<span class="nc" id="L144">    customer = null;</span>
+<span class="nc" id="L145">  }</span>
+
+  public String toString() {
+<span class="nc" id="L148">    return super.toString() + &quot;[&quot; +</span>
+<span class="nc" id="L149">        &quot;trackingNumber&quot; + &quot;:&quot; + getTrackingNumber() + &quot;,&quot; +</span>
+<span class="nc" id="L150">        &quot;note&quot; + &quot;:&quot; + getNote() + &quot;,&quot; +</span>
+<span class="nc" id="L151">        &quot;paymentCard&quot; + &quot;:&quot; + getPaymentCard() + &quot;]&quot; + System.getProperties().getProperty(&quot;line.separator&quot;) +</span>
+        &quot;  &quot; + &quot;orderDate&quot; + &quot;=&quot;
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        + (getOrderDate() != null</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">            ? !getOrderDate().equals(this) ? getOrderDate().toString().replaceAll(&quot;  &quot;, &quot;    &quot;) : &quot;this&quot;</span>
+<span class="nc" id="L155">            : &quot;null&quot;)</span>
+<span class="nc" id="L156">        + System.getProperties().getProperty(&quot;line.separator&quot;) +</span>
+        &quot;  &quot; + &quot;customer = &quot;
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        + (getCustomer() != null ? Integer.toHexString(System.identityHashCode(getCustomer())) : &quot;null&quot;);</span>
+  }
+
+  public static void clearTestTrackingNumbers(List&lt;String&gt; test_tracking_numbers) {
+<span class="fc bfc" id="L162" title="All 2 branches covered.">    for (String test_tracking_number : test_tracking_numbers) {</span>
+<span class="fc" id="L163">      ordersByTrackingNumber.remove(test_tracking_number);</span>
+<span class="fc" id="L164">    }</span>
+<span class="fc" id="L165">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

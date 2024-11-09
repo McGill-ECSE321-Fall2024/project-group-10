@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WishListController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.controller</a> &gt; <span class="el_source">WishListController.java</span></div><h1>WishListController.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
+import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
+import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.model.WishList;
+import com.mcgill.ecse321.GameShop.service.WishListService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
+<span class="nc" id="L18">public class WishListController {</span>
+    
+    @Autowired
+    private WishListService wishListService;
+
+    @GetMapping(&quot;/wishlist/{wishlist_id}&quot;)
+    public WishListResponseDto findWishlistById(@PathVariable int wishlist_id) {
+
+<span class="nc" id="L26">        WishList wishList = wishListService.findWishlistById(wishlist_id);</span>
+<span class="nc" id="L27">        return WishListResponseDto.create(wishList);</span>
+    }
+    @PutMapping(&quot;/wishlist/{wishlist_id}/title&quot;)
+    public WishListResponseDto updateWishlistTitle(@PathVariable int wishlist_id, @RequestBody String newTitle) {
+<span class="nc" id="L31">        WishList updatedWishlist = wishListService.updateWishlListTitle(wishlist_id, newTitle);</span>
+<span class="nc" id="L32">        return WishListResponseDto.create(updatedWishlist);</span>
+    }
+    @PutMapping(&quot;/wishlist/{wishlist_id}/{game_id}&quot;)
+    public WishListResponseDto addGameToWishlist(@PathVariable int wishlist_id, @PathVariable int game_id) {
+<span class="nc" id="L36">        WishList wishList = wishListService.addGameToWishlist(wishlist_id,game_id);</span>
+<span class="nc" id="L37">        return WishListResponseDto.create(wishList);</span>
+    }
+    @DeleteMapping(&quot;/wishlist/{wishlist_id}/{game_id}&quot;)
+    public WishListResponseDto removeGameFromWishlist(@PathVariable int wishlist_id, @PathVariable int game_id) {
+<span class="nc" id="L41">        WishList wishList = wishListService.removeGameFromWishlist(wishlist_id,game_id);</span>
+<span class="nc" id="L42">        return WishListResponseDto.create(wishList);</span>
+    }
+    @PutMapping(&quot;/wishlist/{wishlist_id}&quot;)
+    public WishListResponseDto removeAllGamesFromWishlist(@PathVariable int wishlist_id) {
+<span class="nc" id="L46">        WishList wishList = wishListService.findWishlistById(wishlist_id);</span>
+<span class="nc" id="L47">        wishList = wishListService.removeAllGamesFromWishlist(wishlist_id);</span>
+<span class="nc" id="L48">        return WishListResponseDto.create(wishList);</span>
+    }
+    @GetMapping(&quot;/wishlist/{wishlist_id}/&quot;)
+    public GameListDto getAllGamesInWishlist(@PathVariable int wishlist_id) {
+<span class="nc" id="L52">        WishList wishList = wishListService.findWishlistById(wishlist_id);</span>
+<span class="nc" id="L53">        WishListResponseDto wishListResponseDto = new WishListResponseDto(wishList);</span>
+<span class="nc" id="L54">        return wishListResponseDto.getGames();</span>
+        
+    }
+    @GetMapping(&quot;/wishlist/{wishlist_id}/{game_id}&quot;)
+    public GameResponseDto getGameInWishList(@PathVariable int wishlist_id, @PathVariable int game_id) {
+<span class="nc" id="L59">        Game game = wishListService.getGameInWishList(wishlist_id,game_id);</span>
+<span class="nc" id="L60">        return new GameResponseDto(game);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" tests="20" skipped="0" failures="0" errors="0" timestamp="2024-11-09T02:15:20" hostname="Marcs-MacBook.local" time="0.049">
+  <properties/>
+  <testcase name="testCreatePlatformWithNullPlatformName()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testGetAllGamesInPlatformWithInvalidIdValue()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.001"/>
+  <testcase name="testDeletePlatform()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testGetPlatformByInvalidIdValue()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.001"/>
+  <testcase name="testUpdatePlatformWithInvalidId()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testDeletePlatformWithAssociatedGames()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testGetAllGamesInPlatform_Successful()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testCreatePlatformWithNullManagerEmail()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.001"/>
+  <testcase name="testCreatePlatformWithNonExistentManager()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testDeletePlatformWithInvalidId()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testGetPlatformByInvalidId()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testGetAllPlatforms()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.001"/>
+  <testcase name="testCreateValidPlatform()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testCreatePlatformWithEmptyManagerEmail()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.001"/>
+  <testcase name="testGetPlatformByValidId()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testUpdatePlatformWithEmptyPlatformName()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testGetAllGamesInPlatformWithInvalidId()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testUpdatePlatformWithNullPlatformName()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testUpdatePlatform()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <testcase name="testDeletePlatformWithInvalidIdValue()" classname="com.mcgill.ecse321.GameShop.service.PlatformServiceTests" time="0.002"/>
+  <system-out><![CDATA[2024-11-08T21:15:20.788-05:00  INFO 86551 --- [GameShop] [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.mcgill.ecse321.GameShop.service.PlatformServiceTests]: PlatformServiceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-11-08T21:15:20.789-05:00  INFO 86551 --- [GameShop] [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.mcgill.ecse321.GameShop.GameShopApplication for test class com.mcgill.ecse321.GameShop.service.PlatformServiceTests
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

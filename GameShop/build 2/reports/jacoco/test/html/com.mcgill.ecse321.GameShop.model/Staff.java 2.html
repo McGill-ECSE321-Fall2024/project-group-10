@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Staff.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.model</a> &gt; <span class="el_source">Staff.java</span></div><h1>Staff.java</h1><pre class="source lang-java linenums">/*PLEASE DO NOT EDIT THIS CODE*/
+/*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
+
+package com.mcgill.ecse321.GameShop.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+
+// line 14 &quot;../../../../../../model.ump&quot;
+// line 205 &quot;../../../../../../model.ump&quot;
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Staff extends Account {
+
+  // ------------------------
+  // MEMBER VARIABLES
+  // ------------------------
+
+  // ------------------------
+  // CONSTRUCTOR
+  // ------------------------
+
+  public Staff(String aEmail, String aUsername, String aPassword, String aPhoneNumber, String aAddress) {
+<span class="fc" id="L25">    super(aEmail, aUsername, aPassword, aPhoneNumber, aAddress);</span>
+<span class="fc" id="L26">  }</span>
+
+<span class="fc" id="L28">  protected Staff() {</span>
+<span class="fc" id="L29">  }</span>
+
+  // ------------------------
+  // INTERFACE
+  // ------------------------
+
+  public void delete() {
+<span class="nc" id="L36">    super.delete();</span>
+<span class="nc" id="L37">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

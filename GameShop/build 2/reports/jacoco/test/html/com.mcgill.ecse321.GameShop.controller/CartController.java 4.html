@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CartController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.controller</a> &gt; <span class="el_source">CartController.java</span></div><h1>CartController.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.controller;
+
+import com.mcgill.ecse321.GameShop.dto.CartDto.*;
+import com.mcgill.ecse321.GameShop.model.Cart;
+import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.service.CartService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
+import java.util.*;
+
+@RestController
+<span class="fc" id="L14">public class CartController {</span>
+
+    @Autowired
+    private CartService cartService;
+
+    // Create a new cart
+    @PostMapping(&quot;/carts&quot;)
+    public CartResponseDto createCart() {
+<span class="nc" id="L22">        Cart cart = cartService.createCart();</span>
+<span class="nc" id="L23">        return buildCartResponseDto(cart);</span>
+    }
+
+    @PostMapping(&quot;/carts/{cartId}/games&quot;)
+    public CartResponseDto addGamesToCart(
+            @PathVariable int cartId,
+            @Valid @RequestBody CartRequestDto requestDto) {
+<span class="nc" id="L30">        int gameId = requestDto.getGameId();</span>
+<span class="nc" id="L31">        int quantity = requestDto.getQuantity();</span>
+
+<span class="nc" id="L33">        cartService.addGameToCart(cartId, gameId, quantity);</span>
+
+<span class="nc" id="L35">        Cart cart = cartService.getCartById(cartId);</span>
+<span class="nc" id="L36">        return buildCartResponseDto(cart);</span>
+    }
+
+    @PostMapping(&quot;/carts/{cartId}/games/remove&quot;)
+    public CartResponseDto removeGamesFromCart(
+            @PathVariable int cartId,
+            @Valid @RequestBody CartRequestDto requestDto) {
+<span class="nc" id="L43">        int gameId = requestDto.getGameId();</span>
+<span class="nc" id="L44">        int quantity = requestDto.getQuantity();</span>
+
+<span class="nc" id="L46">        cartService.removeGameFromCart(cartId, gameId, quantity);</span>
+
+<span class="nc" id="L48">        Cart cart = cartService.getCartById(cartId);</span>
+<span class="nc" id="L49">        return buildCartResponseDto(cart);</span>
+    }
+
+    @GetMapping(&quot;/carts/{cartId}&quot;)
+    public CartResponseDto findCartById(@PathVariable int cartId) {
+<span class="nc" id="L54">        Cart cart = cartService.getCartById(cartId);</span>
+<span class="nc" id="L55">        return buildCartResponseDto(cart);</span>
+    }
+
+    @GetMapping(&quot;/carts&quot;)
+    public CartListDto findAllCarts() {
+<span class="nc" id="L60">        List&lt;CartSummaryDto&gt; cartSummaries = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        for (Cart cart : cartService.getAllCarts()) {</span>
+<span class="nc" id="L62">            Map&lt;Integer, Integer&gt; quantities = cartService.getQuantitiesForCart(cart.getCart_id());</span>
+<span class="nc" id="L63">            int totalItems = quantities.values().stream().mapToInt(Integer::intValue).sum();</span>
+
+            // Calculate total price for the cart
+<span class="nc" id="L66">            int totalPrice = 0;</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">            for (Game game : cart.getGames()) {</span>
+<span class="nc" id="L68">                int gameId = game.getGame_id();</span>
+<span class="nc" id="L69">                int quantity = quantities.getOrDefault(gameId, 1);</span>
+<span class="nc" id="L70">                totalPrice += game.getPrice() * quantity;</span>
+<span class="nc" id="L71">            }</span>
+
+<span class="nc" id="L73">            cartSummaries.add(new CartSummaryDto(cart.getCart_id(), totalItems, totalPrice));</span>
+<span class="nc" id="L74">        }</span>
+<span class="nc" id="L75">        return new CartListDto(cartSummaries);</span>
+    }
+
+    // Helper method to build CartResponseDto
+    private CartResponseDto buildCartResponseDto(Cart cart) {
+<span class="nc" id="L80">        Map&lt;Integer, Integer&gt; quantities = cartService.getQuantitiesForCart(cart.getCart_id());</span>
+<span class="nc" id="L81">        int totalItems = quantities.values().stream().mapToInt(Integer::intValue).sum();</span>
+
+        // Build a list of maps containing game details and quantities
+<span class="nc" id="L84">        List&lt;Map&lt;String, Object&gt;&gt; games = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L85">        int totalPrice = 0;</span>
+
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        for (Game game : cart.getGames()) {</span>
+<span class="nc" id="L88">            int gameId = game.getGame_id();</span>
+<span class="nc" id="L89">            int quantity = quantities.getOrDefault(gameId, 1);</span>
+
+<span class="nc" id="L91">            Map&lt;String, Object&gt; gameInfo = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L92">            gameInfo.put(&quot;gameId&quot;, game.getGame_id());</span>
+<span class="nc" id="L93">            gameInfo.put(&quot;title&quot;, game.getTitle());</span>
+<span class="nc" id="L94">            gameInfo.put(&quot;description&quot;, game.getDescription());</span>
+<span class="nc" id="L95">            gameInfo.put(&quot;price&quot;, game.getPrice());</span>
+<span class="nc" id="L96">            gameInfo.put(&quot;photoUrl&quot;, game.getPhotoUrl());</span>
+<span class="nc" id="L97">            gameInfo.put(&quot;gameStatus&quot;, game.getGameStatus().toString());</span>
+<span class="nc" id="L98">            gameInfo.put(&quot;stockQuantity&quot;, game.getStockQuantity());</span>
+<span class="nc" id="L99">            gameInfo.put(&quot;quantity&quot;, quantity);</span>
+
+<span class="nc" id="L101">            totalPrice += game.getPrice() * quantity;</span>
+
+<span class="nc" id="L103">            games.add(gameInfo);</span>
+<span class="nc" id="L104">        }</span>
+
+<span class="nc" id="L106">        return new CartResponseDto(cart.getCart_id(), games, totalItems, totalPrice);</span>
+    }
+
+    @PostMapping(&quot;/carts/{cartId}/games/updateQuantity&quot;)
+    public CartResponseDto updateGameQuantityInCart(
+            @PathVariable int cartId,
+            @Valid @RequestBody CartRequestDto requestDto) {
+<span class="nc" id="L113">        int gameId = requestDto.getGameId();</span>
+<span class="nc" id="L114">        int quantity = requestDto.getQuantity();</span>
+
+<span class="nc" id="L116">        Cart cart = cartService.updateGameQuantityInCart(cartId, gameId, quantity);</span>
+<span class="nc" id="L117">        return buildCartResponseDto(cart);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.controller</a> &gt; <span class="el_source">GameController.java</span></div><h1>GameController.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.mcgill.ecse321.GameShop.model.Category;
+import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
+import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
+import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameListDto;
+import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameSummaryDto;
+import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
+import com.mcgill.ecse321.GameShop.model.Platform;
+import com.mcgill.ecse321.GameShop.service.CategoryService;
+import com.mcgill.ecse321.GameShop.service.GameService;
+import com.mcgill.ecse321.GameShop.service.PlatformService;
+import com.mcgill.ecse321.GameShop.service.SpecificGameService;
+
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+
+@RestController
+<span class="fc" id="L38">public class GameController { // TODO still have to take into account inventory</span>
+    
+    @Autowired
+    private GameService gameService;
+    @Autowired
+    private PlatformService PlatformService;
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    private SpecificGameService specificGameService;
+
+    @GetMapping(&quot;/games/{game_id}&quot;)
+    public GameResponseDto findGameById(@PathVariable int game_id) {
+<span class="nc" id="L51">        Game game = gameService.findGameById(game_id);</span>
+<span class="nc" id="L52">        return GameResponseDto.create(game);</span>
+    }
+
+    @GetMapping(&quot;/games&quot;)
+    public GameListDto findAllGames() { // TODO needs to be checked for fixes
+<span class="nc" id="L57">        List&lt;GameSummaryDto&gt; dtos = new ArrayList&lt;GameSummaryDto&gt;();</span>
+
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        for (Game game : gameService.getAllGames()) {</span>
+<span class="nc" id="L60">            dtos.add(new GameSummaryDto(game));</span>
+<span class="nc" id="L61">        }</span>
+
+<span class="nc" id="L63">        return new GameListDto(dtos);</span>
+    }
+
+    @PostMapping(&quot;/games&quot;)
+    public GameResponseDto createGame(@Valid @RequestBody GameRequestDto request) {
+<span class="fc" id="L68">        Game createdGame = gameService.createGame(request.getaTitle(), request.getaDescription(), request.getaPrice(), request.getaGameStatus(), request.getaStockQuantity(), request.getaPhotoUrl());</span>
+
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (request.getCategories() != null) {</span>
+        
+<span class="fc" id="L72">            gameService.updateCategories(createdGame.getGame_id(), request.getCategories());</span>
+      
+        
+        }
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (request.getPlatforms() != null) {</span>
+<span class="fc" id="L77">            gameService.updatePlatforms(createdGame.getGame_id(), request.getPlatforms());</span>
+        }
+  
+<span class="fc" id="L80">        return GameResponseDto.create(createdGame);</span>
+    }
+
+    @DeleteMapping(&quot;/games/{game_id}&quot;) // TODO, no soft delete for now, has to be implemented
+    // Upon archiving the app should require the owner to specify if the archived game should still appear in the catalogue
+    public void deleteGame(@PathVariable int game_id) {
+<span class="nc" id="L86">        gameService.deleteGame(game_id);</span>
+<span class="nc" id="L87">    }</span>
+
+    @PutMapping(&quot;/games/{id}&quot;)
+    public Game putMethod(@PathVariable int id, @RequestBody String request) { // TODO needs to be checked for fixes
+<span class="nc" id="L91">        Game game = gameService.findGameById(id);</span>
+
+<span class="nc" id="L93">        game.setTitle(game.getTitle());</span>
+<span class="nc" id="L94">        game.setDescription(game.getDescription());</span>
+<span class="nc" id="L95">        game.setPrice(game.getPrice());</span>
+<span class="nc" id="L96">        game.setGameStatus(game.getGameStatus());</span>
+<span class="nc" id="L97">        game.setStockQuantity(game.getStockQuantity());</span>
+<span class="nc" id="L98">        game.setPhotoUrl(game.getPhotoUrl());</span>
+
+<span class="nc" id="L100">        return game;</span>
+    }
+    // @PutMapping(&quot;/games/categories/{game_id}&quot;)
+    // public GameResponseDto updateListOfCategories(@PathVariable int id,@RequestBody GameRequestDto request) {
+    //     Game game = gameService.updateCategories(id, request.getCategories());
+    //     return GameResponseDto.create(game);
+    // }
+
+    @PutMapping(&quot;/games/platform/{game_id}/{platform_id}&quot;)
+    public Game addPlatform(@PathVariable int game_id, @PathVariable int platform_id) {
+<span class="nc" id="L110">        return gameService.addPlatform(game_id, platform_id);</span>
+    }
+
+    @PutMapping(&quot;/games/category/{game_id}/{category_id}&quot;) 
+    public Game addCategory(@PathVariable int game_id, @PathVariable int category_id) {
+<span class="nc" id="L115">        return gameService.addCategory(game_id, category_id);</span>
+    }
+    
+    @GetMapping(&quot;/games/Title/{Title}&quot;)
+    public Iterable&lt;Game&gt; getGamesByTitle(@RequestParam String Title) {
+<span class="nc" id="L120">        Iterable&lt;Game&gt; games = gameService.getGamesByTitle(Title);</span>
+<span class="nc" id="L121">        return games;</span>
+    }
+
+
+
+    @GetMapping(&quot;/games/Status/{status}&quot;)
+    public Iterable&lt;Game&gt; getGamesByStatus(@RequestParam GameStatus status) {
+<span class="nc" id="L128">        Iterable&lt;Game&gt; games = gameService.getGamesByStatus(status);</span>
+<span class="nc" id="L129">        return games;</span>
+    }
+
+    @PostMapping(&quot;/games/specificGame/{game_id}&quot;)
+    public void postMethodName(@RequestParam int game_id, @RequestParam int numberOfCopies) {
+<span class="nc" id="L134">        Game game = gameService.findGameById(game_id);</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        for (int i = 0; i &lt; numberOfCopies; i++) {</span>
+<span class="nc" id="L136">            specificGameService.createSpecificGame(game);</span>
+        }
+<span class="nc" id="L138">    }</span>
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

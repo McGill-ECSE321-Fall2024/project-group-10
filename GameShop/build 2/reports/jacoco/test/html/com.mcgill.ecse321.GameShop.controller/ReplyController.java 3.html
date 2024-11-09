@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReplyController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.controller</a> &gt; <span class="el_source">ReplyController.java</span></div><h1>ReplyController.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyRequestDto;
+import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyResponseDto;
+import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewResponseDto;
+import com.mcgill.ecse321.GameShop.model.Reply;
+import com.mcgill.ecse321.GameShop.model.Review;
+import com.mcgill.ecse321.GameShop.service.ReplyService;
+
+import jakarta.validation.Valid;
+
+@RestController
+<span class="fc" id="L16">public class ReplyController {</span>
+
+    @Autowired
+    private ReplyService replyService;
+
+    /** Create a new reply */
+    @PostMapping(&quot;/replies&quot;)
+    public ReplyResponseDto createReply(@Valid @RequestBody ReplyRequestDto request) {
+<span class="nc" id="L24">        Reply reply = replyService.createReply(</span>
+<span class="nc" id="L25">                request.getReplyDate(),</span>
+<span class="nc" id="L26">                request.getDescription(),</span>
+<span class="nc" id="L27">                request.getReviewRating(),</span>
+<span class="nc" id="L28">                request.getReviewId(),</span>
+<span class="nc" id="L29">                request.getManagerEmail()</span>
+        );
+<span class="nc" id="L31">        return new ReplyResponseDto(reply);</span>
+    }
+
+    /** Get a reply by ID */
+    @GetMapping(&quot;/replies/{rid}&quot;)
+    public ReplyResponseDto getReplyById(@PathVariable int rid) {
+<span class="nc" id="L37">        Reply reply = replyService.getReplyById(rid);</span>
+<span class="nc" id="L38">        return new ReplyResponseDto(reply);</span>
+    }
+
+    /** Update an existing reply */
+    @PutMapping(&quot;/replies/{id}&quot;)
+    public ReplyResponseDto updateReply(@PathVariable int id, @RequestBody ReplyRequestDto request) {
+<span class="nc" id="L44">        Reply reply = replyService.updateReply(</span>
+                id,
+<span class="nc" id="L46">                request.getDescription(),</span>
+<span class="nc" id="L47">                request.getReviewRating()</span>
+        );
+<span class="nc" id="L49">        return new ReplyResponseDto(reply);</span>
+    }
+
+    /** Get the review associated with a reply */
+    @GetMapping(&quot;/replies/{replyId}/review&quot;)
+    public ReviewResponseDto getReviewByReplyId(@PathVariable int replyId) {
+<span class="nc" id="L55">        Review review = replyService.getReviewByReplyId(replyId);</span>
+<span class="nc" id="L56">        return new ReviewResponseDto(review);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

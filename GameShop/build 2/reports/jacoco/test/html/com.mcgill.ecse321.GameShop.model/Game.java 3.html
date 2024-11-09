@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Game.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.model</a> &gt; <span class="el_source">Game.java</span></div><h1>Game.java</h1><pre class="source lang-java linenums">/*PLEASE DO NOT EDIT THIS CODE*/
+/*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
+
+package com.mcgill.ecse321.GameShop.model;
+
+import java.util.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+
+// line 69 &quot;../../../../../../model.ump&quot;
+// line 234 &quot;../../../../../../model.ump&quot;
+@Entity
+public class Game {
+
+  // ------------------------
+  // ENUMERATIONS
+  // ------------------------
+
+<span class="fc" id="L28">  public enum GameStatus {</span>
+<span class="fc" id="L29">    InStock, OutOfStock, Archived</span>
+  }
+
+  // ------------------------
+  // STATIC VARIABLES
+  // ------------------------
+
+<span class="fc" id="L36">  private static Map&lt;Integer, Game&gt; gamesByGame_id = new HashMap&lt;Integer, Game&gt;();</span>
+
+  // ------------------------
+  // MEMBER VARIABLES
+  // ------------------------
+
+  // Game Attributes
+  @Id
+  @GeneratedValue
+  private int game_id;
+  private String title;
+  private String description;
+  private int price;
+
+  @Enumerated(EnumType.STRING)
+  private GameStatus gameStatus;
+
+  private int stockQuantity;
+  private String photoUrl;
+
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JoinTable(name = &quot;game_category_jt&quot;, joinColumns = @JoinColumn(name = &quot;game_id&quot;), inverseJoinColumns = @JoinColumn(name = &quot;category_id&quot;))
+  private List&lt;Category&gt; categories;
+
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JoinTable(name = &quot;game_platform_jt&quot;, joinColumns = @JoinColumn(name = &quot;game_id&quot;), inverseJoinColumns = @JoinColumn(name = &quot;platform_id&quot;))
+  private List&lt;Platform&gt; platforms;
+
+  // ------------------------
+  // CONSTRUCTOR
+  // ------------------------
+
+  public Game(String aTitle, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity,
+<span class="fc" id="L69">      String aPhotoUrl) {</span>
+<span class="fc" id="L70">    title = aTitle;</span>
+<span class="fc" id="L71">    description = aDescription;</span>
+<span class="fc" id="L72">    price = aPrice;</span>
+<span class="fc" id="L73">    gameStatus = aGameStatus;</span>
+<span class="fc" id="L74">    stockQuantity = aStockQuantity;</span>
+<span class="fc" id="L75">    photoUrl = aPhotoUrl;</span>
+<span class="fc" id="L76">    categories = new ArrayList&lt;Category&gt;();</span>
+<span class="fc" id="L77">    platforms = new ArrayList&lt;Platform&gt;();</span>
+<span class="fc" id="L78">  }</span>
+
+<span class="fc" id="L80">  protected Game() {</span>
+<span class="fc" id="L81">  }</span>
+
+  // ------------------------
+  // INTERFACE
+  // ------------------------
+
+  public boolean setGame_id(int aGame_id) {
+<span class="fc" id="L88">    boolean wasSet = false;</span>
+<span class="fc" id="L89">    Integer anOldGame_id = getGame_id();</span>
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">    if (anOldGame_id != null &amp;&amp; anOldGame_id.equals(aGame_id)) {</span>
+<span class="fc" id="L91">      return true;</span>
+    }
+<span class="fc bfc" id="L93" title="All 2 branches covered.">    if (hasWithGame_id(aGame_id)) {</span>
+<span class="fc" id="L94">      return wasSet;</span>
+    }
+<span class="fc" id="L96">    game_id = aGame_id;</span>
+<span class="fc" id="L97">    wasSet = true;</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">    if (anOldGame_id != null) {</span>
+<span class="fc" id="L99">      gamesByGame_id.remove(anOldGame_id);</span>
+    }
+<span class="fc" id="L101">    gamesByGame_id.put(aGame_id, this);</span>
+<span class="fc" id="L102">    return wasSet;</span>
+  }
+
+  public boolean setTitle(String aTitle) {
+<span class="fc" id="L106">    boolean wasSet = false;</span>
+<span class="fc" id="L107">    title = aTitle;</span>
+<span class="fc" id="L108">    wasSet = true;</span>
+<span class="fc" id="L109">    return wasSet;</span>
+  }
+
+  public boolean setDescription(String aDescription) {
+<span class="fc" id="L113">    boolean wasSet = false;</span>
+<span class="fc" id="L114">    description = aDescription;</span>
+<span class="fc" id="L115">    wasSet = true;</span>
+<span class="fc" id="L116">    return wasSet;</span>
+  }
+
+  public boolean setPrice(int aPrice) {
+<span class="fc" id="L120">    boolean wasSet = false;</span>
+<span class="fc" id="L121">    price = aPrice;</span>
+<span class="fc" id="L122">    wasSet = true;</span>
+<span class="fc" id="L123">    return wasSet;</span>
+  }
+
+  public boolean setGameStatus(GameStatus aGameStatus) {
+<span class="fc" id="L127">    boolean wasSet = false;</span>
+<span class="fc" id="L128">    gameStatus = aGameStatus;</span>
+<span class="fc" id="L129">    wasSet = true;</span>
+<span class="fc" id="L130">    return wasSet;</span>
+  }
+
+  public boolean setStockQuantity(int aStockQuantity) {
+<span class="fc" id="L134">    boolean wasSet = false;</span>
+<span class="fc" id="L135">    stockQuantity = aStockQuantity;</span>
+<span class="fc" id="L136">    wasSet = true;</span>
+<span class="fc" id="L137">    return wasSet;</span>
+  }
+
+  public boolean setPhotoUrl(String aPhotoUrl) {
+<span class="fc" id="L141">    boolean wasSet = false;</span>
+<span class="fc" id="L142">    photoUrl = aPhotoUrl;</span>
+<span class="fc" id="L143">    wasSet = true;</span>
+<span class="fc" id="L144">    return wasSet;</span>
+  }
+
+  public int getGame_id() {
+<span class="fc" id="L148">    return game_id;</span>
+  }
+
+  /* Code from template attribute_GetUnique */
+  public static Game getWithGame_id(int aGame_id) {
+<span class="fc" id="L153">    return gamesByGame_id.get(aGame_id);</span>
+  }
+
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithGame_id(int aGame_id) {
+<span class="fc bfc" id="L158" title="All 2 branches covered.">    return getWithGame_id(aGame_id) != null;</span>
+  }
+
+  public String getTitle() {
+<span class="fc" id="L162">    return title;</span>
+  }
+
+  public String getDescription() {
+<span class="fc" id="L166">    return description;</span>
+  }
+
+  public int getPrice() {
+<span class="fc" id="L170">    return price;</span>
+  }
+
+  public GameStatus getGameStatus() {
+<span class="fc" id="L174">    return gameStatus;</span>
+  }
+
+  public int getStockQuantity() {
+<span class="fc" id="L178">    return stockQuantity;</span>
+  }
+
+  public String getPhotoUrl() {
+<span class="fc" id="L182">    return photoUrl;</span>
+  }
+
+  /* Code from template association_GetMany */
+  public Category getCategory(int index) {
+<span class="nc" id="L187">    Category aCategory = categories.get(index);</span>
+<span class="nc" id="L188">    return aCategory;</span>
+  }
+
+  public List&lt;Category&gt; getCategories() {
+<span class="fc" id="L192">    List&lt;Category&gt; newCategories = Collections.unmodifiableList(categories);</span>
+<span class="fc" id="L193">    return newCategories;</span>
+  }
+
+  public int numberOfCategories() {
+<span class="nc" id="L197">    int number = categories.size();</span>
+<span class="nc" id="L198">    return number;</span>
+  }
+
+  public boolean hasCategories() {
+<span class="nc bnc" id="L202" title="All 2 branches missed.">    boolean has = categories.size() &gt; 0;</span>
+<span class="nc" id="L203">    return has;</span>
+  }
+
+  public int indexOfCategory(Category aCategory) {
+<span class="nc" id="L207">    int index = categories.indexOf(aCategory);</span>
+<span class="nc" id="L208">    return index;</span>
+  }
+
+  /* Code from template association_GetMany */
+  public Platform getPlatform(int index) {
+<span class="nc" id="L213">    Platform aPlatform = platforms.get(index);</span>
+<span class="nc" id="L214">    return aPlatform;</span>
+  }
+
+  public List&lt;Platform&gt; getPlatforms() {
+<span class="fc" id="L218">    List&lt;Platform&gt; newPlatforms = Collections.unmodifiableList(platforms);</span>
+<span class="fc" id="L219">    return newPlatforms;</span>
+  }
+  public void setPlatforms(List&lt;Platform&gt; platforms) {
+<span class="fc" id="L222">    this.platforms = platforms;</span>
+<span class="fc" id="L223">  }</span>
+
+  public int numberOfPlatforms() {
+<span class="nc" id="L226">    int number = platforms.size();</span>
+<span class="nc" id="L227">    return number;</span>
+  }
+
+  public boolean hasPlatforms() {
+<span class="nc bnc" id="L231" title="All 2 branches missed.">    boolean has = platforms.size() &gt; 0;</span>
+<span class="nc" id="L232">    return has;</span>
+  }
+
+  public int indexOfPlatform(Platform aPlatform) {
+<span class="nc" id="L236">    int index = platforms.indexOf(aPlatform);</span>
+<span class="nc" id="L237">    return index;</span>
+  }
+
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfCategories() {
+<span class="nc" id="L242">    return 0;</span>
+  }
+
+  /* Code from template association_AddUnidirectionalMany */
+  public boolean addCategory(Category aCategory) {
+<span class="fc" id="L247">    boolean wasAdded = false;</span>
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">    if (categories.contains(aCategory)) {</span>
+<span class="nc" id="L249">      return false;</span>
+    }
+<span class="fc" id="L251">    categories.add(aCategory);</span>
+<span class="fc" id="L252">    wasAdded = true;</span>
+<span class="fc" id="L253">    return wasAdded;</span>
+  }
+
+  public boolean removeCategory(Category aCategory) {
+<span class="fc" id="L257">    boolean wasRemoved = false;</span>
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">    if (categories.contains(aCategory)) {</span>
+<span class="fc" id="L259">      categories.remove(aCategory);</span>
+<span class="fc" id="L260">      wasRemoved = true;</span>
+    }
+<span class="fc" id="L262">    return wasRemoved;</span>
+  }
+
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addCategoryAt(Category aCategory, int index) {
+<span class="nc" id="L267">    boolean wasAdded = false;</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">    if (addCategory(aCategory)) {</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">      if (index &lt; 0) {</span>
+<span class="nc" id="L270">        index = 0;</span>
+      }
+<span class="nc bnc" id="L272" title="All 2 branches missed.">      if (index &gt; numberOfCategories()) {</span>
+<span class="nc" id="L273">        index = numberOfCategories() - 1;</span>
+      }
+<span class="nc" id="L275">      categories.remove(aCategory);</span>
+<span class="nc" id="L276">      categories.add(index, aCategory);</span>
+<span class="nc" id="L277">      wasAdded = true;</span>
+    }
+<span class="nc" id="L279">    return wasAdded;</span>
+  }
+
+  public boolean addOrMoveCategoryAt(Category aCategory, int index) {
+<span class="nc" id="L283">    boolean wasAdded = false;</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">    if (categories.contains(aCategory)) {</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">      if (index &lt; 0) {</span>
+<span class="nc" id="L286">        index = 0;</span>
+      }
+<span class="nc bnc" id="L288" title="All 2 branches missed.">      if (index &gt; numberOfCategories()) {</span>
+<span class="nc" id="L289">        index = numberOfCategories() - 1;</span>
+      }
+<span class="nc" id="L291">      categories.remove(aCategory);</span>
+<span class="nc" id="L292">      categories.add(index, aCategory);</span>
+<span class="nc" id="L293">      wasAdded = true;</span>
+    } else {
+<span class="nc" id="L295">      wasAdded = addCategoryAt(aCategory, index);</span>
+    }
+<span class="nc" id="L297">    return wasAdded;</span>
+  }
+
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfPlatforms() {
+<span class="nc" id="L302">    return 0;</span>
+  }
+
+  /* Code from template association_AddUnidirectionalMany */
+  public boolean addPlatform(Platform aPlatform) {
+<span class="fc" id="L307">    boolean wasAdded = false;</span>
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">    if (platforms.contains(aPlatform)) {</span>
+<span class="nc" id="L309">      return false;</span>
+    }
+<span class="fc" id="L311">    platforms.add(aPlatform);</span>
+<span class="fc" id="L312">    wasAdded = true;</span>
+<span class="fc" id="L313">    return wasAdded;</span>
+  }
+
+  public boolean removePlatform(Platform aPlatform) {
+<span class="fc" id="L317">    boolean wasRemoved = false;</span>
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">    if (platforms.contains(aPlatform)) {</span>
+<span class="fc" id="L319">      platforms.remove(aPlatform);</span>
+<span class="fc" id="L320">      wasRemoved = true;</span>
+    }
+<span class="fc" id="L322">    return wasRemoved;</span>
+  }
+
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addPlatformAt(Platform aPlatform, int index) {
+<span class="nc" id="L327">    boolean wasAdded = false;</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">    if (addPlatform(aPlatform)) {</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">      if (index &lt; 0) {</span>
+<span class="nc" id="L330">        index = 0;</span>
+      }
+<span class="nc bnc" id="L332" title="All 2 branches missed.">      if (index &gt; numberOfPlatforms()) {</span>
+<span class="nc" id="L333">        index = numberOfPlatforms() - 1;</span>
+      }
+<span class="nc" id="L335">      platforms.remove(aPlatform);</span>
+<span class="nc" id="L336">      platforms.add(index, aPlatform);</span>
+<span class="nc" id="L337">      wasAdded = true;</span>
+    }
+<span class="nc" id="L339">    return wasAdded;</span>
+  }
+  public void setCategories(List&lt;Category&gt; categories) {
+<span class="fc" id="L342">    this.categories = categories;</span>
+<span class="fc" id="L343">  }</span>
+
+  public boolean addOrMovePlatformAt(Platform aPlatform, int index) {
+<span class="nc" id="L346">    boolean wasAdded = false;</span>
+<span class="nc bnc" id="L347" title="All 2 branches missed.">    if (platforms.contains(aPlatform)) {</span>
+<span class="nc bnc" id="L348" title="All 2 branches missed.">      if (index &lt; 0) {</span>
+<span class="nc" id="L349">        index = 0;</span>
+      }
+<span class="nc bnc" id="L351" title="All 2 branches missed.">      if (index &gt; numberOfPlatforms()) {</span>
+<span class="nc" id="L352">        index = numberOfPlatforms() - 1;</span>
+      }
+<span class="nc" id="L354">      platforms.remove(aPlatform);</span>
+<span class="nc" id="L355">      platforms.add(index, aPlatform);</span>
+<span class="nc" id="L356">      wasAdded = true;</span>
+    } else {
+<span class="nc" id="L358">      wasAdded = addPlatformAt(aPlatform, index);</span>
+    }
+<span class="nc" id="L360">    return wasAdded;</span>
+  }
+
+  public void delete() {
+<span class="nc" id="L364">    gamesByGame_id.remove(getGame_id());</span>
+<span class="nc" id="L365">    categories.clear();</span>
+<span class="nc" id="L366">    platforms.clear();</span>
+<span class="nc" id="L367">  }</span>
+
+  public String toString() {
+<span class="fc" id="L370">    return super.toString() + &quot;[&quot; +</span>
+<span class="fc" id="L371">        &quot;game_id&quot; + &quot;:&quot; + getGame_id() + &quot;,&quot; +</span>
+<span class="fc" id="L372">        &quot;description&quot; + &quot;:&quot; + getDescription() + &quot;,&quot; +</span>
+<span class="fc" id="L373">        &quot;price&quot; + &quot;:&quot; + getPrice() + &quot;,&quot; +</span>
+<span class="fc" id="L374">        &quot;stockQuantity&quot; + &quot;:&quot; + getStockQuantity() + &quot;,&quot; +</span>
+<span class="fc" id="L375">        &quot;photoUrl&quot; + &quot;:&quot; + getPhotoUrl() + &quot;]&quot; + System.getProperties().getProperty(&quot;line.separator&quot;) +</span>
+        &quot;  &quot; + &quot;gameStatus&quot; + &quot;=&quot;
+<span class="pc bpc" id="L377" title="1 of 2 branches missed.">        + (getGameStatus() != null</span>
+<span class="pc bpc" id="L378" title="1 of 2 branches missed.">            ? !getGameStatus().equals(this) ? getGameStatus().toString().replaceAll(&quot;  &quot;, &quot;    &quot;) : &quot;this&quot;</span>
+<span class="pc" id="L379">            : &quot;null&quot;);</span>
+  }
+
+  public static void clearTestEmails(List&lt;Integer&gt; test_integers) {
+<span class="fc bfc" id="L383" title="All 2 branches covered.">    for (Integer test_integer : test_integers) {</span>
+<span class="fc" id="L384">      gamesByGame_id.remove(test_integer);</span>
+<span class="fc" id="L385">    }</span>
+<span class="fc" id="L386">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReplyRequestDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GameShop</a> &gt; <a href="index.source.html" class="el_package">com.mcgill.ecse321.GameShop.dto.ReplyDto</a> &gt; <span class="el_source">ReplyRequestDto.java</span></div><h1>ReplyRequestDto.java</h1><pre class="source lang-java linenums">package com.mcgill.ecse321.GameShop.dto.ReplyDto;
+
+import java.sql.Date;
+
+import com.mcgill.ecse321.GameShop.model.Reply.ReviewRating;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class ReplyRequestDto {
+
+    @NotNull(message = &quot;Reply date cannot be null&quot;)
+    private Date replyDate;
+
+    @NotBlank(message = &quot;Description cannot be empty&quot;)
+    private String description;
+
+    @NotNull(message = &quot;Review rating cannot be null&quot;)
+    private ReviewRating reviewRating;
+
+    @NotNull(message = &quot;Review ID cannot be null&quot;)
+    private Integer reviewId;
+
+    @Email(message = &quot;Email should be valid&quot;)
+    @NotBlank(message = &quot;Manager email cannot be empty&quot;)
+    private String managerEmail;
+
+<span class="nc" id="L29">    public ReplyRequestDto() {</span>
+<span class="nc" id="L30">    }</span>
+
+<span class="nc" id="L32">    public ReplyRequestDto(Date replyDate, String description, ReviewRating reviewRating, Integer reviewId, String managerEmail) {</span>
+<span class="nc" id="L33">        this.replyDate = replyDate;</span>
+<span class="nc" id="L34">        this.description = description;</span>
+<span class="nc" id="L35">        this.reviewRating = reviewRating;</span>
+<span class="nc" id="L36">        this.reviewId = reviewId;</span>
+<span class="nc" id="L37">        this.managerEmail = managerEmail;</span>
+<span class="nc" id="L38">    }</span>
+
+    // Getters and Setters
+
+    public Date getReplyDate() {
+<span class="nc" id="L43">        return replyDate;</span>
+    }
+
+    public void setReplyDate(Date replyDate) {
+<span class="nc" id="L47">        this.replyDate = replyDate;</span>
+<span class="nc" id="L48">    }</span>
+
+    public String getDescription() {
+<span class="nc" id="L51">        return description;</span>
+    }
+
+    public void setDescription(String description) {
+<span class="nc" id="L55">        this.description = description;</span>
+<span class="nc" id="L56">    }</span>
+
+    public ReviewRating getReviewRating() {
+<span class="nc" id="L59">        return reviewRating;</span>
+    }
+
+    public void setReviewRating(ReviewRating reviewRating) {
+<span class="nc" id="L63">        this.reviewRating = reviewRating;</span>
+<span class="nc" id="L64">    }</span>
+
+    public Integer getReviewId() {
+<span class="nc" id="L67">        return reviewId;</span>
+    }
+
+    public void setReviewId(Integer reviewId) {
+<span class="nc" id="L71">        this.reviewId = reviewId;</span>
+<span class="nc" id="L72">    }</span>
+
+    public String getManagerEmail() {
+<span class="nc" id="L75">        return managerEmail;</span>
+    }
+
+    public void setManagerEmail(String managerEmail) {
+<span class="nc" id="L79">        this.managerEmail = managerEmail;</span>
+<span class="nc" id="L80">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

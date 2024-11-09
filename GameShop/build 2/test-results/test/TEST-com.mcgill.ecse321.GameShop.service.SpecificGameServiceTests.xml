@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" tests="19" skipped="0" failures="0" errors="0" timestamp="2024-11-09T02:16:23" hostname="Marcs-MacBook.local" time="0.12">
+  <properties/>
+  <testcase name="testFindSpecificGameById_InvalidIdValue()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.007"/>
+  <testcase name="testUpdateSpecificGameItemStatus_NonExistentSpecificGameId()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.005"/>
+  <testcase name="testGetSpecificGamesByGameId_Successful()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.005"/>
+  <testcase name="testGetSpecificGamesByGameId_NoSpecificGames()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.005"/>
+  <testcase name="testCreateSpecificGame_NullGame()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.004"/>
+  <testcase name="testUpdateSpecificGame_InvalidIds()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.01"/>
+  <testcase name="testUpdateSpecificGameItemStatus_NullStatus()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.003"/>
+  <testcase name="testGetSpecificGamesByGameId_InvalidGameId()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.003"/>
+  <testcase name="testFindSpecificGameById_Successful()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.004"/>
+  <testcase name="testGetAllSpecificGames_Empty()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.004"/>
+  <testcase name="testUpdateSpecificGame_Successful()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.011"/>
+  <testcase name="testUpdateSpecificGame_NonExistentSpecificGameId()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.004"/>
+  <testcase name="testFindSpecificGameByInvalidId_NotFound()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.004"/>
+  <testcase name="testUpdateSpecificGameItemStatus_Successful()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.004"/>
+  <testcase name="testCreateSpecificGame_Successful()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.004"/>
+  <testcase name="testUpdateSpecificGameItemStatus_InvalidSpecificGameId()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.003"/>
+  <testcase name="testUpdateSpecificGame_NonExistentGameId()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.004"/>
+  <testcase name="testGetSpecificGamesByGameId_NoGameFound()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.004"/>
+  <testcase name="testGetAllSpecificGames_Successful()" classname="com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests" time="0.005"/>
+  <system-out><![CDATA[2024-11-08T21:16:23.100-05:00  INFO 86700 --- [GameShop] [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests]: SpecificGameServiceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-11-08T21:16:23.101-05:00  INFO 86700 --- [GameShop] [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.mcgill.ecse321.GameShop.GameShopApplication for test class com.mcgill.ecse321.GameShop.service.SpecificGameServiceTests
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
