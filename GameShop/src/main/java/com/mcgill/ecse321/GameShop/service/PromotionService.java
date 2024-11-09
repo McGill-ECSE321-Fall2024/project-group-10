@@ -43,6 +43,10 @@ public class PromotionService {
             String managerEmail, List<Integer> gameIds) {
 
         // Validate inputs
+        if (gameIds == null || gameIds.isEmpty()) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game IDs cannot be null or empty");
+        }
+
         if (isEmpty(description)) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Description cannot be empty or null");
         }
@@ -60,15 +64,14 @@ public class PromotionService {
             throw new GameShopException(HttpStatus.NOT_FOUND,
                     String.format("Manager with email %s not found", managerEmail));
         }
-        if (gameIds == null || gameIds.isEmpty()) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game IDs cannot be null or empty");
-        }
 
         // Fetch games by IDs
         List<Game> games = new ArrayList<>();
-        for (Integer gameId : gameIds) {
-            Game game = gameRepository.findById(gameId).orElseThrow(() -> 
-                new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId)));
+        for (int  gameId : gameIds) {
+            Game game = gameRepository.findById(gameId);
+            if (game == null){
+                    throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId));
+            }
             games.add(game);
         }
 
@@ -138,12 +141,10 @@ public class PromotionService {
         // Update associated games if provided
         if (gameIds != null) {
             List<Game> games = new ArrayList<>();
-            for (Integer gameId : gameIds) {
-                Game game = gameRepository.findById(gameId).orElseThrow(() -> 
-                    new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId)));
-                if (game == null) {
-                    throw new GameShopException(HttpStatus.NOT_FOUND,
-                            String.format("Game with ID %d not found", gameId));
+            for (int  gameId : gameIds) {
+                Game game = gameRepository.findById(gameId);
+                if (game == null){
+                        throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId));
                 }
                 games.add(game);
             }
