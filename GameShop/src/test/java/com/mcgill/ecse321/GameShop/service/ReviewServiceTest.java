@@ -34,7 +34,6 @@ import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ReviewRepository;
 
-import jakarta.validation.constraints.AssertFalse.List;
 
 @SpringBootTest
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
