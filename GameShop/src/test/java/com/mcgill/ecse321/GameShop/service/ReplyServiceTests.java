@@ -22,6 +22,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
+import com.mcgill.ecse321.GameShop.model.Cart;
+import com.mcgill.ecse321.GameShop.model.Customer;
+import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.Reply;
 import com.mcgill.ecse321.GameShop.model.Reply.ReviewRating;
@@ -53,14 +56,28 @@ public class ReplyServiceTests {
         // Arrange
         int replyId = 1001; // Unique reply ID
         int reviewId = 2001; // Unique review ID
+        int gameId = 3001; // Unique game ID
+        String customerEmail = "customer1001@example.com"; // Unique customer email
         String managerEmail = "manager1034879@example.com"; // Unique manager email
         Date replyDate = Date.valueOf("2023-10-10");
         String description = "Thank you for your feedback!";
         ReviewRating reviewRating = ReviewRating.Like;
 
-        // Create Manager and Review
+        // Create Cart
+        Cart cart = new Cart();
+
+        // Create Game
+        Game game = new Game("Test Game", "A test game", 50, Game.GameStatus.InStock, 100, "testPhotoUrl");
+        game.setGame_id(gameId);
+
+        // Create Customer
+        Customer customer = new Customer(customerEmail, "customerUser1", "customerPass1", "123-456-7890", "456 Customer Street", cart);
+
+        // Create Manager
         Manager manager = new Manager(managerEmail, "managerUser1", "managerPass1", "123-456-7890", "123 Manager Street");
-        Review review = new Review(Date.valueOf("2023-10-01"), "Great game!", 5, Review.GameRating.Five, null, null);
+
+        // Create Review with Game and Customer
+        Review review = new Review(Date.valueOf("2023-10-01"), "Great game!", 5, Review.GameRating.Five, game, customer);
         review.setReview_id(reviewId);
 
         // Mock repositories
@@ -94,6 +111,7 @@ public class ReplyServiceTests {
         verify(reviewRepository, times(1)).findById(reviewId);
         verify(replyRepository, times(1)).save(any(Reply.class));
     }
+
 
     @Test
     public void testCreateReplyWithNullDate() {
