@@ -160,6 +160,80 @@ public class CartServiceTests {
         verify(cartRepository, times(1)).save(cart);
     }
 
+    @Test
+    public void testAddGameToCartInvalidGameId() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(1206);
+
+        when(cartRepository.findById(1206)).thenReturn(cart);
+        when(gameRepository.findById(1207)).thenReturn(null);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            cartService.addGameToCart(1206, 1207, VALID_QUANTITY);
+        });
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(String.format("Game with ID %d does not exist", 1207), exception.getMessage());
+
+        verify(cartRepository, times(1)).findById(1206);
+        verify(gameRepository, times(1)).findById(1207);
+        verify(cartRepository, never()).save(any(Cart.class));
+    }
+
+    @Test
+    public void testAddGameToCartGameOutOfStock() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(1367);
+
+        Game game = new Game("Title", "Description", 50, GameStatus.OutOfStock, 0, "photoUrl");
+        game.setGame_id(13671);
+
+        when(cartRepository.findById(1367)).thenReturn(cart);
+        when(gameRepository.findById(13671)).thenReturn(game);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            cartService.addGameToCart(1367, 13671, VALID_QUANTITY);
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals(String.format("Game with ID %d is not available for purchase", 13671), exception.getMessage());
+
+        verify(cartRepository, times(1)).findById(1367);
+        verify(gameRepository, times(1)).findById(13671);
+        verify(cartRepository, never()).save(any(Cart.class));
+    }
+
+    @Test
+    public void testAddGameToCartQuantityExceedsStock() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(1571);
+
+        Game game = new Game("Title", "Description", 50, GameStatus.InStock, 5, "photoUrl");
+        game.setGame_id(1572);
+
+        when(cartRepository.findById(1571)).thenReturn(cart);
+        when(gameRepository.findById(1572)).thenReturn(game);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            cartService.addGameToCart(1571, 1572, 10);
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals(
+                String.format("Only %d units of Game ID %d are available", game.getStockQuantity(), 1572),
+                exception.getMessage());
+
+        verify(cartRepository, times(1)).findById(1571);
+        verify(gameRepository, times(1)).findById(1572);
+        verify(cartRepository, never()).save(any(Cart.class));
+    }
+
     // --- Other tests follow the same pattern ---
     // Adjusted to use the correct Customer constructor and ensure proper
     // associations
@@ -196,6 +270,77 @@ public class CartServiceTests {
         verify(cartRepository, atLeast(1)).save(cart);
     }
 
+    /*
+     * @Test
+     * public void testRemoveGameFromCartInvalidQuantity() {
+     * // Arrange
+     * Cart cart = new Cart();
+     * cart.setCart_id(7123);
+     * 
+     * when(cartRepository.findById(7123)).thenReturn(cart);
+     * 
+     * GameShopException exception = assertThrows(GameShopException.class, () -> {
+     * cartService.removeGameFromCart(7123, 1672, INVALID_QUANTITY);
+     * });
+     * 
+     * assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+     * assertEquals("Quantity must be at least 1.", exception.getMessage());
+     * 
+     * // verify(cartRepository, times(1)).findById(167123);
+     * verify(gameRepository, never()).findById(anyInt());
+     * verify(cartRepository, never()).save(any(Cart.class));
+     * }
+     */
+
+    @Test
+    public void testRemoveGameFromCartGameNotInCart() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(1712);
+        Game game = new Game("Title", "Description", 50, GameStatus.InStock, 10, "photoUrl");
+        game.setGame_id(1713);
+        when(cartRepository.findById(1712)).thenReturn(cart);
+        when(gameRepository.findById(1713)).thenReturn(game);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            cartService.removeGameFromCart(1712, 1713, 1);
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Game is not in the cart.", exception.getMessage());
+
+        verify(cartRepository, times(1)).findById(1712);
+        verify(gameRepository, times(1)).findById(1713);
+        verify(cartRepository, never()).save(any(Cart.class));
+    }
+
+    @Test
+    public void testRemoveGameFromCartRemovingMoreThanExists() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(1812);
+
+        Game game = new Game("Title", "Description", 50, GameStatus.InStock, 10, "photoUrl");
+        game.setGame_id(1813);
+
+        when(cartRepository.findById(1812)).thenReturn(cart);
+        when(gameRepository.findById(1813)).thenReturn(game);
+
+        // Simulate adding the game to the cart first
+        cartService.addGameToCart(1812, 1813, 2);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            cartService.removeGameFromCart(1812, 1813, 3);
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Cannot remove more than the existing quantity.", exception.getMessage());
+
+        verify(cartRepository, atLeast(1)).findById(1812);
+        verify(gameRepository, atLeast(1)).findById(1813);
+    }
     // --- Tests for updateGameQuantityInCart ---
 
     @Test
@@ -226,6 +371,58 @@ public class CartServiceTests {
         verify(cartRepository, atLeast(1)).findById(7301);
         verify(gameRepository, atLeast(1)).findById(7302);
         verify(cartRepository, atLeast(1)).save(cart);
+    }
+
+    @Test
+    public void testUpdateGameQuantityInCartGameNotInCart() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(2132);
+        Game game = new Game("Title", "Description", 50, GameStatus.InStock, 10, "photoUrl");
+        game.setGame_id(2131);
+        when(cartRepository.findById(2132)).thenReturn(cart);
+        when(gameRepository.findById(2131)).thenReturn(game);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            cartService.updateGameQuantityInCart(2132, 2131, 5);
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Game is not in the cart.", exception.getMessage());
+
+        verify(cartRepository, times(1)).findById(2132);
+        verify(gameRepository, times(1)).findById(2131);
+        verify(cartRepository, never()).save(any(Cart.class));
+    }
+
+    @Test
+    public void testUpdateGameQuantityInCartExceedsStockQuantity() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(2214);
+
+        Game game = new Game("Title", "Description", 50, GameStatus.InStock, 5, "photoUrl");
+        game.setGame_id(22141);
+
+        when(cartRepository.findById(2214)).thenReturn(cart);
+        when(gameRepository.findById(22141)).thenReturn(game);
+
+        // Simulate adding the game to the cart first
+        cartService.addGameToCart(2214, 22141, 2);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            cartService.updateGameQuantityInCart(2214, 22141, 10);
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals(
+                String.format("Only %d units of Game ID %d are available", game.getStockQuantity(), 22141),
+                exception.getMessage());
+
+        verify(cartRepository, atLeast(1)).findById(2214);
+        verify(gameRepository, atLeast(1)).findById(22141);
     }
 
     // --- Tests for getAllGamesFromCartWithQuantities ---
@@ -270,6 +467,23 @@ public class CartServiceTests {
         verify(cartRepository, atLeast(1)).findById(19);
     }
 
+    @Test
+    public void testGetAllGamesFromCartWithQuantitiesEmptyCart() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(2332);
+
+        when(cartRepository.findById(2332)).thenReturn(cart);
+
+        // Act
+        Map<Game, Integer> result = cartService.getAllGamesFromCartWithQuantities(2332);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        verify(cartRepository, times(1)).findById(2332);
+    }
     // --- Tests for getGameFromCart ---
 
     @Test
@@ -332,6 +546,23 @@ public class CartServiceTests {
 
         verify(cartRepository, atLeast(1)).findById(279);
         verify(cartRepository, atLeast(1)).save(cart);
+    }
+
+    @Test
+    public void testClearCartInvalidCartId() {
+        // Arrange
+        when(cartRepository.findById(9173)).thenReturn(null);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            cartService.clearCart(9173);
+        });
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(String.format("Cart with ID %d does not exist", 9173), exception.getMessage());
+
+        verify(cartRepository, times(1)).findById(9173);
+        verify(cartRepository, never()).save(any(Cart.class));
     }
 
     // --- Tests for getAllCarts ---
