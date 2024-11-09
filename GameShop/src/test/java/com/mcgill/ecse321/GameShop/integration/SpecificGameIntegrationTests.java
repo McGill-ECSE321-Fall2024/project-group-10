@@ -224,21 +224,4 @@ public class SpecificGameIntegrationTests {
         assertEquals(newGameId, updatedSpecificGame.getGame_id());
     }
 
-    // @Test
-    // @Order(6)
-    // public void testDeleteSpecificGame() {
-    //     // Arrange
-    //     String url = String.format("/specificGames/%d", specificGameId);
-
-    //     // Act
-    //     ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);
-
-    //     // Assert
-    //     assertNotNull(response);
-    //     assertEquals(HttpStatus.OK, response.getStatusCode());
-
-    //     // Verify Deletion
-    //     ResponseEntity<SpecificGameResponseDto> getResponse = client.getForEntity(url, SpecificGameResponseDto.class);
-    //     assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
-    // }
 }
