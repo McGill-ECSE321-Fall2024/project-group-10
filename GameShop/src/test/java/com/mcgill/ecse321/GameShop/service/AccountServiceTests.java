@@ -17,6 +17,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
@@ -114,27 +117,11 @@ public class AccountServiceTests {
 
     @Test
     public void testDuplicateCustomer(){
-        //Arrange
-
         when(mockAccountRepository.findByEmail(CUSTOMER_EMAIL+"z")).thenReturn(new Customer(CUSTOMER_EMAIL+"z", CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS, new Cart()));
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createCustomer(CUSTOMER_EMAIL+"z", CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Account with email " + CUSTOMER_EMAIL+"z" + " already exists.", exception.getMessage());
         verify(mockCustomerRepository, never()).save(any(Customer.class));
-    }
-
-    @Test
-    public void testDuplicateEmployee(){
-        //Arrange
-        when(mockAccountRepository.findByEmail(EMPLOYEE_EMAIL+"z")).thenReturn(new Employee(EMPLOYEE_EMAIL+"z", EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
-        //Act
-        //Assert
-        GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createEmployee(EMPLOYEE_EMAIL+"z", EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals("Account with email " + EMPLOYEE_EMAIL+"z" + " already exists.", exception.getMessage());
-        verify(mockEmployeeRepository, never()).save(any(Employee.class));
     }
 
     @Test
@@ -161,7 +148,7 @@ public class AccountServiceTests {
         when(mockEmployeeRepository.save(any(Account.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
         //Act
         Account createdEmployee = accountService.createEmployee(EMPLOYEE_EMAIL, EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS);
-
+        //Assert
         assertNotNull(createdEmployee);
         assertEquals(EMPLOYEE_EMAIL, createdEmployee.getEmail());
         assertEquals(EMPLOYEE_USERNAME, createdEmployee.getUsername());
@@ -173,11 +160,18 @@ public class AccountServiceTests {
         verify(mockEmployeeRepository, times(1)).save(createdEmployee);
     }
 
+
+    @Test
+    public void testDuplicateEmployee(){
+        when(mockAccountRepository.findByEmail(EMPLOYEE_EMAIL+"z")).thenReturn(new Employee(EMPLOYEE_EMAIL+"z", EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
+        GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createEmployee(EMPLOYEE_EMAIL+"z", EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Account with email " + EMPLOYEE_EMAIL+"z" + " already exists.", exception.getMessage());
+        verify(mockEmployeeRepository, never()).save(any(Employee.class));
+    }
+
     @Test
     public void testCreateCustomerWithInvalidNullEmail() {
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createCustomer(INVALID_NULL_EMAIL, CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Email is invalid.", exception.getMessage());
@@ -186,9 +180,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateCustomerWithInvalidEmptyEmail() {
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createCustomer(INVALID_EMPTY_EMAIL, CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Email is invalid.", exception.getMessage());
@@ -197,9 +188,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateCustomerWithInvalidEmptyUsername(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createCustomer(CUSTOMER_EMAIL, INVALID_EMPTY_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid username ", exception.getMessage());
@@ -208,9 +196,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateCustomerWithInvalidNullUsername(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createCustomer(CUSTOMER_EMAIL, INVALID_NULL_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid username null", exception.getMessage());
@@ -219,9 +204,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateCustomerWithInvalidEmptyPassword(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createCustomer(CUSTOMER_EMAIL, CUSTOMER_USERNAME, INVALID_EMPTY_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid password", exception.getMessage());
@@ -230,9 +212,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateCustomerWithInvalidNullPassword(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createCustomer(CUSTOMER_EMAIL, CUSTOMER_USERNAME, INVALID_NULL_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid password", exception.getMessage());
@@ -241,9 +220,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateEmployeeWithInvalidEmptyUsername(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createEmployee(EMPLOYEE_EMAIL, INVALID_EMPTY_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid username ", exception.getMessage());
@@ -252,9 +228,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateEmployeeWithInvalidNullUsername(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createEmployee(EMPLOYEE_EMAIL, INVALID_NULL_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid username null", exception.getMessage());
@@ -263,9 +236,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateEmployeeWithInvalidNullEmail(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createEmployee(INVALID_NULL_EMAIL, EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Email is invalid.", exception.getMessage());
@@ -274,9 +244,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateEmployeeWithEmptyEmail(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createEmployee(INVALID_EMPTY_EMAIL, EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Email is invalid.", exception.getMessage());
@@ -285,9 +252,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateEmployeeWithInvalidEmptyPassword(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createEmployee(EMPLOYEE_EMAIL, EMPLOYEE_USERNAME, INVALID_EMPTY_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid password", exception.getMessage());
@@ -296,9 +260,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateEmployeeWithInvalidNullPassword(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createEmployee(EMPLOYEE_EMAIL, EMPLOYEE_USERNAME, INVALID_NULL_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid password", exception.getMessage());
@@ -307,29 +268,19 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateManagerWithInvalidNullEmail(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createManager(INVALID_NULL_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Email is invalid.", exception.getMessage());
         verify(mockManagerRepository, never()).save(any(Manager.class));    }
 
-        @Test
-        public void testCreateManagerWithInvalidEmptyEmail(){
-            //Arrange
-            //Act
-            //Assert
-            GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createManager(INVALID_EMPTY_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS));
-            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-            assertEquals("Email is invalid.", exception.getMessage());
-            verify(mockManagerRepository, never()).save(any(Manager.class));    }
+    @Test
+    public void testCreateManagerWithInvalidEmptyEmail(){
+        GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createManager(INVALID_EMPTY_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS));            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Email is invalid.", exception.getMessage());
+        verify(mockManagerRepository, never()).save(any(Manager.class));    }
 
     @Test
     public void testCreateManagerWithInvalidEmptyUsername(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createManager(MANAGER_EMAIL, INVALID_EMPTY_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid username ", exception.getMessage());
@@ -338,9 +289,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateManagerWithInvalidNullUsername(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createManager(MANAGER_EMAIL, INVALID_NULL_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid username null", exception.getMessage());
@@ -349,9 +297,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateManagerWithInvalidEmptyPassword(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createManager(MANAGER_EMAIL, MANAGER_USERNAME, INVALID_EMPTY_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid password", exception.getMessage());
@@ -360,9 +305,6 @@ public class AccountServiceTests {
 
     @Test
     public void testCreateManagerWithInvalidNullPassword(){
-        //Arrange
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createManager(MANAGER_EMAIL, MANAGER_USERNAME, INVALID_NULL_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Invalid password", exception.getMessage());
@@ -377,11 +319,14 @@ public class AccountServiceTests {
 
         //Act
         Customer foundCustomer = accountService.getCustomerAccountByEmail(CUSTOMER_EMAIL + "s");
+
+        //Assert
         assertNotNull(foundCustomer);
         assertEquals(CUSTOMER_EMAIL + "s", foundCustomer.getEmail());
         assertEquals(CUSTOMER_USERNAME, foundCustomer.getUsername());
         assertEquals(CUSTOMER_PHONE_NUMBER, foundCustomer.getPhoneNumber());
         assertEquals(CUSTOMER_ADDRESS, foundCustomer.getAddress());
+        verify(mockCustomerRepository, times(1)).findByEmail(CUSTOMER_EMAIL + "s");
     }
 
     @Test
@@ -392,33 +337,28 @@ public class AccountServiceTests {
 
         //Act
         Employee foundEmployee = accountService.getEmployeeAccountByEmail(EMPLOYEE_EMAIL + "s");
+
+        //Assert
         assertNotNull(foundEmployee);
         assertEquals(EMPLOYEE_EMAIL + "s", foundEmployee.getEmail());
         assertEquals(EMPLOYEE_USERNAME, foundEmployee.getUsername());
         assertEquals(EMPLOYEE_PHONE_NUMBER, foundEmployee.getPhoneNumber());
         assertEquals(EMPLOYEE_ADDRESS, foundEmployee.getAddress());
+        verify(mockEmployeeRepository, times(1)).findByEmail(EMPLOYEE_EMAIL + "s");
     }
 
-    /////CHECKKK THISSSS
     @Test
     public void testGetCustomerWithInvalidEmail(){
-        //Arrange
         when(mockCustomerRepository.findByEmail(CUSTOMER_EMAIL + "a")).thenReturn(null);
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.getCustomerAccountByEmail(CUSTOMER_EMAIL + "a"));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("There is no customer account with email " + CUSTOMER_EMAIL + "a.", exception.getMessage());
         verify(mockCustomerRepository, times(1)).findByEmail(CUSTOMER_EMAIL + "a");
     }
 
-    /////CHECK THISSSSSS
     @Test
     public void testGetEmployeeWithInvalidEmail(){
-        //Arrange
         when(mockEmployeeRepository.findByEmail(EMPLOYEE_EMAIL + "a")).thenReturn(null);
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.getEmployeeAccountByEmail(EMPLOYEE_EMAIL + "a"));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("There is no employee account with email " + EMPLOYEE_EMAIL + "a.", exception.getMessage());
@@ -429,37 +369,44 @@ public class AccountServiceTests {
     public void testGetManager(){
         //Arrange
         Manager manager = new Manager(MANAGER_EMAIL + "xy", MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS);
-        when(mockManagerRepository.findAll()).thenReturn(java.util.List.of(manager));
+        when(mockAccountRepository.findAll()).thenReturn(java.util.List.of(manager));
 
         //Act
-        Iterable<Account> managers = accountService.getManager();
+        Manager fetchedManager = accountService.getManager();
 
 
         //Assert
-        assertNotNull(managers);
-        assertEquals(1, ((java.util.List<Account>) managers).size());
-        assertEquals(MANAGER_EMAIL + "xy", ((java.util.List<Account>) managers).get(0).getEmail());
-        assertEquals(MANAGER_USERNAME, ((java.util.List<Account>) managers).get(0).getUsername());
-        assertEquals(MANAGER_PHONE_NUMBER, ((java.util.List<Account>) managers).get(0).getPhoneNumber());
-        assertEquals(MANAGER_ADDRESS, ((java.util.List<Account>) managers).get(0).getAddress());
+        assertNotNull(fetchedManager);
+        assertEquals(MANAGER_EMAIL + "xy", fetchedManager.getEmail());
+        assertEquals(MANAGER_USERNAME, fetchedManager.getUsername());
+        assertEquals(MANAGER_PHONE_NUMBER, fetchedManager.getPhoneNumber());
+        assertEquals(MANAGER_ADDRESS, fetchedManager.getAddress());
+        verify(mockAccountRepository, times(1)).findAll();
     }
 
     @Test
     public void testGetAllEmployees(){
         //Arrange
         Employee employee = new Employee(EMPLOYEE_EMAIL + "l", EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS);
-        when(mockEmployeeRepository.findAll()).thenReturn(java.util.List.of(employee));
+        Employee secondEmployee = new Employee(EMPLOYEE_EMAIL + "j", EMPLOYEE_USERNAME + "j", EMPLOYEE_PASSWORD + "j", EMPLOYEE_PHONE_NUMBER + "j", EMPLOYEE_ADDRESS + "j");
+        when(mockEmployeeRepository.findAll()).thenReturn(java.util.List.of(employee, secondEmployee));
 
         //Act
         Iterable<Account> employees = accountService.getAllEmployees();
 
         //Assert
         assertNotNull(employees);
-        assertEquals(1, ((java.util.List<Account>) employees).size());
+        assertEquals(2, ((java.util.List<Account>) employees).size());
         assertEquals(EMPLOYEE_EMAIL + "l", ((java.util.List<Account>) employees).get(0).getEmail());
         assertEquals(EMPLOYEE_USERNAME, ((java.util.List<Account>) employees).get(0).getUsername());
         assertEquals(EMPLOYEE_PHONE_NUMBER, ((java.util.List<Account>) employees).get(0).getPhoneNumber());
         assertEquals(EMPLOYEE_ADDRESS, ((java.util.List<Account>) employees).get(0).getAddress());
+
+        assertEquals(EMPLOYEE_EMAIL + "j", ((java.util.List<Account>) employees).get(1).getEmail());
+        assertEquals(EMPLOYEE_USERNAME + "j", ((java.util.List<Account>) employees).get(1).getUsername());
+        assertEquals(EMPLOYEE_PHONE_NUMBER + "j", ((java.util.List<Account>) employees).get(1).getPhoneNumber());
+        assertEquals(EMPLOYEE_ADDRESS + "j", ((java.util.List<Account>) employees).get(1).getAddress());
+        verify(mockEmployeeRepository, times(1)).findAll();
     }
 
     @Test
@@ -468,7 +415,6 @@ public class AccountServiceTests {
         Customer customer = new Customer(CUSTOMER_EMAIL + "w", CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS, new Cart());
         Customer secondCustomer = new Customer(CUSTOMER_EMAIL + "j", CUSTOMER_USERNAME + "j", CUSTOMER_PASSWORD + "j", CUSTOMER_PHONE_NUMBER + "j", CUSTOMER_ADDRESS + "j", new Cart());
         when(mockCustomerRepository.findAll()).thenReturn(java.util.List.of(customer, secondCustomer));
-        //when(mockCustomerRepository.findAll()).thenReturn(java.util.List.of(customer));
 
         //Act
         Iterable<Account> customers = accountService.getAllCustomers();
@@ -485,6 +431,7 @@ public class AccountServiceTests {
         assertEquals(CUSTOMER_USERNAME + "j", ((java.util.List<Account>) customers).get(1).getUsername());
         assertEquals(CUSTOMER_PHONE_NUMBER + "j", ((java.util.List<Account>) customers).get(1).getPhoneNumber());
         assertEquals(CUSTOMER_ADDRESS + "j", ((java.util.List<Account>) customers).get(1).getAddress());
+        verify(mockCustomerRepository, times(1)).findAll();
     }
 
     @Test
@@ -509,11 +456,7 @@ public class AccountServiceTests {
 
     @Test
     public void testUpdateAccountWithInvalidEmail(){
-        //Arrange
         when(mockAccountRepository.findByEmail(CUSTOMER_EMAIL + "s")).thenReturn(null);
-
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.updateAccount(CUSTOMER_EMAIL + "s", UPDATED_CUSTOMER_USERNAME, UPDATED_CUSTOMER_PASSWORD, UPDATED_CUSTOMER_PHONE_NUMBER, UPDATED_CUSTOMER_ADDRESS));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("There is no account with email " + CUSTOMER_EMAIL + "s.", exception.getMessage());
@@ -529,28 +472,51 @@ public class AccountServiceTests {
         //Act
         accountService.archiveEmployee(EMPLOYEE_EMAIL + "la");
 
+        //Assert
         assertNotNull(employee);
         assertEquals(EMPLOYEE_EMAIL + "la", employee.getEmail());
         assertEquals(EMPLOYEE_USERNAME, employee.getUsername());
         assertEquals(EMPLOYEE_PHONE_NUMBER, employee.getPhoneNumber());
         assertEquals(EMPLOYEE_ADDRESS, employee.getAddress());
         assertEquals(EmployeeStatus.Archived, employee.getEmployeeStatus());
+        verify(mockEmployeeRepository, times(1)).findByEmail(EMPLOYEE_EMAIL + "la");
 
-        //Assert
-        //verify(mockEmployeeRepository, times(1)).delete(employee);
     }
 
     @Test
     public void testArchiveEmployeeWithInvalidEmail(){
-        //Arrange
         when(mockEmployeeRepository.findByEmail(EMPLOYEE_EMAIL + "org")).thenReturn(null);
-
-        //Act
-        //Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> accountService.archiveEmployee(EMPLOYEE_EMAIL + "org"));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Account with email " + EMPLOYEE_EMAIL + "org does not exist.", exception.getMessage());
         verify(mockEmployeeRepository, times(1)).findByEmail(EMPLOYEE_EMAIL + "org");
+    }
+
+    @Test
+    public void testCreateMultipleManagers(){
+
+        //no manager has been created yet
+        when(mockManagerRepository.count()).thenReturn(0L);
+        when(mockManagerRepository.save(any(Manager.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
+        
+        //create the first manager
+        Manager createdManager = accountService.createManager(MANAGER_EMAIL + "first", MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS);
+        
+        //Assert
+        assertNotNull(createdManager);
+        assertEquals(MANAGER_EMAIL + "first", createdManager.getEmail());
+        assertEquals(MANAGER_USERNAME, createdManager.getUsername());
+        assertEquals(MANAGER_PASSWORD, createdManager.getPassword());
+        assertEquals(MANAGER_PHONE_NUMBER, createdManager.getPhoneNumber());
+        assertEquals(MANAGER_ADDRESS, createdManager.getAddress());
+        verify(mockManagerRepository, times(1)).save(createdManager);
+
+        //Assume that more than 1 manager exists
+        when(mockManagerRepository.count()).thenReturn(2L);
+        GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createManager(MANAGER_EMAIL + "test", MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("A manager already exists", exception.getMessage());
+        verify(mockManagerRepository, times(2)).count();
     }
 
 

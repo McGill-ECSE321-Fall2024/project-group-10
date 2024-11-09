@@ -1,6 +1,9 @@
 package com.mcgill.ecse321.GameShop.service;
 
 
+import java.util.Optional;
+import java.util.stream.StreamSupport;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -126,15 +129,9 @@ public class AccountService {
         //check if the account already exists
         Account account = accountRepository.findByEmail(email);
         if (account != null){
-            System.out.println("Account already exists");
-            throw new GameShopException(HttpStatus.NOT_FOUND,
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Account with email %s already exists.", email));
         }
-        //Customer customer2 = customerRepo.findByEmail(email);
-        // if (customer2 != null){
-        //     throw new GameShopException(HttpStatus.NOT_FOUND,
-        //     String.format("Account with email %s already exists.", email));
-        // }
 
         //a cart is mandatory when creating a customer
         Cart cart = new Cart();
@@ -162,8 +159,15 @@ public class AccountService {
     }
 
     @Transactional
-    public Iterable<Account> getManager(){
-        return managerRepo.findAll();
+    public Manager getManager(){
+
+        Iterable<Account> accounts = accountRepository.findAll();
+        for (Account account: accounts){
+            if (account instanceof Manager){
+                return (Manager) account;
+            }
+        }
+        throw new GameShopException(HttpStatus.NOT_FOUND, "Manager does not exist");
     }
 
 
