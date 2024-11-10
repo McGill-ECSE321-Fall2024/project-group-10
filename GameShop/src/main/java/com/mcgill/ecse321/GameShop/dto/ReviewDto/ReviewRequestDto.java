@@ -2,8 +2,6 @@ package com.mcgill.ecse321.GameShop.dto.ReviewDto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Max;
 import java.sql.Date;
 
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
