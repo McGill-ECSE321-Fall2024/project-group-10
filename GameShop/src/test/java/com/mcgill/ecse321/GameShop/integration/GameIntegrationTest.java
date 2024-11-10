@@ -13,6 +13,7 @@ import java.util.List;
 import org.springframework.http.HttpMethod;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
+import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryListDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategorySummaryDto;
@@ -20,6 +21,7 @@ import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
+import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformListDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformSummaryDto;
@@ -89,6 +91,8 @@ public class GameIntegrationTest {
 
     private int game_id;
     private List<Integer> gameIds = new ArrayList<>();
+    private List<CategorySummaryDto> categoryIds = new ArrayList<>();
+    private List<PlatformSummaryDto> platformIds = new ArrayList<>();
     // private int platformId;
 
     @BeforeAll
@@ -183,6 +187,13 @@ public class GameIntegrationTest {
         for (PlatformSummaryDto platformInResponse : response.getBody().getPlatforms().getPlatforms()) {
             assertTrue(platformIds.contains(platformInResponse.getPlatformId()));
         }
+
+        this.platformIds = response.getBody().getPlatforms().getPlatforms();
+        this.categoryIds = response.getBody().getCategories().getCategories();
+
+        System.out.println("OriginalPlatforms: " + this.platformIds.size());
+        System.out.println("OriginalCategories: " + this.categoryIds.size());
+
     }
 
     @Test
@@ -260,50 +271,192 @@ public class GameIntegrationTest {
         }
     }
     
+    @Test
+    @Order(4)
+    public void testUpdateGame() {
 
-    // @Test
-    // @Order(4)
-    // public void testUpdateGame() {
-    //     String newTitle = "New Title";
-    //     String newDescription = "New Description";
-    //     int newPrice = 100;
-    //     GameStatus newStatus = GameStatus.OutOfStock;
-    //     int newStockQuantity = 5;
-    //     String newPhotoUrl = "https://www.example.com/newgame.jpg";
+        System.out.println("BEEGGGGGPlatforms: " + this.platformIds.size());
+        System.out.println("BEE+++EEEEEGCategories: " + this.categoryIds.size());
 
-    //     ArrayList<Integer> platformIds = new ArrayList<>();
-    //     ArrayList<Integer> categoryIds = new ArrayList<>();
+        String newTitle = "New Title";
+        String newDescription = "New Description";
+        int newPrice = 100;
+        GameStatus newStatus = GameStatus.OutOfStock;
+        int newStockQuantity = 5;
+        String newPhotoUrl = "https://www.example.com/newgame.jpg";
 
-    //     for (int i = 1; i <= 3; i++) {
-    //         PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
-    //         ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
-    //         assertNotNull(platformResponse);
-    //         assertEquals(HttpStatus.OK, platformResponse.getStatusCode());
-    //         assertEquals("Platform Name", platformResponse.getBody().getPlatformName());
-    //         platformIds.add(platformResponse.getBody().getPlatformId());
+        List<Integer> platformIds = new ArrayList<>();
+        List<Integer> categoryIds = new ArrayList<>();
 
-    //         CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Name", MANAGER_EMAIL);
-    //         ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto, CategoryResponseDto.class);
-    //         assertNotNull(categoryResponse);
-    //         assertEquals(HttpStatus.OK, categoryResponse.getStatusCode());
-    //         assertEquals("Category Name", categoryResponse.getBody().getCategoryName());
-    //         categoryIds.add(categoryResponse.getBody().getCategoryId());
-    //     }
-    //     HttpEntity<GameRequestDto> gameRequestDto = new HttpEntity<>(new GameRequestDto(newTitle, newDescription, newPrice, newStatus, newStockQuantity, newPhotoUrl));
+         for (int i = 1; i <= 3; i++) {
+            PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
+            ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
+            assertNotNull(platformResponse);
+            assertEquals(HttpStatus.OK, platformResponse.getStatusCode());
+            assertEquals("Platform Name", platformResponse.getBody().getPlatformName());
+            platformIds.add(platformResponse.getBody().getPlatformId());
 
-    //     ResponseEntity<GameResponseDto> updateResponse = client.exchange("/games/" + this.game_id, HttpMethod.PUT, gameRequestDto, GameResponseDto.class);
+            CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Name", MANAGER_EMAIL);
+            ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto, CategoryResponseDto.class);
+            assertNotNull(categoryResponse);
+            assertEquals(HttpStatus.OK, categoryResponse.getStatusCode());
+            assertEquals("Category Name", categoryResponse.getBody().getCategoryName());
+            categoryIds.add(categoryResponse.getBody().getCategoryId());
+        }
 
-    //     GameResponseDto updatedGame = updateResponse.getBody();
+        HttpEntity<GameRequestDto> gameRequestDto = new HttpEntity<>(new GameRequestDto(newTitle, newDescription, newPrice, newStatus, newStockQuantity, newPhotoUrl));
+        gameRequestDto.getBody().setCategories(categoryIds);
+        gameRequestDto.getBody().setPlatforms(platformIds);
 
-    //     assertNotNull(updatedGame);
-    //     assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
-    //     assertEquals(this.game_id, updatedGame.getaGame_id());
-    //     assertEquals(newTitle, updatedGame.getaTitle());
-    //     assertEquals(newDescription, updatedGame.getaDescription());
-    //     assertEquals(newPrice, updatedGame.getaPrice());
-    //     assertEquals(newStatus, updatedGame.getaGameStatus());
-    //     assertEquals(newStockQuantity, updatedGame.getaStockQuantity());
-    //     assertEquals(newPhotoUrl, updatedGame.getaPhotoUrl());
-    // }
+        ResponseEntity<GameResponseDto> updateResponse = client.exchange("/games/" + this.game_id, HttpMethod.PUT, gameRequestDto, GameResponseDto.class);
+
+        GameResponseDto updatedGame = updateResponse.getBody();
+        assertNotNull(updatedGame);
+        assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
+
+        assertTrue(updatedGame.getaGame_id()>0, "The ID should be positive");
+        
+        assertEquals(newTitle, updatedGame.getaTitle());
+        assertEquals(newDescription, updatedGame.getaDescription());
+        assertEquals(newPrice, updatedGame.getaPrice());
+        assertEquals(newStatus, updatedGame.getaGameStatus());
+        assertEquals(newStockQuantity, updatedGame.getaStockQuantity());
+        assertEquals(newPhotoUrl, updatedGame.getaPhotoUrl());
+
+        List<Integer> returned_categoryIds = new ArrayList<>();
+
+        for (CategorySummaryDto category : updatedGame.getCategories().getCategories()) {
+            returned_categoryIds.add(category.getCategoryId());
+        }
+
+        List<Integer> returned_platformIds = new ArrayList<>();
+
+        for (PlatformSummaryDto platform : updatedGame.getPlatforms().getPlatforms()) {
+            returned_platformIds.add(platform.getPlatformId());
+        }
+
+        for (Integer categoryId : categoryIds) {
+            assertTrue(returned_categoryIds.contains(categoryId));
+        }
+        assertEquals(returned_categoryIds.size(), categoryIds.size() + this.categoryIds.size());
+
+        for (Integer platformId : platformIds) {
+            assertTrue(returned_platformIds.contains(platformId));
+        }
+        assertEquals(returned_platformIds.size(), platformIds.size() + this.platformIds.size());
+
+        this.platformIds = updateResponse.getBody().getPlatforms().getPlatforms();
+        this.categoryIds = updateResponse.getBody().getCategories().getCategories();
+
+        System.out.println("Platforms: " + this.platformIds.size());
+        System.out.println("Categories: " + this.categoryIds.size());
+
+    }
+
+    @Test
+    @Order(5)
+    public void testAddCategoryToGame() {
+        CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Name", MANAGER_EMAIL);
+        ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto, CategoryResponseDto.class);
+        assertNotNull(categoryResponse);
+        assertEquals(HttpStatus.OK, categoryResponse.getStatusCode());
+        assertEquals("Category Name", categoryResponse.getBody().getCategoryName());
+
+        int categoryIdToAdd = categoryResponse.getBody().getCategoryId();
+
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/category/" + this.game_id + "/" + categoryIdToAdd, HttpMethod.PUT, null, GameResponseDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        GameResponseDto game = response.getBody();
+        assertNotNull(game);
+        assertEquals(this.game_id, game.getaGame_id());
+
+        List<Integer> returned_categoryIds = new ArrayList<>();
+
+        for (CategorySummaryDto category : game.getCategories().getCategories()) {
+            returned_categoryIds.add(category.getCategoryId());
+        }
+
+        assertTrue(returned_categoryIds.contains(categoryIdToAdd));
+        assertEquals(returned_categoryIds.size(), this.categoryIds.size() + 1);
+
+        this.categoryIds = response.getBody().getCategories().getCategories();
+        System.out.println("hjkadshjkdsajkhdaskjhsadkjhdaskhj: " + this.categoryIds.size());
+    }
+
+    @Test
+    @Order(6)
+    public void testAddPlatformToGame() {
+        PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
+        ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
+        assertNotNull(platformResponse);
+        assertEquals(HttpStatus.OK, platformResponse.getStatusCode());
+        assertEquals("Platform Name", platformResponse.getBody().getPlatformName());
+
+        int platformIdToAdd = platformResponse.getBody().getPlatformId();
+
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/platform/" + this.game_id + "/" + platformIdToAdd, HttpMethod.PUT, null, GameResponseDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        GameResponseDto game = response.getBody();
+        assertNotNull(game);
+        assertEquals(this.game_id, game.getaGame_id());
+
+        List<Integer> returned_platformIds = new ArrayList<>();
+
+        for (PlatformSummaryDto platform : game.getPlatforms().getPlatforms()) {
+            returned_platformIds.add(platform.getPlatformId());
+        }
+
+        assertTrue(returned_platformIds.contains(platformIdToAdd));
+        assertEquals(returned_platformIds.size(), this.platformIds.size() + 1);
+
+        this.platformIds = response.getBody().getPlatforms().getPlatforms();
+        System.out.println("hjkadshjkdsajkhdaskjhsadkjhdaskhj: " + this.platformIds.size());
+    }
+
+    @Test
+    @Order(7)
+    public void testGetGamesByTitle() {
+        String title = "New Title";
+        String url = "/games/Title/" + title;
+        ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        GameListDto games = response.getBody();
+        assertNotNull(games);
+        assertTrue(games.getNumberOfGames() == 1, "There should be two games");
+
+        List<GameSummaryDto> gamesList = games.getGames();
+        assertTrue(gamesList.get(0).getGameId() > 0, "The ID should be positive");
+
+        for (GameSummaryDto game : gamesList) {
+            assertTrue(gameIds.contains(game.getGameId()));
+        }
+    }
+
+    @Test
+    @Order(8)
+    public void testGetGamesByStatus() {
+        GameStatus status = GameStatus.OutOfStock;
+        String url = "/games/Status/" + status;
+        ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        GameListDto games = response.getBody();
+        assertNotNull(games);
+        assertTrue(games.getNumberOfGames() == 1, "There should be two games");
+
+        List<GameSummaryDto> gamesList = games.getGames();
+        assertTrue(gamesList.get(0).getGameId() > 0, "The ID should be positive");
+
+        for (GameSummaryDto game : gamesList) {
+            assertTrue(gameIds.contains(game.getGameId()));
+        }
+    }
 
 }

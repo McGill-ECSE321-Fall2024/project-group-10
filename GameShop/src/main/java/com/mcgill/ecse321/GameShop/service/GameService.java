@@ -81,6 +81,7 @@ public class GameService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Title cannot be empty or null");
         }
         Iterable<Game> games = gameRepository.findAllByTitle(title);
+        System.out.println("Using Title " + title + "GAmes found are: " + games);
         if (!games.iterator().hasNext()) { // Checks if games list is empty
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with title %s does not exist", title));
         }

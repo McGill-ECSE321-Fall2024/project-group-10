@@ -85,46 +85,64 @@ public class GameController { // TODO still have to take into account inventory
     }
 
     @PutMapping("/games/{id}")
-    public Game putMethod(@PathVariable int id, @RequestBody String request) { // TODO needs to be checked for fixes
+    public GameResponseDto putMethod(@PathVariable int id, @RequestBody GameRequestDto request) { // TODO needs to be checked for fixes
+        
         Game game = gameService.findGameById(id);
 
-        game.setTitle(game.getTitle());
-        game.setDescription(game.getDescription());
-        game.setPrice(game.getPrice());
-        game.setGameStatus(game.getGameStatus());
-        game.setStockQuantity(game.getStockQuantity());
-        game.setPhotoUrl(game.getPhotoUrl());
+        gameService.updateGameDescription(id, request.getaDescription());
+        gameService.updateGamePrice(id, request.getaPrice());
+        gameService.updateGameStatus(id, request.getaGameStatus());
+        gameService.updateGameStockQuantity(id, request.getaStockQuantity());
+        gameService.updateGamePhotoUrl(id, request.getaPhotoUrl());
+        gameService.updateGameTitle(id, request.getaTitle());
+        gameService.updateCategories(id, request.getCategories());
+        gameService.updatePlatforms(id, request.getPlatforms());
 
-        return game;
+        return new GameResponseDto(game);
     }
-    // @PutMapping("/games/categories/{game_id}")
+    // @PutMapping("/ga mes/categories/{game_id}")
     // public GameResponseDto updateListOfCategories(@PathVariable int id,@RequestBody GameRequestDto request) {
     //     Game game = gameService.updateCategories(id, request.getCategories());
     //     return GameResponseDto.create(game);
     // }
 
     @PutMapping("/games/platform/{game_id}/{platform_id}")
-    public Game addPlatform(@PathVariable int game_id, @PathVariable int platform_id) {
-        return gameService.addPlatform(game_id, platform_id);
+    public GameResponseDto addPlatform(@PathVariable int game_id, @PathVariable int platform_id) {
+        gameService.addPlatform(game_id, platform_id);
+
+        return GameResponseDto.create(gameService.findGameById(game_id));
     }
 
     @PutMapping("/games/category/{game_id}/{category_id}") 
-    public Game addCategory(@PathVariable int game_id, @PathVariable int category_id) {
-        return gameService.addCategory(game_id, category_id);
+    public GameResponseDto addCategory(@PathVariable int game_id, @PathVariable int category_id) {
+        gameService.addCategory(game_id, category_id);
+
+        return GameResponseDto.create(gameService.findGameById(game_id));
     }
     
-    @GetMapping("/games/Title/{Title}")
-    public Iterable<Game> getGamesByTitle(@RequestParam String Title) {
-        Iterable<Game> games = gameService.getGamesByTitle(Title);
-        return games;
-    }
+    // Add delete category and platform
+    // Get games by category and platform
 
+    @GetMapping("/games/Title/{Title}")
+    public GameListDto getGamesByTitle(@PathVariable String Title) {
+        Iterable<Game> games = gameService.getGamesByTitle(Title);
+        List<GameSummaryDto> dtos = new ArrayList<GameSummaryDto>();
+        for (Game game : games) {
+            dtos.add(new GameSummaryDto(game));
+        }
+        return new GameListDto(dtos);
+    }
 
 
     @GetMapping("/games/Status/{status}")
-    public Iterable<Game> getGamesByStatus(@RequestParam GameStatus status) {
+    public GameListDto getGamesByStatus(@PathVariable GameStatus status) {
+        System.out.println("Searching by status: "+ status);
         Iterable<Game> games = gameService.getGamesByStatus(status);
-        return games;
+        List<GameSummaryDto> dtos = new ArrayList<GameSummaryDto>();
+        for (Game game : games) {
+            dtos.add(new GameSummaryDto(game));
+        }
+        return new GameListDto(dtos);
     }
 
     @PostMapping("/games/specificGame/{game_id}")
