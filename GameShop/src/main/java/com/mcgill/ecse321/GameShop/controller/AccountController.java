@@ -38,6 +38,12 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
+    /**
+     * Creates a new customer account.
+     * 
+     * @param customerToCreate the account request data for the customer
+     * @return the response DTO containing the created customer account information
+     */
     @PostMapping("/account/customer")
     public AccountResponseDto createCustomer(@Valid @RequestBody AccountRequestDto customerToCreate) {
         Customer createdCustomer = accountService.createCustomer(customerToCreate.getEmail(), 
@@ -49,6 +55,12 @@ public class AccountController {
     }
 
 
+    /**
+     * Creates a new manager account.
+     * 
+     * @param managerToCreate the account request data for the manager
+     * @return the response DTO containing the created manager account information
+     */
     @PostMapping("/account/manager")
     public AccountResponseDto createManager(@Valid @RequestBody AccountRequestDto managerToCreate) {
         Account createdManager = accountService.createManager(managerToCreate.getEmail(), 
@@ -59,6 +71,12 @@ public class AccountController {
         return AccountResponseDto.create(createdManager);
     }
 
+    /**
+     * Creates a new employee account.
+     * 
+     * @param employeeToCreate the account request data for the employee
+     * @return the response DTO containing the created employee account information
+     */
     @PostMapping("/account/employee")
     public EmployeeResponseDto createEmployee(@Valid @RequestBody AccountRequestDto employeeToCreate) {
         Account createdEmployee = accountService.createEmployee(employeeToCreate.getEmail(), 
@@ -69,18 +87,37 @@ public class AccountController {
         return EmployeeResponseDto.create(createdEmployee);
     }
 
+
+    /**
+     * Finds a customer account by email.
+     *
+     * @param email the email of the customer
+     * @return the account response DTO containing the customer account information
+     */
     @GetMapping("/account/customer/{email}")
     public AccountResponseDto findCustomerByEmail(@PathVariable String email) {
         Account createdAccount = accountService.getCustomerAccountByEmail(email);
         return AccountResponseDto.create(createdAccount);
     }
 
+    /**
+     * Finds an employee account by email.
+     *
+     * @param email the email of the employee
+     * @return the employee response DTO containing the employee account information
+     */
     @GetMapping("/account/employee/{email}")
     public EmployeeResponseDto findEmployeeByEmail(@PathVariable String email) {
         Employee createdAccount = (Employee) accountService.getEmployeeAccountByEmail(email);
         return EmployeeResponseDto.create(createdAccount);
     }
 
+    /**
+     * Finds a manager account by email.
+     *
+     * @param email the email of the manager
+     * @return the account response DTO containing the manager account information
+     */
     @GetMapping("/account/getmanager")
     public AccountResponseDto getManager() {
         Account manager = accountService.getManager();
@@ -88,6 +125,11 @@ public class AccountController {
     }
     
 
+    /**
+     * Returns all the employees in the sytem. 
+     * 
+     * @return a list of employees as a list of employee response DTOs
+     */
     @GetMapping("/account/employees")
     public EmployeeListDto getEmployees() {
         List<EmployeeResponseDto> dtos = new ArrayList<EmployeeResponseDto>();
@@ -102,6 +144,13 @@ public class AccountController {
         return new EmployeeListDto(dtos);
     }
 
+
+
+    /**
+     * Returns all the customers in the system.
+     * 
+     * @return a list of customers returned as a list of account response DTOs
+     */
     @GetMapping("/account/customers")
     public AccountListDto getCustomers() {
         List<AccountResponseDto> dtos = new ArrayList<AccountResponseDto>();
@@ -116,6 +165,14 @@ public class AccountController {
         return new AccountListDto(dtos);
     }
     
+
+    /**
+     * Updates an account with the provided information.
+     * 
+     * @param email the email of the account to be updated
+     * @param updatedInformation the updated information for the account
+     * @return the account response DTO containing the updated account information
+     */
     @PutMapping("account/{email}")
     public AccountResponseDto updateAccount(@PathVariable String email, @RequestBody AccountRequestDto updatedInformation) {
         Account account = accountService.getAccountByEmail(email);
@@ -126,12 +183,24 @@ public class AccountController {
         return AccountResponseDto.create(account);
     }
 
+    /**
+     * Archives a customer account by email.
+     *
+     * @param email the email of the customer
+     * @return the account response DTO containing the customer account information
+     */
     @PutMapping("account/employee/{email}")
     public EmployeeResponseDto archiveEmployeeAccount(@PathVariable String email){
         Account employee = (Account) accountService.archiveEmployee(email);
         return EmployeeResponseDto.create(employee);
     }
 
+    /**
+     * Returns the customer's wishlist given the customer's email.
+     *
+     * @param email the email of the customer
+     * @return the wishlist response DTO containing the customer's wishlist
+     */
     @GetMapping("/account/customer/{email}/wishlist")
     public WishListResponseDto getCustomerWishlist(@PathVariable String email) {
         Customer customer = (Customer) accountService.getAccountByEmail(email);
