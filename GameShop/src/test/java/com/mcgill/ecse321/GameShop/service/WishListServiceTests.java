@@ -167,76 +167,7 @@ public class WishListServiceTests {
         verify(wishListRepository, never()).findById(-1);
     }
 
-    @Test
-    public void testUpdateWishlistTitle_Successful() {
-        Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "q", "customerUser", "customerPass", "123-456-7890",
-                "123 Fake StMontreal", new Cart());
-        WishList wishList = new WishList(VALID_TITLE, customer);
-        wishList.setWishList_id(13);
-        when(wishListRepository.findById(13)).thenReturn(wishList);
-        when(wishListRepository.save(any(WishList.class)))
-                .thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
-        String newTitle = "New Title";
-        WishList result = wishListService.updateWishlListTitle(13, newTitle);
-        assertNotNull(result);
-        assertEquals(13, result.getWishList_id());
-        assertEquals(newTitle, result.getTitle());
-        assertEquals(customer, result.getCustomer());
-        verify(wishListRepository, times(1)).findById(13);
-        verify(wishListRepository, times(1)).save(any(WishList.class));
-    }
-    @Test
-    public void testUpdateWishListWithInvalidId(){
-        int invalidId =9877;
-        when(wishListRepository.findById(invalidId)).thenReturn(null);
-        GameShopException exception = assertThrows(GameShopException.class, () -> {
-            wishListService.updateWishlListTitle(invalidId, "New Title");
-        });
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals("There is no WishList with Id 9877.", exception.getMessage());
-        verify(wishListRepository, times(1)).findById(invalidId);
-        verify(wishListRepository, never()).save(any(WishList.class));
-    }
-    @Test
-    public void testUpdateWishListWithInvalidIdValue(){
-        GameShopException exception = assertThrows(GameShopException.class, () -> {
-            wishListService.updateWishlListTitle(-1, "New Title");
-        });
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Wishlist Id must be greater than 0", exception.getMessage());
-        verify(wishListRepository, never()).findById(-1);
-        verify(wishListRepository, never()).save(any(WishList.class));
-    }
-    @Test
-    public void testUpdateWishListWithNullTitle(){
-        Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "w", "customerUser", "customerPass", "123-456-7890",
-                "123 Fake StMontreal", new Cart());
-        WishList wishList = new WishList(VALID_TITLE, customer);
-        wishList.setWishList_id(30);
-        // when(wishListRepository.findById(30)).thenReturn(wishList);
-        GameShopException exception = assertThrows(GameShopException.class, () -> {
-            wishListService.updateWishlListTitle(30, null);
-        });
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Wishlist title cannot be empty or null", exception.getMessage());
-        // verify(wishListRepository, times(0)).findById(30);
-        verify(wishListRepository, never()).save(any(WishList.class));
-    }
-    @Test
-    public void testUpdateWishListWithEmptyTitle(){
-        Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "e", "customerUser", "customerPass", "123-456-7890",
-                "123 Fake StMontreal", new Cart());
-        WishList wishList = new WishList(VALID_TITLE, customer);
-        wishList.setWishList_id(307);
-        // when(wishListRepository.findById(307)).thenReturn(wishList);
-        GameShopException exception = assertThrows(GameShopException.class, () -> {
-            wishListService.updateWishlListTitle(307, "   ");
-        });
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Wishlist title cannot be empty or null", exception.getMessage());
-        // verify(wishListRepository, times(0)).findById(307);
-        verify(wishListRepository, never()).save(any(WishList.class));
-    }
+    
     @Test
     public void testAddGameToWishlist_Successful(){
         Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "r", "customerUser", "customerPass", "123-456-7890",

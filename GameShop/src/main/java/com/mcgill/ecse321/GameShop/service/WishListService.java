@@ -55,15 +55,6 @@ public class WishListService {
         WishList wishList = new WishList(title, customer);
         return wishListRepository.save(wishList);
     }
-    @Transactional
-    public WishList updateWishlListTitle(int wishlistId, String newTitle) {
-        if (newTitle == null || newTitle.trim().isEmpty()) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist title cannot be empty or null");
-        }
-        WishList wishList = findWishlistById(wishlistId);
-        wishList.setTitle(newTitle);
-        return wishListRepository.save(wishList);
-    }
 
     @Transactional
     public WishList addGameToWishlist(int wishlistId, int gameId) {

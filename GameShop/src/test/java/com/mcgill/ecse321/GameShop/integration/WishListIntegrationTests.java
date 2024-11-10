@@ -125,46 +125,6 @@ public class WishListIntegrationTests {
             assertTrue(responseBody.contains("There is no WishList with Id"));
         }
     
-        // /*** Update Wishlist Title ***/
-        // @Test
-        // @Order(4)
-        // public void testUpdateWishlistTitle() {
-        //     String newTitle = "My Wishlist";
-        //     String url = String.format("/wishlist/%d/title", this.wishListId);
-        //     System.out.println("URL: " + url);
-        //     System.out.println(wishListId +"the new wishlist id");
-        //     WishListResponseDto request = new WishListResponseDto();
-        //     request.setTitle(newTitle);
-        //     HttpEntity<WishListResponseDto> requestEntity = new HttpEntity<>(request);
-    
-        //     ResponseEntity<WishListResponseDto> response = client.exchange(
-        //         url, HttpMethod.PUT, requestEntity, WishListResponseDto.class);
-    
-        //     assertNotNull(response);
-        //     assertEquals(HttpStatus.OK, response.getStatusCode());
-        //     WishListResponseDto wishList = response.getBody();
-        //     assertNotNull(wishList);
-        //     assertEquals(this.wishListId, wishList.getWishlistId());
-        //     assertEquals(newTitle, wishList.getTitle());
-        // }
-
-    
-        @Test
-        @Order(5)
-        public void testUpdateWishlistTitleMissingNewTitle() {
-            String url = String.format("/wishlist/%d/title", this.wishListId);
-            HttpEntity<String> requestEntity = new HttpEntity<>(null, getJsonHeaders());
-    
-            ResponseEntity<String> response = client.exchange(
-                url, HttpMethod.PUT, requestEntity, String.class);
-    
-            assertNotNull(response);
-            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-            String responseBody = response.getBody();
-            assertNotNull(responseBody);
-            assertTrue(responseBody.contains("Wishlist title cannot be empty or null"));
-        }
-    
         // /*** Add Game to Wishlist ***/
     
         @Test
@@ -302,7 +262,7 @@ public class WishListIntegrationTests {
         String responseBody = response.getBody();
         assertNotNull(responseBody);
         assertTrue(responseBody.contains("There is no Game with Id"));
-
+        }
 
     // /*** Remove Game from Wishlist ***/
 
