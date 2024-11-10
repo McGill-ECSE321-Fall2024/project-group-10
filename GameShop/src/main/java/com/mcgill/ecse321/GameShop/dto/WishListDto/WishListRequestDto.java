@@ -5,22 +5,28 @@ import jakarta.validation.constraints.NotBlank;
 
 public class WishListRequestDto {
     @NotBlank(message ="WishList name cannot be empty")
-    private String wishListName;
+    private String title;
     @NotBlank(message = "Email cannot be empty")
     private String customerEmail;
 
     protected WishListRequestDto() {
     }
-    public WishListRequestDto(String wishListName, String customerEmail) {
-        this.wishListName = wishListName;
+    public WishListRequestDto(String title, String customerEmail) {
+        this.title = title;
         this.customerEmail = customerEmail;
     }
-    public String getWishListName() {
-        return wishListName;
+    public String getTitle() {
+        return title;
     }
 
     public String getCustomerEmail() {
         return customerEmail;
     }
-    //public Iterable<Gto> 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
+ 
 }

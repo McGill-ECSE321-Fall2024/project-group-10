@@ -10,13 +10,13 @@ import com.mcgill.ecse321.GameShop.model.WishList;
 
 public class WishListResponseDto {
    
-    private int wishList_id;
+    private int wishlistId;
     private String title;
     private String customerEmail;
     private GameListDto games;
 
     public WishListResponseDto(WishList wishList) {
-        this.wishList_id = wishList.getWishList_id();
+        this.wishlistId = wishList.getWishList_id();
         this.title = wishList.getTitle();
         List<GameSummaryDto> gameSummaryList = new ArrayList<GameSummaryDto>();
         for(Game game : wishList.getGames()) {
@@ -25,19 +25,22 @@ public class WishListResponseDto {
         this.games = new GameListDto(gameSummaryList);
         this.customerEmail = wishList.getCustomer().getEmail();
     }
-    protected WishListResponseDto() {
+    public WishListResponseDto() {
     }
 
     public String getCustomerEmail() {
         return customerEmail;
     }
 
-    public int getWishList_id() {
-        return wishList_id;
+    public int getWishlistId() {
+        return wishlistId;
     }
 
     public String getTitle() {
         return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public GameListDto getGames() {

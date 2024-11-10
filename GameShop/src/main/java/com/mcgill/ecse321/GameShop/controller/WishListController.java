@@ -1,13 +1,17 @@
 package com.mcgill.ecse321.GameShop.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
+import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListRequestDto;
 import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.WishList;
@@ -15,22 +19,19 @@ import com.mcgill.ecse321.GameShop.service.WishListService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
+@RestController
 public class WishListController {
     
     @Autowired
     private WishListService wishListService;
 
-    @GetMapping("/wishlist/{wishlist_id}")
+    @GetMapping("/wishlists/{wishlist_id}")
     public WishListResponseDto findWishlistById(@PathVariable int wishlist_id) {
 
         WishList wishList = wishListService.findWishlistById(wishlist_id);
         return WishListResponseDto.create(wishList);
     }
-    @PutMapping("/wishlist/{wishlist_id}/title")
-    public WishListResponseDto updateWishlistTitle(@PathVariable int wishlist_id, @RequestBody String newTitle) {
-        WishList updatedWishlist = wishListService.updateWishlListTitle(wishlist_id, newTitle);
-        return WishListResponseDto.create(updatedWishlist);
-    }
+
     @PutMapping("/wishlist/{wishlist_id}/{game_id}")
     public WishListResponseDto addGameToWishlist(@PathVariable int wishlist_id, @PathVariable int game_id) {
         WishList wishList = wishListService.addGameToWishlist(wishlist_id,game_id);
@@ -41,6 +42,32 @@ public class WishListController {
         WishList wishList = wishListService.removeGameFromWishlist(wishlist_id,game_id);
         return WishListResponseDto.create(wishList);
     }
+
+
+    @PutMapping("/wishlist/{wishlist_id}/title")
+public WishListResponseDto updateWishlistTitle(@PathVariable int wishlist_id, @RequestBody WishListResponseDto request) {
+    System.out.println("Received title: in the controller " + request.getTitle());
+    System.out.println("Received id: in the controller " + request.getWishlistId());
+    WishList updatedWishlist = wishListService.updateWishlListTitle(wishlist_id, request.getTitle());
+    return WishListResponseDto.create(updatedWishlist);
+}
+    // public WishListResponseDto updateWishlistTitle(@PathVariable int wishlist_id, @RequestBody Map<String, String> body) {
+    //     String title = body.get("title");
+    //     System.out.println("Received title: " + title);
+    //     WishList updatedWishlist = wishListService.updateWishlListTitle(wishlist_id, title);
+    //     return WishListResponseDto.create(updatedWishlist);
+    // }
+    // public WishListResponseDto updateWishlistTitle(@PathVariable int wishlist_id, @RequestBody String title) {
+    //     System.out.println("Received title: " + title);
+    //     WishList updatedWishlist = wishListService.updateWishlListTitle(wishlist_id, title);
+    //     return WishListResponseDto.create(updatedWishlist);
+    // }
+    // public WishListResponseDto updateWishlistTitle(@PathVariable int wishlist_id, @RequestBody WishListRequestDto request) {
+    //     System.out.println("the title is " + request.getTitle());
+    //     WishList updatedWishlist = wishListService.updateWishlListTitle(wishlist_id, request.getTitle());
+    //     return WishListResponseDto.create(updatedWishlist);
+    // }
+
     @PutMapping("/wishlist/{wishlist_id}")
     public WishListResponseDto removeAllGamesFromWishlist(@PathVariable int wishlist_id) {
         WishList wishList = wishListService.findWishlistById(wishlist_id);
