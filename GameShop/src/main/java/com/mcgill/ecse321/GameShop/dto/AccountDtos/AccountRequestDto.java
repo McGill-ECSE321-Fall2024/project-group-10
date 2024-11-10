@@ -11,11 +11,11 @@ public class AccountRequestDto {
     private String password;
     private String phoneNumber;
     private String address;
-    private AccountType type;
+    private AccountType accountType;
     
   
     public AccountRequestDto(String email, String username, String password, String phoneNumber, String address) {
-        this.type = AccountType.EMPLOYEE;
+        this.accountType = AccountType.MANAGER;
         this.email = email;
         this.username = username;
         this.password = password;
@@ -55,11 +55,11 @@ public class AccountRequestDto {
     }
 
     public AccountType getAccountType() {
-        return type;
+        return accountType;
     }
 
     public void setAccountType(AccountType type) {
-        this.type = type;
+        this.accountType = type;
     }
 
 

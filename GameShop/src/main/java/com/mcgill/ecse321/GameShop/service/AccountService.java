@@ -1,6 +1,9 @@
 package com.mcgill.ecse321.GameShop.service;
 
 
+import java.util.Optional;
+import java.util.stream.StreamSupport;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -54,15 +57,15 @@ public class AccountService {
         }
 
         //input validation to ensure email, username, and password are not null
-        if (email.trim().isEmpty() || email == null){
+        if (email == null || email.trim().isEmpty() ){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-					String.format("Email is invalid"));
+					String.format("Email is invalid."));
         }
-        if (username.trim().isEmpty() || username == null){
+        if (username == null || username.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
         }
-        if (password.trim().isEmpty() || password == null){
+        if (password == null || password.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid password"));
         }
@@ -82,15 +85,15 @@ public class AccountService {
     @Transactional
     public Employee createEmployee(String email, String username, String password, String phoneNumber, String address){
         //input validation
-        if (email.trim().isEmpty() || email == null){
+        if (email == null || email.trim().isEmpty() ){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-					String.format("Email is invalid"));
+					String.format("Email is invalid."));
         }
-        if (username.trim().isEmpty() || username == null){
+        if (username == null || username.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
         }
-        if (password.trim().isEmpty() || password == null){
+        if (password == null || password.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid password"));
         }
@@ -110,15 +113,15 @@ public class AccountService {
     @Transactional
     public Customer createCustomer(String email, String username, String password, String phoneNumber, String address){
         //input validation
-        if (email.trim().isEmpty() || email == null){
+        if (email == null || email.trim().isEmpty() ){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-					String.format("Email is invalid"));
+					String.format("Email is invalid."));
         }
-        if (username.trim().isEmpty() || username == null){
+        if (username == null || username.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid username %s", username));
         }
-        if (password.trim().isEmpty() || password == null){
+        if (password == null || password.trim().isEmpty()){
             throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Invalid password"));
         }
@@ -126,7 +129,7 @@ public class AccountService {
         //check if the account already exists
         Account account = accountRepository.findByEmail(email);
         if (account != null){
-            throw new GameShopException(HttpStatus.NOT_FOUND,
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
             String.format("Account with email %s already exists.", email));
         }
 
@@ -156,8 +159,15 @@ public class AccountService {
     }
 
     @Transactional
-    public Iterable<Account> getManager(){
-        return managerRepo.findAll();
+    public Manager getManager(){
+
+        Iterable<Account> accounts = accountRepository.findAll();
+        for (Account account: accounts){
+            if (account instanceof Manager){
+                return (Manager) account;
+            }
+        }
+        throw new GameShopException(HttpStatus.NOT_FOUND, "Manager does not exist");
     }
 
 

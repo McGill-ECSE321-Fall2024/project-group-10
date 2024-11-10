@@ -2,6 +2,7 @@ package com.mcgill.ecse321.GameShop.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
 
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountListDto;
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -79,18 +82,11 @@ public class AccountController {
     }
 
     @GetMapping("/account/getmanager")
-    public AccountListDto getManager() {
-        List<AccountResponseDto> dtos = new ArrayList<AccountResponseDto>();
-        for (Account m: accountService.getManager()){
-            if (m instanceof Manager){
-                dtos.add(new AccountResponseDto(m));
-            }
-            else{
-                continue;
-            }
-        }
-        return new AccountListDto(dtos);
+    public AccountResponseDto getManager() {
+        Account manager = accountService.getManager();
+        return AccountResponseDto.create(manager);
     }
+    
 
     @GetMapping("/account/employees")
     public EmployeeListDto getEmployees() {

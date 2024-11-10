@@ -12,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountType;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
+import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Employee.EmployeeStatus;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.WishListRepository;
@@ -24,7 +26,9 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 
 import java.util.List;
 
@@ -95,31 +99,31 @@ public class AccountIntegrationTests {
         accountRepository.deleteAll();
     }
 
-    @SuppressWarnings("null")
+   
     @Test
     @Order(1)
     public void testCreateValidManager(){
         //Arrange
         AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONENUM, MANAGER_ADDRESS);
-
+        
         //Act
         ResponseEntity<AccountResponseDto> response = client.postForEntity("/account/manager", manager, AccountResponseDto.class);
-
+        
         //Assert
-
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         AccountResponseDto fetchedManager = response.getBody();
         assertNotNull(fetchedManager);
-        assertEquals(MANAGER_EMAIL, response.getBody().getEmail());
-        this.managerEmail = response.getBody().getEmail();
-        assertEquals(MANAGER_USERNAME, response.getBody().getUsername());
-        assertEquals(MANAGER_PHONENUM, response.getBody().getPhoneNumber());
-        assertEquals(MANAGER_ADDRESS, response.getBody().getAddress());
-        //assertEquals(AccountType.MANAGER, response.getBody().getAccountType());
+        AccountResponseDto manager1 = response.getBody();
+        assertNotNull(manager1);
+        assertEquals(MANAGER_EMAIL, manager1.getEmail());
+        this.managerEmail = manager1.getEmail();
+        assertEquals(MANAGER_USERNAME, manager1.getUsername());
+        assertEquals(MANAGER_PHONENUM, manager1.getPhoneNumber());
+        assertEquals(MANAGER_ADDRESS, manager1.getAddress());
+        assertEquals(AccountType.MANAGER, manager1.getAccountType());
     }
 
-    @SuppressWarnings("null")
     @Test
     @Order(2)
     public void testCreateValidEmployee(){
@@ -135,17 +139,15 @@ public class AccountIntegrationTests {
 
         EmployeeResponseDto fetchedEmployee = response.getBody();
         assertNotNull(fetchedEmployee);
-
-        assertEquals(EMPLOYEE_EMAIL, response.getBody().getEmail());
-        this.employeeEmail = response.getBody().getEmail();
-        assertEquals(EMPLOYEE_USERNAME, response.getBody().getUsername());
-        assertEquals(EMPLOYEE_PHONENUM, response.getBody().getPhoneNumber());
-        assertEquals(EMPLOYEE_ADDRESS, response.getBody().getAddress());
-        assertEquals(EmployeeStatus.Active, response.getBody().getEmployeeStatus());
-        //assertEquals(AccountType.EMPLOYEE, response.getBody().getAccountType());
+        
+        assertEquals(EMPLOYEE_EMAIL, fetchedEmployee.getEmail());
+        this.employeeEmail = fetchedEmployee.getEmail();
+        assertEquals(EMPLOYEE_USERNAME, fetchedEmployee.getUsername());
+        assertEquals(EMPLOYEE_PHONENUM, fetchedEmployee.getPhoneNumber());
+        assertEquals(EMPLOYEE_ADDRESS, fetchedEmployee.getAddress());
+        assertEquals(EmployeeStatus.Active, fetchedEmployee.getEmployeeStatus());
     }
 
-    @SuppressWarnings("null")
     @Test
     @Order(3)
     public void testCreateValidCustomer(){
@@ -160,16 +162,15 @@ public class AccountIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         AccountResponseDto fetchedCustomer = response.getBody();
         assertNotNull(fetchedCustomer);
-        assertEquals(CUSTOMER_EMAIL, response.getBody().getEmail());
-        this.customerEmail = response.getBody().getEmail();
-        assertEquals(CUSTOMER_USERNAME, response.getBody().getUsername());
-        assertEquals(CUSTOMER_PHONENUM, response.getBody().getPhoneNumber());
-        assertEquals(CUSTOMER_ADDRESS, response.getBody().getAddress());
-        //assertEquals(AccountType.CUSTOMER, response.getBody().getAccountType());
+        assertEquals(CUSTOMER_EMAIL, fetchedCustomer.getEmail());
+        this.customerEmail = fetchedCustomer.getEmail();
+        assertEquals(CUSTOMER_USERNAME, fetchedCustomer.getUsername());
+        assertEquals(CUSTOMER_PHONENUM, fetchedCustomer.getPhoneNumber());
+        assertEquals(CUSTOMER_ADDRESS, fetchedCustomer.getAddress());
+        assertEquals(AccountType.CUSTOMER, fetchedCustomer.getAccountType());
     }
 
 
-    @SuppressWarnings("null")
     @Test
     @Order(4)
     public void testGetValidCustomerByEmail(){
@@ -179,14 +180,13 @@ public class AccountIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         AccountResponseDto fetchedCustomer = response.getBody();
         assertNotNull(fetchedCustomer);
-        assertEquals(this.customerEmail, response.getBody().getEmail());
-        assertEquals(CUSTOMER_USERNAME, response.getBody().getUsername());
-        assertEquals(CUSTOMER_ADDRESS, response.getBody().getAddress());
-        assertEquals(CUSTOMER_PHONENUM, response.getBody().getPhoneNumber());
+        assertEquals(this.customerEmail, fetchedCustomer.getEmail());
+        assertEquals(CUSTOMER_USERNAME, fetchedCustomer.getUsername());
+        assertEquals(CUSTOMER_ADDRESS, fetchedCustomer.getAddress());
+        assertEquals(CUSTOMER_PHONENUM, fetchedCustomer.getPhoneNumber());
 
     }
 
-    @SuppressWarnings("null")
     @Test
     @Order(5)
     public void testGetValidEmployeeByEmail(){
@@ -196,38 +196,30 @@ public class AccountIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         EmployeeResponseDto fetchedEmployee = response.getBody();
         assertNotNull(fetchedEmployee);
-        assertEquals(this.employeeEmail, response.getBody().getEmail());
-        assertEquals(EMPLOYEE_USERNAME, response.getBody().getUsername());
-        assertEquals(EMPLOYEE_ADDRESS, response.getBody().getAddress());
-        assertEquals(EMPLOYEE_PHONENUM, response.getBody().getPhoneNumber());
+        assertEquals(this.employeeEmail, fetchedEmployee.getEmail());
+        assertEquals(EMPLOYEE_USERNAME, fetchedEmployee.getUsername());
+        assertEquals(EMPLOYEE_ADDRESS, fetchedEmployee.getAddress());
+        assertEquals(EMPLOYEE_PHONENUM, fetchedEmployee.getPhoneNumber());
         assertEquals(EmployeeStatus.Active, fetchedEmployee.getEmployeeStatus());
 
     }
 
-    @SuppressWarnings("null")
     @Test
     @Order(6)
     public void testGetValidManagerByEmail(){
         String url = String.format("/account/getmanager");
-        ResponseEntity<AccountListDto> response = client.getForEntity(url, AccountListDto.class);
+        ResponseEntity<AccountResponseDto> response = client.getForEntity(url, AccountResponseDto.class);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        AccountListDto fetchedManager = response.getBody();
+        AccountResponseDto fetchedManager = response.getBody();
         assertNotNull(fetchedManager);
-        List<AccountResponseDto> account = fetchedManager.getAccounts();
-        assertNotNull(account);
-        assertFalse(account.isEmpty(), "A manager was expected");
-
-        AccountResponseDto manager = account.get(0);
-        assertNotNull(manager);
-        assertEquals(this.managerEmail, manager.getEmail());
-        assertEquals(MANAGER_USERNAME, manager.getUsername());
-        assertEquals(MANAGER_ADDRESS, manager.getAddress());
-        assertEquals(MANAGER_PHONENUM, manager.getPhoneNumber());
+        assertEquals(this.managerEmail, fetchedManager.getEmail());
+        assertEquals(MANAGER_USERNAME, fetchedManager.getUsername());
+        assertEquals(MANAGER_ADDRESS, fetchedManager.getAddress());
+        assertEquals(MANAGER_PHONENUM, fetchedManager.getPhoneNumber());
 
     }
 
-    @SuppressWarnings("null")
     @Test
     @Order(7)
     public void testGetValidCustomers(){
@@ -264,7 +256,6 @@ public class AccountIntegrationTests {
 
     }
 
-    @SuppressWarnings("null")
     @Test
     @Order(8)
     public void testGetValidEmployees(){
@@ -303,7 +294,6 @@ public class AccountIntegrationTests {
 
     }
 
-    @SuppressWarnings("null")
     @Test
     @Order(9)
     public void testUpdateValidAccount(){
@@ -325,7 +315,6 @@ public class AccountIntegrationTests {
         assertEquals(UPDATE_EMPLOYEE_PHONENUM, updatedAccount.getPhoneNumber());
     }
 
-    @SuppressWarnings("null")
     @Test
     @Order(10)
     public void testArchiveValidEmployee(){

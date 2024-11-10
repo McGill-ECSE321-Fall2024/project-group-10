@@ -302,7 +302,7 @@ public class WishListIntegrationTests {
         String responseBody = response.getBody();
         assertNotNull(responseBody);
         assertTrue(responseBody.contains("There is no Game with Id"));
-    }
+
 
     // /*** Remove Game from Wishlist ***/
 
