@@ -78,7 +78,6 @@ public class ReviewService {
         int rating = 0;
         // Create the review
         Review review = new Review(reviewDate, description, rating, gameRating, game, customer);
-        System.out.println("here");
         // Save and return the review
         return reviewRepository.save(review);
     }

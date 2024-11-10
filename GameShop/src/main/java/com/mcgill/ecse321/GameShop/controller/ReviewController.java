@@ -43,6 +43,7 @@ public class ReviewController {
         Review review = reviewService.getReviewById(id);
         return new ReviewResponseDto(review);
     }
+    
 
     /** Get the customer that wrote the review*/
     @GetMapping("/reviews/review/customer/{id}")
