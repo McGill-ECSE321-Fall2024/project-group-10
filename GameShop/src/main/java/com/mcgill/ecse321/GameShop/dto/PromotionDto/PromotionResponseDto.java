@@ -59,8 +59,8 @@ public class PromotionResponseDto {
         return managerEmail;
     }
 
-    //public List<GameSummaryDto> getGames() {
-    //    return games;
-    //}
+    public List<GameSummaryDto> getGames() {
+        return games;
+    }
 }
 
