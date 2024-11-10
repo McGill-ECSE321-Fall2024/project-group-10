@@ -238,7 +238,7 @@ public class ReplyIntegrationTests {
 
 
     @Test
-    @Order(6)
+    @Order(5)
     public void testGetReplyByInvalidId() {
         // Arrange
         int invalidReplyId = 9999;
@@ -256,7 +256,7 @@ public class ReplyIntegrationTests {
     }
 
     @Test
-    @Order(7)
+    @Order(6)
     public void testUpdateReplyInvalidId() {
         // Arrange
         int invalidReplyId = 9999;
@@ -279,7 +279,7 @@ public class ReplyIntegrationTests {
     }
 
     @Test
-    @Order(8)
+    @Order(7)
     public void testGetReviewByInvalidReplyId() {
         // Arrange
         int invalidReplyId = 9999;
@@ -297,7 +297,7 @@ public class ReplyIntegrationTests {
     }
 
     @Test
-    @Order(10)
+    @Order(8)
     public void testCreateReplyInvalidData() {
         // Arrange: Missing description
         ReplyRequestDto replyRequest = new ReplyRequestDto();
@@ -319,7 +319,7 @@ public class ReplyIntegrationTests {
     }
 
     @Test
-    @Order(11)
+    @Order(9)
     public void testUpdateReplyInvalidData() {
         // Arrange: Update with null description and null reviewRating
         String url = String.format("/replies/%d", replyId);
@@ -344,7 +344,7 @@ public class ReplyIntegrationTests {
     }
 
     @Test
-    @Order(12)
+    @Order(10)
     public void testCreateReplyWithInvalidEmailFormat() {
         // Arrange
         String invalidEmail = "invalid-email-format";
@@ -368,7 +368,7 @@ public class ReplyIntegrationTests {
     }
 
     @Test
-    @Order(13)
+    @Order(11)
     public void testCreateReplyWithNullReplyDate() {
         // Arrange
         ReplyRequestDto replyRequest = new ReplyRequestDto(
@@ -391,7 +391,7 @@ public class ReplyIntegrationTests {
     }
 
     @Test
-    @Order(14)
+    @Order(12)
     public void testCreateReplyWithNullReviewRating() {
         // Arrange
         ReplyRequestDto replyRequest = new ReplyRequestDto(
@@ -414,7 +414,7 @@ public class ReplyIntegrationTests {
     }
 
     @Test
-    @Order(15)
+    @Order(13)
     public void testCreateReplyWithNullReviewId() {
         // Arrange
         ReplyRequestDto replyRequest = new ReplyRequestDto(
@@ -437,7 +437,7 @@ public class ReplyIntegrationTests {
     }
 
     @Test
-    @Order(16)
+    @Order(14)
     public void testCreateReplyWithBlankDescription() {
         // Arrange
         ReplyRequestDto replyRequest = new ReplyRequestDto(
@@ -460,7 +460,7 @@ public class ReplyIntegrationTests {
     }
 
     @Test
-    @Order(17)
+    @Order(15)
     public void testCreateReplyWithBlankManagerEmail() {
         // Arrange
         ReplyRequestDto replyRequest = new ReplyRequestDto(
