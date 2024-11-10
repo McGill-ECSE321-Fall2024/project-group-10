@@ -132,7 +132,6 @@ public class ReplyIntegrationTests {
 
         // Create a Review with Game and Customer
         ReviewRequestDto reviewRequest = new ReviewRequestDto(
-            Date.valueOf("2023-10-01"),
             "Great game!",
             5,
             GameRating.Five,

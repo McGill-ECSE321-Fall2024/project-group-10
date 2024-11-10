@@ -598,4 +598,42 @@ public class ReviewServiceTest {
         assertFalse(foundWrongReview);
     }
 
+    @Test
+    public void testGetReviewsByCustomerNotFound(){
+        when(customerRepository.findByEmail(VALID_CUSTOMER_EMAIL)).thenReturn(null);
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            reviewService.getReviewsByCustomer(VALID_CUSTOMER_EMAIL);
+        });
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("No reviews found for given customer", exception.getMessage());
+    }
+
+    @Test
+    public void testGetReviewsByCustomerEmptyEmail(){
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            reviewService.getReviewsByCustomer("");
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Email cannot be empty or null", exception.getMessage());
+    }
+
+    @Test
+    public void testGetReviewsByCustomerNullEmail(){
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            reviewService.getReviewsByCustomer(null);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Email cannot be empty or null", exception.getMessage());
+    }
+
+    @Test
+    public void testGetReviewsByCustomerNoReviews(){
+        when(customerRepository.findByEmail(VALID_CUSTOMER_EMAIL)).thenReturn(customer);
+        when(reviewRepository.findAll()).thenReturn(new ArrayList<Review>());
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            reviewService.getReviewsByCustomer(VALID_CUSTOMER_EMAIL);
+        });
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("No reviews found for given customer", exception.getMessage());
+    }
 }
