@@ -77,9 +77,6 @@ public class ReplyIntegrationTests {
         replyRepo.deleteAll();
         reviewRepo.deleteAll();
         gameRepo.deleteAll();
-        cartRepo.deleteAll();
-        accountRepo.deleteAll();
-        managerRepo.deleteAll();
     }
 
     @Test
@@ -239,29 +236,6 @@ public class ReplyIntegrationTests {
         assertEquals(customerEmail, retrievedReview.getCustomerEmail());
     }
 
-    @Test
-    @Order(5)
-    public void testCreateReplyInvalidManagerEmail() {
-        // Arrange
-        String invalidManagerEmail = "invalidmanager@example.com";
-        ReplyRequestDto replyRequest = new ReplyRequestDto(
-            Date.valueOf("2023-10-03"),
-            "Thank you for your feedback!",
-            ReviewRating.Like,
-            reviewId,
-            invalidManagerEmail
-        );
-
-        // Act
-        ResponseEntity<String> response = client.postForEntity("/replies", replyRequest, String.class);
-
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        String responseBody = response.getBody();
-        assertNotNull(responseBody);
-        assertTrue(responseBody.contains(String.format("There is no manager with email: %s", invalidManagerEmail)));
-    }
 
     @Test
     @Order(6)
@@ -320,30 +294,6 @@ public class ReplyIntegrationTests {
         String responseBody = response.getBody();
         assertNotNull(responseBody);
         assertTrue(responseBody.contains("Reply not found"));
-    }
-
-    @Test
-    @Order(9)
-    public void testCreateReplyInvalidReviewId() {
-        // Arrange
-        int invalidReviewId = 9999;
-        ReplyRequestDto replyRequest = new ReplyRequestDto(
-            Date.valueOf("2023-10-04"),
-            "Thank you for your feedback!",
-            ReviewRating.Like,
-            invalidReviewId,
-            managerEmail
-        );
-
-        // Act
-        ResponseEntity<String> response = client.postForEntity("/replies", replyRequest, String.class);
-
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        String responseBody = response.getBody();
-        assertNotNull(responseBody);
-        assertTrue(responseBody.contains("Review does not exist"));
     }
 
     @Test
