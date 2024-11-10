@@ -91,7 +91,6 @@ public class WishListIntegrationTests {
             // Retrieve wishlist ID associated with the customer
             this.wishListId = getWishlistIdByCustomerEmail(CUSTOMER_EMAIL);
             assertTrue(this.wishListId > 0, "Wishlist ID should be greater than 0");
-            System.out.println("Wishlist ID: " + this.wishListId);
             assertNotNull(wishListRepo.findById(this.wishListId));
         }
     
