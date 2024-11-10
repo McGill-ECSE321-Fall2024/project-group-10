@@ -25,8 +25,6 @@ public class OrderRequestDto {
     private List<Integer> specificGameIds;
 
     // Constructors
-    public OrderRequestDto() {
-    }
 
     public OrderRequestDto(Date orderDate, String note, int paymentCard, String customerEmail,
             List<Integer> specificGameIds) {
@@ -48,6 +46,7 @@ public class OrderRequestDto {
     public String getNote() {
         return note;
     }
+
     protected OrderRequestDto() {
     }
 
