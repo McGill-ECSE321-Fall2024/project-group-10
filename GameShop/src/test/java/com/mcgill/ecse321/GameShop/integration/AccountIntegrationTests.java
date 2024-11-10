@@ -124,6 +124,7 @@ public class AccountIntegrationTests {
         assertEquals(AccountType.MANAGER, manager1.getAccountType());
     }
 
+
     @Test
     @Order(2)
     public void testCreateValidEmployee(){
@@ -336,6 +337,59 @@ public class AccountIntegrationTests {
 
         assertTrue(archivedEmployee.getEmployeeStatus() == EmployeeStatus.Archived);
     }
+
+    @Test
+    @Order(11)
+    public void testCreateCustomerWithInvalidEmail(){
+        //Arrange
+        AccountRequestDto customer = new AccountRequestDto("", CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONENUM, CUSTOMER_ADDRESS);
+
+        //Act
+        ResponseEntity<AccountResponseDto> response = client.postForEntity("/account/customer", customer, AccountResponseDto.class);
+        
+        //Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(12)
+    public void testCreateCustomerWithInvalidUsername(){
+        //Arrange
+        AccountRequestDto customer = new AccountRequestDto(CUSTOMER_EMAIL, "", CUSTOMER_PASSWORD, CUSTOMER_PHONENUM, CUSTOMER_ADDRESS);
+
+        //Act
+        ResponseEntity<AccountResponseDto> response = client.postForEntity("/account/customer", customer, AccountResponseDto.class);
+        
+        //Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(13)
+    public void testCreateCustomerWithInvalidPassword(){
+        //Arrange
+        AccountRequestDto customer = new AccountRequestDto(CUSTOMER_EMAIL, CUSTOMER_USERNAME, "", CUSTOMER_PHONENUM, CUSTOMER_ADDRESS);
+
+        //Act
+        ResponseEntity<AccountResponseDto> response = client.postForEntity("/account/customer", customer, AccountResponseDto.class);
+        
+        //Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(14)
+    public void testGetEmployeeWithNonExistentEmail(){
+        String url = String.format("/account/employee/%s", "email@notregistered.com");
+        ResponseEntity<EmployeeResponseDto> response = client.getForEntity(url, EmployeeResponseDto.class);
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+
 
 
 
