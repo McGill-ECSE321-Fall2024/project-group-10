@@ -100,7 +100,6 @@ public class ReplyIntegrationTests {
         assertNotNull(game);
         gameId = game.getaGame_id();
 
-        // Create a Customer (Cart is automatically created and associated)
         AccountRequestDto customerRequest = new AccountRequestDto(
             customerEmail,
             "customerUser",
