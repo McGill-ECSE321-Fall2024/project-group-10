@@ -74,7 +74,7 @@ public class ReviewService {
         if (customer == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Customer with email %s not found", customerEmail));
         }
-        Date reviewDate = Date.valueOf(LocalDate.now());
+        LocalDate reviewDate = LocalDate.now();
         int rating = 0;
         // Create the review
         Review review = new Review(reviewDate, description, rating, gameRating, game, customer);

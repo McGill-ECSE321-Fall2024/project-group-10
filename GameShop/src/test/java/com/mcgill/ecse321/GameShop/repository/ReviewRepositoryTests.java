@@ -1,6 +1,6 @@
 package com.mcgill.ecse321.GameShop.repository;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class ReviewRepositoryTests {
         String url = "www.randomliiiiiink.ca";
         int price = 70;
 
-        Date reviewDate = Date.valueOf("2024-10-05");
+        LocalDate reviewDate = LocalDate.parse("2024-10-05");
         int rating = 0;
         GameRating gameRating = GameRating.Five;
         String reviewDescription = "This is a very good game";
@@ -131,7 +131,7 @@ public class ReviewRepositoryTests {
         game = gameRepository.save(game);
 
         // Create and save first review
-        Date reviewDate1 = Date.valueOf("2024-10-05");
+        LocalDate reviewDate1 = LocalDate.parse("2024-10-05");
         GameRating gameRating1 = GameRating.Five;
         String reviewDescription1 = "This is a very good game";
 
@@ -139,7 +139,7 @@ public class ReviewRepositoryTests {
         review1 = reviewRepository.save(review1);
 
         // Create and save second review
-        Date reviewDate2 = Date.valueOf("2024-10-06");
+        LocalDate reviewDate2 = LocalDate.parse("2024-10-06");
         GameRating gameRating2 = GameRating.Four;
         String reviewDescription2 = "Enjoyed the game a lot";
 

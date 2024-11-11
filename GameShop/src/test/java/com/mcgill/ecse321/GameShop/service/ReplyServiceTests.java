@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.service;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -77,7 +78,7 @@ public class ReplyServiceTests {
         Manager manager = new Manager(managerEmail, "managerUser1", "managerPass1", "123-456-7890", "123 Manager Street");
 
         // Create Review with Game and Customer
-        Review review = new Review(Date.valueOf("2023-10-01"), "Great game!", 5, Review.GameRating.Five, game, customer);
+        Review review = new Review(LocalDate.parse("2023-10-01"), "Great game!", 5, Review.GameRating.Five, game, customer);
         review.setReview_id(reviewId);
 
         // Mock repositories
@@ -284,7 +285,7 @@ public class ReplyServiceTests {
         Manager manager = new Manager(managerEmail, "managerUser7", "managerPass7", "123-456-7890", "123 Manager Street");
 
         // Create Review with Game and Customer
-        Review review = new Review(Date.valueOf("2023-10-15"), "Not bad", 3, Review.GameRating.Three, game, customer);
+        Review review = new Review(LocalDate.parse("2023-10-15"), "Not bad", 3, Review.GameRating.Three, game, customer);
         review.setReview_id(reviewId);
 
         // Create Reply
@@ -350,7 +351,7 @@ public class ReplyServiceTests {
         Manager manager = new Manager(managerEmail, "managerUser9", "managerPass9", "123-456-7890", "123 Manager Street");
 
         // Create Review with Game and Customer
-        Review review = new Review(Date.valueOf("2023-10-17"), "Great game!", 5, Review.GameRating.Five, game, customer);
+        Review review = new Review(LocalDate.parse("2023-10-17"), "Great game!", 5, Review.GameRating.Five, game, customer);
         review.setReview_id(reviewId);
 
         // Create Reply
@@ -400,7 +401,7 @@ public class ReplyServiceTests {
         Manager manager = new Manager(managerEmail, "managerUser10", "managerPass10", "123-456-7890", "123 Manager Street");
 
         // Create Review with Game and Customer
-        Review review = new Review(Date.valueOf("2023-10-19"), "Average game", 3, Review.GameRating.Three, game, customer);
+        Review review = new Review(LocalDate.parse("2023-10-19"), "Average game", 3, Review.GameRating.Three, game, customer);
         review.setReview_id(reviewId);
 
         // Create Reply
@@ -471,7 +472,7 @@ public class ReplyServiceTests {
         Manager manager = new Manager(managerEmail, "managerUser12", "managerPass12", "123-456-7890", "123 Manager Street");
 
         // Create Review with Game and Customer
-        Review review = new Review(Date.valueOf("2023-10-21"), "Fantastic game", 5, Review.GameRating.Five, game, customer);
+        Review review = new Review(LocalDate.parse("2023-10-21"), "Fantastic game", 5, Review.GameRating.Five, game, customer);
         review.setReview_id(reviewId);
 
         // Create Reply

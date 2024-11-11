@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.repository;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class ReplyRepositoryTests {
                 String url = "www.";
                 int price = 61;
 
-                Date reviewDate = Date.valueOf("2024-10-09");
+                LocalDate reviewDate = LocalDate.parse("2024-10-09");
                 int rating = 0;
                 GameRating gameRating = GameRating.One;
                 String reviewDescription = "This is a bad game";
@@ -88,7 +89,7 @@ public class ReplyRepositoryTests {
                 String customerPhoneNumber = "+1 (438) 865-9298";
                 String customerAddress = "1234 rue Mtl";
 
-                Date replyDate = Date.valueOf("2024-10-10");
+                Date replyDate =  Date.valueOf("2024-10-10");
                 String replyDescription = "Thank you";
 
                 // Save cart and customer to the repository
@@ -151,7 +152,7 @@ public class ReplyRepositoryTests {
                                 "batmanlink.com");
                 game = gameRepository.save(game);
 
-                Review review = new Review(Date.valueOf("2024-01-10"), "I Love this Game!", 5,
+                Review review = new Review(LocalDate.parse("2024-01-10"), "I Love this Game!", 5,
                                 GameRating.Five, game, customer);
                 review = reviewRepository.save(review);
 

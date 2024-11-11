@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -183,7 +182,7 @@ public class ReviewIntegrationTests {
         GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         gameRequestDto.setCategories(categoryIds);
         gameRequestDto.setPlatforms(platformIds);
-        Date date = Date.valueOf(LocalDate.now());
+        LocalDate date = LocalDate.now();
         ResponseEntity<GameResponseDto> gameRes = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
         assertNotNull(gameRes);
         assertEquals(HttpStatus.OK, gameRes.getStatusCode());
@@ -202,7 +201,7 @@ public class ReviewIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().getReviewId() > 0, "The ID should be positive");
         this.review_id = response.getBody().getReviewId();
-        //assertEquals(date, response.getBody().getReviewDate());
+        assertEquals(date, response.getBody().getReviewDate());
         assertEquals(REVIEW_DESCRIPTION, response.getBody().getDescription());
         assertEquals(0, response.getBody().getRating());
         assertEquals(REVIEW_GAME_RATING, response.getBody().getGameRating());
