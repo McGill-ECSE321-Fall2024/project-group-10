@@ -459,4 +459,125 @@ public class GameIntegrationTest {
         }
     }
 
+    @Test
+    @Order(9)
+    public void testGetGameByInvalidId() {
+        ResponseEntity<GameResponseDto> response = client.getForEntity("/games/0", GameResponseDto.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(10)
+    public void testGetGameByNonExistentId() {
+        ResponseEntity<GameResponseDto> response = client.getForEntity("/games/999", GameResponseDto.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    @Order(11)
+    public void testCreateGameWithInvalidPrice() {
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, -1, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(12)
+    public void testCreateGameWithInvalidTitle() {
+        GameRequestDto gameRequestDto = new GameRequestDto("", GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(13)
+    public void testCreateGameWithInvalidStatus() {
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, null, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(14)
+    public void testUpdateGameWithInvalidId() {
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/9999", HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    @Order(15)
+    public void testupdateGameWithInvalidPrice() {
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, -1, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(16)
+    public void testupdateGameWithInvalidTitle() {
+        GameRequestDto gameRequestDto = new GameRequestDto("", GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(17)
+    public void testupdateGameWithInvalidStatus() {
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, null, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(18)
+    public void testAddInvalidCategoryToGame() {
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/category/" + this.game_id + "/9999", HttpMethod.PUT, null, GameResponseDto.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    @Order(19)
+    public void testAddInvalidPlatformToGame() {
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/platform/" + this.game_id + "/9999", HttpMethod.PUT, null, GameResponseDto.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    @Order(20)
+    public void testGetGameWithInvalidTitle() {
+        ResponseEntity<GameListDto> response = client.getForEntity("/games/Title/" + " ", GameListDto.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(21)
+    public void testGetGameWithInvalidStatus() {
+        ResponseEntity<GameListDto> response = client.getForEntity("/games/Status/" + " ", GameListDto.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(22)
+    public void testDeleteGame() {
+
+        ResponseEntity<GameResponseDto> getResponse = client.getForEntity("/games/" + this.game_id, GameResponseDto.class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());        
+
+        ResponseEntity<Void> response = client.exchange("/games/" + this.game_id, HttpMethod.DELETE, null, Void.class);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        ResponseEntity<GameResponseDto> invalidResp = client.getForEntity("/games/" + this.game_id, GameResponseDto.class);
+        assertEquals(HttpStatus.NOT_FOUND, invalidResp.getStatusCode());
+    }
+
+    @Test
+    @Order(23)
+    public void testDeleteGameWithInvalidId() {
+        ResponseEntity<Void> response = client.exchange("/games/9999", HttpMethod.DELETE, null, Void.class);
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
 }

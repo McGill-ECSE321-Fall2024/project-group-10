@@ -119,9 +119,6 @@ public class GameController { // TODO still have to take into account inventory
 
         return GameResponseDto.create(gameService.findGameById(game_id));
     }
-    
-    // Add delete category and platform
-    // Get games by category and platform
 
     @GetMapping("/games/Title/{Title}")
     public GameListDto getGamesByTitle(@PathVariable String Title) {
@@ -146,7 +143,7 @@ public class GameController { // TODO still have to take into account inventory
     }
 
     @PostMapping("/games/specificGame/{game_id}")
-    public void postMethodName(@RequestParam int game_id, @RequestParam int numberOfCopies) {
+    public void createSpecificGame(@RequestParam int game_id, @RequestParam int numberOfCopies) {
         Game game = gameService.findGameById(game_id);
         for (int i = 0; i < numberOfCopies; i++) {
             specificGameService.createSpecificGame(game);

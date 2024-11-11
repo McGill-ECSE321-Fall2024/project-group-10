@@ -77,6 +77,7 @@ public class GameService {
 
     @Transactional
     public Iterable<Game> getGamesByTitle(String title) {
+        System.out.println("Using Title " + title+" OUGABOGA");
         if (isEmpty(title)) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Title cannot be empty or null");
         }
