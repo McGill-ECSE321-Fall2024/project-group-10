@@ -27,9 +27,8 @@ public class ReviewRequestDto {
     public ReviewRequestDto() {
     }
 
-    public ReviewRequestDto( String description, int rating, GameRating gameRating, Integer gameId, String customerEmail) {
+    public ReviewRequestDto( String description, GameRating gameRating, Integer gameId, String customerEmail) {
         this.description = description;
-        this.rating = rating;
         this.gameRating = gameRating;
         this.gameId = gameId;
         this.customerEmail = customerEmail;
