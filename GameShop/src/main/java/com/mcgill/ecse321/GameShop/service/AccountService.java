@@ -73,7 +73,7 @@ public class AccountService {
         Account account = accountRepository.findByEmail(email);
         
         if (account != null){
-            throw new GameShopException(HttpStatus.NOT_FOUND,
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
 					String.format("Account with email %s already exists.", email));
         }
 
@@ -175,15 +175,10 @@ public class AccountService {
     public Account updateAccount(String email, String username, String password, String phoneNumber, String address){
         Account account = getAccountByEmail(email);
         //ensure that the account exists
-        if (account!= null){
-            account.setUsername(username);
-            account.setPassword(password);
-            account.setPhoneNumber(phoneNumber);
-            account.setAddress(address);
-        } else{
-            throw new GameShopException(HttpStatus.NOT_FOUND,
-            String.format("Account with email %s does not exist.", email));
-        }
+        account.setUsername(username);
+        account.setPassword(password);
+        account.setPhoneNumber(phoneNumber);
+        account.setAddress(address);
         
         return accountRepository.save(account);
     }
@@ -244,12 +239,8 @@ public class AccountService {
             throw new GameShopException(HttpStatus.NOT_FOUND,
             String.format("Account with email %s does not exist.", email));
         } else{
-            Iterable<WishList> wishlists = wishListRepository.findAll();
-            for (WishList wishlist: wishlists){
-            if (wishlist.getCustomer().getEmail().equals(email)){
-                wishlistToReturn = wishlist;
-            }
-        }
+            WishList wishlist = wishListRepository.findByCustomer(customer);
+            wishlistToReturn = wishlist;
         }
                 return wishlistToReturn;
     }

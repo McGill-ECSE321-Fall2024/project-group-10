@@ -96,6 +96,7 @@ public class AccountServiceTests {
     private static final String UPDATED_CUSTOMER_PHONE_NUMBER = "+1 (438) 123-4567";
     private static final String UPDATED_CUSTOMER_ADDRESS = "1234 rue: Sainte-Catherine";
 
+
     @Test
     public void testCreateValidCustomer() {
         //Arrange
@@ -139,6 +140,16 @@ public class AccountServiceTests {
         assertEquals(MANAGER_ADDRESS, createdManager.getAddress());
 
         verify(mockManagerRepository, times(1)).save(createdManager);
+    }
+
+    @Test
+    public void testCreateManagerWithDuplicateEmail(){
+        when(mockAccountRepository.findByEmail(MANAGER_EMAIL+"z")).thenReturn(new Manager(MANAGER_EMAIL+"z", MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE_NUMBER, MANAGER_ADDRESS));
+        GameShopException exception = assertThrows(GameShopException.class, () -> accountService.createManager(MANAGER_EMAIL+"z", MANAGER_USERNAME + "z", MANAGER_PASSWORD + "z", MANAGER_PHONE_NUMBER + "z", MANAGER_ADDRESS + "z"));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Account with email " + MANAGER_EMAIL+"z" + " already exists.", exception.getMessage());
+        verify(mockManagerRepository, never()).save(any(Manager.class));
+        verify(mockAccountRepository, times(1)).findByEmail(MANAGER_EMAIL+"z");
     }
 
 
@@ -385,6 +396,15 @@ public class AccountServiceTests {
     }
 
     @Test
+    public void testGetManagerWithNoManager(){
+        when(mockAccountRepository.findAll()).thenReturn(java.util.List.of());
+        GameShopException exception = assertThrows(GameShopException.class, () -> accountService.getManager());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Manager does not exist", exception.getMessage());
+        verify(mockAccountRepository, times(1)).findAll();
+    }
+
+    @Test
     public void testGetAllEmployees(){
         //Arrange
         Employee employee = new Employee(EMPLOYEE_EMAIL + "l", EMPLOYEE_USERNAME, EMPLOYEE_PASSWORD, EMPLOYEE_PHONE_NUMBER, EMPLOYEE_ADDRESS);
@@ -518,6 +538,34 @@ public class AccountServiceTests {
         assertEquals("A manager already exists", exception.getMessage());
         verify(mockManagerRepository, times(2)).count();
     }
+
+    @Test
+    public void testGetWishListWithValidCustomerEmail(){
+        //Arrange
+        Customer customer = new Customer(CUSTOMER_EMAIL + "wk", CUSTOMER_USERNAME, CUSTOMER_PASSWORD, CUSTOMER_PHONE_NUMBER, CUSTOMER_ADDRESS, new Cart());
+        WishList wishlist = new WishList(String.format("%s"+"wk", CUSTOMER_EMAIL), customer);
+        when(mockCustomerRepository.findByEmail(CUSTOMER_EMAIL + "wk")).thenReturn(customer);
+        when(mockWishListRepository.findByCustomer(customer)).thenReturn(wishlist);
+
+        //Act
+        WishList foundWishList = accountService.getWishlistByCustomerEmail(CUSTOMER_EMAIL + "wk");
+
+        //Assert
+        assertNotNull(foundWishList);
+        assertEquals(foundWishList, foundWishList);
+        verify(mockCustomerRepository, times(1)).findByEmail(CUSTOMER_EMAIL + "wk");
+    }
+
+    @Test
+    public void testGetWishListWithInvalidCustomerEmail(){
+        when(mockCustomerRepository.findByEmail(CUSTOMER_EMAIL + "wkj")).thenReturn(null);
+        GameShopException exception = assertThrows(GameShopException.class, () -> accountService.getWishlistByCustomerEmail(CUSTOMER_EMAIL + "wkj"));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Account with email " + CUSTOMER_EMAIL + "wkj does not exist.", exception.getMessage());
+        verify(mockCustomerRepository, times(1)).findByEmail(CUSTOMER_EMAIL + "wkj");
+    }
+
+
 
 
 
