@@ -35,8 +35,8 @@ public class PromotionController {
         Promotion promotion = promotionService.createPromotion(
                 request.getDescription(),
                 request.getDiscountRate(),
-                request.getStartDate(),
-                request.getEndDate(),
+                request.getStartLocalDate(),
+                request.getEndLocalDate(),
                 request.getManagerEmail(),
                 request.getGameIds()
         );
@@ -67,8 +67,8 @@ public class PromotionController {
                 id,
                 request.getDescription(),
                 request.getDiscountRate(),
-                request.getStartDate(),
-                request.getEndDate(),
+                request.getStartLocalDate(),
+                request.getEndLocalDate(),
                 request.getGameIds()
         );
         return new PromotionResponseDto(promotion);
