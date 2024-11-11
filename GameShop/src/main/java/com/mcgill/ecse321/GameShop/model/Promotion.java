@@ -14,7 +14,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 // line 100 "../../../../../../model.ump"
 // line 250 "../../../../../../model.ump"
@@ -37,8 +37,8 @@ public class Promotion {
   private int promotion_id;
   private String description;
   private int discountRate;
-  private Date startDate;
-  private Date endDate;
+  private LocalDate startLocalDate;
+  private LocalDate endLocalDate;
 
   // Promotion Associations
   @ManyToMany(fetch = FetchType.EAGER)
@@ -51,11 +51,11 @@ public class Promotion {
   // CONSTRUCTOR
   // ------------------------
 
-  public Promotion(String aDescription, int aDiscountRate, Date aStartDate, Date aEndDate, Manager aManager) {
+  public Promotion(String aDescription, int aDiscountRate, LocalDate aStartLocalDate, LocalDate aEndLocalDate, Manager aManager) {
     description = aDescription;
     discountRate = aDiscountRate;
-    startDate = aStartDate;
-    endDate = aEndDate;
+    startLocalDate = aStartLocalDate;
+    endLocalDate = aEndLocalDate;
     games = new ArrayList<Game>();
     if (!setManager(aManager)) {
       throw new RuntimeException(
@@ -102,16 +102,16 @@ public class Promotion {
     return wasSet;
   }
 
-  public boolean setStartDate(Date aStartDate) {
+  public boolean setStartLocalDate(LocalDate aStartLocalDate) {
     boolean wasSet = false;
-    startDate = aStartDate;
+    startLocalDate = aStartLocalDate;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setEndDate(Date aEndDate) {
+  public boolean setEndLocalDate(LocalDate aEndLocalDate) {
     boolean wasSet = false;
-    endDate = aEndDate;
+    endLocalDate = aEndLocalDate;
     wasSet = true;
     return wasSet;
   }
@@ -138,12 +138,12 @@ public class Promotion {
     return discountRate;
   }
 
-  public Date getStartDate() {
-    return startDate;
+  public LocalDate getStartLocalDate() {
+    return startLocalDate;
   }
 
-  public Date getEndDate() {
-    return endDate;
+  public LocalDate getEndLocalDate() {
+    return endLocalDate;
   }
 
   /* Code from template association_GetMany */
@@ -257,13 +257,13 @@ public class Promotion {
         "promotion_id" + ":" + getPromotion_id() + "," +
         "description" + ":" + getDescription() + "," +
         "discountRate" + ":" + getDiscountRate() + "]" + System.getProperties().getProperty("line.separator") +
-        "  " + "startDate" + "="
-        + (getStartDate() != null
-            ? !getStartDate().equals(this) ? getStartDate().toString().replaceAll("  ", "    ") : "this"
+        "  " + "startLocalDate" + "="
+        + (getStartLocalDate() != null
+            ? !getStartLocalDate().equals(this) ? getStartLocalDate().toString().replaceAll("  ", "    ") : "this"
             : "null")
         + System.getProperties().getProperty("line.separator") +
-        "  " + "endDate" + "="
-        + (getEndDate() != null ? !getEndDate().equals(this) ? getEndDate().toString().replaceAll("  ", "    ") : "this"
+        "  " + "endLocalDate" + "="
+        + (getEndLocalDate() != null ? !getEndLocalDate().equals(this) ? getEndLocalDate().toString().replaceAll("  ", "    ") : "this"
             : "null")
         + System.getProperties().getProperty("line.separator") +
         "  " + "manager = "

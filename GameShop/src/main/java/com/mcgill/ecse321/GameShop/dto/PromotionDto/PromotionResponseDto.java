@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.dto.PromotionDto;
 
-import java.sql.Date;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,8 +13,8 @@ public class PromotionResponseDto {
     private int promotionId;
     private String description;
     private int discountRate;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startLocalDate;
+    private LocalDate endLocalDate;
     private String managerEmail;
     private List<GameSummaryDto> games;
 
@@ -24,8 +25,8 @@ public class PromotionResponseDto {
         this.promotionId = promotion.getPromotion_id();
         this.description = promotion.getDescription();
         this.discountRate = promotion.getDiscountRate();
-        this.startDate = promotion.getStartDate();
-        this.endDate = promotion.getEndDate();
+        this.startLocalDate = promotion.getStartLocalDate();
+        this.endLocalDate = promotion.getEndLocalDate();
         this.managerEmail = promotion.getManager().getEmail();
         // Convert associated games to GameSummaryDto
         this.games = promotion.getGames().stream()
@@ -47,20 +48,20 @@ public class PromotionResponseDto {
         return discountRate;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public LocalDate getStartLocalDate() {
+        return startLocalDate;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public LocalDate getEndLocalDate() {
+        return endLocalDate;
     }
 
     public String getManagerEmail() {
         return managerEmail;
     }
 
-    //public List<GameSummaryDto> getGames() {
-    //    return games;
-    //}
+    public List<GameSummaryDto> getGames() {
+       return games;
+    }
 }
 

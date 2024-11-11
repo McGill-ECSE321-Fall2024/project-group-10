@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,8 +102,8 @@ public class GameRepositoryTests {
         game = gameRepository.save(game);
 
         // Create and save a promotion
-        Date startDate = Date.valueOf("2021-10-10");
-        Date endDate = Date.valueOf("2021-10-20");
+        LocalDate startDate = LocalDate.parse("2021-10-10");
+        LocalDate endDate = LocalDate.parse("2021-10-20");
         Promotion createdPromotion = new Promotion("Promotion", 10, startDate, endDate, createdManager);
         createdPromotion.addGame(game);
         createdPromotion = promotionRepository.save(createdPromotion);

@@ -1,6 +1,6 @@
 package com.mcgill.ecse321.GameShop.dto.PromotionDto;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.validation.constraints.Email;
@@ -18,11 +18,11 @@ public class PromotionRequestDto {
     @Max(value = 100, message = "Discount rate must be between 0 and 100")
     private int discountRate;
 
-    @NotNull(message = "Start date cannot be null")
-    private Date startDate;
+    @NotNull(message = "Start LocalDate  cannot be null")
+    private LocalDate  startLocalDate ;
 
-    @NotNull(message = "End date cannot be null")
-    private Date endDate;
+    @NotNull(message = "End LocalDate  cannot be null")
+    private LocalDate  endLocalDate ;
 
     @Email(message = "Email should be valid")
     @NotBlank(message = "Manager email cannot be empty")
@@ -34,11 +34,11 @@ public class PromotionRequestDto {
     public PromotionRequestDto() {
     }
 
-    public PromotionRequestDto(String description, int discountRate, Date startDate, Date endDate, String managerEmail, List<Integer> gameIds) {
+    public PromotionRequestDto(String description, int discountRate, LocalDate  startLocalDate , LocalDate  endLocalDate , String managerEmail, List<Integer> gameIds) {
         this.description = description;
         this.discountRate = discountRate;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.startLocalDate  = startLocalDate ;
+        this.endLocalDate  = endLocalDate ;
         this.managerEmail = managerEmail;
         this.gameIds = gameIds;
     }
@@ -61,20 +61,20 @@ public class PromotionRequestDto {
         this.discountRate = discountRate;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public LocalDate  getStartLocalDate () {
+        return startLocalDate ;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setStartLocalDate (LocalDate  startLocalDate ) {
+        this.startLocalDate  = startLocalDate ;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public LocalDate  getEndLocalDate () {
+        return endLocalDate ;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setEndLocalDate (LocalDate  endLocalDate ) {
+        this.endLocalDate  = endLocalDate ;
     }
 
     public String getManagerEmail() {

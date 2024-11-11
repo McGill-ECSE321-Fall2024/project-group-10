@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.service;
 
-import java.sql.Date;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,8 +61,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager1@example.com";
         String description = "Summer Sale";
         int discountRate = 20;
-        Date startDate = Date.valueOf("2023-07-01");
-        Date endDate = Date.valueOf("2023-07-31");
+        LocalDate startDate = LocalDate.parse("2023-07-01");
+        LocalDate endDate = LocalDate.parse("2023-07-31");
         List<Integer> gameIds = Arrays.asList(10001, 10002);
 
         Manager manager = new Manager(managerEmail, "managerUser1", "managerPass1", "123-456-7890",
@@ -95,8 +96,8 @@ public class PromotionServiceTests {
         assertEquals(promotionId, createdPromotion.getPromotion_id());
         assertEquals(description, createdPromotion.getDescription());
         assertEquals(discountRate, createdPromotion.getDiscountRate());
-        assertEquals(startDate, createdPromotion.getStartDate());
-        assertEquals(endDate, createdPromotion.getEndDate());
+        assertEquals(startDate, createdPromotion.getStartLocalDate());
+        assertEquals(endDate, createdPromotion.getEndLocalDate());
         assertEquals(manager, createdPromotion.getManager());
         assertEquals(2, createdPromotion.getGames().size());
         assertTrue(createdPromotion.getGames().contains(game1));
@@ -115,8 +116,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager2@example.com";
         String description = null;
         int discountRate = 20;
-        Date startDate = Date.valueOf("2023-07-01");
-        Date endDate = Date.valueOf("2023-07-31");
+        LocalDate startDate = LocalDate.parse("2023-07-01");
+        LocalDate endDate = LocalDate.parse("2023-07-31");
         List<Integer> gameIds = Arrays.asList(103, 104);
 
         // Act & Assert
@@ -146,8 +147,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager3@example.com";
         String description = "Autumn Sale";
         int discountRate = -10; // Invalid
-        Date startDate = Date.valueOf("2023-09-01");
-        Date endDate = Date.valueOf("2023-09-30");
+        LocalDate startDate = LocalDate.parse("2023-09-01");
+        LocalDate endDate = LocalDate.parse("2023-09-30");
         List<Integer> gameIds = Arrays.asList(105, 106);
 
         // Act & Assert
@@ -177,8 +178,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager4@example.com";
         String description = "Winter Sale";
         int discountRate = 20;
-        Date startDate = null;
-        Date endDate = Date.valueOf("2023-12-31");
+        LocalDate startDate = null;
+        LocalDate endDate = LocalDate.parse("2023-12-31");
         List<Integer> gameIds = Arrays.asList(107, 108);
 
         // Act & Assert
@@ -194,7 +195,7 @@ public class PromotionServiceTests {
         });
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Start date and end date cannot be null", exception.getMessage());
+        assertEquals("Start LocalDate and end LocalDate cannot be null", exception.getMessage());
 
         verify(managerRepository, never()).findByEmail(anyString());
         verify(gameRepository, never()).findById(anyInt());
@@ -208,8 +209,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager5@example.com";
         String description = "Flash Sale";
         int discountRate = 25;
-        Date startDate = Date.valueOf("2023-10-01");
-        Date endDate = Date.valueOf("2023-09-30"); // End date before start date
+        LocalDate startDate = LocalDate.parse("2023-10-01");
+        LocalDate endDate = LocalDate.parse("2023-09-30"); // End LocalDate before start LocalDate
         List<Integer> gameIds = Arrays.asList(109, 110);
 
         // Act & Assert
@@ -225,7 +226,7 @@ public class PromotionServiceTests {
         });
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Start date cannot be after end date", exception.getMessage());
+        assertEquals("Start LocalDate cannot be after end LocalDate", exception.getMessage());
 
         verify(managerRepository, never()).findByEmail(anyString());
         verify(gameRepository, never()).findById(anyInt());
@@ -238,8 +239,8 @@ public class PromotionServiceTests {
         String invalidManagerEmail = "invalidmanager@example.com";
         String description = "Summer Sale";
         int discountRate = 20;
-        Date startDate = Date.valueOf("2023-07-01");
-        Date endDate = Date.valueOf("2023-07-31");
+        LocalDate startDate = LocalDate.parse("2023-07-01");
+        LocalDate endDate = LocalDate.parse("2023-07-31");
         List<Integer> gameIds = Arrays.asList(111, 112);
 
         when(managerRepository.findByEmail(invalidManagerEmail)).thenReturn(null);
@@ -271,8 +272,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager6@example.com";
         String description = "Black Friday Sale";
         int discountRate = 30;
-        Date startDate = Date.valueOf("2023-11-25");
-        Date endDate = Date.valueOf("2023-11-30");
+        LocalDate startDate = LocalDate.parse("2023-11-25");
+        LocalDate endDate = LocalDate.parse("2023-11-30");
         List<Integer> gameIds = null;
 
         // Act & Assert
@@ -302,8 +303,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager7@example.com";
         String description = "Cyber Monday Sale";
         int discountRate = 35;
-        Date startDate = Date.valueOf("2023-11-27");
-        Date endDate = Date.valueOf("2023-12-02");
+        LocalDate startDate = LocalDate.parse("2023-11-27");
+        LocalDate endDate = LocalDate.parse("2023-12-02");
         List<Integer> gameIds = Arrays.asList(113); // Game ID 113 does not exist
 
         Manager manager = new Manager(managerEmail, "managerUser7", "managerPass7", "123-456-7890", "123 Manager Street");
@@ -355,7 +356,7 @@ public class PromotionServiceTests {
         int promotionId = 1004;
         String managerEmail = "manager1004@example.com";
         Manager manager = new Manager(managerEmail, "managerUser1004", "managerPass1004", "123-456-7890", "123 Manager Street");
-        Promotion promotion = new Promotion("Promo1004", 15, Date.valueOf("2023-03-01"), Date.valueOf("2023-03-31"), manager);
+        Promotion promotion = new Promotion("Promo1004", 15, LocalDate.parse("2023-03-01"), LocalDate.parse("2023-03-31"), manager);
         promotion.setPromotion_id(promotionId);
 
         when(promotionRepository.findById(promotionId)).thenReturn(promotion);
@@ -380,14 +381,14 @@ public class PromotionServiceTests {
         String managerEmail = "manager8@example.com";
         String description = "Holiday Sale";
         int discountRate = 40;
-        Date startDate = Date.valueOf("2024-12-01");
-        Date endDate = Date.valueOf("2024-12-31");
+        LocalDate startDate = LocalDate.parse("2024-12-01");
+        LocalDate endDate = LocalDate.parse("2024-12-31");
         List<Integer> gameIds = Arrays.asList(114);
 
         String updatedDescription = "New Year Sale";
         int updatedDiscountRate = 50;
-        Date updatedStartDate = Date.valueOf("2024-01-01");
-        Date updatedEndDate = Date.valueOf("2024-01-31");
+        LocalDate updatedStartDate = LocalDate.parse("2024-01-01");
+        LocalDate updatedEndDate = LocalDate.parse("2024-01-31");
         List<Integer> updatedGameIds = Arrays.asList(114);
 
         Manager manager = new Manager(managerEmail, "managerUser8", "managerPass8", "123-456-7890", "123 Manager Street");
@@ -420,8 +421,8 @@ public class PromotionServiceTests {
         assertEquals(promotionId, updatedPromotion.getPromotion_id());
         assertEquals(updatedDescription, updatedPromotion.getDescription());
         assertEquals(updatedDiscountRate, updatedPromotion.getDiscountRate());
-        assertEquals(updatedStartDate, updatedPromotion.getStartDate());
-        assertEquals(updatedEndDate, updatedPromotion.getEndDate());
+        assertEquals(updatedStartDate, updatedPromotion.getStartLocalDate());
+        assertEquals(updatedEndDate, updatedPromotion.getEndLocalDate());
         assertEquals(1, updatedPromotion.getGames().size());
         assertTrue(updatedPromotion.getGames().contains(game1));
 
@@ -436,8 +437,8 @@ public class PromotionServiceTests {
         int invalidPromotionId = 1000;
         String updatedDescription = "New Year Sale";
         int updatedDiscountRate = 50;
-        Date updatedStartDate = Date.valueOf("2024-01-01");
-        Date updatedEndDate = Date.valueOf("2024-01-31");
+        LocalDate updatedStartDate = LocalDate.parse("2024-01-01");
+        LocalDate updatedEndDate = LocalDate.parse("2024-01-31");
         List<Integer> updatedGameIds = Arrays.asList(116);
 
         when(promotionRepository.findById(invalidPromotionId)).thenReturn(null);
@@ -469,14 +470,14 @@ public class PromotionServiceTests {
         String managerEmail = "manager9@example.com";
         String description = "Spring Sale";
         int discountRate = 15;
-        Date startDate = Date.valueOf("2024-03-01");
-        Date endDate = Date.valueOf("2024-03-31");
+        LocalDate startDate = LocalDate.parse("2024-03-01");
+        LocalDate endDate = LocalDate.parse("2024-03-31");
         List<Integer> gameIds = Arrays.asList(117);
 
         String updatedDescription = "Updated Spring Sale";
         int invalidDiscountRate = -5;
-        Date updatedStartDate = Date.valueOf("2024-04-01");
-        Date updatedEndDate = Date.valueOf("2024-04-30");
+        LocalDate updatedStartDate = LocalDate.parse("2024-04-01");
+        LocalDate updatedEndDate = LocalDate.parse("2024-04-30");
         List<Integer> updatedGameIds = Arrays.asList(117);
 
         Manager manager = new Manager(managerEmail, "managerUser9", "managerPass9", "123-456-7890", "123 Manager Street");
@@ -517,8 +518,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager10@example.com";
         String description = "Mega Sale";
         int discountRate = 50;
-        Date startDate = Date.valueOf("2024-05-01");
-        Date endDate = Date.valueOf("2024-05-31");
+        LocalDate startDate = LocalDate.parse("2024-05-01");
+        LocalDate endDate = LocalDate.parse("2024-05-31");
         List<Integer> gameIds = Arrays.asList(118, 119);
 
         Manager manager = new Manager(managerEmail, "managerUser10", "managerPass10", "123-456-7890", "123 Manager Street");
@@ -580,9 +581,9 @@ public class PromotionServiceTests {
         int promotionId1 = 2001;
         int promotionId2 = 2002;
         Manager manager = new Manager("managerAll@example.com", "managerAll", "passAll", "123-456-7890", "123 All Street");
-        Promotion promotion1 = new Promotion("Promo1", 10, Date.valueOf("2023-01-01"), Date.valueOf("2023-01-31"), manager);
+        Promotion promotion1 = new Promotion("Promo1", 10, LocalDate.parse("2023-01-01"), LocalDate.parse("2023-01-31"), manager);
         promotion1.setPromotion_id(promotionId1);
-        Promotion promotion2 = new Promotion("Promo2", 20, Date.valueOf("2023-02-01"), Date.valueOf("2023-02-28"), manager);
+        Promotion promotion2 = new Promotion("Promo2", 20, LocalDate.parse("2023-02-01"), LocalDate.parse("2023-02-28"), manager);
         promotion2.setPromotion_id(promotionId2);
         List<Promotion> promotionList = Arrays.asList(promotion1, promotion2);
 
@@ -611,8 +612,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager11@example.com";
         String description = "Holiday Sale";
         int discountRate = 45;
-        Date startDate = Date.valueOf("2024-12-01");
-        Date endDate = Date.valueOf("2024-12-31");
+        LocalDate startDate = LocalDate.parse("2024-12-01");
+        LocalDate endDate = LocalDate.parse("2024-12-31");
         List<Integer> gameIds = Arrays.asList(120, 121);
 
         Manager manager = new Manager(managerEmail, "managerUser11", "managerPass11", "123-456-7890", "123 Manager Street");
@@ -665,8 +666,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager12@example.com";
         String description = "Clearance Sale";
         int discountRate = 60;
-        Date startDate = Date.valueOf("2024-06-01");
-        Date endDate = Date.valueOf("2024-06-30");
+        LocalDate startDate = LocalDate.parse("2024-06-01");
+        LocalDate endDate = LocalDate.parse("2024-06-30");
         List<Integer> gameIds = Arrays.asList(122);
 
         Game game = new Game("Game10", "Description10", 140, GameStatus.InStock, 90, "photoUrl10");
@@ -696,8 +697,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager13@example.com";
         String description = "Exclusive Sale";
         int discountRate = 55;
-        Date startDate = Date.valueOf("2024-07-01");
-        Date endDate = Date.valueOf("2024-07-31");
+        LocalDate startDate = LocalDate.parse("2024-07-01");
+        LocalDate endDate = LocalDate.parse("2024-07-31");
         List<Integer> gameIds = Arrays.asList(123);
 
         Manager manager = new Manager(managerEmail, "managerUser13", "managerPass13", "123-456-7890", "123 Manager Street");
@@ -728,8 +729,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager14@example.com";
         String description = "New Product Launch Sale";
         int discountRate = 25;
-        Date startDate = Date.valueOf("2024-09-01");
-        Date endDate = Date.valueOf("2024-09-30");
+        LocalDate startDate = LocalDate.parse("2024-09-01");
+        LocalDate endDate = LocalDate.parse("2024-09-30");
         List<Integer> gameIds = Arrays.asList(124);
 
         Game game = new Game("Game11", "Description11", 150, GameStatus.InStock, 100, "photoUrl11");
@@ -763,8 +764,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager15@example.com";
         String description = "Limited Time Offer";
         int discountRate = 35;
-        Date startDate = Date.valueOf("2024-10-01");
-        Date endDate = Date.valueOf("2024-10-31");
+        LocalDate startDate = LocalDate.parse("2024-10-01");
+        LocalDate endDate = LocalDate.parse("2024-10-31");
         List<Integer> gameIds = Arrays.asList(125);
 
         Game game = new Game("Game12", "Description12", 160, GameStatus.InStock, 110, "photoUrl12");
@@ -820,8 +821,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager16@example.com";
         String description = "Flash Discount";
         int discountRate = 40;
-        Date startDate = Date.valueOf("2024-11-01");
-        Date endDate = Date.valueOf("2024-11-30");
+        LocalDate startDate = LocalDate.parse("2024-11-01");
+        LocalDate endDate = LocalDate.parse("2024-11-30");
         List<Integer> gameIds = Arrays.asList(126);
 
         Game game = new Game("Game13", "Description13", 170, GameStatus.InStock, 120, "photoUrl13");
@@ -875,8 +876,8 @@ public class PromotionServiceTests {
         String managerEmail = "manager17@example.com";
         String description = "Mega Discount";
         int discountRate = 50;
-        Date startDate = Date.valueOf("2024-12-01");
-        Date endDate = Date.valueOf("2024-12-31");
+        LocalDate startDate = LocalDate.parse("2024-12-01");
+        LocalDate endDate = LocalDate.parse("2024-12-31");
         List<Integer> gameIds = Arrays.asList(127);
 
         Game game = new Game("Game14", "Description14", 180, GameStatus.InStock, 130, "photoUrl14");
