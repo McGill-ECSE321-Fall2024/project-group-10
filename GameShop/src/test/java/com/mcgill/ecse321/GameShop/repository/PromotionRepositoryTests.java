@@ -1,6 +1,6 @@
 package com.mcgill.ecse321.GameShop.repository;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,8 +65,8 @@ public class PromotionRepositoryTests {
         createdGame = gameRepository.save(createdGame);
 
         // Create promotion
-        Date startDate = Date.valueOf("2021-10-10");
-        Date endDate = Date.valueOf("2021-10-20");
+        LocalDate startDate = LocalDate.parse("2021-10-10");
+        LocalDate endDate = LocalDate.parse("2021-10-20");
 
         Promotion createdPromotion = new Promotion("Promotion", 10, startDate, endDate, createdManager);
         createdPromotion.addGame(createdGame);
@@ -80,8 +80,8 @@ public class PromotionRepositoryTests {
         // Assertions
         assertEquals("Promotion", pulledPromotion.getDescription());
         assertEquals(10, pulledPromotion.getDiscountRate());
-        assertEquals(startDate, pulledPromotion.getStartDate());
-        assertEquals(endDate, pulledPromotion.getEndDate());
+        assertEquals(startDate, pulledPromotion.getStartLocalDate());
+        assertEquals(endDate, pulledPromotion.getEndLocalDate());
         assertEquals(createdGame.getGame_id(), pulledPromotion.getGames().get(0).getGame_id()); // Compare game IDs
         assertEquals(createdManager.getEmail(), pulledPromotion.getManager().getEmail()); // Compare manager emails
     }
@@ -107,8 +107,8 @@ public class PromotionRepositoryTests {
                 .save(new Game("Game 2", "Description 2", 60, GameStatus.InStock, 20, "http://example.com/game2.jpg"));
 
         // Create promotion
-        Date startDate = Date.valueOf("2022-01-01");
-        Date endDate = Date.valueOf("2022-01-10");
+        LocalDate startDate = LocalDate.parse("2022-01-01");
+        LocalDate endDate = LocalDate.parse("2022-01-10");
 
         Promotion promotion = new Promotion("Multiple Games Promotion", 15, startDate, endDate, createdManager);
         promotion.addGame(game1);
@@ -147,15 +147,15 @@ public class PromotionRepositoryTests {
         createdGame = gameRepository.save(createdGame);
 
         // Create first promotion
-        Date startDate1 = Date.valueOf("2022-01-01");
-        Date endDate1 = Date.valueOf("2022-01-10");
+        LocalDate startDate1 =LocalDate.parse("2022-01-01");
+        LocalDate endDate1 = LocalDate.parse("2022-01-10");
         Promotion firstPromotion = new Promotion("First Promotion", 10, startDate1, endDate1, createdManager);
         firstPromotion.addGame(createdGame);
         firstPromotion = promotionRepository.save(firstPromotion);
 
         // Create second promotion with overlapping dates
-        Date startDate2 = Date.valueOf("2022-01-05");
-        Date endDate2 = Date.valueOf("2022-01-15");
+        LocalDate startDate2 = LocalDate.parse("2022-01-05");
+        LocalDate endDate2 = LocalDate.parse("2022-01-15");
         Promotion secondPromotion = new Promotion("Second Promotion", 20, startDate2, endDate2, createdManager);
         secondPromotion.addGame(createdGame);
         secondPromotion = promotionRepository.save(secondPromotion);
