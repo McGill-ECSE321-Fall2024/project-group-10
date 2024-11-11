@@ -74,11 +74,10 @@ public class ReviewService {
         if (customer == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Customer with email %s not found", customerEmail));
         }
-        Date reviewDate = Date.valueOf(LocalDate.now());
+        LocalDate reviewDate = LocalDate.now();
         int rating = 0;
         // Create the review
         Review review = new Review(reviewDate, description, rating, gameRating, game, customer);
-        System.out.println("here");
         // Save and return the review
         return reviewRepository.save(review);
     }
@@ -140,10 +139,7 @@ public class ReviewService {
         if(isEmpty(email)) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Email cannot be empty or null");
         }
-        Customer customer = customerRepository.findByEmail(email);
-        if(customer == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
-        }
+        customerRepository.findByEmail(email);
         ArrayList<Review> reviews = new ArrayList<>();
         for (Review review : reviewRepository.findAll()) {
             if (review.getCustomer().getEmail().equals(email)) {

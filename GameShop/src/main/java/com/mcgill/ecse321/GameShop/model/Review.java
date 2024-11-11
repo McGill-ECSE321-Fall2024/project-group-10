@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 // line 49 "../../../../../../model.ump"
 // line 221 "../../../../../../model.ump"
@@ -40,7 +41,7 @@ public class Review {
   @Id
   @GeneratedValue
   private int review_id;
-  private Date reviewDate;
+  private LocalDate reviewDate;
   private String description;
   private int rating;
   private GameRating gameRating;
@@ -56,7 +57,7 @@ public class Review {
   // CONSTRUCTOR
   // ------------------------
 
-  public Review(Date aReviewDate, String aDescription, int aRating, GameRating aGameRating, Game aGame,
+  public Review(LocalDate aReviewDate, String aDescription, int aRating, GameRating aGameRating, Game aGame,
       Customer aCustomer) {
     reviewDate = aReviewDate;
     description = aDescription;
@@ -99,7 +100,7 @@ public class Review {
     return wasSet;
   }
 
-  public boolean setReviewDate(Date aReviewDate) {
+  public boolean setReviewDate(LocalDate aReviewDate) {
     boolean wasSet = false;
     reviewDate = aReviewDate;
     wasSet = true;
@@ -141,7 +142,7 @@ public class Review {
     return getWithReview_id(aReview_id) != null;
   }
 
-  public Date getReviewDate() {
+  public LocalDate getReviewDate() {
     return reviewDate;
   }
 
