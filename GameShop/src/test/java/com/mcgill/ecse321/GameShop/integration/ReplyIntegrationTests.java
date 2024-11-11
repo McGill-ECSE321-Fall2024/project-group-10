@@ -133,7 +133,6 @@ public class ReplyIntegrationTests {
         // Create a Review with Game and Customer
         ReviewRequestDto reviewRequest = new ReviewRequestDto(
             "Great game!",
-            5,
             GameRating.Five,
             gameId,
             customerEmail
@@ -389,29 +388,7 @@ public class ReplyIntegrationTests {
         assertTrue(responseBody.contains("Reply date cannot be null"));
     }
 
-    @Test
-    @Order(12)
-    public void testCreateReplyWithNullReviewRating() {
-        // Arrange
-        ReplyRequestDto replyRequest = new ReplyRequestDto(
-            Date.valueOf("2023-10-07"),
-            "Thank you!",
-            null, // Null review rating
-            reviewId,
-            managerEmail
-        );
-
-        // Act
-        ResponseEntity<String> response = client.postForEntity("/replies", replyRequest, String.class);
-
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String responseBody = response.getBody();
-        assertNotNull(responseBody);
-        assertTrue(responseBody.contains("Review rating cannot be null"));
-    }
-
+    
     @Test
     @Order(13)
     public void testCreateReplyWithNullReviewId() {

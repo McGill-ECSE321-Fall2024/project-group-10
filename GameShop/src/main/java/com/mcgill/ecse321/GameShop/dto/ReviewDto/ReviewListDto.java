@@ -6,6 +6,8 @@ public class ReviewListDto {
 
     private List<ReviewSummaryDto> reviews;
 
+    protected ReviewListDto() {
+    }
     public ReviewListDto(List<ReviewSummaryDto> reviews) {
         this.reviews = reviews;
     }
