@@ -37,9 +37,6 @@ public class GameService {
     
     @Transactional
     public Game createGame(String title, String aDescription, int aPrice, Game.GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl) {
-        // if (isEmpty(aPhotoUrl) || isEmpty(title) || isEmpty(aDescription) || aPrice < 0 || aStockQuantity < 0 || aGameStatus == null) {
-        //     throw new GameShopException(HttpStatus.BAD_REQUEST, "Constructor fields for Game cannot be empty, null, or negative");
-        // }
         if (isEmpty(title)) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Title cannot be empty or null");
         }
@@ -77,12 +74,10 @@ public class GameService {
 
     @Transactional
     public Iterable<Game> getGamesByTitle(String title) {
-        System.out.println("Using Title " + title+" OUGABOGA");
         if (isEmpty(title)) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Title cannot be empty or null");
         }
         Iterable<Game> games = gameRepository.findAllByTitle(title);
-        System.out.println("Using Title " + title + "GAmes found are: " + games);
         if (!games.iterator().hasNext()) { // Checks if games list is empty
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with title %s does not exist", title));
         }
@@ -96,30 +91,6 @@ public class GameService {
         // }
         // throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with title %s does not exist", title));
     }
-
-    // @Transactional 
-    // public Iterable<Game> getGamesByCategory(Category category){
-    //     Iterable<Game> games = this.getAllGames();
-    //     List<Game> gamesByCategory = new ArrayList<Game>();
-    //     for (Game game : games) {
-    //         if (game.getCategories().contains(category)) {
-    //             gamesByCategory.add(game);
-    //         }
-    //     }
-    //     return gamesByCategory;
-    // }
-
-    // @Transactional
-    // public Iterable<Game> getGamesByPlatform(Platform platform) {
-    //     Iterable<Game> games = this.getAllGames();
-    //     List<Game> gamesByPlatform = new ArrayList<Game>();
-    //     for (Game game : games) {
-    //         if (game.getPlatforms().contains(platform)) {
-    //             gamesByPlatform.add(game);
-    //         }
-    //     }
-    //     return gamesByPlatform;
-    // }
 
     @Transactional
     public Iterable<Game> getGamesByStatus(GameStatus status){
@@ -139,6 +110,23 @@ public class GameService {
         return gamesByStatus;
     }
     
+    @Transactional
+    public Iterable<Game> getGamesByStockQuantity(int stockQuantity) {
+        if (stockQuantity < 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Stock quantity cannot be negative");
+        }
+        Iterable<Game> games = this.getAllGames();
+        List<Game> gamesByStockQuantity = new ArrayList<Game>();
+        for (Game game : games) {
+            if (game.getStockQuantity() == stockQuantity) {
+                gamesByStockQuantity.add(game);
+            }
+        }
+        if(gamesByStockQuantity.isEmpty()){
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No games with the given stock quantity");
+        }
+        return gamesByStockQuantity;
+    }
 
     @Transactional
     public Iterable<Game> getAllGames() {
@@ -289,10 +277,11 @@ public class GameService {
     }
     
     @Transactional 
-    public void deleteGame(int game_id) {
+    public Game deleteGame(int game_id) {
         Game game = findGameById(game_id);
-        gameRepository.delete(game);
-
+        game.setGameStatus(GameStatus.Archived);
+        gameRepository.save(game);
+        return game;
     }
 
     @Transactional

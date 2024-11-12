@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-public class GameController { // TODO still have to take into account inventory
+public class GameController {
     
     @Autowired
     private GameService gameService;
@@ -53,7 +53,7 @@ public class GameController { // TODO still have to take into account inventory
     }
 
     @GetMapping("/games")
-    public GameListDto findAllGames() { // TODO needs to be checked for fixes
+    public GameListDto findAllGames() {
         List<GameSummaryDto> dtos = new ArrayList<GameSummaryDto>();
 
         for (Game game : gameService.getAllGames()) {
@@ -78,14 +78,14 @@ public class GameController { // TODO still have to take into account inventory
         return GameResponseDto.create(createdGame);
     }
 
-    @DeleteMapping("/games/{game_id}") // TODO, no soft delete for now, has to be implemented
-    // Upon archiving the app should require the owner to specify if the archived game should still appear in the catalogue
+    @DeleteMapping("/games/{game_id}")
+    // TODO for next delivaerable: Upon archiving the app should require the owner to specify if the archived game should still appear in the catalogue
     public void deleteGame(@PathVariable int game_id) {
         gameService.deleteGame(game_id);
     }
 
     @PutMapping("/games/{id}")
-    public GameResponseDto putMethod(@PathVariable int id, @RequestBody GameRequestDto request) { // TODO needs to be checked for fixes
+    public GameResponseDto putMethod(@PathVariable int id, @RequestBody GameRequestDto request) {
         
         Game game = gameService.findGameById(id);
 
@@ -100,11 +100,6 @@ public class GameController { // TODO still have to take into account inventory
 
         return new GameResponseDto(game);
     }
-    // @PutMapping("/ga mes/categories/{game_id}")
-    // public GameResponseDto updateListOfCategories(@PathVariable int id,@RequestBody GameRequestDto request) {
-    //     Game game = gameService.updateCategories(id, request.getCategories());
-    //     return GameResponseDto.create(game);
-    // }
 
     @PutMapping("/games/platform/{game_id}/{platform_id}")
     public GameResponseDto addPlatform(@PathVariable int game_id, @PathVariable int platform_id) {
@@ -130,10 +125,8 @@ public class GameController { // TODO still have to take into account inventory
         return new GameListDto(dtos);
     }
 
-
     @GetMapping("/games/Status/{status}")
     public GameListDto getGamesByStatus(@PathVariable GameStatus status) {
-        System.out.println("Searching by status: "+ status);
         Iterable<Game> games = gameService.getGamesByStatus(status);
         List<GameSummaryDto> dtos = new ArrayList<GameSummaryDto>();
         for (Game game : games) {
@@ -142,13 +135,26 @@ public class GameController { // TODO still have to take into account inventory
         return new GameListDto(dtos);
     }
 
-    @PostMapping("/games/specificGame/{game_id}")
-    public void createSpecificGame(@RequestParam int game_id, @RequestParam int numberOfCopies) {
+    @GetMapping("/games/SpecificGame/{stock_quantity}")
+    public GameListDto getGamesByStockQuantity(@PathVariable int stock_quantity) {
+        Iterable<Game> games = gameService.getGamesByStockQuantity(stock_quantity);
+        List<GameSummaryDto> dtos = new ArrayList<GameSummaryDto>();
+        for (Game game : games) {
+            dtos.add(new GameSummaryDto(game));
+        }
+        return new GameListDto(dtos);
+    }
+
+    @PutMapping("/games/specificGame/{game_id}/{numberOfCopies}")
+    public GameResponseDto createSpecificGame(@PathVariable int game_id, @PathVariable int numberOfCopies) {
         Game game = gameService.findGameById(game_id);
+        int count = numberOfCopies + game.getStockQuantity();
+        gameService.updateGameStockQuantity(game_id, count);
         for (int i = 0; i < numberOfCopies; i++) {
             specificGameService.createSpecificGame(game);
         }
+
+        return new GameResponseDto(game);
     }
-    
-    
+
 }

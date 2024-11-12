@@ -2,6 +2,7 @@ package com.mcgill.ecse321.GameShop.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Date;
@@ -25,6 +26,7 @@ import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformListDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformSummaryDto;
+import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameResponseDto;
 import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Platform;
@@ -32,6 +34,7 @@ import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CategoryRepository;
 import com.mcgill.ecse321.GameShop.repository.PlatformRepository;
+import com.mcgill.ecse321.GameShop.repository.SpecificGameRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 
@@ -75,6 +78,9 @@ public class GameIntegrationTest {
 
     @Autowired
     private PlatformRepository platformRepository;
+
+    @Autowired
+    private SpecificGameRepository specificGameRepository;
 
     private static final String GAME_TITLE = "Game Title";
     private static final String GAME_DESCRIPTION = "Game Description";
@@ -123,13 +129,14 @@ public class GameIntegrationTest {
         }
 
         managerRepository.deleteAll();
+        specificGameRepository.deleteAll();
         gameRepository.deleteAll();
         categoryRepository.deleteAll();
         platformRepository.deleteAll();
         accountRepo.deleteAll();
     }
 
-    @SuppressWarnings("null") // TODO check this later
+    @SuppressWarnings("null")
     @Test
     @Order(1)
     public void testCreateValidGame() {
@@ -190,9 +197,6 @@ public class GameIntegrationTest {
 
         this.platformIds = response.getBody().getPlatforms().getPlatforms();
         this.categoryIds = response.getBody().getCategories().getCategories();
-
-        System.out.println("OriginalPlatforms: " + this.platformIds.size());
-        System.out.println("OriginalCategories: " + this.categoryIds.size());
 
     }
 
@@ -275,9 +279,6 @@ public class GameIntegrationTest {
     @Order(4)
     public void testUpdateGame() {
 
-        System.out.println("BEEGGGGGPlatforms: " + this.platformIds.size());
-        System.out.println("BEE+++EEEEEGCategories: " + this.categoryIds.size());
-
         String newTitle = "New Title";
         String newDescription = "New Description";
         int newPrice = 100;
@@ -348,9 +349,6 @@ public class GameIntegrationTest {
         this.platformIds = updateResponse.getBody().getPlatforms().getPlatforms();
         this.categoryIds = updateResponse.getBody().getCategories().getCategories();
 
-        System.out.println("Platforms: " + this.platformIds.size());
-        System.out.println("Categories: " + this.categoryIds.size());
-
     }
 
     @Test
@@ -382,7 +380,6 @@ public class GameIntegrationTest {
         assertEquals(returned_categoryIds.size(), this.categoryIds.size() + 1);
 
         this.categoryIds = response.getBody().getCategories().getCategories();
-        System.out.println("hjkadshjkdsajkhdaskjhsadkjhdaskhj: " + this.categoryIds.size());
     }
 
     @Test
@@ -414,7 +411,6 @@ public class GameIntegrationTest {
         assertEquals(returned_platformIds.size(), this.platformIds.size() + 1);
 
         this.platformIds = response.getBody().getPlatforms().getPlatforms();
-        System.out.println("hjkadshjkdsajkhdaskjhsadkjhdaskhj: " + this.platformIds.size());
     }
 
     @Test
@@ -461,20 +457,66 @@ public class GameIntegrationTest {
 
     @Test
     @Order(9)
+    public void testGetGamesbyStockQuantity() {
+        int stockQuantity = 5;
+        String url = "/games/SpecificGame/" + stockQuantity;
+        ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        GameListDto games = response.getBody();
+        assertNotNull(games);
+        assertTrue(games.getNumberOfGames() == 1, "There should be a game");
+
+        List<GameSummaryDto> gamesList = games.getGames();
+        assertTrue(gamesList.get(0).getGameId() > 0, "The ID should be positive");
+
+        for (GameSummaryDto game : gamesList) {
+            assertTrue(gameIds.contains(game.getGameId()));
+        }
+    }
+
+    @Test
+    @Order(10)
+    public void testGetGamesByInvalidStockQuantity() {
+        int stockQuantity = -1;
+        String url = "/games/SpecificGame/" + stockQuantity;
+        ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(11)
+    public void testGetGamesByStockQuantityNoResult() {
+        int stockQuantity = 9999;
+        String url = "/games/SpecificGame/" + stockQuantity;
+        ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        GameListDto games = response.getBody();
+        assertNotNull(games);
+        assertNull(games.getGames(), "There should be no games");
+    }
+
+    @Test
+    @Order(12)
     public void testGetGameByInvalidId() {
         ResponseEntity<GameResponseDto> response = client.getForEntity("/games/0", GameResponseDto.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    @Order(10)
+    @Order(13)
     public void testGetGameByNonExistentId() {
         ResponseEntity<GameResponseDto> response = client.getForEntity("/games/999", GameResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    @Order(11)
+    @Order(14)
     public void testCreateGameWithInvalidPrice() {
         GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, -1, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
@@ -482,7 +524,7 @@ public class GameIntegrationTest {
     }
 
     @Test
-    @Order(12)
+    @Order(15)
     public void testCreateGameWithInvalidTitle() {
         GameRequestDto gameRequestDto = new GameRequestDto("", GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
@@ -490,7 +532,7 @@ public class GameIntegrationTest {
     }
 
     @Test
-    @Order(13)
+    @Order(16)
     public void testCreateGameWithInvalidStatus() {
         GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, null, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
@@ -498,7 +540,7 @@ public class GameIntegrationTest {
     }
 
     @Test
-    @Order(14)
+    @Order(17)
     public void testUpdateGameWithInvalidId() {
         GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         ResponseEntity<GameResponseDto> response = client.exchange("/games/9999", HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
@@ -506,7 +548,7 @@ public class GameIntegrationTest {
     }
 
     @Test
-    @Order(15)
+    @Order(18)
     public void testupdateGameWithInvalidPrice() {
         GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, -1, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
@@ -514,7 +556,7 @@ public class GameIntegrationTest {
     }
 
     @Test
-    @Order(16)
+    @Order(19)
     public void testupdateGameWithInvalidTitle() {
         GameRequestDto gameRequestDto = new GameRequestDto("", GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
@@ -522,7 +564,7 @@ public class GameIntegrationTest {
     }
 
     @Test
-    @Order(17)
+    @Order(20)
     public void testupdateGameWithInvalidStatus() {
         GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, null, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
@@ -530,35 +572,49 @@ public class GameIntegrationTest {
     }
 
     @Test
-    @Order(18)
+    @Order(21)
     public void testAddInvalidCategoryToGame() {
         ResponseEntity<GameResponseDto> response = client.exchange("/games/category/" + this.game_id + "/9999", HttpMethod.PUT, null, GameResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    @Order(19)
+    @Order(22)
     public void testAddInvalidPlatformToGame() {
         ResponseEntity<GameResponseDto> response = client.exchange("/games/platform/" + this.game_id + "/9999", HttpMethod.PUT, null, GameResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    @Order(20)
+    @Order(23)
     public void testGetGameWithInvalidTitle() {
         ResponseEntity<GameListDto> response = client.getForEntity("/games/Title/" + " ", GameListDto.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    @Order(21)
+    @Order(24)
     public void testGetGameWithInvalidStatus() {
         ResponseEntity<GameListDto> response = client.getForEntity("/games/Status/" + " ", GameListDto.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    @Order(22)
+    @Order(25)
+    public void testCreateSpecificGameForGame() {
+        Game orginalGame = gameRepository.findById(this.game_id);
+        int originalQtity = orginalGame.getStockQuantity();
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/specificGame/" + this.game_id + "/10", HttpMethod.PUT, null, GameResponseDto.class);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        GameResponseDto game = response.getBody();
+        assertNotNull(game);
+        assertEquals(this.game_id, game.getaGame_id());
+        assertEquals(game.getaStockQuantity(), originalQtity + 10);
+    }
+
+    @Test
+    @Order(26)
     public void testDeleteGame() {
 
         ResponseEntity<GameResponseDto> getResponse = client.getForEntity("/games/" + this.game_id, GameResponseDto.class);
@@ -568,12 +624,17 @@ public class GameIntegrationTest {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        ResponseEntity<GameResponseDto> invalidResp = client.getForEntity("/games/" + this.game_id, GameResponseDto.class);
-        assertEquals(HttpStatus.NOT_FOUND, invalidResp.getStatusCode());
+        GameStatus status = GameStatus.Archived;
+        ResponseEntity<GameListDto> invalidResp = client.getForEntity("/games/Status/" + status, GameListDto.class);
+        assertEquals(HttpStatus.OK, invalidResp.getStatusCode());
+
+        GameListDto games = invalidResp.getBody();
+        assertEquals(games.getNumberOfGames(), 1);
+    
     }
 
     @Test
-    @Order(23)
+    @Order(27)
     public void testDeleteGameWithInvalidId() {
         ResponseEntity<Void> response = client.exchange("/games/9999", HttpMethod.DELETE, null, Void.class);
         assertNotNull(response);
