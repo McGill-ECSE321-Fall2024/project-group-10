@@ -81,6 +81,7 @@ public class CartService {
             cart.addGame(game);
         }
         quantities.put(gameId, newQuantity);
+        cartQuantities.put(cart.getCart_id(), quantities);
         cartRepository.save(cart);
 
         return cart;
@@ -117,7 +118,7 @@ public class CartService {
         } else {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Cannot remove more than the existing quantity.");
         }
-
+        cartQuantities.put(cart.getCart_id(), quantities);
         return cart;
     }
 
@@ -156,6 +157,7 @@ public class CartService {
             quantities.put(gameId, quantity);
 
         }
+        cartQuantities.put(cart.getCart_id(), quantities);
         cartRepository.save(cart);
         return cart;
     }
@@ -189,7 +191,7 @@ public class CartService {
 
             gamesInCart.put(game, quantity);
         }
-
+        cartQuantities.put(cart.getCart_id(), quantities);
         return gamesInCart;
     }
 
