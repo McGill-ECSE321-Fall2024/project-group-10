@@ -29,15 +29,19 @@ import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyRequestDto;
 import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyResponseDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewRequestDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewResponseDto;
+import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.Reply.ReviewRating;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CartRepository;
+import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
+import com.mcgill.ecse321.GameShop.repository.EmployeeRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import com.mcgill.ecse321.GameShop.repository.ReplyRepository;
 import com.mcgill.ecse321.GameShop.repository.ReviewRepository;
+import com.mcgill.ecse321.GameShop.repository.WishListRepository;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
@@ -65,6 +69,15 @@ public class ReplyIntegrationTests {
     @Autowired
     private ReplyRepository replyRepo;
 
+    @Autowired
+    private CustomerRepository customerRepo;
+
+    @Autowired
+    private EmployeeRepository employeeRepo;
+
+    @Autowired
+    private WishListRepository wishListRepo;
+
     private int replyId;
     private int reviewId;
     private int gameId;
@@ -74,9 +87,17 @@ public class ReplyIntegrationTests {
     @BeforeAll
     @AfterAll
     public void clearDatabase() {
+        // replyRepo.deleteAll();
+        // reviewRepo.deleteAll();
+        // gameRepo.deleteAll();
         replyRepo.deleteAll();
         reviewRepo.deleteAll();
         gameRepo.deleteAll();
+        wishListRepo.deleteAll();
+        employeeRepo.deleteAll();
+        managerRepo.deleteAll();
+        customerRepo.deleteAll();
+        cartRepo.deleteAll();
     }
 
     @Test
