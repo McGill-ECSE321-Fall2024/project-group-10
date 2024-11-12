@@ -19,5 +19,9 @@ public class GameListDto {
     public void setGames(List<GameSummaryDto> games) {
         this.games = games;
     }
+
+    public Integer getNumberOfGames() {
+        return games.size();
+    }
     
 }

@@ -13,6 +13,7 @@ public class CategoryListDto {
     }
 
     public CategoryListDto() {
+        this.categories = new ArrayList<CategorySummaryDto>();
     }
 
     public List<CategorySummaryDto> getCategories() {
