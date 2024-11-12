@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,6 +20,8 @@ import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformSummaryDto;
+import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyRequestDto;
+import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyResponseDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewListDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewRequestDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewResponseDto;
@@ -27,6 +30,7 @@ import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Platform;
+import com.mcgill.ecse321.GameShop.model.Reply.ReviewRating;
 import com.mcgill.ecse321.GameShop.model.Review;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
@@ -52,6 +56,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 
 
@@ -286,6 +292,49 @@ public class ReviewIntegrationTests {
         }       
         assertTrue(found);
     }
+
+    @Test
+    @Order(5)
+    public void testUpdateReview(){
+        String newDescription = "This is an updated review of game 1";
+        ReviewRequestDto reviewRequestDto = new ReviewRequestDto(newDescription, Review.GameRating.Five, this.game_id, CUSTOMER_EMAIL);
+        ResponseEntity<ReviewResponseDto> response = client.postForEntity("/reviews", reviewRequestDto, ReviewResponseDto.class);
+        this.review_id = response.getBody().getReviewId();
+        String url = "/reviews/review/" + this.review_id;
+        String url2 = url + "/" + 1;
+        HttpEntity<ReviewRequestDto> requestEntity = new HttpEntity<>(reviewRequestDto);
+        ResponseEntity<ReviewResponseDto> postResponse = client.exchange(url2, HttpMethod.PUT, requestEntity, ReviewResponseDto.class);
+        assertNotNull(postResponse);
+        assertEquals(HttpStatus.OK, postResponse.getStatusCode());
+        assertEquals(this.review_id, postResponse.getBody().getReviewId());
+        assertEquals(newDescription, postResponse.getBody().getDescription());
+        assertEquals(1, postResponse.getBody().getRating());
+        assertEquals(Review.GameRating.Five, postResponse.getBody().getGameRating());
+        assertEquals(this.game_id, postResponse.getBody().getGameId());
+        assertEquals(CUSTOMER_EMAIL, postResponse.getBody().getCustomerEmail());
+    }
+
+    // @Test
+    // @Order(6)
+    // public void testGetReplyById(){
+    //     ReplyRequestDto replyRequest = new ReplyRequestDto(
+    //         Date.valueOf(LocalDate.now()),
+    //         "Thank you for your feedback!",
+    //         ReviewRating.Like,
+    //         this.review_id,
+    //         MANAGER_EMAIL
+    //     );
+    //     ResponseEntity<ReplyResponseDto> replyResponse = client.postForEntity("/replies", replyRequest, ReplyResponseDto.class);
+    //     ResponseEntity<ReplyResponseDto> response = client.getForEntity("/replies/" + replyResponse.getBody().getReplyId(), ReplyResponseDto.class);
+    //     assertNotNull(response);
+    //     assertEquals(HttpStatus.OK, response.getStatusCode());
+    //     assertEquals("Thank you for your feedback!", response.getBody().getDescription());
+    //     assertEquals(Date.valueOf(LocalDate.now()), response.getBody().getReplyDate());
+    //     assertEquals(ReviewRating.Like, response.getBody().getReviewRating());
+    //     assertEquals(this.review_id, response.getBody().getReviewId());
+    //     assertEquals(MANAGER_EMAIL, response.getBody().getManagerEmail());
+
+    // }
 }
 
 

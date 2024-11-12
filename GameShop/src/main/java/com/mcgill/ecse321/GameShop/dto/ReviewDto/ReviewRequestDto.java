@@ -28,6 +28,7 @@ public class ReviewRequestDto {
     }
 
     public ReviewRequestDto( String description, GameRating gameRating, Integer gameId, String customerEmail) {
+        System.out.println(description);
         this.description = description;
         this.gameRating = gameRating;
         this.gameId = gameId;
