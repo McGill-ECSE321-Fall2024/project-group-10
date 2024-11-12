@@ -295,18 +295,66 @@ public class ReviewIntegrationTests {
 
     @Test
     @Order(5)
+    public void getReviewsByCustomer(){
+        GameRequestDto game2RequestDto = new GameRequestDto("Game#2", "This is the second game", 100, GameStatus.InStock, 1, "https://www.exampleger.com/game2.jpg");  
+        game2RequestDto.setCategories(new ArrayList<>());
+        game2RequestDto.setPlatforms(new ArrayList<>());
+        ResponseEntity<GameResponseDto> game2Response = client.postForEntity("/games", game2RequestDto, GameResponseDto.class);
+        int game2Id = game2Response.getBody().getaGame_id();
+        ReviewRequestDto reviewRequestDto = new ReviewRequestDto("This is a review of game 2", Review.GameRating.Three, game2Id, CUSTOMER_EMAIL);
+        ResponseEntity<ReviewResponseDto> reviewResponse = client.postForEntity("/reviews", reviewRequestDto, ReviewResponseDto.class);
+        assertNotNull(reviewResponse);
+        assertEquals(HttpStatus.OK, reviewResponse.getStatusCode());
+        assertTrue(reviewResponse.getBody().getReviewId() > 0, "The ID should be positive");
+        int review2Id = reviewResponse.getBody().getReviewId();
+        String url = "/reviews/customer/r" + CUSTOMER_EMAIL;
+        ResponseEntity<ReviewListDto> response = client.getForEntity(url, ReviewListDto.class);
+        ReviewListDto reviewListDto = response.getBody();
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, reviewListDto.getReviews().size());
+        boolean found = false;
+        for(ReviewSummaryDto review : reviewListDto.getReviews()){
+            if (review.getReviewId() == this.review_id){
+                found = true;
+                assertEquals(REVIEW_DESCRIPTION, review.getDescription());
+                assertEquals(0, review.getRating());
+                assertEquals(REVIEW_GAME_RATING, review.getGameRating());
+                assertEquals(CUSTOMER_EMAIL, review.getCustomerEmail());
+                assertEquals(game_id, review.getGameId());
+                break;
+            }
+        }
+        assertTrue(found);
+        found = false;
+        for(ReviewSummaryDto review : reviewListDto.getReviews()){
+            if (review.getReviewId() == review2Id){
+                found = true;
+                assertEquals("This is a review of game 2", review.getDescription());
+                assertEquals(0, review.getRating());
+                assertEquals(GameRating.Three, review.getGameRating());
+                assertEquals(CUSTOMER_EMAIL, review.getCustomerEmail());
+                assertEquals(game2Id, review.getGameId());
+                break;
+            }
+        }
+        assertTrue(found);
+    }
+
+    @Test
+    @Order(6)
     public void testUpdateReview(){
         String newDescription = "This is an updated review of game 1";
         ReviewRequestDto reviewRequestDto = new ReviewRequestDto(newDescription, Review.GameRating.Five, this.game_id, CUSTOMER_EMAIL);
         ResponseEntity<ReviewResponseDto> response = client.postForEntity("/reviews", reviewRequestDto, ReviewResponseDto.class);
-        this.review_id = response.getBody().getReviewId();
-        String url = "/reviews/review/" + this.review_id;
+        int review2_id = response.getBody().getReviewId();
+        String url = "/reviews/review/" + review2_id;
         String url2 = url + "/" + 1;
         HttpEntity<ReviewRequestDto> requestEntity = new HttpEntity<>(reviewRequestDto);
         ResponseEntity<ReviewResponseDto> postResponse = client.exchange(url2, HttpMethod.PUT, requestEntity, ReviewResponseDto.class);
         assertNotNull(postResponse);
         assertEquals(HttpStatus.OK, postResponse.getStatusCode());
-        assertEquals(this.review_id, postResponse.getBody().getReviewId());
+        assertEquals(review2_id, postResponse.getBody().getReviewId());
         assertEquals(newDescription, postResponse.getBody().getDescription());
         assertEquals(1, postResponse.getBody().getRating());
         assertEquals(Review.GameRating.Five, postResponse.getBody().getGameRating());
@@ -314,27 +362,7 @@ public class ReviewIntegrationTests {
         assertEquals(CUSTOMER_EMAIL, postResponse.getBody().getCustomerEmail());
     }
 
-    // @Test
-    // @Order(6)
-    // public void testGetReplyById(){
-    //     ReplyRequestDto replyRequest = new ReplyRequestDto(
-    //         Date.valueOf(LocalDate.now()),
-    //         "Thank you for your feedback!",
-    //         ReviewRating.Like,
-    //         this.review_id,
-    //         MANAGER_EMAIL
-    //     );
-    //     ResponseEntity<ReplyResponseDto> replyResponse = client.postForEntity("/replies", replyRequest, ReplyResponseDto.class);
-    //     ResponseEntity<ReplyResponseDto> response = client.getForEntity("/replies/" + replyResponse.getBody().getReplyId(), ReplyResponseDto.class);
-    //     assertNotNull(response);
-    //     assertEquals(HttpStatus.OK, response.getStatusCode());
-    //     assertEquals("Thank you for your feedback!", response.getBody().getDescription());
-    //     assertEquals(Date.valueOf(LocalDate.now()), response.getBody().getReplyDate());
-    //     assertEquals(ReviewRating.Like, response.getBody().getReviewRating());
-    //     assertEquals(this.review_id, response.getBody().getReviewId());
-    //     assertEquals(MANAGER_EMAIL, response.getBody().getManagerEmail());
-
-    // }
+    
 }
 
 

@@ -9,6 +9,7 @@ import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Reply;
 import com.mcgill.ecse321.GameShop.model.Review;
+import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 import com.mcgill.ecse321.GameShop.service.ReviewService;
 
 import java.time.LocalDate;
@@ -29,13 +30,13 @@ public class ReviewController {
     /** Create a new review */
     @PostMapping("/reviews")
     public ReviewResponseDto createReview(@Valid @RequestBody ReviewRequestDto request) {
-        
         Review review = reviewService.createReview(
                 request.getDescription(),
                 request.getGameRating(),
                 request.getGameId(),
                 request.getCustomerEmail()
         );
+        
         return new ReviewResponseDto(review);
     }
 
