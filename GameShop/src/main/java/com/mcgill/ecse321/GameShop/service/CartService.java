@@ -124,7 +124,7 @@ public class CartService {
     @Transactional
     public Cart updateGameQuantityInCart(int cartId, int gameId, int quantity) {
         if (quantity <= 0) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Quantity must be 0 or greater.");
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Quantity must be 1 or greater.");
         }
         Cart cart = getCartById(cartId);
         Game game = gameRepository.findById(gameId);
