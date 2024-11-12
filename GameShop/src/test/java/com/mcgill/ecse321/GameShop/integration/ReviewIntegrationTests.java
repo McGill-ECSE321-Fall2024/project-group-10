@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,6 +20,8 @@ import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformSummaryDto;
+import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyRequestDto;
+import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyResponseDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewListDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewRequestDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewResponseDto;
@@ -27,6 +30,7 @@ import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Platform;
+import com.mcgill.ecse321.GameShop.model.Reply.ReviewRating;
 import com.mcgill.ecse321.GameShop.model.Review;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
@@ -52,6 +56,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 
 
@@ -286,6 +292,77 @@ public class ReviewIntegrationTests {
         }       
         assertTrue(found);
     }
+
+    @Test
+    @Order(5)
+    public void getReviewsByCustomer(){
+        GameRequestDto game2RequestDto = new GameRequestDto("Game#2", "This is the second game", 100, GameStatus.InStock, 1, "https://www.exampleger.com/game2.jpg");  
+        game2RequestDto.setCategories(new ArrayList<>());
+        game2RequestDto.setPlatforms(new ArrayList<>());
+        ResponseEntity<GameResponseDto> game2Response = client.postForEntity("/games", game2RequestDto, GameResponseDto.class);
+        int game2Id = game2Response.getBody().getaGame_id();
+        ReviewRequestDto reviewRequestDto = new ReviewRequestDto("This is a review of game 2", Review.GameRating.Three, game2Id, CUSTOMER_EMAIL);
+        ResponseEntity<ReviewResponseDto> reviewResponse = client.postForEntity("/reviews", reviewRequestDto, ReviewResponseDto.class);
+        assertNotNull(reviewResponse);
+        assertEquals(HttpStatus.OK, reviewResponse.getStatusCode());
+        assertTrue(reviewResponse.getBody().getReviewId() > 0, "The ID should be positive");
+        int review2Id = reviewResponse.getBody().getReviewId();
+        String url = "/reviews/customer/r" + CUSTOMER_EMAIL;
+        ResponseEntity<ReviewListDto> response = client.getForEntity(url, ReviewListDto.class);
+        ReviewListDto reviewListDto = response.getBody();
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, reviewListDto.getReviews().size());
+        boolean found = false;
+        for(ReviewSummaryDto review : reviewListDto.getReviews()){
+            if (review.getReviewId() == this.review_id){
+                found = true;
+                assertEquals(REVIEW_DESCRIPTION, review.getDescription());
+                assertEquals(0, review.getRating());
+                assertEquals(REVIEW_GAME_RATING, review.getGameRating());
+                assertEquals(CUSTOMER_EMAIL, review.getCustomerEmail());
+                assertEquals(game_id, review.getGameId());
+                break;
+            }
+        }
+        assertTrue(found);
+        found = false;
+        for(ReviewSummaryDto review : reviewListDto.getReviews()){
+            if (review.getReviewId() == review2Id){
+                found = true;
+                assertEquals("This is a review of game 2", review.getDescription());
+                assertEquals(0, review.getRating());
+                assertEquals(GameRating.Three, review.getGameRating());
+                assertEquals(CUSTOMER_EMAIL, review.getCustomerEmail());
+                assertEquals(game2Id, review.getGameId());
+                break;
+            }
+        }
+        assertTrue(found);
+    }
+
+    @Test
+    @Order(6)
+    public void testUpdateReview(){
+        String newDescription = "This is an updated review of game 1";
+        ReviewRequestDto reviewRequestDto = new ReviewRequestDto(newDescription, Review.GameRating.Five, this.game_id, CUSTOMER_EMAIL);
+        ResponseEntity<ReviewResponseDto> response = client.postForEntity("/reviews", reviewRequestDto, ReviewResponseDto.class);
+        int review2_id = response.getBody().getReviewId();
+        String url = "/reviews/review/" + review2_id;
+        String url2 = url + "/" + 1;
+        HttpEntity<ReviewRequestDto> requestEntity = new HttpEntity<>(reviewRequestDto);
+        ResponseEntity<ReviewResponseDto> postResponse = client.exchange(url2, HttpMethod.PUT, requestEntity, ReviewResponseDto.class);
+        assertNotNull(postResponse);
+        assertEquals(HttpStatus.OK, postResponse.getStatusCode());
+        assertEquals(review2_id, postResponse.getBody().getReviewId());
+        assertEquals(newDescription, postResponse.getBody().getDescription());
+        assertEquals(1, postResponse.getBody().getRating());
+        assertEquals(Review.GameRating.Five, postResponse.getBody().getGameRating());
+        assertEquals(this.game_id, postResponse.getBody().getGameId());
+        assertEquals(CUSTOMER_EMAIL, postResponse.getBody().getCustomerEmail());
+    }
+
+    
 }
 
 

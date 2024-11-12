@@ -19,6 +19,7 @@ public class ReviewResponseDto {
     }
 
     public ReviewResponseDto(Review review) {
+        
         this.reviewId = review.getReview_id();
         this.reviewDate = review.getReviewDate();
         this.description = review.getDescription();
