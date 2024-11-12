@@ -19,6 +19,7 @@ import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Employee.EmployeeStatus;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
+import com.mcgill.ecse321.GameShop.repository.CartRepository;
 import com.mcgill.ecse321.GameShop.repository.WishListRepository;
 
 import org.junit.jupiter.api.TestMethodOrder;
@@ -52,6 +53,9 @@ public class AccountIntegrationTests {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
 
     private String customerEmail;
     private String managerEmail;
@@ -98,6 +102,7 @@ public class AccountIntegrationTests {
     public void clearDatabase(){
         wishListRepository.deleteAll();
         accountRepository.deleteAll();
+        cartRepository.deleteAll();
     }
 
    
