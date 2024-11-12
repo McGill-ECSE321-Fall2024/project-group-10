@@ -287,7 +287,6 @@ public void testCreateCategoryMissingName() {
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
     assertNotNull(response.getBody());
-    System.out.println("Response body: " + response.getBody());
     assertTrue(response.getBody().contains("Category name cannot be empty"));
 }
 @Test
@@ -303,7 +302,6 @@ public void testGetCategoryByNonExistentId() {
     // Assert
     assertNotNull(response);
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    System.out.println("Response body: " + response.getBody());
     assertTrue(response.getBody().contains("Category does not exist"));
 }
 @Test
@@ -321,7 +319,6 @@ public void testUpdateCategoryInvalidId() {
     // Assert
     assertNotNull(response);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    System.out.println("Response body: " + response.getBody());
     assertTrue(response.getBody().contains("Invalid category ID"));
 }
 
@@ -339,9 +336,6 @@ public void testUpdateCategoryInvalidId() {
 
         // Act
         ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);
-
-        // Log for debugging
-        System.out.println("Response status code for DELETE: " + response.getStatusCode());
 
         // Assert
         assertNotNull(response);

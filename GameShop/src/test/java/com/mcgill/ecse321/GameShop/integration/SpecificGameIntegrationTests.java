@@ -276,7 +276,6 @@ public class SpecificGameIntegrationTests {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         String responseBody = response.getBody();
         assertNotNull(responseBody);
-        System.out.println(responseBody);
         assertTrue(responseBody.contains("SpecificGame ID must be greater than 0"));
     }
     @Test

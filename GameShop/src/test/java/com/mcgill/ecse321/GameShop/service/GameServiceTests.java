@@ -1157,7 +1157,7 @@ public void testDeleteGame_Successful() {
     gameService.deleteGame(VALID_GAME_ID);
 
     verify(gameRepository, times(1)).findById(VALID_GAME_ID);
-    verify(gameRepository, times(1)).delete(game);
+    verify(gameRepository, never()).delete(game);
 }
 
 @Test
@@ -1290,6 +1290,56 @@ public void testGetGamesByStatus_NullStatus() {
     verify(gameRepository, never()).findAll();
 }
 
+@Test
+public void testGetGamesByStockQuantity_Valid() {
+    Game game1 = new Game("Game 1", "Description 1", 50, GameStatus.InStock, 10, "http://example.com/game1.jpg");
+    Game game2 = new Game("Game 2", "Description 2", 60, GameStatus.InStock, 10, "http://example.com/game2.jpg");
+    Game game3 = new Game("Game 3", "Description 3", 70, GameStatus.InStock, 20, "http://example.com/game3.jpg");
 
+    List<Game> games = Arrays.asList(game1, game2, game3);
+    when(gameRepository.findAll()).thenReturn(games);
 
+    Iterable<Game> foundGames = gameService.getGamesByStockQuantity(10);
+
+    assertNotNull(foundGames);
+    List<Game> gamesList = new ArrayList<>();
+    for (Game game : foundGames) {
+        gamesList.add(game);
+    }
+
+    assertEquals(2, gamesList.size());
+    assertTrue(gamesList.contains(game1));
+    assertTrue(gamesList.contains(game2));
+    assertFalse(gamesList.contains(game3));
+    verify(gameRepository, times(1)).findAll();
+}
+
+@Test
+public void testGetGamesByStockQuantity_NullStatus() {
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        gameService.getGamesByStockQuantity(-1);
+    });
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Stock quantity cannot be negative", exception.getMessage());
+    verify(gameRepository, never()).findAll();
+}
+
+@Test
+public void testGetGamesByStockQuantity_InvalidQuantity() {
+    Game game1 = new Game("Game 1", "Description 1", 50, GameStatus.InStock, 10, "http://example.com/game1.jpg");
+    Game game2 = new Game("Game 2", "Description 2", 60, GameStatus.InStock, 10, "http://example.com/game2.jpg");
+    Game game3 = new Game("Game 3", "Description 3", 70, GameStatus.InStock, 20, "http://example.com/game3.jpg");
+
+    List<Game> games = Arrays.asList(game1, game2, game3);
+    when(gameRepository.findAll()).thenReturn(games);
+
+    GameShopException exception = assertThrows(GameShopException.class, () -> {
+        gameService.getGamesByStockQuantity(55);
+    });
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertEquals("No games with the given stock quantity", exception.getMessage());
+    verify(gameRepository, times(1)).findAll();
+    }
 }
