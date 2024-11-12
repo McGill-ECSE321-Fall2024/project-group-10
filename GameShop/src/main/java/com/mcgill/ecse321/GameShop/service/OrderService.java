@@ -1,4 +1,3 @@
-// OrderService.java
 package com.mcgill.ecse321.GameShop.service;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
@@ -39,7 +38,7 @@ public class OrderService {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
         }
 
-        Cart cart = customerService.getCustomerAccountByEmail(customerEmail).getCart();
+        Cart cart = customer.getCart();
         if (cart == null || cart.getGames().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Cart is empty");
         }
@@ -73,7 +72,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order getOrderById(String trackingNumber) {
+    public Order getOrderByTrackingNumber(String trackingNumber) {
         Order order = orderRepository.findByTrackingNumber(trackingNumber);
         if (order == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Order not found");
@@ -100,7 +99,7 @@ public class OrderService {
 
     @Transactional
     public void addGameToOrder(String trackingNumber, int gameId, int quantity) {
-        Order order = getOrderById(trackingNumber);
+        Order order = getOrderByTrackingNumber(trackingNumber);
         Game game = gameService.findGameById(gameId);
         if (game == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Game not found");
@@ -119,7 +118,7 @@ public class OrderService {
 
     @Transactional
     public List<SpecificGame> getSpecificGamesByOrder(String trackingNumber) {
-        Order order = getOrderById(trackingNumber);
+        Order order = getOrderByTrackingNumber(trackingNumber);
         if (order == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Order not found");
         }
