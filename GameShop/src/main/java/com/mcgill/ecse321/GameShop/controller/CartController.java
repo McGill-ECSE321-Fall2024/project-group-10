@@ -1,30 +1,50 @@
 package com.mcgill.ecse321.GameShop.controller;
 
 import com.mcgill.ecse321.GameShop.dto.CartDto.*;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
+import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Cart;
+import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.service.CartService;
+import com.mcgill.ecse321.GameShop.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class CartController {
 
     @Autowired
     private CartService cartService;
+    @Autowired
+    private AccountService customerService;
 
-    // Create a new cart
-    @PostMapping("/carts")
-    public CartResponseDto createCart() {
-        Cart cart = cartService.createCart();
-        return buildCartResponseDto(cart);
+    // Get the cart associated with a customer
+    @GetMapping("/carts/{customerEmail}")
+    public CartResponseDto getCartByCustomerEmail(@PathVariable String customerEmail) {
+        Customer customer = customerService.getCustomerAccountByEmail(customerEmail);
+        if (customer == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
+        }
+        Cart cart = customer.getCart();
+        if (cart == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Cart not found for the customer");
+        }
+        Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cart.getCart_id());
+        return CartResponseDto.create(cart, quantities);
     }
 
+    // Add a game to the cart with quantity
     @PostMapping("/carts/{cartId}/games")
-    public CartResponseDto addGamesToCart(
+    public CartResponseDto addGameToCart(
             @PathVariable int cartId,
             @Valid @RequestBody CartRequestDto requestDto) {
         int gameId = requestDto.getGameId();
@@ -33,11 +53,13 @@ public class CartController {
         cartService.addGameToCart(cartId, gameId, quantity);
 
         Cart cart = cartService.getCartById(cartId);
-        return buildCartResponseDto(cart);
+        Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cartId);
+        return CartResponseDto.create(cart, quantities);
     }
 
+    // Remove a game from the cart with quantity
     @PostMapping("/carts/{cartId}/games/remove")
-    public CartResponseDto removeGamesFromCart(
+    public CartResponseDto removeGameFromCart(
             @PathVariable int cartId,
             @Valid @RequestBody CartRequestDto requestDto) {
         int gameId = requestDto.getGameId();
@@ -46,75 +68,76 @@ public class CartController {
         cartService.removeGameFromCart(cartId, gameId, quantity);
 
         Cart cart = cartService.getCartById(cartId);
-        return buildCartResponseDto(cart);
+        Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cartId);
+        return CartResponseDto.create(cart, quantities);
     }
 
+    // Get a specific cart by ID
     @GetMapping("/carts/{cartId}")
     public CartResponseDto findCartById(@PathVariable int cartId) {
         Cart cart = cartService.getCartById(cartId);
-        return buildCartResponseDto(cart);
+        Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cartId);
+        return CartResponseDto.create(cart, quantities);
     }
 
+    // Get all carts
     @GetMapping("/carts")
     public CartListDto findAllCarts() {
-        List<CartSummaryDto> cartSummaries = new ArrayList<>();
-        for (Cart cart : cartService.getAllCarts()) {
-            Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cart.getCart_id());
-            int totalItems = quantities.values().stream().mapToInt(Integer::intValue).sum();
-
-            // Calculate total price for the cart
-            int totalPrice = 0;
-            for (Game game : cart.getGames()) {
-                int gameId = game.getGame_id();
-                int quantity = quantities.getOrDefault(gameId, 1);
-                totalPrice += game.getPrice() * quantity;
-            }
-
-            cartSummaries.add(new CartSummaryDto(cart.getCart_id(), totalItems, totalPrice));
-        }
+        List<Cart> carts = (List<Cart>) cartService.getAllCarts();
+        List<CartSummaryDto> cartSummaries = carts.stream()
+                .map(cart -> {
+                    int cartId = cart.getCart_id();
+                    Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cartId);
+                    int totalItems = quantities.values().stream().mapToInt(Integer::intValue).sum();
+                    int totalPrice = cart.getGames().stream()
+                            .mapToInt(game -> game.getPrice() * quantities.getOrDefault(game.getGame_id(), 1))
+                            .sum();
+                    return new CartSummaryDto(cart, totalItems, totalPrice);
+                })
+                .collect(Collectors.toList());
         return new CartListDto(cartSummaries);
     }
 
-    // Helper method to build CartResponseDto
-    private CartResponseDto buildCartResponseDto(Cart cart) {
-        Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cart.getCart_id());
-        int totalItems = quantities.values().stream().mapToInt(Integer::intValue).sum();
-
-        // Build a list of maps containing game details and quantities
-        List<Map<String, Object>> games = new ArrayList<>();
-        int totalPrice = 0;
-
-        for (Game game : cart.getGames()) {
-            int gameId = game.getGame_id();
-            int quantity = quantities.getOrDefault(gameId, 1);
-
-            Map<String, Object> gameInfo = new HashMap<>();
-            gameInfo.put("gameId", game.getGame_id());
-            gameInfo.put("title", game.getTitle());
-            gameInfo.put("description", game.getDescription());
-            gameInfo.put("price", game.getPrice());
-            gameInfo.put("photoUrl", game.getPhotoUrl());
-            gameInfo.put("gameStatus", game.getGameStatus().toString());
-            gameInfo.put("stockQuantity", game.getStockQuantity());
-            gameInfo.put("quantity", quantity);
-
-            totalPrice += game.getPrice() * quantity;
-
-            games.add(gameInfo);
-        }
-
-        return new CartResponseDto(cart.getCart_id(), games, totalItems, totalPrice);
-    }
-
-    @PostMapping("/carts/{cartId}/games/updateQuantity")
+    // Update the quantity of a specific game in the cart
+    @PutMapping("/carts/{cartId}/games/{gameId}/quantity")
     public CartResponseDto updateGameQuantityInCart(
             @PathVariable int cartId,
+            @PathVariable int gameId,
             @Valid @RequestBody CartRequestDto requestDto) {
-        int gameId = requestDto.getGameId();
         int quantity = requestDto.getQuantity();
 
-        Cart cart = cartService.updateGameQuantityInCart(cartId, gameId, quantity);
-        return buildCartResponseDto(cart);
+        cartService.updateGameQuantityInCart(cartId, gameId, quantity);
+
+        Cart cart = cartService.getCartById(cartId);
+        Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cartId);
+        return CartResponseDto.create(cart, quantities);
     }
 
+    // Clear all games from the cart
+    @PostMapping("/carts/{cartId}/clear")
+    public CartResponseDto clearCart(@PathVariable int cartId) {
+        cartService.clearCart(cartId);
+        Cart cart = cartService.getCartById(cartId);
+        Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cartId);
+        return CartResponseDto.create(cart, quantities);
+    }
+
+    // Get a specific game from the cart
+    @GetMapping("/carts/{cartId}/games/{gameId}")
+    public GameResponseDto getGameFromCart(
+            @PathVariable int cartId,
+            @PathVariable int gameId) {
+        Game game = cartService.getGameFromCart(cartId, gameId);
+        return GameResponseDto.create(game);
+    }
+
+    // Get all games from the cart
+    @GetMapping("/carts/{cartId}/games")
+    public GameListDto getGamesInCart(@PathVariable int cartId) {
+        Map<Game, Integer> gamesWithQuantities = cartService.getAllGamesFromCartWithQuantities(cartId);
+        List<GameSummaryDto> gameSummaries = gamesWithQuantities.entrySet().stream()
+                .map(entry -> new GameSummaryDto(entry.getKey()))
+                .collect(Collectors.toList());
+        return new GameListDto(gameSummaries);
+    }
 }

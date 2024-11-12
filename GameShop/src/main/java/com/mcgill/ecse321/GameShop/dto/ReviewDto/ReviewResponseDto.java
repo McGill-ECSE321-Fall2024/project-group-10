@@ -1,13 +1,14 @@
 package com.mcgill.ecse321.GameShop.dto.ReviewDto;
 
-import java.sql.Date;
+import java.time.LocalDate;
+
 import com.mcgill.ecse321.GameShop.model.Review;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 
 public class ReviewResponseDto {
 
     private int reviewId;
-    private Date reviewDate;
+    private LocalDate reviewDate;
     private String description;
     private int rating;
     private GameRating gameRating;
@@ -33,7 +34,7 @@ public class ReviewResponseDto {
         return reviewId;
     }
 
-    public Date getReviewDate() {
+    public LocalDate getReviewDate() {
         return reviewDate;
     }
 

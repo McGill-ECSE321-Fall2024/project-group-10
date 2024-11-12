@@ -1,6 +1,6 @@
 package com.mcgill.ecse321.GameShop.service;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +39,10 @@ public class PromotionService {
      * Create a new Promotion.
      */
     @Transactional
-    public Promotion createPromotion(String description, int discountRate, Date startDate, Date endDate,
+    public Promotion createPromotion(String description, int discountRate, LocalDate startLocalDate, LocalDate endLocalDate,
             String managerEmail, List<Integer> gameIds) {
 
-        // Validate inputs
+        // ValiLocalDate inputs
         if (gameIds == null || gameIds.isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game IDs cannot be null or empty");
         }
@@ -53,11 +53,11 @@ public class PromotionService {
         if (discountRate < 0 || discountRate > 100) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Discount rate must be between 0 and 100");
         }
-        if (startDate == null || endDate == null) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Start date and end date cannot be null");
+        if (startLocalDate == null || endLocalDate == null) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Start LocalDate and end LocalDate cannot be null");
         }
-        if (startDate.after(endDate)) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Start date cannot be after end date");
+        if (startLocalDate.isAfter(endLocalDate)) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Start LocalDate cannot be after end LocalDate");
         }
         Manager manager = managerRepository.findByEmail(managerEmail);
         if (manager == null) {
@@ -76,7 +76,7 @@ public class PromotionService {
         }
 
         // Create the promotion with games
-        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        Promotion promotion = new Promotion(description, discountRate, startLocalDate, endLocalDate, manager);
         promotion.setGames(games);
 
         // Save and return the promotion
@@ -104,19 +104,19 @@ public class PromotionService {
     }
 
     /**
-     * Update an existing Promotion.
+     * UpLocalDate an existing Promotion.
      */
     @Transactional
-    public Promotion updatePromotion(int promotionId, String description, Integer discountRate, Date startDate,
-            Date endDate, List<Integer> gameIds) {
+    public Promotion updatePromotion(int promotionId, String description, Integer discountRate, LocalDate startLocalDate,
+            LocalDate endLocalDate, List<Integer> gameIds) {
         Promotion promotion = getPromotionById(promotionId);
 
-        // Update description if provided
+        // UpLocalDate description if provided
         if (!isEmpty(description)) {
             promotion.setDescription(description);
         }
 
-        // Update discount rate if provided
+        // UpLocalDate discount rate if provided
         if (discountRate != null) {
             if (discountRate < 0 || discountRate > 100) {
                 throw new GameShopException(HttpStatus.BAD_REQUEST, "Discount rate must be between 0 and 100");
@@ -124,21 +124,21 @@ public class PromotionService {
             promotion.setDiscountRate(discountRate);
         }
 
-        // Update dates if provided
-        if (startDate != null) {
-            if (endDate != null && startDate.after(endDate)) {
-                throw new GameShopException(HttpStatus.BAD_REQUEST, "Start date cannot be after end date");
+        // UpLocalDate LocalDates if provided
+        if (startLocalDate != null) {
+            if (endLocalDate != null && startLocalDate.isAfter(endLocalDate)) {
+                throw new GameShopException(HttpStatus.BAD_REQUEST, "Start LocalDate cannot be after end LocalDate");
             }
-            promotion.setStartDate(startDate);
+            promotion.setStartLocalDate(startLocalDate);
         }
-        if (endDate != null) {
-            if (startDate != null && startDate.after(endDate)) {
-                throw new GameShopException(HttpStatus.BAD_REQUEST, "Start date cannot be after end date");
+        if (endLocalDate != null) {
+            if (startLocalDate != null && startLocalDate.isAfter(endLocalDate)) {
+                throw new GameShopException(HttpStatus.BAD_REQUEST, "Start LocalDate cannot be after end LocalDate");
             }
-            promotion.setEndDate(endDate);
+            promotion.setEndLocalDate(endLocalDate);
         }
 
-        // Update associated games if provided
+        // UpLocalDate associated games if provided
         if (gameIds != null) {
             List<Game> games = new ArrayList<>();
             for (int  gameId : gameIds) {
@@ -151,7 +151,7 @@ public class PromotionService {
             promotion.setGames(games);
         }
 
-        // Save and return the updated promotion
+        // Save and return the upLocalDated promotion
         return promotionRepository.save(promotion);
     }
 

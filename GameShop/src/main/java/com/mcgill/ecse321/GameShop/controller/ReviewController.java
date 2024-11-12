@@ -11,6 +11,7 @@ import com.mcgill.ecse321.GameShop.model.Reply;
 import com.mcgill.ecse321.GameShop.model.Review;
 import com.mcgill.ecse321.GameShop.service.ReviewService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class ReviewController {
     /** Create a new review */
     @PostMapping("/reviews")
     public ReviewResponseDto createReview(@Valid @RequestBody ReviewRequestDto request) {
+        
         Review review = reviewService.createReview(
                 request.getDescription(),
                 request.getGameRating(),
@@ -43,6 +45,7 @@ public class ReviewController {
         Review review = reviewService.getReviewById(id);
         return new ReviewResponseDto(review);
     }
+    
 
     /** Get the customer that wrote the review*/
     @GetMapping("/reviews/review/customer/{id}")
