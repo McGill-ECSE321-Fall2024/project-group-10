@@ -90,8 +90,7 @@ public class Cart {
   }
 
   public List<Game> getGames() {
-    List<Game> newGames = Collections.unmodifiableList(games);
-    return newGames;
+    return this.games;
   }
 
   public int numberOfGames() {
