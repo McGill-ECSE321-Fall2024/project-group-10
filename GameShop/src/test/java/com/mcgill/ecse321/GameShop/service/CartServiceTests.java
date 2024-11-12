@@ -43,9 +43,7 @@ public class CartServiceTests {
     private static final int VALID_CART_ID = 1;
     private static final int INVALID_CART_ID = 999;
     private static final int VALID_GAME_ID = 100;
-    private static final int INVALID_GAME_ID = 999;
     private static final Integer VALID_QUANTITY = 2;
-    private static final Integer INVALID_QUANTITY = -1;
     private static final String VALID_CUSTOMER_EMAIL = "customer@gmail.ca";
     private static final String INVALID_CUSTOMER_EMAIL = "invalid@ca.ca";
 
