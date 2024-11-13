@@ -333,8 +333,8 @@ public class GameService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform is already in the game");
         }
         game.addPlatform(platform);
-        game.getPlatformSpecificMap().put(platform, new ArrayList<>());
-        game.getHistoryMap().put(platform, new ArrayList<>());
+        // game.getPlatformSpecificMap().put(platform, new ArrayList<>());
+        // game.getHistoryMap().put(platform, new ArrayList<>());
         gameRepository.save(game);
         return game;
     }
