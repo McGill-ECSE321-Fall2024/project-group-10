@@ -10,7 +10,7 @@ Build System Instructions for Deliverable 2
 
 
 
-Build System Instructions from Deliverable 1
+Build System Instructions for Deliverable 1
 --------
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
