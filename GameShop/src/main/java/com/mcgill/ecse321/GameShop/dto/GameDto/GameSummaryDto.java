@@ -42,5 +42,4 @@ public class GameSummaryDto {
         this.gameId = gameId;
     }
 
-
 }

@@ -157,4 +157,11 @@ public class GameController {
         return new GameResponseDto(game);
     }
 
+    // @PutMapping("/games/{game_id}/specificGame/{specificGame_id}/platform/{platform_id}")
+    // public void updateMaps(@PathVariable int id, @RequestBody int specific_game_id, @RequestBody int platform_id) {
+    //     Game game = gameService.findGameById(id);
+    //     gameService.addSpecificGameToHistoryMap(id, specific_game_id);
+    //     gameService.addSpecificGameToSpecificGamesByPlatform(id, platform_id,specific_game_id);
+    // }
+
 }

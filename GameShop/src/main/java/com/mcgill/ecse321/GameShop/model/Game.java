@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Transient;
 
 // line 69 "../../../../../../model.ump"
 // line 234 "../../../../../../model.ump"
@@ -52,6 +53,10 @@ public class Game {
 
   private int stockQuantity;
   private String photoUrl;
+  @Transient
+  private Map<Platform, List<Integer>> platformSpecificMap;
+  @Transient
+  private Map<Platform, List<Integer>> historyMap;
 
   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinTable(name = "game_category_jt", joinColumns = @JoinColumn(name = "game_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
@@ -75,6 +80,7 @@ public class Game {
     photoUrl = aPhotoUrl;
     categories = new ArrayList<Category>();
     platforms = new ArrayList<Platform>();
+    platformSpecificMap = new HashMap<Platform, List<Integer>>();
   }
 
   protected Game() {
@@ -384,4 +390,59 @@ public class Game {
       gamesByGame_id.remove(test_integer);
     }
   }
+
+  public Map<Platform, List<Integer>> getPlatformSpecificMap() {
+    return platformSpecificMap;
+  }
+
+  public Map<Platform, List<Integer>> getHistoryMap() {
+    return historyMap;
+  }
+
+  public Boolean addToPlatformSpecificMap(Platform platform, Integer specific_game_ids) {
+    List<Integer> currSpecifcGameIds = platformSpecificMap.get(platform);
+    if (currSpecifcGameIds == null) {
+      currSpecifcGameIds = new ArrayList<Integer>();
+    }
+    if (currSpecifcGameIds.contains(specific_game_ids)) {
+      return false;
+    }
+    currSpecifcGameIds.add(specific_game_ids);
+    platformSpecificMap.put(platform, currSpecifcGameIds);
+    return true;
+  }
+
+  public Boolean addToHistoryMap(Platform platform, Integer specific_game_ids){
+    List<Integer> currSpecificGameIds = historyMap.get(platform);
+    if (currSpecificGameIds == null) {
+      currSpecificGameIds = new ArrayList<Integer>();
+    }
+    if (currSpecificGameIds.contains(specific_game_ids)) {
+      return false;
+    }
+    currSpecificGameIds.add(specific_game_ids);
+    historyMap.put(platform, currSpecificGameIds);
+    return true;
+  }
+
+  public Boolean removeFromPlatformSpecificMap(Platform platform, Integer specific_game_ids) {
+    List<Integer> currSpecificGameIds = platformSpecificMap.get(platform);
+    if (currSpecificGameIds != null && currSpecificGameIds.contains(specific_game_ids)) {
+      currSpecificGameIds.remove(specific_game_ids);
+      platformSpecificMap.put(platform, currSpecificGameIds);
+      return true;
+    }
+    return false;
+  }
+
+  public Boolean removeFromHistoryMap(Platform platform, Integer specific_game_ids) {
+    List<Integer> currSpecificGameIds = historyMap.get(platform);
+    if (currSpecificGameIds != null && currSpecificGameIds.contains(specific_game_ids)) {
+      currSpecificGameIds.remove(specific_game_ids);
+      historyMap.put(platform, currSpecificGameIds);
+      return true;
+    }
+    return false;
+  }
+
 }

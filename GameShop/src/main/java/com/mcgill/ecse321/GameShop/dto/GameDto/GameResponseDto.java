@@ -1,5 +1,8 @@
 package com.mcgill.ecse321.GameShop.dto.GameDto;
 
+import java.util.List;
+import java.util.Map;
+
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryListDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformListDto;
 import com.mcgill.ecse321.GameShop.model.Game;
@@ -17,6 +20,7 @@ public class GameResponseDto {
         private String aPhotoUrl;
         private CategoryListDto categories;
         private PlatformListDto platforms;
+        // private Map<Platform, List<Integer>> platformSpecificMap;
 
         protected GameResponseDto() {
         }
@@ -31,6 +35,7 @@ public class GameResponseDto {
             this.aPhotoUrl = aGame.getPhotoUrl();
             this.categories = CategoryListDto.convertToCategoryListDto(aGame.getCategories());
             this.platforms = PlatformListDto.convertToPlatformListDto(aGame.getPlatforms());
+            // this.platformSpecificMap = aGame.getPlatformSpecificMap();
         }
 
         // TODO check with team: Static factory method to create a GameResponseDto from a Game instance
