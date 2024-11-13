@@ -1,7 +1,5 @@
 package com.mcgill.ecse321.GameShop.controller;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,13 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
-import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListRequestDto;
 import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.WishList;
 import com.mcgill.ecse321.GameShop.service.WishListService;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 public class WishListController {
@@ -25,41 +20,80 @@ public class WishListController {
     @Autowired
     private WishListService wishListService;
 
+    /**
+     * Find a wishlist by its ID.
+     * 
+     * @param wishlist_id the ID of the wishlist to retrieve
+     * @return the response data transfer object containing the details of the retrieved wishlist
+     */
     @GetMapping("/wishlists/{wishlist_id}")
     public WishListResponseDto findWishlistById(@PathVariable int wishlist_id) {
-
         WishList wishList = wishListService.findWishlistById(wishlist_id);
         return WishListResponseDto.create(wishList);
     }
 
+    /**
+     * Add a game to a wishlist.
+     * 
+     * @param wishlist_id the ID of the wishlist to add the game to
+     * @param game_id the ID of the game to add to the wishlist
+     * @return the response data transfer object containing the details of the updated wishlist
+     */
     @PutMapping("/wishlist/{wishlist_id}/{game_id}")
     public WishListResponseDto addGameToWishlist(@PathVariable int wishlist_id, @PathVariable int game_id) {
-        WishList wishList = wishListService.addGameToWishlist(wishlist_id,game_id);
+        WishList wishList = wishListService.addGameToWishlist(wishlist_id, game_id);
         return WishListResponseDto.create(wishList);
     }
+
+    /**
+     * Remove a game from a wishlist.
+     * 
+     * @param wishlist_id the ID of the wishlist to remove the game from
+     * @param game_id the ID of the game to remove from the wishlist
+     * @return the response data transfer object containing the details of the updated wishlist
+     */
     @DeleteMapping("/wishlist/{wishlist_id}/{game_id}")
     public WishListResponseDto removeGameFromWishlist(@PathVariable int wishlist_id, @PathVariable int game_id) {
-        WishList wishList = wishListService.removeGameFromWishlist(wishlist_id,game_id);
+        WishList wishList = wishListService.removeGameFromWishlist(wishlist_id, game_id);
         return WishListResponseDto.create(wishList);
     }
 
-
+    /**
+     * Remove all games from a wishlist.
+     * 
+     * @param wishlist_id the ID of the wishlist to remove all games from
+     * @return the response data transfer object containing the details of the updated wishlist
+     */
     @PutMapping("/wishlist/{wishlist_id}")
     public WishListResponseDto removeAllGamesFromWishlist(@PathVariable int wishlist_id) {
         WishList wishList = wishListService.findWishlistById(wishlist_id);
         wishList = wishListService.removeAllGamesFromWishlist(wishlist_id);
         return WishListResponseDto.create(wishList);
     }
+
+    /**
+     * Get all games in a wishlist.
+     * 
+     * @param wishlist_id the ID of the wishlist to retrieve games from
+     * @return a list data transfer object containing the summaries of all games in the wishlist
+     */
     @GetMapping("/wishlist/{wishlist_id}/")
     public GameListDto getAllGamesInWishlist(@PathVariable int wishlist_id) {
         WishList wishList = wishListService.findWishlistById(wishlist_id);
         WishListResponseDto wishListResponseDto = new WishListResponseDto(wishList);
         return wishListResponseDto.getGames();
-        
     }
+
+    /**
+     * Get a specific game in a wishlist.
+     * 
+     * @param wishlist_id the ID of the wishlist to retrieve the game from
+     * @param game_id the ID of the game to retrieve
+     * @return the response data transfer object containing the details of the retrieved game
+     */
     @GetMapping("/wishlist/{wishlist_id}/{game_id}")
     public GameResponseDto getGameInWishList(@PathVariable int wishlist_id, @PathVariable int game_id) {
-        Game game = wishListService.getGameInWishList(wishlist_id,game_id);
+        Game game = wishListService.getGameInWishList(wishlist_id, game_id);
         return new GameResponseDto(game);
     }
 }
