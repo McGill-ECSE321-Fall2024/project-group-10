@@ -24,6 +24,8 @@ import com.mcgill.ecse321.GameShop.dto.OrderDto.OrderAddGameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.OrderDto.OrderListDto;
 import com.mcgill.ecse321.GameShop.dto.OrderDto.OrderRequestDto;
 import com.mcgill.ecse321.GameShop.dto.OrderDto.OrderResponseDto;
+import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
+import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
 import com.mcgill.ecse321.GameShop.dto.CartDto.CartRequestDto;
@@ -37,10 +39,13 @@ import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CartRepository;
+import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
+import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import com.mcgill.ecse321.GameShop.repository.OrderRepository;
 import com.mcgill.ecse321.GameShop.repository.SpecificGameRepository;
 import com.mcgill.ecse321.GameShop.repository.WishListRepository;
+import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.SpecificGame;
 import com.mcgill.ecse321.GameShop.model.SpecificGame.ItemStatus;
 
@@ -70,6 +75,25 @@ public class OrderIntegrationTests {
         @Autowired
         private CartRepository cartRepository;
 
+        @Autowired
+        private ManagerRepository managerRepository;
+
+        @Autowired
+        private CustomerRepository customerRepository;
+
+        private static final String GAME_TITLE = "Game Title";
+        private static final String GAME_DESCRIPTION = "Game Description";
+        private static final int GAME_PRICE = 50;
+        private static final GameStatus GAME_STATUS = GameStatus.InStock;
+        private static final int GAME_STOCK_QUANTITY = 10;
+        private static final String GAME_PHOTO_URL = "https://www.exampleayre.com/game.jpg";
+    
+        private static final String MANAGER_EMAIL = "managerovjchkdhjkgfsjkghdsfaghjkfPlatformmm@example.com";
+        private static final String MANAGER_PASSWORD = "managerPass";
+        private static final String MANAGER_USERNAME = "managerUser";
+        private static final String MANAGER_PHONE = "123-456-7890";
+        private static final String MANAGER_ADDRESS = "123 Manager Street";
+
         private String trackingNumber = "HELLOHELLOTRACKINGNUMBERHELLOHELLO";
         private String customerEmail = "customer@hellohello.com";
         private int gameId = 74289562;
@@ -82,6 +106,8 @@ public class OrderIntegrationTests {
                 specificGameRepository.deleteAll();
                 wishListRepository.deleteAll();
                 orderRepository.deleteAll();
+                managerRepository.deleteAll();
+                customerRepository.deleteAll();
                 accountRepository.deleteAll();
                 cartRepository.deleteAll();
                 gameRepository.deleteAll();
@@ -97,6 +123,20 @@ public class OrderIntegrationTests {
                                 "customerPass",
                                 "123-456-7890",
                                 "123 Customer Street");
+
+                AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE, MANAGER_ADDRESS);
+                ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager, AccountResponseDto.class);
+                assertNotNull(managerResponse);
+                assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
+                assertEquals(MANAGER_EMAIL, managerResponse.getBody().getEmail());
+
+                PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
+                ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
+                assertNotNull(platformResponse);
+                assertEquals(HttpStatus.OK, platformResponse.getStatusCode());
+                assertEquals("Platform Name", platformResponse.getBody().getPlatformName());
+                int platformId = platformResponse.getBody().getPlatformId();
+                
                 ResponseEntity<AccountResponseDto> customerResponse = client.postForEntity(
                                 "/account/customer",
                                 customerRequest,
@@ -136,7 +176,7 @@ public class OrderIntegrationTests {
                 int cartId = cart.getCartId();
 
                 // Add Game to Customer's Cart
-                CartRequestDto cartRequestDto = new CartRequestDto(gameId, 1);
+                CartRequestDto cartRequestDto = new CartRequestDto(gameId, 1, platformId);
                 ResponseEntity<CartResponseDto> updatedCartResponse = client.postForEntity(
                                 "/carts/" + cartId + "/games",
                                 cartRequestDto,

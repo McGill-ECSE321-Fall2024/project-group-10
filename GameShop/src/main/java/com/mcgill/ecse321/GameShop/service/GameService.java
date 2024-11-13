@@ -413,7 +413,7 @@ public class GameService {
     }
 
     @Transactional
-    public void addSpecificGameToHistoryMap(int game_id, int specificGame_id) {
+    public void addSpecificGameToHistoryMap(int game_id, int specificGame_id, int platform_id) {
         if(game_id <= 0){
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
         }
@@ -424,7 +424,7 @@ public class GameService {
         if(game == null){
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
         }
-        Platform platform = findPlatformByGameHistory(game_id, specificGame_id);
+        Platform platform = platformRepository.findById(platform_id);
         if(platform == null){
             throw new GameShopException(HttpStatus.NOT_FOUND, "Platform does not exist");
         }

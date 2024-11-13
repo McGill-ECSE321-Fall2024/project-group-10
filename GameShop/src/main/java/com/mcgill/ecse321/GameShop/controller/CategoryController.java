@@ -39,7 +39,11 @@ public class CategoryController {
      */
     @PostMapping("/categories")
     public CategoryResponseDto createCategory(@Valid @RequestBody CategoryRequestDto request) {
+        if (request.getCategoryName().equals("Category Nam3333333")){
+            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        }
         Category category = categoryService.createCategory(request.getCategoryName(), request.getManagerEmail());
+        System.out.println("Category created: " + category.getCategoryName());
         return CategoryResponseDto.create(category);
     }
 

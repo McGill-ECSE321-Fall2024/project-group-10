@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Transient;
 
 // line 108 "../../../../../../model.ump"
 // line 250 "../../../../../../model.ump"
@@ -37,6 +38,8 @@ public class Cart {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "cart_items_jt", joinColumns = @JoinColumn(name = "cart_id"), inverseJoinColumns = @JoinColumn(name = "game_id"))
   private List<Game> games;
+  @Transient
+  private Map<Game, List<Platform>> gamePlatforms = new HashMap<Game, List<Platform>>();
 
   // ------------------------
   // CONSTRUCTOR
@@ -177,4 +180,30 @@ public class Cart {
     return super.toString() + "[" +
         "cart_id" + ":" + getCart_id() + "]";
   }
+
+  public Map<Game, List<Platform>> getGamePlatforms() {
+    return gamePlatforms;
+  }
+
+  public Boolean addGametoPlatformtoGame(Game game, Platform platform) {
+    List<Platform> currPlatforms = gamePlatforms.get(game);
+    if (currPlatforms == null) {
+      currPlatforms = new ArrayList<Platform>();
+    }
+    if (currPlatforms.contains(platform)) {
+      return false;
+    }
+    currPlatforms.add(platform);
+    return true;
+  }
+
+  public Boolean removeGamefromPlatformfromGame(Game game, Platform platform) {
+    List<Platform> currPlatforms = gamePlatforms.get(game);
+    if (currPlatforms != null && currPlatforms.contains(platform)) {
+      currPlatforms.remove(platform);
+      return true;
+    }
+    return false;
+  }
+
 }

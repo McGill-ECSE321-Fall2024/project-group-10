@@ -31,6 +31,8 @@ public class CategoryService {
 
     @Transactional
     public Category createCategory(String categoryName, String managerEmail) {
+        System.out.println("Creating CCCCCCCCCCCCC: " + categoryName);
+        System.out.println("Manager EEEEEEEEEEEEEE: " + managerEmail);
         if (categoryName == null || categoryName.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Category name cannot be empty or null");
         }
@@ -39,6 +41,7 @@ public class CategoryService {
         }
     
         Manager manager = managerRepository.findByEmail(managerEmail);
+        System.out.println("ManagerRRRRRRRRRRRRRRRRRR: " + manager);
         if (manager == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND,
                     String.format("There is no manager with email: %s", managerEmail));

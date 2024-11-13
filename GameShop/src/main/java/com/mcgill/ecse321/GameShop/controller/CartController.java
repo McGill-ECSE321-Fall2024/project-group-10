@@ -63,7 +63,6 @@ public class CartController {
             @Valid @RequestBody CartRequestDto requestDto) {
         int gameId = requestDto.getGameId();
         int quantity = requestDto.getQuantity();
-
         cartService.addGameToCart(cartId, gameId, quantity);
 
         Cart cart = cartService.getCartById(cartId);

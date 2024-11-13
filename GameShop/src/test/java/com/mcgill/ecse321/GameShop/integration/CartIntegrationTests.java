@@ -9,11 +9,16 @@ import com.mcgill.ecse321.GameShop.dto.CartDto.CartSummaryDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
+import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
+import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CartRepository;
+import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
+import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import com.mcgill.ecse321.GameShop.repository.OrderRepository;
+import com.mcgill.ecse321.GameShop.repository.PlatformRepository;
 import com.mcgill.ecse321.GameShop.repository.ReplyRepository;
 import com.mcgill.ecse321.GameShop.repository.WishListRepository;
 
@@ -49,9 +54,29 @@ public class CartIntegrationTests {
     private WishListRepository wishlistRepo;
     @Autowired
     private ReplyRepository replyRepo;
-
+    @Autowired
+    private PlatformRepository platformRepo;
     @Autowired
     private OrderRepository orderRepo;
+
+    @Autowired
+    private ManagerRepository managerRepo;
+
+    @Autowired
+    private CustomerRepository customerRepo;
+
+    private static final String GAME_TITLE = "Game Title";
+    private static final String GAME_DESCRIPTION = "Game Description";
+    private static final int GAME_PRICE = 50;
+    private static final GameStatus GAME_STATUS = GameStatus.InStock;
+    private static final int GAME_STOCK_QUANTITY = 10;
+    private static final String GAME_PHOTO_URL = "https://www.exampleayre.com/game.jpg";
+
+    private static final String MANAGER_EMAIL = "managerovjchkdhjkgfsjkghdsfaghjkfPlatformmm@example.com";
+    private static final String MANAGER_PASSWORD = "managerPass";
+    private static final String MANAGER_USERNAME = "managerUser";
+    private static final String MANAGER_PHONE = "123-456-7890";
+    private static final String MANAGER_ADDRESS = "123 Manager Street";
 
     private int cartId;
     private int gameId1;
@@ -61,15 +86,17 @@ public class CartIntegrationTests {
     private String customerPassword = "customerpass";
     private String customerPhone = "123-456-7890";
     private String customerAddress = "123 Customer Street";
+    private int platformId;
 
     @BeforeAll
     @AfterAll
     public void clearDatabase() {
         wishlistRepo.deleteAll();
-
         replyRepo.deleteAll();
-
         orderRepo.deleteAll();
+        platformRepo.deleteAll();
+        managerRepo.deleteAll();
+        customerRepo.deleteAll();
         accountRepo.deleteAll();
         cartRepo.deleteAll();
         gameRepo.deleteAll();
@@ -90,6 +117,21 @@ public class CartIntegrationTests {
                 customerPassword,
                 customerPhone,
                 customerAddress);
+
+        AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE, MANAGER_ADDRESS);
+        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager, AccountResponseDto.class);
+        assertNotNull(managerResponse);
+        assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
+        assertEquals(MANAGER_EMAIL, managerResponse.getBody().getEmail());
+
+        PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
+        ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
+        assertNotNull(platformResponse);
+        assertEquals(HttpStatus.OK, platformResponse.getStatusCode());
+        assertEquals("Platform Name", platformResponse.getBody().getPlatformName());
+
+        this.platformId = platformResponse.getBody().getPlatformId();
+
         ResponseEntity<AccountResponseDto> customerResponse = client.postForEntity(
                 "/account/customer",
                 customerRequest,
@@ -178,7 +220,7 @@ public class CartIntegrationTests {
 
         // Act: Add game to cart
         String url = String.format("/carts/%d/games", cartId);
-        CartRequestDto requestDto = new CartRequestDto(gameId1, 2);
+        CartRequestDto requestDto = new CartRequestDto(gameId1, 2, this.platformId);
         ResponseEntity<CartResponseDto> response = client.postForEntity(url, requestDto, CartResponseDto.class);
 
         // Assert
@@ -202,7 +244,7 @@ public class CartIntegrationTests {
     public void testAddGameToCartInvalidQuantity() {
         // Arrange
         String url = String.format("/carts/%d/games", cartId);
-        CartRequestDto requestDto = new CartRequestDto(gameId1, -1);
+        CartRequestDto requestDto = new CartRequestDto(gameId1, -1, this.platformId);
 
         // Act
         ResponseEntity<String> response = client.postForEntity(url, requestDto, String.class);
@@ -238,7 +280,7 @@ public class CartIntegrationTests {
         gameId2 = game2.getaGame_id();
 
         String addUrl = String.format("/carts/%d/games", cartId);
-        CartRequestDto addRequestDto = new CartRequestDto(gameId2, 3);
+        CartRequestDto addRequestDto = new CartRequestDto(gameId2, 3, this.platformId);
         ResponseEntity<CartResponseDto> addResponse = client.postForEntity(addUrl, addRequestDto,
                 CartResponseDto.class);
         assertNotNull(addResponse);
@@ -246,7 +288,7 @@ public class CartIntegrationTests {
 
         // Act: Remove some quantity of gameId2 from cart
         String removeUrl = String.format("/carts/%d/games/remove", cartId);
-        CartRequestDto removeRequestDto = new CartRequestDto(gameId2, 2);
+        CartRequestDto removeRequestDto = new CartRequestDto(gameId2, 2, this.platformId);
         ResponseEntity<CartResponseDto> response = client.postForEntity(removeUrl, removeRequestDto,
                 CartResponseDto.class);
 
@@ -269,7 +311,7 @@ public class CartIntegrationTests {
     public void testRemoveGameFromCartInvalidQuantity() {
         // Arrange
         String url = String.format("/carts/%d/games/remove", cartId);
-        CartRequestDto requestDto = new CartRequestDto(gameId2, -1);
+        CartRequestDto requestDto = new CartRequestDto(gameId2, -1, this.platformId);
 
         // Act
         ResponseEntity<String> response = client.postForEntity(url, requestDto, String.class);
@@ -290,7 +332,7 @@ public class CartIntegrationTests {
     public void testUpdateGameQuantityInCart() {
         // Arrange: Ensure initial quantity of gameId1 is set to 1
         String addUrl = String.format("/carts/%d/games", cartId);
-        CartRequestDto addRequestDto = new CartRequestDto(gameId1, 1);
+        CartRequestDto addRequestDto = new CartRequestDto(gameId1, 1, this.platformId);
         ResponseEntity<CartResponseDto> addResponse = client.postForEntity(addUrl, addRequestDto,
                 CartResponseDto.class);
         assertNotNull(addResponse);
@@ -300,7 +342,7 @@ public class CartIntegrationTests {
 
         // Arrange: Update quantity of gameId1 to 5
         String url = String.format("/carts/%d/games/%d/quantity", cartId, gameId1);
-        CartRequestDto requestDto = new CartRequestDto(gameId1, 5);
+        CartRequestDto requestDto = new CartRequestDto(gameId1, 5, this.platformId);
 
         // Act
         ResponseEntity<CartResponseDto> response = client.exchange(
@@ -327,7 +369,7 @@ public class CartIntegrationTests {
     public void testUpdateGameQuantityInCartInvalidQuantity() {
         // Arrange
         String url = String.format("/carts/%d/games/%d/quantity", cartId, gameId1);
-        CartRequestDto requestDto = new CartRequestDto(gameId1, -2);
+        CartRequestDto requestDto = new CartRequestDto(gameId1, -2, this.platformId);
 
         // Act
         ResponseEntity<String> response = client.exchange(
@@ -395,7 +437,7 @@ public class CartIntegrationTests {
     public void testGetGameFromCart() {
         // Arrange: Add game back to cart
         String addUrl = String.format("/carts/%d/games", cartId);
-        CartRequestDto addRequestDto = new CartRequestDto(gameId1, 2);
+        CartRequestDto addRequestDto = new CartRequestDto(gameId1, 2, this.platformId);
         ResponseEntity<CartResponseDto> addResponse = client.postForEntity(addUrl, addRequestDto,
                 CartResponseDto.class);
         assertNotNull(addResponse);
@@ -492,7 +534,7 @@ public class CartIntegrationTests {
 
         // Act: Try to add more than available stock (quantity of 5) to the cart
         String url = String.format("/carts/%d/games", cartId);
-        CartRequestDto requestDto = new CartRequestDto(createdGameId, 5);
+        CartRequestDto requestDto = new CartRequestDto(createdGameId, 5, this.platformId);
         ResponseEntity<String> response = client.postForEntity(url, requestDto, String.class);
 
         // Assert: Expect BAD_REQUEST due to insufficient stock
@@ -512,7 +554,7 @@ public class CartIntegrationTests {
         // Arrange
         int nonExistentGameId = 9999;
         String url = String.format("/carts/%d/games", cartId);
-        CartRequestDto requestDto = new CartRequestDto(nonExistentGameId, 1);
+        CartRequestDto requestDto = new CartRequestDto(nonExistentGameId, 1, this.platformId);
 
         // Act
         ResponseEntity<String> response = client.postForEntity(url, requestDto, String.class);

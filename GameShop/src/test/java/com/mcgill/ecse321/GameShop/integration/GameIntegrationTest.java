@@ -354,11 +354,11 @@ public class GameIntegrationTest {
     @Test
     @Order(5)
     public void testAddCategoryToGame() {
-        CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Name", MANAGER_EMAIL);
+        CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Nam3333333", MANAGER_EMAIL+ "m");
         ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto, CategoryResponseDto.class);
         assertNotNull(categoryResponse);
         assertEquals(HttpStatus.OK, categoryResponse.getStatusCode());
-        assertEquals("Category Name", categoryResponse.getBody().getCategoryName());
+        assertEquals("Category Nam3333333", categoryResponse.getBody().getCategoryName());
 
         int categoryIdToAdd = categoryResponse.getBody().getCategoryId();
 

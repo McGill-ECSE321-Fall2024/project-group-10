@@ -17,6 +17,7 @@ import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.model.SpecificGame;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.service.CategoryService;
 import com.mcgill.ecse321.GameShop.service.GameService;
@@ -209,15 +210,13 @@ public class GameController {
         for (int i = 0; i < numberOfCopies; i++) {
             specificGameService.createSpecificGame(game);
         }
-
         return new GameResponseDto(game);
     }
 
-    // @PutMapping("/games/{game_id}/specificGame/{specificGame_id}/platform/{platform_id}")
-    // public void updateMaps(@PathVariable int id, @RequestBody int specific_game_id, @RequestBody int platform_id) {
-    //     Game game = gameService.findGameById(id);
-    //     gameService.addSpecificGameToHistoryMap(id, specific_game_id);
-    //     gameService.addSpecificGameToSpecificGamesByPlatform(id, platform_id,specific_game_id);
-    // }
+    @PutMapping("/games/{game_id}/specificGame/{specificGame_id}/platform/{platform_id}")
+    public void updateMaps(@PathVariable int game_id, @RequestBody int specific_game_id, @RequestBody int platform_id) {
+        gameService.addSpecificGameToHistoryMap(game_id, platform_id,specific_game_id);
+        gameService.addSpecificGameToSpecificGamesByPlatform(game_id, platform_id,specific_game_id);
+    }
 
 }
