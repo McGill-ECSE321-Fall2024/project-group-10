@@ -16,8 +16,6 @@ import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountType;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
 import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
-import com.mcgill.ecse321.GameShop.model.Customer;
-import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Employee.EmployeeStatus;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CartRepository;

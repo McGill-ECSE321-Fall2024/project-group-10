@@ -3,7 +3,6 @@ package com.mcgill.ecse321.GameShop.dto.GameDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryListDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformListDto;
 import com.mcgill.ecse321.GameShop.model.Game;
-import com.mcgill.ecse321.GameShop.model.Platform;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 
 public class GameResponseDto {

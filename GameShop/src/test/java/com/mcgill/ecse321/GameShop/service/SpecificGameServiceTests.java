@@ -6,12 +6,10 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
-import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.SpecificGame;
 import com.mcgill.ecse321.GameShop.model.SpecificGame.ItemStatus;
 import com.mcgill.ecse321.GameShop.repository.SpecificGameRepository;
-import com.mcgill.ecse321.GameShop.repository.AccountRepositoryTests;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 
 import org.junit.jupiter.api.AfterAll;

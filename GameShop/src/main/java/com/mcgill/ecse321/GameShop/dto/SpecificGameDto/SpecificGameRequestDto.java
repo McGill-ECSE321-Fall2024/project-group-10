@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.mcgill.ecse321.GameShop.model.SpecificGame.ItemStatus;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
