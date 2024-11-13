@@ -12,7 +12,6 @@ public class AccountResponseDto {
     private String username;
     private String phoneNumber;
     private String address;
-    private int accountId;
 
     protected AccountResponseDto(){}
 

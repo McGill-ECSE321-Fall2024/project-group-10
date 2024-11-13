@@ -2,7 +2,6 @@ package com.mcgill.ecse321.GameShop.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
-import java.util.Optional;
 import java.util.ArrayList;
 
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountListDto;
@@ -14,7 +13,6 @@ import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
-import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.WishList;
 import com.mcgill.ecse321.GameShop.service.AccountService;
 
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -203,8 +200,6 @@ public class AccountController {
      */
     @GetMapping("/account/customer/{email}/wishlist")
     public WishListResponseDto getCustomerWishlist(@PathVariable String email) {
-        Customer customer = (Customer) accountService.getAccountByEmail(email);
-        String title = String.format("%s's Wishlist", customer.getUsername());
         WishList wishlist = accountService.getWishlistByCustomerEmail(email);
         return new WishListResponseDto(wishlist);
     }
