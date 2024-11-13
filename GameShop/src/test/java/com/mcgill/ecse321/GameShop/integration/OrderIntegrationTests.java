@@ -332,9 +332,8 @@ public class OrderIntegrationTests {
         @Test
         @Order(6)
         public void testAddAnotherSpecificGameToOrder() {
-                System.out.println("Starting testAddAnotherSpecificGameToOrder");
 
-                // Step 1: Create a second SpecificGame instance for the same Game
+                // Create a second SpecificGame instance for the same Game
                 SpecificGameRequestDto specificGameRequest2 = new SpecificGameRequestDto(
                                 SpecificGame.ItemStatus.Confirmed,
                                 new ArrayList<>(),
@@ -350,18 +349,14 @@ public class OrderIntegrationTests {
                 assertNotNull(specificGame2);
                 int specificGameId2 = specificGame2.getSpecificGame_id();
 
-                System.out.println("SpecificGame 2 created with ID: " + specificGameId2);
-
-                // Step 2: Add the second SpecificGame instance to the order
+                // Add the second SpecificGame instance to the order
                 OrderAddGameRequestDto addGameRequest2 = new OrderAddGameRequestDto(gameId, 1);
                 ResponseEntity<OrderResponseDto> response = client.postForEntity(
                                 "/orders/" + trackingNumber + "/games",
                                 addGameRequest2,
                                 OrderResponseDto.class);
 
-                System.out.println("Adding second specific game to order response: " + response.getStatusCode());
-
-                // Step 3: Retrieve the updated order
+                // Retrieve the updated order
                 ResponseEntity<OrderResponseDto> updatedOrderResponse = client.getForEntity(
                                 "/orders/" + trackingNumber,
                                 OrderResponseDto.class);
@@ -376,13 +371,12 @@ public class OrderIntegrationTests {
                 List<Integer> specificGameIds = updatedOrder.getSpecificGames().stream()
                                 .map(SpecificGameResponseDto::getSpecificGame_id)
                                 .collect(Collectors.toList());
-                System.out.println("Specific game IDs in order: " + specificGameIds);
 
                 // Ensure that both specific games are present
                 assertTrue(specificGameIds.contains(specificGameId), "Order should contain the first SpecificGame");
                 assertTrue(specificGameIds.contains(specificGameId2), "Order should contain the second SpecificGame");
 
-                // Step 4: Confirm the count of specific games with the same gameId
+                // Confirm the count of specific games with the same gameId
                 long count = updatedOrder.getSpecificGames().stream()
                                 .filter(sg -> sg.getGame_id() == gameId)
                                 .count();
@@ -513,6 +507,106 @@ public class OrderIntegrationTests {
                 assertNotNull(returnedSpecificGame, "Expected non-null SpecificGameResponseDto after return.");
                 assertEquals(ItemStatus.Returned, returnedSpecificGame.getItemStatus(),
                                 "Expected specific game status to be 'Returned' after returning.");
+        }
+
+        @SuppressWarnings("null")
+        @Test
+        @Order(10)
+        public void testCreateOrderWithInvalidCustomerEmail() {
+                OrderRequestDto orderRequest = new OrderRequestDto(
+                                new Date(),
+                                "Invalid order with non-existent customer",
+                                paymentCard,
+                                "invalid_email@nonexistent.com", // Invalid email
+                                new ArrayList<>());
+
+                ResponseEntity<String> response = client.postForEntity("/orders", orderRequest, String.class);
+
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(),
+                                "Expected status NOT_FOUND for invalid customer email.");
+                assertTrue(response.getBody().contains("Customer not found"),
+                                "Expected 'Customer not found' error message.");
+        }
+
+        @SuppressWarnings("null")
+        @Test
+        @Order(11)
+        public void testGetOrderByInvalidTrackingNumber() {
+                ResponseEntity<String> response = client.getForEntity("/orders/invalid_tracking_number", String.class);
+
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(),
+                                "Expected status NOT_FOUND for invalid tracking number.");
+                assertTrue(response.getBody().contains("Order not found"), "Expected 'Order not found' error message.");
+        }
+
+        @SuppressWarnings("null")
+        @Order(12)
+        public void testAddGameToOrderWithInvalidGameId() {
+                OrderAddGameRequestDto addGameRequest = new OrderAddGameRequestDto(9999999, 1); // Invalid game ID
+
+                ResponseEntity<String> response = client.postForEntity(
+                                "/orders/" + trackingNumber + "/games",
+                                addGameRequest,
+                                String.class);
+
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(),
+                                "Expected status NOT_FOUND for invalid game ID.");
+                assertTrue(response.getBody().contains("Game not found"), "Expected 'Game not found' error message.");
+        }
+
+        @SuppressWarnings("null")
+        @Test
+        @Order(13)
+        public void testReturnNonExistentSpecificGame() {
+                int nonExistentSpecificGameId = 91929398; // Non-existent specific game ID
+
+                ResponseEntity<String> response = client.postForEntity(
+                                "/orders/" + trackingNumber + "/return/" + nonExistentSpecificGameId,
+                                null,
+                                String.class);
+
+                // Assert status code is NOT_FOUND
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(),
+                                "Expected status NOT_FOUND for non-existent specific game ID.");
+
+                // Check if the response body is non-null and contains the exact expected
+                // message
+                assertNotNull(response.getBody(), "Expected a non-null response body for error message.");
+                assertTrue(response.getBody().contains("SpecificGame does not exist"),
+                                "Expected 'SpecificGame does not exist' error message but got: " + response.getBody());
+        }
+
+        @SuppressWarnings("null")
+        @Test
+        @Order(14)
+        public void testReturnGameNotInOrder() {
+                // Create a new specific game but do not add it to the existing order
+                SpecificGameRequestDto specificGameRequest = new SpecificGameRequestDto(
+                                SpecificGame.ItemStatus.Confirmed,
+                                new ArrayList<>(),
+                                gameId);
+
+                ResponseEntity<SpecificGameResponseDto> specificGameResponse = client.postForEntity(
+                                "/specificGames",
+                                specificGameRequest,
+                                SpecificGameResponseDto.class);
+                assertNotNull(specificGameResponse);
+                assertEquals(HttpStatus.OK, specificGameResponse.getStatusCode());
+
+                SpecificGameResponseDto specificGame = specificGameResponse.getBody();
+                assertNotNull(specificGame);
+                int specificGameIdNotInOrder = specificGame.getSpecificGame_id();
+
+                // Attempt to return a specific game that was never added to the order
+                ResponseEntity<String> response = client.postForEntity(
+                                "/orders/" + trackingNumber + "/return/" + specificGameIdNotInOrder,
+                                null,
+                                String.class);
+
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(),
+                                "Expected status BAD_REQUEST for specific game not in order.");
+                assertTrue(response.getBody().contains("Game not in order"),
+                                "Expected 'Game not in order' error message.");
         }
 
 }
