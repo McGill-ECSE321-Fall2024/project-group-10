@@ -70,6 +70,4 @@ public class CategoryController {
         categoryService.deleteCategory(id);
     }
 
-
 }
-

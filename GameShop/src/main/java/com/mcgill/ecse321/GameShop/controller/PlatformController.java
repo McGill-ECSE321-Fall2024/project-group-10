@@ -18,7 +18,6 @@ import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @RestController
 public class PlatformController {
 
@@ -70,6 +69,5 @@ public class PlatformController {
     public void deletePlatform(@PathVariable int id) {
         platformService.deletePlatform(id);
     }
-
 
 }

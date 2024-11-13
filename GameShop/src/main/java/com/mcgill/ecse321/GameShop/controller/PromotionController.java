@@ -29,11 +29,13 @@ public class PromotionController {
     @Autowired
     private PromotionService promotionService;
 
-    /** 
+    /**
      * Create a new promotion.
      * 
-     * @param request the promotion request data transfer object containing the details of the promotion to be created
-     * @return the response data transfer object containing the details of the created promotion
+     * @param request the promotion request data transfer object containing the
+     *                details of the promotion to be created
+     * @return the response data transfer object containing the details of the
+     *         created promotion
      */
     @PostMapping("/promotions")
     public PromotionResponseDto createPromotion(@Valid @RequestBody PromotionRequestDto request) {
@@ -43,16 +45,16 @@ public class PromotionController {
                 request.getStartLocalDate(),
                 request.getEndLocalDate(),
                 request.getManagerEmail(),
-                request.getGameIds()
-        );
+                request.getGameIds());
         return new PromotionResponseDto(promotion);
     }
 
-    /** 
+    /**
      * Get a promotion by ID.
      * 
      * @param pid the ID of the promotion to retrieve
-     * @return the response data transfer object containing the details of the retrieved promotion
+     * @return the response data transfer object containing the details of the
+     *         retrieved promotion
      */
     @GetMapping("/promotions/{pid}")
     public PromotionResponseDto getPromotionById(@PathVariable int pid) {
@@ -60,10 +62,11 @@ public class PromotionController {
         return new PromotionResponseDto(promotion);
     }
 
-    /** 
+    /**
      * Get all promotions.
      * 
-     * @return a list data transfer object containing the summaries of all promotions
+     * @return a list data transfer object containing the summaries of all
+     *         promotions
      */
     @GetMapping("/promotions")
     public PromotionListDto getAllPromotions() {
@@ -74,12 +77,14 @@ public class PromotionController {
         return new PromotionListDto(dtos);
     }
 
-    /** 
+    /**
      * Update a promotion.
      * 
-     * @param id the ID of the promotion to update
-     * @param request the promotion request data transfer object containing the updated details of the promotion
-     * @return the response data transfer object containing the details of the updated promotion
+     * @param id      the ID of the promotion to update
+     * @param request the promotion request data transfer object containing the
+     *                updated details of the promotion
+     * @return the response data transfer object containing the details of the
+     *         updated promotion
      */
     @PutMapping("/promotions/{id}")
     public PromotionResponseDto updatePromotion(@PathVariable int id, @RequestBody PromotionRequestDto request) {
@@ -89,12 +94,11 @@ public class PromotionController {
                 request.getDiscountRate(),
                 request.getStartLocalDate(),
                 request.getEndLocalDate(),
-                request.getGameIds()
-        );
+                request.getGameIds());
         return new PromotionResponseDto(promotion);
     }
 
-    /** 
+    /**
      * Delete a promotion.
      * 
      * @param promotionId the ID of the promotion to delete
@@ -104,11 +108,12 @@ public class PromotionController {
         promotionService.deletePromotion(promotionId);
     }
 
-    /** 
+    /**
      * Get all games from a promotion.
      * 
      * @param promotionId the ID of the promotion to retrieve games from
-     * @return a list of game summary data transfer objects containing the details of the games in the promotion
+     * @return a list of game summary data transfer objects containing the details
+     *         of the games in the promotion
      */
     @GetMapping("/promotions/{promotionId}/games")
     public List<GameSummaryDto> getAllGamesFromPromotion(@PathVariable int promotionId) {
@@ -119,12 +124,13 @@ public class PromotionController {
         return gameDtos;
     }
 
-    /** 
+    /**
      * Get a specific game from a promotion.
      * 
      * @param promotionId the ID of the promotion to retrieve the game from
-     * @param gameId the ID of the game to retrieve
-     * @return the game summary data transfer object containing the details of the retrieved game
+     * @param gameId      the ID of the game to retrieve
+     * @return the game summary data transfer object containing the details of the
+     *         retrieved game
      */
     @GetMapping("/promotions/{promotionId}/games/{gameId}")
     public GameSummaryDto getGameByIdFromPromotion(@PathVariable int promotionId, @PathVariable int gameId) {
@@ -132,12 +138,13 @@ public class PromotionController {
         return new GameSummaryDto(game);
     }
 
-    /** 
+    /**
      * Add a game to a promotion.
      * 
      * @param promotionId the ID of the promotion to add the game to
-     * @param gameId the ID of the game to add to the promotion
-     * @return the response data transfer object containing the details of the updated promotion
+     * @param gameId      the ID of the game to add to the promotion
+     * @return the response data transfer object containing the details of the
+     *         updated promotion
      */
     @PostMapping("/promotions/{promotionId}/games/{gameId}")
     public PromotionResponseDto addGameToPromotion(@PathVariable int promotionId, @PathVariable int gameId) {
@@ -145,12 +152,13 @@ public class PromotionController {
         return new PromotionResponseDto(promotion);
     }
 
-    /** 
+    /**
      * Remove a game from a promotion.
      * 
      * @param promotionId the ID of the promotion to remove the game from
-     * @param gameId the ID of the game to remove from the promotion
-     * @return the response data transfer object containing the details of the updated promotion
+     * @param gameId      the ID of the game to remove from the promotion
+     * @return the response data transfer object containing the details of the
+     *         updated promotion
      */
     @DeleteMapping("/promotions/{promotionId}/games/{gameId}")
     public PromotionResponseDto removeGameFromPromotion(@PathVariable int promotionId, @PathVariable int gameId) {

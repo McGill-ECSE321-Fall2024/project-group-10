@@ -9,10 +9,8 @@ import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Reply;
 import com.mcgill.ecse321.GameShop.model.Review;
-import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 import com.mcgill.ecse321.GameShop.service.ReviewService;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +32,8 @@ public class ReviewController {
                 request.getDescription(),
                 request.getGameRating(),
                 request.getGameId(),
-                request.getCustomerEmail()
-        );
-        
+                request.getCustomerEmail());
+
         return new ReviewResponseDto(review);
     }
 
@@ -46,15 +43,14 @@ public class ReviewController {
         Review review = reviewService.getReviewById(id);
         return new ReviewResponseDto(review);
     }
-    
 
-    /** Get the customer that wrote the review*/
+    /** Get the customer that wrote the review */
     @GetMapping("/reviews/review/customer/{id}")
     public AccountResponseDto getCustomerByReviewId(@PathVariable int id) {
         Customer customer = reviewService.getCustomerByReviewID(id);
         return new AccountResponseDto(customer);
     }
-    
+
     /** Get all the reviews to a Game */
     @GetMapping("/reviews/review/game{gameId}")
     public ReviewListDto getReviewsByGame(@PathVariable int gameId) {
@@ -64,7 +60,7 @@ public class ReviewController {
             reviewsDto.add(new ReviewSummaryDto(review));
         }
         return new ReviewListDto(reviewsDto);
-        }
+    }
 
     /** Get all the reviews done by a customer */
     @GetMapping("/reviews/customer/r{email}")
@@ -83,7 +79,6 @@ public class ReviewController {
         Reply reply = reviewService.getReplyToReview(reviewId);
         return new ReplyResponseDto(reply);
     }
-
 
     @PutMapping("/reviews/review/{id}/{rating}")
     public ReviewResponseDto updateRating(@PathVariable int id, @PathVariable int rating) {
