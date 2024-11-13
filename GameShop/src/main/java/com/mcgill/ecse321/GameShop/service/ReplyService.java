@@ -51,11 +51,13 @@ public class ReplyService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Review rating cannot be null");
         }
 
+        // Retrieve the manager by email
         Manager manager = managerRepository.findByEmail(managerEmail);
         if (manager == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Manager with email %s not found", managerEmail));
         }
 
+        // Retrieve the review by ID
         Review review = reviewRepository.findById(reviewId);
         if (review == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Review with ID %d not found", reviewId));
@@ -74,6 +76,7 @@ public class ReplyService {
      */
     @Transactional
     public Reply getReplyById(int replyId) {
+        // Retrieve the reply by ID
         Reply reply = replyRepository.findById(replyId);
         if (reply == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Reply not found");
@@ -86,6 +89,7 @@ public class ReplyService {
      */
     @Transactional
     public Reply updateReply(int replyId, String description, ReviewRating reviewRating) {
+        // Retrieve the reply by ID
         Reply reply = getReplyById(replyId);
 
         // Update description if provided
@@ -107,7 +111,9 @@ public class ReplyService {
      */
     @Transactional
     public Review getReviewByReplyId(int replyId) {
+        // Retrieve the reply by ID
         Reply reply = getReplyById(replyId);
+        // Return the associated review
         return reply.getReview();
     }
 }

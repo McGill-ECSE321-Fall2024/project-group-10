@@ -1,6 +1,5 @@
 package com.mcgill.ecse321.GameShop.service;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class CategoryService {
     @Autowired
     private GameRepository gameRepository;
 
-
+    // Method to create a new category
     @Transactional
     public Category createCategory(String categoryName, String managerEmail) {
         if (categoryName == null || categoryName.trim().isEmpty()) {
@@ -47,6 +46,7 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
     
+    // Method to get a category by its ID
     @Transactional
     public Category getCategory(int categoryId) {
         if (categoryId <= 0) {
@@ -59,11 +59,13 @@ public class CategoryService {
         return category;
     }
     
+    // Method to get all categories
     @Transactional
     public Iterable<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
     
+    // Method to update a category's name
     @Transactional
     public Category updateCategory(int categoryId, String categoryName) {
         if (categoryId <= 0) {
@@ -77,6 +79,7 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
     
+    // Method to delete a category
     @Transactional
     public void deleteCategory(int categoryId) {
         if (categoryId <= 0) {
@@ -94,12 +97,12 @@ public class CategoryService {
         categoryRepository.save(category);
         categoryRepository.delete(category);
     }
+
+    // Method to get all games in a specific category
     @Transactional
     public List<Game> getAllGamesInCategory(int categoryId) {
         Category category = getCategory(categoryId); // Ensure category exists
         List<Game> games = gameRepository.findAllByCategoriesContains(category);
         return games;
     }
-
-
 }

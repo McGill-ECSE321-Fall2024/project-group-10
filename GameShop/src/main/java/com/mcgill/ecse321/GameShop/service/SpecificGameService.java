@@ -28,10 +28,12 @@ public class SpecificGameService {
 
     @Transactional
     public SpecificGame createSpecificGame(Game game) {
+        // Check if the provided game is null
         if(game == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game cannot be null");
         }
        
+        // Create a new SpecificGame instance and set its status to Confirmed
         SpecificGame specificGame = new SpecificGame(game);
         specificGame.setItemStatus(SpecificGame.ItemStatus.Confirmed);
         specificGameRepository.save(specificGame);
@@ -40,9 +42,11 @@ public class SpecificGameService {
 
     @Transactional
     public SpecificGame findSpecificGameById(int specificGame_id) {
+        // Validate the specificGame_id
         if (specificGame_id <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "SpecificGame ID must be greater than 0");
         }
+        // Retrieve the SpecificGame by its ID
         SpecificGame specificGame = specificGameRepository.findById(specificGame_id);
         if (specificGame == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, String.format("SpecificGame does not exist"));
@@ -52,12 +56,14 @@ public class SpecificGameService {
 
     @Transactional
     public SpecificGame updateSpecificGame(int specificGame_id, int game_id) {
+        // Validate the specificGame_id and game_id
         if (specificGame_id <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "SpecificGame ID must be greater than 0");
         }
         if (game_id <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
         }
+        // Retrieve the SpecificGame and Game instances
         SpecificGame specificGame = findSpecificGameById(specificGame_id);
         if(specificGame == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "SpecificGame does not exist");
@@ -66,6 +72,7 @@ public class SpecificGameService {
         if(game == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Game does not exist");
         }
+        // Update the SpecificGame with the new Game
         specificGame.setGames(game);
         specificGameRepository.save(specificGame);
         return specificGame;
@@ -73,6 +80,7 @@ public class SpecificGameService {
 
     @Transactional
     public Iterable<SpecificGame> getSpecificGamesByGameId(int game_id) {
+        // Validate the game_id
         if (game_id <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
         }
@@ -80,31 +88,33 @@ public class SpecificGameService {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Game does not exist");
         }
     
-    Iterable<SpecificGame> specificGames = this.getAllSpecificGames();
-    if (specificGames == null) {
-        throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found at all");
-        
-    }
-    List<SpecificGame> specificGameList = new ArrayList<>();
-
-    for (SpecificGame specificGame : specificGames) {
-        if (specificGame.getGames().getGame_id() == game_id) {
-            specificGameList.add(specificGame);
+        // Retrieve all SpecificGames
+        Iterable<SpecificGame> specificGames = this.getAllSpecificGames();
+        if (specificGames == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found at all");
         }
-    }
+        
+        // Filter SpecificGames by the provided game_id
+        List<SpecificGame> specificGameList = new ArrayList<>();
+        for (SpecificGame specificGame : specificGames) {
+            if (specificGame.getGames().getGame_id() == game_id) {
+                specificGameList.add(specificGame);
+            }
+        }
 
-    // Throw an exception only if no specific games match the given game_id
-    if (specificGameList.isEmpty()) {
-        throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found for this Game ID");
-    }
+        // Throw an exception only if no specific games match the given game_id
+        if (specificGameList.isEmpty()) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found for this Game ID");
+        }
 
-    return specificGameList;
-}
+        return specificGameList;
+    }
     
 
     @Transactional
     public Iterable<SpecificGame> getAllSpecificGames() {
-        Iterable<SpecificGame> specificGames=specificGameRepository.findAll();
+        // Retrieve all SpecificGames from the repository
+        Iterable<SpecificGame> specificGames = specificGameRepository.findAll();
         if (!specificGames.iterator().hasNext()) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found at all");
         }
@@ -113,18 +123,20 @@ public class SpecificGameService {
 
     @Transactional
     public SpecificGame updateSpecificGameItemStatus(int specificGame_id, SpecificGame.ItemStatus newItemStatus) {
+        // Validate the specificGame_id and newItemStatus
         if (specificGame_id <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "SpecificGame ID must be greater than 0");
         }
         if(newItemStatus == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "ItemStatus cannot be null");
         }
+        // Retrieve the SpecificGame by its ID
         SpecificGame specificGame = findSpecificGameById(specificGame_id);
-
         if (specificGame == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "SpecificGame does not exist");
         }
 
+        // Update the ItemStatus of the SpecificGame
         specificGame.setItemStatus(newItemStatus);
         specificGameRepository.save(specificGame);
         return specificGame;

@@ -42,7 +42,7 @@ public class PromotionService {
     public Promotion createPromotion(String description, int discountRate, LocalDate startLocalDate, LocalDate endLocalDate,
             String managerEmail, List<Integer> gameIds) {
 
-        // ValiLocalDate inputs
+        // Validate inputs
         if (gameIds == null || gameIds.isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game IDs cannot be null or empty");
         }
@@ -104,19 +104,19 @@ public class PromotionService {
     }
 
     /**
-     * UpLocalDate an existing Promotion.
+     * Update an existing Promotion.
      */
     @Transactional
     public Promotion updatePromotion(int promotionId, String description, Integer discountRate, LocalDate startLocalDate,
             LocalDate endLocalDate, List<Integer> gameIds) {
         Promotion promotion = getPromotionById(promotionId);
 
-        // UpLocalDate description if provided
+        // Update description if provided
         if (!isEmpty(description)) {
             promotion.setDescription(description);
         }
 
-        // UpLocalDate discount rate if provided
+        // Update discount rate if provided
         if (discountRate != null) {
             if (discountRate < 0 || discountRate > 100) {
                 throw new GameShopException(HttpStatus.BAD_REQUEST, "Discount rate must be between 0 and 100");
@@ -124,7 +124,7 @@ public class PromotionService {
             promotion.setDiscountRate(discountRate);
         }
 
-        // UpLocalDate LocalDates if provided
+        // Update LocalDates if provided
         if (startLocalDate != null) {
             if (endLocalDate != null && startLocalDate.isAfter(endLocalDate)) {
                 throw new GameShopException(HttpStatus.BAD_REQUEST, "Start LocalDate cannot be after end LocalDate");
@@ -135,7 +135,7 @@ public class PromotionService {
             promotion.setEndLocalDate(endLocalDate);
         }
 
-        // UpLocalDate associated games if provided
+        // Update associated games if provided
         if (gameIds != null) {
             List<Game> games = new ArrayList<>();
             for (int  gameId : gameIds) {
@@ -148,7 +148,7 @@ public class PromotionService {
             promotion.setGames(games);
         }
 
-        // Save and return the upLocalDated promotion
+        // Save and return the updated promotion
         return promotionRepository.save(promotion);
     }
 

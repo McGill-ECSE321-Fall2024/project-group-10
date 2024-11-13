@@ -1,14 +1,24 @@
 package com.mcgill.ecse321.GameShop.service;
 
-import com.mcgill.ecse321.GameShop.exception.GameShopException;
-import com.mcgill.ecse321.GameShop.model.*;
-import com.mcgill.ecse321.GameShop.repository.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import com.mcgill.ecse321.GameShop.exception.GameShopException;
+import com.mcgill.ecse321.GameShop.model.Cart;
+import com.mcgill.ecse321.GameShop.model.Customer;
+import com.mcgill.ecse321.GameShop.model.Game;
+import com.mcgill.ecse321.GameShop.model.Order;
+import com.mcgill.ecse321.GameShop.model.SpecificGame;
+import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
+import com.mcgill.ecse321.GameShop.repository.GameRepository;
+import com.mcgill.ecse321.GameShop.repository.OrderRepository;
 
 @Service
 public class OrderService {
@@ -33,50 +43,57 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(Date orderDate, String note, int paymentCard, String customerEmail) {
+        // Validate customer email
         if (customerEmail == null || customerEmail.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Customer email cannot be empty or null");
         }
 
+        // Retrieve customer by email
         Customer customer = customerRepository.findByEmail(customerEmail);
         if (customer == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
         }
 
+        // Retrieve customer's cart and validate it is not empty
         Cart cart = customer.getCart();
         if (cart == null || cart.getGames().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Cart is empty");
         }
 
+        // Create new order
         Order order = new Order(orderDate, note, paymentCard, customer);
         List<Game> gamesInCart = cart.getGames();
         Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cart.getCart_id());
 
+        // Process each game in the cart
         for (Game game : gamesInCart) {
             int gameId = game.getGame_id();
             int quantity = quantities.getOrDefault(gameId, 0);
 
+            // Check stock quantity
             if (game.getStockQuantity() < quantity) {
                 throw new GameShopException(HttpStatus.BAD_REQUEST,
                         String.format("Insufficient stock for game ID %d", gameId));
             }
 
-            // Retrieve the SpecificGame instances
+            // Retrieve SpecificGame instances
             Iterable<SpecificGame> specificGames = specificGameService.getSpecificGamesByGameId(game.getGame_id());
             List<SpecificGame> specificGameList = new ArrayList<>();
             specificGames.forEach(specificGameList::add);
 
+            // Validate enough SpecificGame instances are available
             if (specificGameList.size() < quantity) {
                 throw new GameShopException(HttpStatus.BAD_REQUEST,
                         "Not enough SpecificGame instances available for game ID " + game.getGame_id());
             }
 
-            // Add each SpecificGame instance to the order up to the quantity required
+            // Add SpecificGame instances to the order
             for (int i = 0; i < quantity; i++) {
                 SpecificGame specificGame = specificGameList.get(i);
                 specificGame.addOrder(order);
             }
 
-            // Update the game stock after adding all required SpecificGames
+            // Update game stock quantity
             game.setStockQuantity(game.getStockQuantity() - quantity);
             gameService.updateGameStockQuantity(game.getGame_id(), game.getStockQuantity());
         }
@@ -88,6 +105,7 @@ public class OrderService {
 
     @Transactional
     public Order getOrderByTrackingNumber(String trackingNumber) {
+        // Retrieve order by tracking number
         Order order = orderRepository.findByTrackingNumber(trackingNumber);
         if (order == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Order not found");
@@ -97,15 +115,18 @@ public class OrderService {
 
     @Transactional
     public List<Order> getAllOrders() {
+        // Retrieve all orders
         return (List<Order>) orderRepository.findAll();
     }
 
     @Transactional
     public Order updateOrder(String trackingNumber, Date orderDate, String note, int paymentCard) {
+        // Retrieve order by tracking number
         Order order = orderRepository.findByTrackingNumber(trackingNumber);
         if (order == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Order not found");
         }
+        // Update order details
         order.setOrderDate(orderDate);
         order.setNote(note);
         order.setPaymentCard(paymentCard);
@@ -131,8 +152,7 @@ public class OrderService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Insufficient stock");
         }
 
-        // Retrieve all SpecificGame instances for the game, filtering to only those not
-        // yet in the order
+        // Retrieve all SpecificGame instances for the game, filtering to only those not yet in the order
         Iterable<SpecificGame> specificGames = specificGameService.getSpecificGamesByGameId(game.getGame_id());
         List<SpecificGame> availableSpecificGames = new ArrayList<>();
         specificGames.forEach(specificGame -> {
@@ -141,8 +161,7 @@ public class OrderService {
             }
         });
 
-        // Check if there are enough available specific games to fulfill the quantity
-        // request
+        // Check if there are enough available specific games to fulfill the quantity request
         if (availableSpecificGames.size() < quantity) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
                     "Not enough SpecificGame instances available for game ID " + game.getGame_id());
@@ -162,11 +181,13 @@ public class OrderService {
 
     @Transactional
     public List<SpecificGame> getSpecificGamesByOrder(String trackingNumber) {
+        // Retrieve order by tracking number
         Order order = getOrderByTrackingNumber(trackingNumber);
         if (order == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Order not found");
         }
 
+        // Retrieve SpecificGame instances associated with the order
         List<SpecificGame> specificGames = new ArrayList<>();
         for (SpecificGame specificGame : specificGameService.getAllSpecificGames()) {
             if (specificGame.getOrder().contains(order)) {
@@ -211,15 +232,18 @@ public class OrderService {
 
     @Transactional
     public List<Order> getOrdersWithCustomerEmail(String customerEmail) {
+        // Validate customer email
         if (customerEmail == null || customerEmail.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Customer email cannot be empty or null");
         }
 
+        // Retrieve customer by email
         Customer customer = customerRepository.findByEmail(customerEmail);
         if (customer == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
         }
 
+        // Retrieve orders associated with the customer
         List<Order> orders = new ArrayList<>();
         for (Order order : getAllOrders()) {
             if (order.getCustomer().equals(customer)) {

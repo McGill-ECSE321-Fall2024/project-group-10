@@ -2,6 +2,7 @@ package com.mcgill.ecse321.GameShop.service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class WishListService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    
+    // Find a wishlist by its ID
     @Transactional
     public WishList findWishlistById(int id) {
         if (id <= 0) {
@@ -38,6 +39,8 @@ public class WishListService {
         }
         return wishList;
     }
+
+    // Create a new wishlist for a customer
     @Transactional
     public WishList createWishlist(String customerEmail, String title) {
         if (customerEmail == null || customerEmail.trim().isEmpty()) {
@@ -56,6 +59,7 @@ public class WishListService {
         return wishListRepository.save(wishList);
     }
 
+    // Add a game to a wishlist
     @Transactional
     public WishList addGameToWishlist(int wishlistId, int gameId) {
         if (gameId <= 0) {
@@ -78,8 +82,7 @@ public class WishListService {
         return wishListRepository.save(wishList);
     }
 
-
-
+    // Remove a game from a wishlist
     @Transactional
     public WishList removeGameFromWishlist(int wishlistId, int gameId) {
         if (gameId <= 0) {
@@ -98,12 +101,14 @@ public class WishListService {
                 String.format("There is no Game with Id %d in the WishList with Id %d.",gameId,wishlistId));
     }
 
+    // Get the size of a wishlist
     @Transactional
     public int getWishlistSize(int wishlistId) {
         WishList wishList = findWishlistById(wishlistId);
         return wishList.getGames().size();
     }
 
+    // Get all games in a wishlist
     @Transactional
     public List<Game> getGamesInWishList(int wishlistId){
         if (wishlistId <= 0) {
@@ -113,6 +118,7 @@ public class WishListService {
         return wishList.getGames();
     }
 
+    // Remove all games from a wishlist
     @Transactional
     public WishList removeAllGamesFromWishlist(int wishlistId) {
         if (wishlistId <= 0) {
@@ -122,6 +128,8 @@ public class WishListService {
         wishList.setGames(new ArrayList<>());
         return wishListRepository.save(wishList);
     }
+
+    // Get a specific game from a wishlist
     @Transactional
     public Game getGameInWishList(int wishlistId, int gameId) {
         if (gameId <= 0) {
