@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.text.GlyphView;
 
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Manager;
@@ -57,12 +56,10 @@ public class GameServiceTests {
     private static GameStatus VALID_GAME_STATUS = GameStatus.InStock;
     private static Manager VALID_MANAGER = new Manager("manageremailofgame@example.com", "usernameof maneger",
             "ManagerPassqoesd", "154142365", "montreal");
-    private static String VALID_MANAGER_EMAIL = VALID_MANAGER.getEmail();
 
     @Test
     public void testCreateGame() {
         VALID_GAME_ID = 1;
-        // when(managerRepository.findByEmail(VALID_MANAGER_EMAIL)).thenReturn(VALID_MANAGER);
 
         when(gameRepository.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> {
             Game savedGame = invocation.getArgument(0);

@@ -21,7 +21,6 @@ import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Game;
-import com.mcgill.ecse321.GameShop.service.AccountService;
 import com.mcgill.ecse321.GameShop.service.CartService;
 
 import jakarta.validation.Valid;
@@ -31,8 +30,7 @@ public class CartController {
 
     @Autowired
     private CartService cartService;
-    @Autowired
-    private AccountService customerService;
+
 
     // Get the cart associated with a customer
     /**

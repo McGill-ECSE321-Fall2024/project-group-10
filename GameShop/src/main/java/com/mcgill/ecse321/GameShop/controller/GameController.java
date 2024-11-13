@@ -18,9 +18,7 @@ import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
-import com.mcgill.ecse321.GameShop.service.CategoryService;
 import com.mcgill.ecse321.GameShop.service.GameService;
-import com.mcgill.ecse321.GameShop.service.PlatformService;
 import com.mcgill.ecse321.GameShop.service.SpecificGameService;
 
 import jakarta.validation.Valid;
@@ -30,10 +28,6 @@ public class GameController {
     
     @Autowired
     private GameService gameService;
-    @Autowired
-    private PlatformService PlatformService;
-    @Autowired
-    private CategoryService categoryService;
     @Autowired
     private SpecificGameService specificGameService;
 

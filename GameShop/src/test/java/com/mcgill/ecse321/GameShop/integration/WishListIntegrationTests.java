@@ -2,8 +2,6 @@ package com.mcgill.ecse321.GameShop.integration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -13,7 +11,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
 import com.mcgill.ecse321.GameShop.dto.WishListDto.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.*;
 import com.mcgill.ecse321.GameShop.dto.GameDto.*;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
