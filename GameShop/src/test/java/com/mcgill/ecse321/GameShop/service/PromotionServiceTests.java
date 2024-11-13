@@ -1,6 +1,7 @@
 package com.mcgill.ecse321.GameShop.service;
 
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -901,5 +902,120 @@ public class PromotionServiceTests {
         verify(promotionRepository, times(1)).findById(promotionId);
         verify(gameRepository, times(1)).findById(127);
         verify(promotionRepository, never()).save(any(Promotion.class));
+    }
+
+    @Test
+    public void testAddInvalidGameToPromotion() {
+        // Arrange
+        int promotionId = 18;
+        String managerEmail = "manager18@mail.com";
+        String description = "New Year Sale";
+        int discountRate = 53;
+        LocalDate startDate = LocalDate.parse("2024-01-01");
+        LocalDate endDate = LocalDate.parse("2024-01-31");
+        Manager manager = new Manager(managerEmail, "managerUser18", "managerPass18", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
+        when(gameRepository.findById(200)).thenReturn(null);
+
+        // Act 
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            promotionService.addGameToPromotion(promotionId, 200);
+        });
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Game with ID 200 not found", exception.getMessage());
+    }
+
+    @Test
+    public void testRemoveInvalidGameFromPromotion() {
+        // Arrange
+        int promotionId = 19;
+        String managerEmail = "manager19@mail.com";
+        String description = "Another New Year Sale";
+        int discountRate = 55;
+        LocalDate startDate = LocalDate.parse("2024-02-01");
+        LocalDate endDate = LocalDate.parse("2024-02-28");
+        Manager manager = new Manager(managerEmail, "managerUser19", "managerPass19", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
+        when(gameRepository.findById(201)).thenReturn(null);
+
+        // Act
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            promotionService.removeGameFromPromotion(promotionId, 201);
+        });
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Game with ID 201 not found", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdatePromotionEndDateBeforeStartDate() {
+        // Arrange
+        int promotionId = 20;
+        String managerEmail = "manager20@mail.com";
+        String description = "End Date Before Start Date Sale";
+        int discountRate = 60;
+        LocalDate startDate = LocalDate.parse("2025-03-01");
+        LocalDate endDate = LocalDate.parse("2024-02-28");
+        Manager manager = new Manager(managerEmail, "managerUser20", "managerPass20", "123-456-7890", "123 Manager Street");
+        Game game = new Game("Game15", "Description15", 190, GameStatus.InStock, 140, "photoUrl15");
+        game.setGame_id(128);
+        List<Integer> gameIds = Arrays.asList(127);
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            promotionService.updatePromotion(
+                    promotionId,
+                    description,
+                    discountRate,
+                    startDate,
+                    endDate,
+                    gameIds
+                );
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Start LocalDate cannot be after end LocalDate", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdatePromotionWithInvalidGamId(){
+        // Arrange
+        int promotionId = 21;
+        String managerEmail = "manager21@mail.com,";
+        String description = "Invalid Game ID Sale";
+        int discountRate = 70;
+        LocalDate startDate = LocalDate.parse("2025-04-01");
+        LocalDate endDate = LocalDate.parse("2025-04-30");
+        Manager manager = new Manager(managerEmail, "managerUser21", "managerPass21", "123-456-7890", "123 Manager Street");
+        Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
+        promotion.setPromotion_id(promotionId);
+        List<Integer> gameIds = Arrays.asList(129);
+        when(promotionRepository.findById(promotionId)).thenReturn(promotion);
+        when(gameRepository.findById(129)).thenReturn(null);
+
+        // Act
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            promotionService.updatePromotion(
+                    promotionId,
+                    description,
+                    discountRate,
+                    startDate,
+                    endDate,
+                    gameIds
+            );
+        });
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Game with ID 129 not found", exception.getMessage());
     }
 }

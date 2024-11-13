@@ -36,9 +36,6 @@ public class CartService {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
         }
         Cart cart = customer.getCart();
-        if (cart == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND, "Cart not found for the customer");
-        }
         return cart;
     }
 
@@ -69,8 +66,7 @@ public class CartService {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
                     String.format("Game with ID %d is not available for purchase", gameId));
         }
-        Map<Integer, Integer> quantities = cartQuantities.computeIfAbsent(cart.getCart_id(),
-                k -> new ConcurrentHashMap<>());
+        Map<Integer, Integer> quantities = cartQuantities.computeIfAbsent(cart.getCart_id(), k -> new ConcurrentHashMap<>());
         int currentQuantity = quantities.getOrDefault(gameId, 0);
         int newQuantity = currentQuantity + quantity;
         if (newQuantity > game.getStockQuantity()) {
