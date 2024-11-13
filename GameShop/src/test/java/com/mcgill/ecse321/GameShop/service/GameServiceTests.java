@@ -61,13 +61,18 @@ public class GameServiceTests {
     public void testCreateGame() {
         VALID_GAME_ID = 1;
 
+        // Mocking the save method of gameRepository to set the game_id and return the saved game
         when(gameRepository.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> {
             Game savedGame = invocation.getArgument(0);
             savedGame.setGame_id(VALID_GAME_ID);
             return savedGame;
         });
+
+        // Creating a game using the gameService
         Game createdGame = gameService.createGame(VALID_TITLE, VALID_DESCRIPTION, VALID_PRICE, VALID_GAME_STATUS,
                 VALID_STOCK_QUANTITY, VALID_PHOTO_URL);
+
+        // Assertions to verify the created game
         assertNotNull(createdGame);
         assertEquals(VALID_GAME_ID, createdGame.getGame_id(), "Game ID is not the same");
         assertEquals(VALID_TITLE, createdGame.getTitle(), "Title is not the same");
@@ -76,6 +81,8 @@ public class GameServiceTests {
         assertEquals(VALID_GAME_STATUS, createdGame.getGameStatus(), "Game status is not the same");
         assertEquals(VALID_STOCK_QUANTITY, createdGame.getStockQuantity(), "Stock quantity is not the same");
         assertEquals(VALID_PHOTO_URL, createdGame.getPhotoUrl(), "Photo URL is not the same");
+
+        // Verifying that the save method of gameRepository was called once
         verify(gameRepository, times(1)).save(any(Game.class));
     }
 
@@ -85,6 +92,8 @@ public class GameServiceTests {
             gameService.createGame(null, VALID_DESCRIPTION, VALID_PRICE, VALID_GAME_STATUS, VALID_STOCK_QUANTITY,
                     VALID_PHOTO_URL);
         });
+
+        //Assertions
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Title cannot be empty or null", exception.getMessage());
         verify(gameRepository, times(0)).save(any(Game.class));
@@ -92,10 +101,13 @@ public class GameServiceTests {
 
     @Test
     public void testCreateGameEmptyTitle() {
+        // Testing createGame with empty title
         GameShopException exception = assertThrows(GameShopException.class, () -> {
             gameService.createGame(" ", VALID_DESCRIPTION, VALID_PRICE, VALID_GAME_STATUS, VALID_STOCK_QUANTITY,
                     VALID_PHOTO_URL);
         });
+
+        //Assertions
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Title cannot be empty or null", exception.getMessage());
         verify(gameRepository, times(0)).save(any(Game.class));
