@@ -756,27 +756,23 @@ public class OrderServiceTests {
 
         // Create a game with initial stock quantity of 10
         Game game = new Game("GameTitle", "Description", 60, Game.GameStatus.InStock, 10, "photoUrl");
-        game.setGame_id(8724843);
+        game.setGame_id(87248434);
         cart.addGame(game);
 
         // Create two SpecificGame instances
         SpecificGame specificGame1 = new SpecificGame(game);
-        specificGame1.setSpecificGame_id(2724842);
+        specificGame1.setSpecificGame_id(27248421);
         specificGame1.setItemStatus(SpecificGame.ItemStatus.Confirmed);
 
         SpecificGame specificGame2 = new SpecificGame(game);
-        specificGame2.setSpecificGame_id(2724843);
+        specificGame2.setSpecificGame_id(27248431);
         specificGame2.setItemStatus(SpecificGame.ItemStatus.Confirmed);
 
         // Create a customer and an order
         Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "cana", "username", "password", "1234567890",
                 "123 Street", cart);
         Order order = new Order(new Date(), "Return order note", 1234, customer);
-        order.setTrackingNumber(VALID_TRACKING_NUMBER + "leb");
-
-        // Associate the SpecificGames with the order
-        specificGame1.addOrder(order);
-        specificGame2.addOrder(order);
+        order.setTrackingNumber(VALID_TRACKING_NUMBER + "leb1");
 
         // Prepare a list of SpecificGames for the mocks
         List<SpecificGame> specificGamesList = new ArrayList<>();
@@ -784,10 +780,10 @@ public class OrderServiceTests {
         specificGamesList.add(specificGame2);
 
         // Mocking behavior
-        when(orderRepository.findByTrackingNumber(VALID_TRACKING_NUMBER + "leb")).thenReturn(order);
-        when(specificGameService.findSpecificGameById(2724842)).thenReturn(specificGame1);
-        when(gameRepository.findById(8724843)).thenReturn(game);
-        when(specificGameService.getSpecificGamesByGameId(8724843)).thenReturn(specificGamesList);
+        when(orderRepository.findByTrackingNumber(VALID_TRACKING_NUMBER + "leb1")).thenReturn(order);
+        when(specificGameService.findSpecificGameById(27248421)).thenReturn(specificGame1);
+        when(gameRepository.findById(87248434)).thenReturn(game);
+        when(specificGameService.getSpecificGamesByGameId(87248434)).thenReturn(specificGamesList);
         when(specificGameService.getAllSpecificGames()).thenReturn(specificGamesList); // For getSpecificGamesByOrder
 
         // Mock the updateGameStockQuantity to update the in-memory 'game' instance
@@ -798,10 +794,16 @@ public class OrderServiceTests {
         }).when(gameService).updateGameStockQuantity(eq(game.getGame_id()), anyInt());
 
         // Act: Add two games to the order
-        orderService.addGameToOrder(VALID_TRACKING_NUMBER + "leb", 8724843, 2);
+        orderService.addGameToOrder(VALID_TRACKING_NUMBER + "leb1", 87248434, 2);
+
+        // Verify that SpecificGames are now associated with the order
+        assertTrue(specificGame1.getOrder().contains(order),
+                "specificGame1 should be associated with the order after adding");
+        assertTrue(specificGame2.getOrder().contains(order),
+                "specificGame2 should be associated with the order after adding");
 
         // Act: Return one of the specific games
-        orderService.returnGame(VALID_TRACKING_NUMBER + "leb", 2724842);
+        orderService.returnGame(VALID_TRACKING_NUMBER + "leb1", 27248421);
 
         // Assert
         // Check the item statuses
@@ -820,7 +822,7 @@ public class OrderServiceTests {
         verify(gameService).updateGameStockQuantity(game.getGame_id(), 8); // After adding to order
         verify(gameService).updateGameStockQuantity(game.getGame_id(), 9); // After returning a game
         verify(gameService, times(2)).updateGameStockQuantity(eq(game.getGame_id()), anyInt());
-        verify(specificGameService, times(1)).findSpecificGameById(2724842);
+        verify(specificGameService, times(1)).findSpecificGameById(27248421);
     }
 
     @Test
