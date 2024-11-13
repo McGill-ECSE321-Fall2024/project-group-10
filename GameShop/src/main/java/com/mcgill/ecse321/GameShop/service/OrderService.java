@@ -203,4 +203,28 @@ public class OrderService {
         gameService.updateGameStockQuantity(game.getGame_id(), game.getStockQuantity());
     }
 
+    @Transactional
+    public List<Order> getOrdersWithCustomerEmail(String customerEmail) {
+        if (customerEmail == null || customerEmail.trim().isEmpty()) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Customer email cannot be empty or null");
+        }
+
+        Customer customer = customerRepository.findByEmail(customerEmail);
+        if (customer == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
+        }
+
+        List<Order> orders = new ArrayList<>();
+        for (Order order : getAllOrders()) {
+            if (order.getCustomer().equals(customer)) {
+                orders.add(order);
+            }
+        }
+
+        if (orders.isEmpty()) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No orders found for customer email: " + customerEmail);
+        }
+
+        return orders;
+    }
 }

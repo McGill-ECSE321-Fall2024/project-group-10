@@ -968,4 +968,119 @@ public class OrderServiceTests {
         verify(gameService, never()).updateGameStockQuantity(anyInt(), anyInt());
     }
 
+    // --- Tests for getOrdersWithCustomerEmail ---
+
+    @Test
+    public void testGetOrdersWithCustomerEmailValid() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(6472820);
+        Customer customer = new Customer(
+                VALID_CUSTOMER_EMAIL + "iphone",
+                "testUser",
+                "testPass",
+                "1234567890",
+                "456 Avenue",
+                cart);
+
+        Order order1 = new Order(new Date(), VALID_NOTE, VALID_PAYMENT_CARD, customer);
+        Order order2 = new Order(new Date(), "Second order", VALID_PAYMENT_CARD, customer);
+
+        List<Order> orders = Arrays.asList(order1, order2);
+
+        // Mocking the repositories
+        when(customerRepository.findByEmail(VALID_CUSTOMER_EMAIL + "iphone")).thenReturn(customer);
+        when(orderRepository.findAll()).thenReturn(orders);
+
+        // Act
+        List<Order> retrievedOrders = orderService.getOrdersWithCustomerEmail(VALID_CUSTOMER_EMAIL + "iphone");
+
+        // Assert
+        assertNotNull(retrievedOrders);
+        assertEquals(2, retrievedOrders.size());
+        assertTrue(retrievedOrders.contains(order1), "Retrieved orders should contain order1");
+        assertTrue(retrievedOrders.contains(order2), "Retrieved orders should contain order2");
+
+        // Verify interactions
+        verify(customerRepository, times(1)).findByEmail(VALID_CUSTOMER_EMAIL + "iphone");
+        verify(orderRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void testGetOrdersWithCustomerEmailInvalidEmail() {
+        // Arrange
+        when(customerRepository.findByEmail(INVALID_CUSTOMER_EMAIL + "helloworld")).thenReturn(null);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            orderService.getOrdersWithCustomerEmail(INVALID_CUSTOMER_EMAIL + "helloworld");
+        });
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Customer not found", exception.getMessage());
+
+        // Verify interactions
+        verify(customerRepository, times(1)).findByEmail(INVALID_CUSTOMER_EMAIL + "helloworld");
+        verify(orderRepository, never()).findAll();
+    }
+
+    @Test
+    public void testGetOrdersWithCustomerEmailNoOrdersFound() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(6472820);
+        Customer customer = new Customer(
+                VALID_CUSTOMER_EMAIL + "byebye",
+                "testUser",
+                "testPass",
+                "1234567890",
+                "456 Avenue",
+                cart);
+
+        when(customerRepository.findByEmail(VALID_CUSTOMER_EMAIL + "byebye")).thenReturn(customer);
+        when(orderRepository.findAll()).thenReturn(Collections.emptyList());
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            orderService.getOrdersWithCustomerEmail(VALID_CUSTOMER_EMAIL + "byebye");
+        });
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("No orders found for customer email: " + VALID_CUSTOMER_EMAIL + "byebye", exception.getMessage());
+
+        // Verify interactions
+        verify(customerRepository, times(1)).findByEmail(VALID_CUSTOMER_EMAIL + "byebye");
+        verify(orderRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void testGetOrdersWithCustomerEmailNullEmail() {
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            orderService.getOrdersWithCustomerEmail(null);
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Customer email cannot be empty or null", exception.getMessage());
+
+        // Verify interactions
+        verify(customerRepository, never()).findByEmail(anyString());
+        verify(orderRepository, never()).findAll();
+    }
+
+    @Test
+    public void testGetOrdersWithCustomerEmailEmptyEmail() {
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            orderService.getOrdersWithCustomerEmail("");
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Customer email cannot be empty or null", exception.getMessage());
+
+        // Verify interactions
+        verify(customerRepository, never()).findByEmail(anyString());
+        verify(orderRepository, never()).findAll();
+    }
+
 }
