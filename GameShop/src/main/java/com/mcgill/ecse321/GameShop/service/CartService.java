@@ -1,5 +1,14 @@
 package com.mcgill.ecse321.GameShop.service;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
 import com.mcgill.ecse321.GameShop.exception.GameShopException;
 import com.mcgill.ecse321.GameShop.model.Cart;
 import com.mcgill.ecse321.GameShop.model.Customer;
@@ -7,13 +16,8 @@ import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CartRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CartService {
@@ -46,6 +50,7 @@ public class CartService {
             throw new GameShopException(HttpStatus.NOT_FOUND,
                     String.format("Cart with ID %d does not exist", cartId));
         }
+        // Initialize the quantities map for the cart if it doesn't exist
         cartQuantities.computeIfAbsent(cartId, k -> new ConcurrentHashMap<>());
         return cart;
     }
@@ -66,6 +71,7 @@ public class CartService {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
                     String.format("Game with ID %d is not available for purchase", gameId));
         }
+        // Retrieve or initialize the quantities map for the cart
         Map<Integer, Integer> quantities = cartQuantities.computeIfAbsent(cart.getCart_id(), k -> new ConcurrentHashMap<>());
         int currentQuantity = quantities.getOrDefault(gameId, 0);
         int newQuantity = currentQuantity + quantity;
@@ -97,6 +103,7 @@ public class CartService {
                     String.format("Game with ID %d does not exist", gameId));
         }
 
+        // Retrieve the quantities map for the cart
         Map<Integer, Integer> quantities = cartQuantities.get(cart.getCart_id());
         if (quantities == null || !quantities.containsKey(gameId)) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game is not in the cart.");
@@ -136,6 +143,7 @@ public class CartService {
                     String.format("Game with ID %d is not available for purchase", gameId));
         }
 
+        // Retrieve the quantities map for the cart
         Map<Integer, Integer> quantities = cartQuantities.get(cart.getCart_id());
         if (quantities == null || !quantities.containsKey(gameId)) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game is not in the cart.");
