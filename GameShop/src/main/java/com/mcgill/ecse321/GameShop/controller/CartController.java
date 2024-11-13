@@ -74,7 +74,7 @@ public class CartController {
         return CartResponseDto.create(cart, quantities);
     }
 
-    // Get all carts
+    // Get all carts available
     @GetMapping("/carts")
     public CartListDto findAllCarts() {
         List<Cart> carts = (List<Cart>) cartService.getAllCarts();
