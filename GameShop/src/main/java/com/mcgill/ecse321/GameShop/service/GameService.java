@@ -1,7 +1,6 @@
 package com.mcgill.ecse321.GameShop.service;
 
 import java.util.ArrayList;
-import java.beans.Transient;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
