@@ -178,8 +178,12 @@ public class AccountIntegrationTests {
     @Test
     @Order(4)
     public void testGetValidCustomerByEmail(){
+
         String url = String.format("/account/customer/%s", this.customerEmail);
+        //call the GET endpoint
         ResponseEntity<AccountResponseDto> response = client.getForEntity(url, AccountResponseDto.class);
+        
+        //Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         AccountResponseDto fetchedCustomer = response.getBody();
@@ -194,8 +198,12 @@ public class AccountIntegrationTests {
     @Test
     @Order(5)
     public void testGetValidEmployeeByEmail(){
+
         String url = String.format("/account/employee/%s", this.employeeEmail);
+        //call the GET endpoint
         ResponseEntity<EmployeeResponseDto> response = client.getForEntity(url, EmployeeResponseDto.class);
+        
+        //Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         EmployeeResponseDto fetchedEmployee = response.getBody();
@@ -211,8 +219,11 @@ public class AccountIntegrationTests {
     @Test
     @Order(6)
     public void testGetValidManagerByEmail(){
+        //call the GET endpoint
         String url = String.format("/account/getmanager");
         ResponseEntity<AccountResponseDto> response = client.getForEntity(url, AccountResponseDto.class);
+        
+        //Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         AccountResponseDto fetchedManager = response.getBody();
@@ -227,11 +238,14 @@ public class AccountIntegrationTests {
     @Test
     @Order(7)
     public void testGetValidCustomers(){
+        //create a second customer
         AccountRequestDto customer = new AccountRequestDto(SECCUSTOMER_EMAIL, SECCUSTOMER_USERNAME, SECCUSTOMER_PASSWORD, SECCUSTOMER_PHONENUM, SECCUSTOMER_ADDRESS);
         ResponseEntity<AccountResponseDto> createResponse = client.postForEntity("/account/customer", customer, AccountResponseDto.class);
+        //Assert not null for the customer
         assertNotNull(createResponse);
         assertEquals(HttpStatus.OK, createResponse.getStatusCode());
 
+        //call the GET all customers endpoint
         String url = String.format("/account/customers");
         ResponseEntity<AccountListDto> response = client.getForEntity(url, AccountListDto.class);
         assertNotNull(response);
@@ -244,14 +258,18 @@ public class AccountIntegrationTests {
         assertFalse(customerList.isEmpty(), "Customers were expected");
         assertTrue(customerList.size() == 2);
 
+        //Get the first customer that was created in previous test
         AccountResponseDto firstCustomer = customerList.get(0);
+        //Assert
         assertNotNull(firstCustomer);
         assertEquals(CUSTOMER_EMAIL, firstCustomer.getEmail());
         assertEquals(CUSTOMER_USERNAME, firstCustomer.getUsername());
         assertEquals(CUSTOMER_ADDRESS, firstCustomer.getAddress());
         assertEquals(CUSTOMER_PHONENUM, firstCustomer.getPhoneNumber());
 
+        //Get the second customer that was created in this test
         AccountResponseDto secondCustomer = customerList.get(1);
+        //Assert
         assertNotNull(secondCustomer);
         assertEquals(SECCUSTOMER_EMAIL, secondCustomer.getEmail());
         assertEquals(SECCUSTOMER_USERNAME, secondCustomer.getUsername());
@@ -263,16 +281,19 @@ public class AccountIntegrationTests {
     @Test
     @Order(8)
     public void testGetValidEmployees(){
+        //Create a second employee
         AccountRequestDto employee = new AccountRequestDto(SECEMPLOYEE_EMAIL, SECEMPLOYEE_USERNAME, SECEMPLOYEE_PASSWORD, SECEMPLOYEE_PHONENUM, SECEMPLOYEE_ADDRESS);
         ResponseEntity<EmployeeResponseDto> createResponse = client.postForEntity("/account/employee", employee, EmployeeResponseDto.class);
         assertNotNull(createResponse);
         assertEquals(HttpStatus.OK, createResponse.getStatusCode());
 
+        //call the Get all employees endpoint
         String url = String.format("/account/employees");
         ResponseEntity<EmployeeListDto> response = client.getForEntity(url, EmployeeListDto.class);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
+        //Assert
         EmployeeListDto fetchedEmployees = response.getBody();
         assertNotNull(fetchedEmployees);
         List<EmployeeResponseDto> employeeList = fetchedEmployees.getAccounts();
@@ -302,10 +323,11 @@ public class AccountIntegrationTests {
     @Order(9)
     public void testUpdateValidAccount(){
        
-
+        //call the PUT update endpoint with the employee email to update
         String url = String.format("/account/%s", this.employeeEmail);
         AccountRequestDto updatedInfo = new AccountRequestDto(this.employeeEmail, UPDATE_EMPLOYEE_USERNAME, UPDATE_EMPLOYEE_PASSWORD, UPDATE_EMPLOYEE_PHONENUM, UPDATE_EMPLOYEE_ADDRESS);
         
+        //Assert
         ResponseEntity<EmployeeResponseDto> response = client.exchange(url, HttpMethod.PUT, new HttpEntity<>(updatedInfo), EmployeeResponseDto.class);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -323,10 +345,12 @@ public class AccountIntegrationTests {
     @Order(10)
     public void testArchiveValidEmployee(){
        
-
+        //call the PUT archive endpoint with the employee email to archive
         String url = String.format("/account/employee/%s", this.secondEmployeeEmail);
         
         ResponseEntity<EmployeeResponseDto> response = client.exchange(url, HttpMethod.PUT, null, EmployeeResponseDto.class);
+        
+        //Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
@@ -389,14 +413,18 @@ public class AccountIntegrationTests {
         String url = String.format("/account/employee/%s", "email@notregistered.com");
         ResponseEntity<EmployeeResponseDto> response = client.getForEntity(url, EmployeeResponseDto.class);
         assertNotNull(response);
+        //Check status code
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     @Order(15)
     public void testGetCustomerWishList(){
+        //call the GET wishlist endpoint
         String url = String.format("/account/customer/%s/wishlist", this.customerEmail);
         ResponseEntity<WishListResponseDto> response = client.getForEntity(url, WishListResponseDto.class);
+        
+        //Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         WishListResponseDto fetchedWishList = response.getBody();
