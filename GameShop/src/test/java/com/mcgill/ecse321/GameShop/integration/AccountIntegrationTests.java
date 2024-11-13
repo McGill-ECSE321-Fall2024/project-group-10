@@ -331,21 +331,36 @@ public class AccountIntegrationTests {
         assertFalse(employeeList.isEmpty(), "Employees were expected");
         assertTrue(employeeList.size() == 2);
 
-        EmployeeResponseDto firstEmployee = employeeList.get(0);
-        assertNotNull(firstEmployee);
-        assertEquals(EMPLOYEE_EMAIL, firstEmployee.getEmail());
-        this.employeeEmail = firstEmployee.getEmail();
-        assertEquals(EMPLOYEE_USERNAME, firstEmployee.getUsername());
-        assertEquals(EMPLOYEE_ADDRESS, firstEmployee.getAddress());
-        assertEquals(EMPLOYEE_PHONENUM, firstEmployee.getPhoneNumber());
-
-        EmployeeResponseDto secondEmployee = employeeList.get(1);
-        assertNotNull(secondEmployee);
-        assertEquals(SECEMPLOYEE_EMAIL, secondEmployee.getEmail());
-        this.secondEmployeeEmail = secondEmployee.getEmail();
-        assertEquals(SECEMPLOYEE_USERNAME, secondEmployee.getUsername());
-        assertEquals(SECEMPLOYEE_ADDRESS, secondEmployee.getAddress());
-        assertEquals(SECEMPLOYEE_PHONENUM, secondEmployee.getPhoneNumber());
+        
+        boolean found = false;
+        for (EmployeeResponseDto firstEmployee : employeeList) {
+            if (firstEmployee.getEmail().equals(EMPLOYEE_EMAIL)) {
+                found = true;
+                assertNotNull(firstEmployee);
+                assertEquals(EMPLOYEE_EMAIL, firstEmployee.getEmail());
+                assertEquals(EMPLOYEE_USERNAME, firstEmployee.getUsername());
+                assertEquals(EMPLOYEE_ADDRESS, firstEmployee.getAddress());
+                assertEquals(EMPLOYEE_PHONENUM, firstEmployee.getPhoneNumber());
+                break;
+            }
+        }
+        //Assert
+        assertTrue(found);
+        //Get the second customer that was created in this test
+        found = false;
+        for (EmployeeResponseDto secondEmployee : employeeList) {
+            if (secondEmployee.getEmail().equals(SECEMPLOYEE_EMAIL)) {
+                found = true;
+                assertNotNull(secondEmployee);
+                assertEquals(SECEMPLOYEE_EMAIL, secondEmployee.getEmail());
+                assertEquals(SECEMPLOYEE_USERNAME, secondEmployee.getUsername());
+                assertEquals(SECEMPLOYEE_ADDRESS, secondEmployee.getAddress());
+                assertEquals(SECEMPLOYEE_PHONENUM, secondEmployee.getPhoneNumber());
+                break;
+            }
+        }
+        //Assert
+        assertTrue(found);
 
     }
 
