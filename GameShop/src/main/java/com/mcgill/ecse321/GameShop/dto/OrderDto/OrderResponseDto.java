@@ -23,8 +23,11 @@ public class OrderResponseDto {
     public static OrderResponseDto create(Order order, List<SpecificGameResponseDto> specificGames) {
         return new OrderResponseDto(order, specificGames);
     }
+
     protected OrderResponseDto() {
     }
+
+    // No setters/getters for paymentcard (security reasons)
 
     public String getTrackingNumber() {
         return trackingNumber;

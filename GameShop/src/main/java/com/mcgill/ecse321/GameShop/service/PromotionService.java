@@ -132,9 +132,6 @@ public class PromotionService {
             promotion.setStartLocalDate(startLocalDate);
         }
         if (endLocalDate != null) {
-            if (startLocalDate != null && startLocalDate.isAfter(endLocalDate)) {
-                throw new GameShopException(HttpStatus.BAD_REQUEST, "Start LocalDate cannot be after end LocalDate");
-            }
             promotion.setEndLocalDate(endLocalDate);
         }
 

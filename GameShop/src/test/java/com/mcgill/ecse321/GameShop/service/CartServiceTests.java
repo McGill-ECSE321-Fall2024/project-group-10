@@ -880,4 +880,42 @@ public class CartServiceTests {
 
         verify(cartRepository, times(1)).findAll();
     }
+
+    @Test
+    public void testGetInvalidGameFromCart(){
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(16789);
+        when(cartRepository.findById(16789)).thenReturn(cart);
+
+        // Act
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            cartService.getGameFromCart(16789, 178);
+        });
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Game with ID 178 does not exist in the cart", exception.getMessage());
+
+        verify(cartRepository, times(1)).findById(16789);
+    }
+
+    @Test
+    public void testUpdateInvalidGameQUanityInCart(){
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(167810);
+        when(cartRepository.findById(167810)).thenReturn(cart);
+
+        //Act
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            cartService.updateGameQuantityInCart(167810, 1789,13);
+        });
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Game with ID 1789 does not exist", exception.getMessage());
+
+        verify(cartRepository, times(1)).findById(167810);
+    }
 }
