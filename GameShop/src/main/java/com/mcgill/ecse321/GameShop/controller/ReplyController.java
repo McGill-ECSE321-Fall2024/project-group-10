@@ -23,29 +23,32 @@ public class ReplyController {
     @Autowired
     private ReplyService replyService;
 
-    /** 
+    /**
      * Create a new reply.
      * 
-     * @param request the reply request data transfer object containing the details of the reply to be created
-     * @return the response data transfer object containing the details of the created reply
+     * @param request the reply request data transfer object containing the details
+     *                of the reply to be created
+     * @return the response data transfer object containing the details of the
+     *         created reply
      */
     @PostMapping("/replies")
     public ReplyResponseDto createReply(@Valid @RequestBody ReplyRequestDto request) {
+        // Create the reply
         Reply reply = replyService.createReply(
                 request.getReplyDate(),
                 request.getDescription(),
                 request.getReviewRating(),
                 request.getReviewId(),
-                request.getManagerEmail()
-        );
+                request.getManagerEmail());
         return new ReplyResponseDto(reply);
     }
 
-    /** 
+    /**
      * Get a reply by ID.
      * 
      * @param rid the ID of the reply to retrieve
-     * @return the response data transfer object containing the details of the retrieved reply
+     * @return the response data transfer object containing the details of the
+     *         retrieved reply
      */
     @GetMapping("/replies/{rid}")
     public ReplyResponseDto getReplyById(@PathVariable int rid) {
@@ -53,31 +56,35 @@ public class ReplyController {
         return new ReplyResponseDto(reply);
     }
 
-    /** 
+    /**
      * Update an existing reply.
      * 
-     * @param id the ID of the reply to update
-     * @param request the reply request data transfer object containing the updated details of the reply
-     * @return the response data transfer object containing the details of the updated reply
+     * @param id      the ID of the reply to update
+     * @param request the reply request data transfer object containing the updated
+     *                details of the reply
+     * @return the response data transfer object containing the details of the
+     *         updated reply
      */
     @PutMapping("/replies/{id}")
     public ReplyResponseDto updateReply(@PathVariable int id, @RequestBody ReplyRequestDto request) {
+        // Update the reply
         Reply reply = replyService.updateReply(
                 id,
                 request.getDescription(),
-                request.getReviewRating()
-        );
+                request.getReviewRating());
         return new ReplyResponseDto(reply);
     }
 
-    /** 
+    /**
      * Get the review associated with a reply.
      * 
      * @param replyId the ID of the reply to retrieve the associated review from
-     * @return the review response data transfer object containing the details of the associated review
+     * @return the review response data transfer object containing the details of
+     *         the associated review
      */
     @GetMapping("/replies/{replyId}/review")
     public ReviewResponseDto getReviewByReplyId(@PathVariable int replyId) {
+        // Get the review associated with the reply
         Review review = replyService.getReviewByReplyId(replyId);
         return new ReviewResponseDto(review);
     }

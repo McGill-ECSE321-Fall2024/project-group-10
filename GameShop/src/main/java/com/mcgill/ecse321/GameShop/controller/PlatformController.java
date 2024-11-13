@@ -24,7 +24,6 @@ import com.mcgill.ecse321.GameShop.service.PlatformService;
 
 import jakarta.validation.Valid;
 
-
 @RestController
 public class PlatformController {
 
@@ -34,11 +33,14 @@ public class PlatformController {
     /**
      * Create a new platform.
      * 
-     * @param request the platform request data transfer object containing the details of the platform to be created
-     * @return the response data transfer object containing the details of the created platform
+     * @param request the platform request data transfer object containing the
+     *                details of the platform to be created
+     * @return the response data transfer object containing the details of the
+     *         created platform
      */
     @PostMapping("/platforms")
     public PlatformResponseDto createPlatform(@Valid @RequestBody PlatformRequestDto request) {
+        // Create the platform
         Platform platform = platformService.createPlatform(request.getPlatformName(), request.getManagerEmail());
         return PlatformResponseDto.create(platform);
     }
@@ -47,10 +49,12 @@ public class PlatformController {
      * Get a platform by ID.
      * 
      * @param pid the ID of the platform to retrieve
-     * @return the response data transfer object containing the details of the retrieved platform
+     * @return the response data transfer object containing the details of the
+     *         retrieved platform
      */
     @GetMapping("/platforms/{pid}")
     public PlatformResponseDto getPlatformById(@PathVariable int pid) {
+        // Get the platform
         Platform platform = platformService.getPlatform(pid);
         return PlatformResponseDto.create(platform);
     }
@@ -63,6 +67,8 @@ public class PlatformController {
     @GetMapping("/platforms")
     public PlatformListDto getAllPlatforms() {
         List<PlatformSummaryDto> dtos = new ArrayList<>();
+
+        // Get all platforms and add them to dtos list
         for (Platform platform : platformService.getAllPlatforms()) {
             dtos.add(new PlatformSummaryDto(platform));
         }
@@ -73,11 +79,14 @@ public class PlatformController {
      * Get all games in a platform.
      * 
      * @param pid the ID of the platform to retrieve games from
-     * @return a list data transfer object containing the summaries of all games in the platform
+     * @return a list data transfer object containing the summaries of all games in
+     *         the platform
      */
     @GetMapping("/platforms/{pid}/games")
     public GameListDto getAllGamesInPlatform(@PathVariable int pid) {
         List<GameSummaryDto> dtos = new ArrayList<>();
+
+        // Get all games in the platform and add them to dtos list
         for (Game game : platformService.getAllGamesInPlatform(pid)) {
             dtos.add(new GameSummaryDto(game));
         }
@@ -87,12 +96,15 @@ public class PlatformController {
     /**
      * Update a platform's name.
      * 
-     * @param id the ID of the platform to update
-     * @param request the platform request data transfer object containing the updated name of the platform
-     * @return the response data transfer object containing the details of the updated platform
+     * @param id      the ID of the platform to update
+     * @param request the platform request data transfer object containing the
+     *                updated name of the platform
+     * @return the response data transfer object containing the details of the
+     *         updated platform
      */
     @PutMapping("/platforms/{id}")
     public PlatformResponseDto updatePlatform(@PathVariable int id, @RequestBody PlatformRequestDto request) {
+        // Update the platform name
         Platform platform = platformService.updatePlatform(id, request.getPlatformName());
         return PlatformResponseDto.create(platform);
     }
