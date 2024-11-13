@@ -351,7 +351,7 @@ public class OrderIntegrationTests {
 
                 // Add the second SpecificGame instance to the order
                 OrderAddGameRequestDto addGameRequest2 = new OrderAddGameRequestDto(gameId, 1);
-                ResponseEntity<OrderResponseDto> response = client.postForEntity(
+                client.postForEntity(
                                 "/orders/" + trackingNumber + "/games",
                                 addGameRequest2,
                                 OrderResponseDto.class);

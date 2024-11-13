@@ -12,8 +12,6 @@ import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.Cart;
 
 import com.mcgill.ecse321.GameShop.model.Order;
-import com.mcgill.ecse321.GameShop.model.SpecificGame;
-import com.mcgill.ecse321.GameShop.repository.CartRepository;
 import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.OrderRepository;
@@ -24,7 +22,6 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,9 +57,7 @@ public class OrderServiceTests {
     private static final String VALID_CUSTOMER_EMAIL = "customer@tata.ca";
     private static final String INVALID_CUSTOMER_EMAIL = "invalid@ca.ca";
     private static final String VALID_NOTE = "Please deliver between 5-6 PM";
-    private static final String UPDATED_NOTE = "Please leave at the front door";
     private static final int VALID_PAYMENT_CARD = 1234567890;
-    private static final int INVALID_PAYMENT_CARD = -1;
 
     // --- Tests for getOrderByTrackingNumber ---
 
@@ -344,7 +339,6 @@ public class OrderServiceTests {
         when(orderRepository.findByTrackingNumber(VALID_TRACKING_NUMBER + "te")).thenReturn(existingOrder);
         when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        LocalDate date = LocalDate.of(2024, 10, 10);
         Date newOrderDate = java.sql.Date.valueOf(localDate);
         String newNote = "Updated note";
         int newPaymentCard = 987654321;

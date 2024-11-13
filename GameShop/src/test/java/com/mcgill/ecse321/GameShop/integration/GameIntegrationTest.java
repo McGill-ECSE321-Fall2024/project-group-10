@@ -5,16 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.springframework.http.HttpMethod;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
-import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryListDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategorySummaryDto;
@@ -22,11 +17,9 @@ import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
-import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformListDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformSummaryDto;
-import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameResponseDto;
 import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Platform;
@@ -42,7 +35,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.apache.catalina.connector.Response;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -52,7 +44,6 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.junit.jupiter.api.Order;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -113,19 +104,6 @@ public class GameIntegrationTest {
         for (Platform platform : platformRepository.findAll()) {
             platform.removeManager();
             platformRepository.save(platform);
-        }
-
-        for (Game game : gameRepository.findAll()) {
-            Iterator<Category> categoryIterator = game.getCategories().iterator();
-            while (categoryIterator.hasNext()) {
-                Category category = categoryIterator.next();
-            }
-    
-            Iterator<Platform> platformIterator = game.getPlatforms().iterator();
-            while (platformIterator.hasNext()) {
-                Platform platform = platformIterator.next();
-            }
-            gameRepository.save(game);
         }
 
         managerRepository.deleteAll();
@@ -219,6 +197,7 @@ public class GameIntegrationTest {
         assertEquals(GAME_PHOTO_URL, game.getaPhotoUrl());
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(3)
     public void testGetAllGames() {
@@ -275,6 +254,7 @@ public class GameIntegrationTest {
         }
     }
     
+    @SuppressWarnings("null")
     @Test
     @Order(4)
     public void testUpdateGame() {
@@ -351,6 +331,7 @@ public class GameIntegrationTest {
 
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(5)
     public void testAddCategoryToGame() {
@@ -382,6 +363,7 @@ public class GameIntegrationTest {
         this.categoryIds = response.getBody().getCategories().getCategories();
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(6)
     public void testAddPlatformToGame() {
@@ -613,6 +595,7 @@ public class GameIntegrationTest {
         assertEquals(game.getaStockQuantity(), originalQtity + 10);
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(26)
     public void testDeleteGame() {

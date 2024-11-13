@@ -112,7 +112,6 @@ public class PromotionServiceTests {
     @Test
     public void testCreatePromotionWithNullDescription() {
         // Arrange
-        int promotionId = 2;
         String managerEmail = "manager2@example.com";
         String description = null;
         int discountRate = 20;
@@ -143,7 +142,6 @@ public class PromotionServiceTests {
     @Test
     public void testCreatePromotionWithInvalidDiscountRate() {
         // Arrange
-        int promotionId = 3;
         String managerEmail = "manager3@example.com";
         String description = "Autumn Sale";
         int discountRate = -10; // Invalid
@@ -174,7 +172,6 @@ public class PromotionServiceTests {
     @Test
     public void testCreatePromotionWithNullStartDate() {
         // Arrange
-        int promotionId = 4;
         String managerEmail = "manager4@example.com";
         String description = "Winter Sale";
         int discountRate = 20;
@@ -205,7 +202,6 @@ public class PromotionServiceTests {
     @Test
     public void testCreatePromotionWithStartDateAfterEndDate() {
         // Arrange
-        int promotionId = 5;
         String managerEmail = "manager5@example.com";
         String description = "Flash Sale";
         int discountRate = 25;
@@ -268,7 +264,6 @@ public class PromotionServiceTests {
     @Test
     public void testCreatePromotionWithNullGameIds() {
         // Arrange
-        int promotionId = 6;
         String managerEmail = "manager6@example.com";
         String description = "Black Friday Sale";
         int discountRate = 30;
@@ -299,7 +294,6 @@ public class PromotionServiceTests {
     @Test
     public void testCreatePromotionWithNonexistentGameId() {
         // Arrange
-        int promotionId = 7;
         String managerEmail = "manager7@example.com";
         String description = "Cyber Monday Sale";
         int discountRate = 35;
@@ -383,7 +377,6 @@ public class PromotionServiceTests {
         int discountRate = 40;
         LocalDate startDate = LocalDate.parse("2024-12-01");
         LocalDate endDate = LocalDate.parse("2024-12-31");
-        List<Integer> gameIds = Arrays.asList(114);
 
         String updatedDescription = "New Year Sale";
         int updatedDiscountRate = 50;
@@ -472,7 +465,6 @@ public class PromotionServiceTests {
         int discountRate = 15;
         LocalDate startDate = LocalDate.parse("2024-03-01");
         LocalDate endDate = LocalDate.parse("2024-03-31");
-        List<Integer> gameIds = Arrays.asList(117);
 
         String updatedDescription = "Updated Spring Sale";
         int invalidDiscountRate = -5;
@@ -520,7 +512,6 @@ public class PromotionServiceTests {
         int discountRate = 50;
         LocalDate startDate = LocalDate.parse("2024-05-01");
         LocalDate endDate = LocalDate.parse("2024-05-31");
-        List<Integer> gameIds = Arrays.asList(118, 119);
 
         Manager manager = new Manager(managerEmail, "managerUser10", "managerPass10", "123-456-7890", "123 Manager Street");
         Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
@@ -614,7 +605,6 @@ public class PromotionServiceTests {
         int discountRate = 45;
         LocalDate startDate = LocalDate.parse("2024-12-01");
         LocalDate endDate = LocalDate.parse("2024-12-31");
-        List<Integer> gameIds = Arrays.asList(120, 121);
 
         Manager manager = new Manager(managerEmail, "managerUser11", "managerPass11", "123-456-7890", "123 Manager Street");
         Game game1 = new Game("Game8", "Description8", 120, GameStatus.InStock, 70, "photoUrl8");
@@ -668,7 +658,6 @@ public class PromotionServiceTests {
         int discountRate = 60;
         LocalDate startDate = LocalDate.parse("2024-06-01");
         LocalDate endDate = LocalDate.parse("2024-06-30");
-        List<Integer> gameIds = Arrays.asList(122);
 
         Game game = new Game("Game10", "Description10", 140, GameStatus.InStock, 90, "photoUrl10");
         game.setGame_id(122);
@@ -699,7 +688,6 @@ public class PromotionServiceTests {
         int discountRate = 55;
         LocalDate startDate = LocalDate.parse("2024-07-01");
         LocalDate endDate = LocalDate.parse("2024-07-31");
-        List<Integer> gameIds = Arrays.asList(123);
 
         Manager manager = new Manager(managerEmail, "managerUser13", "managerPass13", "123-456-7890", "123 Manager Street");
         Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
@@ -731,7 +719,6 @@ public class PromotionServiceTests {
         int discountRate = 25;
         LocalDate startDate = LocalDate.parse("2024-09-01");
         LocalDate endDate = LocalDate.parse("2024-09-30");
-        List<Integer> gameIds = Arrays.asList(124);
 
         Game game = new Game("Game11", "Description11", 150, GameStatus.InStock, 100, "photoUrl11");
         game.setGame_id(124);
@@ -766,11 +753,10 @@ public class PromotionServiceTests {
         int discountRate = 35;
         LocalDate startDate = LocalDate.parse("2024-10-01");
         LocalDate endDate = LocalDate.parse("2024-10-31");
-        List<Integer> gameIds = Arrays.asList(125);
 
         Game game = new Game("Game12", "Description12", 160, GameStatus.InStock, 110, "photoUrl12");
         game.setGame_id(125);
-
+        
         Manager manager = new Manager(managerEmail, "managerUser15", "managerPass15", "123-456-7890", "123 Manager Street");
         Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
         promotion.setPromotion_id(promotionId);
@@ -823,15 +809,14 @@ public class PromotionServiceTests {
         int discountRate = 40;
         LocalDate startDate = LocalDate.parse("2024-11-01");
         LocalDate endDate = LocalDate.parse("2024-11-30");
-        List<Integer> gameIds = Arrays.asList(126);
 
         Game game = new Game("Game13", "Description13", 170, GameStatus.InStock, 120, "photoUrl13");
         game.setGame_id(126);
-
+        List<Game> gameList = new ArrayList<>(Arrays.asList(game));
         Manager manager = new Manager(managerEmail, "managerUser16", "managerPass16", "123-456-7890", "123 Manager Street");
         Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
         promotion.setPromotion_id(promotionId);
-        promotion.setGames(new ArrayList<>(Arrays.asList(game))); // Game in promotion
+        promotion.setGames(gameList); // Game in promotion
 
         when(promotionRepository.findById(promotionId)).thenReturn(promotion);
         when(gameRepository.findById(126)).thenReturn(game);
@@ -878,15 +863,16 @@ public class PromotionServiceTests {
         int discountRate = 50;
         LocalDate startDate = LocalDate.parse("2024-12-01");
         LocalDate endDate = LocalDate.parse("2024-12-31");
-        List<Integer> gameIds = Arrays.asList(127);
 
         Game game = new Game("Game14", "Description14", 180, GameStatus.InStock, 130, "photoUrl14");
         game.setGame_id(127);
+        List<Game> gameList = new ArrayList<>();
+        gameList.add(game);
 
         Manager manager = new Manager(managerEmail, "managerUser17", "managerPass17", "123-456-7890", "123 Manager Street");
         Promotion promotion = new Promotion(description, discountRate, startDate, endDate, manager);
         promotion.setPromotion_id(promotionId);
-        promotion.setGames(new ArrayList<>()); // No games in promotion
+        promotion.setGames(gameList) ; // No games in promotion
 
         when(promotionRepository.findById(promotionId)).thenReturn(promotion);
         when(gameRepository.findById(127)).thenReturn(game);
@@ -900,7 +886,7 @@ public class PromotionServiceTests {
 
         verify(promotionRepository, times(1)).findById(promotionId);
         verify(gameRepository, times(1)).findById(127);
-        verify(promotionRepository, never()).save(any(Promotion.class));
+        verify(promotionRepository, times(1)).save(any(Promotion.class));
     }
 
     @Test

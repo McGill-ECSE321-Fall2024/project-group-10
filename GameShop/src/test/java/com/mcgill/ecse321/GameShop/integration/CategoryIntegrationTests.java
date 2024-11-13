@@ -271,6 +271,7 @@ public class CategoryIntegrationTests {
         assertFalse(returnedGameIds.contains(gameId3), "Did not expect to find game with ID: " + gameId3);
 
     }
+    @SuppressWarnings("null")
     @Test
 @Order(6)
 public void testCreateCategoryMissingName() {
@@ -289,6 +290,7 @@ public void testCreateCategoryMissingName() {
     assertNotNull(response.getBody());
     assertTrue(response.getBody().contains("Category name cannot be empty"));
 }
+@SuppressWarnings("null")
 @Test
 @Order(7)
 public void testGetCategoryByNonExistentId() {
@@ -304,6 +306,7 @@ public void testGetCategoryByNonExistentId() {
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertTrue(response.getBody().contains("Category does not exist"));
 }
+@SuppressWarnings("null")
 @Test
 @Order(8)
 public void testUpdateCategoryInvalidId() {
@@ -344,6 +347,7 @@ public void testUpdateCategoryInvalidId() {
         ResponseEntity<CategoryResponseDto> getResponse = client.getForEntity(url, CategoryResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
     }
+    @SuppressWarnings("null")
     @Test
     @Order(10)
     public void testDeleteCategoryInvalidInput() {
@@ -388,6 +392,7 @@ public void testGetAllCategoriesEmpty() {
     assertNotNull(categoryList);
     assertTrue(categoryList.isEmpty(), "Expected no categories in the list");
 }
+@SuppressWarnings("null")
 @Test
 @Order(12)
 public void testFindAllGamesInCategoryInvalid() {
