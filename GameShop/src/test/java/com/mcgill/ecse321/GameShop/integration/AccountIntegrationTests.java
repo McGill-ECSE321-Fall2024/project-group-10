@@ -71,7 +71,6 @@ public class AccountIntegrationTests {
     private String customerEmail;
     private String managerEmail;
     private String employeeEmail;
-    private String secondEmployeeEmail;
 
     private String MANAGER_EMAIL = "john@gmail.com";
     private String MANAGER_USERNAME = "john123";
@@ -391,7 +390,7 @@ public class AccountIntegrationTests {
     public void testArchiveValidEmployee(){
        
         //call the PUT archive endpoint with the employee email to archive
-        String url = String.format("/account/employee/%s", this.secondEmployeeEmail);
+        String url = String.format("/account/employee/%s", SECEMPLOYEE_EMAIL);
         
         ResponseEntity<EmployeeResponseDto> response = client.exchange(url, HttpMethod.PUT, null, EmployeeResponseDto.class);
         
@@ -402,7 +401,7 @@ public class AccountIntegrationTests {
         EmployeeResponseDto archivedEmployee = response.getBody();
         assertNotNull(archivedEmployee);
         
-        assertEquals(this.secondEmployeeEmail, archivedEmployee.getEmail());
+        assertEquals(SECEMPLOYEE_EMAIL, archivedEmployee.getEmail());
         assertEquals(SECEMPLOYEE_USERNAME, archivedEmployee.getUsername());
         assertEquals(SECEMPLOYEE_ADDRESS, archivedEmployee.getAddress());
         assertEquals(SECEMPLOYEE_PHONENUM, archivedEmployee.getPhoneNumber());

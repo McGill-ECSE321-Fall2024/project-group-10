@@ -216,6 +216,7 @@ public class AccountService {
     @Transactional
     public Employee archiveEmployee(String email){
         //find the employee account using the email
+        System.out.println(email);
         Employee employee = employeeRepo.findByEmail(email);
         if (employee != null){
             //set the status of the employee to archived
