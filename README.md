@@ -6,6 +6,7 @@ Build System Instructions for Deliverable 2
 * As per TA instructions, the project report, QA Plan, and QA Report are fully completed with all required sections in the wiki and are navigable using this link: [https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-1-Project-Report.](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-2:-Project-Report)
 * In the report, you will also find the Deliverable 2 Build System Instructions, Instructions on how to access the Jacoco Test Coverage Reports (In the QA Report), and Instructions on how to access the API docs for the controller methods implemented.
 * The Deliverable 2 Build System Instructions operate under the assumption that the build system instructions from Deliverable 1 have been followed (see the section below and the Deliverable 1 project report for that).
+* Note about the backlog: As per the professor's instructions when we asked her, to link commits and issues in the backlog, we go into our deliverable 2 issues and, for each issue, add the link to the commit that completes the issue.
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 

@@ -73,41 +73,41 @@ public class AccountIntegrationTests {
     private String employeeEmail;
     private String secondEmployeeEmail;
 
-    private String MANAGER_EMAIL = "john@gmail.com";
-    private String MANAGER_USERNAME = "john123";
-    private String MANAGER_PASSWORD = "john909";
-    private String MANAGER_PHONENUM = "438999000";
-    private String MANAGER_ADDRESS = "900 rue sherbrooke";
+    private static final String MANAGER_EMAIL = "john@gmail.com";
+    private static final String MANAGER_USERNAME = "john123";
+    private static final String MANAGER_PASSWORD = "john909";
+    private static final String MANAGER_PHONENUM = "438999000";
+    private static final String MANAGER_ADDRESS = "900 rue sherbrooke";
 
-    private String CUSTOMER_EMAIL = "annie@gmail.com";
-    private String CUSTOMER_USERNAME = "a901k";
-    private String CUSTOMER_PASSWORD = "annie123";
-    private String CUSTOMER_PHONENUM = "4381111111" ;
-    private String CUSTOMER_ADDRESS = "street 1";
+    private static final String CUSTOMER_EMAIL = "annie@gmail.com";
+    private static final String CUSTOMER_USERNAME = "a901k";
+    private static final String CUSTOMER_PASSWORD = "annie123";
+    private static final String CUSTOMER_PHONENUM = "4381111111" ;
+    private static final String CUSTOMER_ADDRESS = "street 1";
 
-    private String SECCUSTOMER_EMAIL = "lucas12@gmail.com";
-    private String SECCUSTOMER_USERNAME = "lucasS";
-    private String SECCUSTOMER_PASSWORD = "lucase";
-    private String SECCUSTOMER_PHONENUM = "514091283" ;
-    private String SECCUSTOMER_ADDRESS = "street c";
+    private static final String SECCUSTOMER_EMAIL = "lucas12@gmail.com";
+    private static final String SECCUSTOMER_USERNAME = "lucasS";
+    private static final String SECCUSTOMER_PASSWORD = "lucase";
+    private static final String SECCUSTOMER_PHONENUM = "514091283" ;
+    private static final String SECCUSTOMER_ADDRESS = "street c";
 
 
-    private String EMPLOYEE_EMAIL = "jude123@gmail.com";
-    private String EMPLOYEE_USERNAME = "judeSousou";
-    private String EMPLOYEE_PASSWORD = "j123";
-    private String EMPLOYEE_PHONENUM = "4380000000" ;
-    private String EMPLOYEE_ADDRESS = "street a";
+    private static final String EMPLOYEE_EMAIL = "jude123@gmail.com";
+    private static final String EMPLOYEE_USERNAME = "judeSousou";
+    private static final String EMPLOYEE_PASSWORD = "j123";
+    private static final String EMPLOYEE_PHONENUM = "4380000000" ;
+    private static final String EMPLOYEE_ADDRESS = "street a";
 
-    private String SECEMPLOYEE_EMAIL = "jason@gmail.com";
-    private String SECEMPLOYEE_USERNAME = "jason1029";
-    private String SECEMPLOYEE_PASSWORD = "testing";
-    private String SECEMPLOYEE_PHONENUM = "514091823" ;
-    private String SECEMPLOYEE_ADDRESS = "street d";
+    private static final String SECEMPLOYEE_EMAIL = "jason@gmail.com";
+    private static final String SECEMPLOYEE_USERNAME = "jason1029";
+    private static final String SECEMPLOYEE_PASSWORD = "testing";
+    private static final String SECEMPLOYEE_PHONENUM = "514091823" ;
+    private static final String SECEMPLOYEE_ADDRESS = "street d";
 
-    private String UPDATE_EMPLOYEE_USERNAME = "jude10111111";
-    private String UPDATE_EMPLOYEE_PASSWORD = "alkdalkdal";
-    private String UPDATE_EMPLOYEE_PHONENUM = "43820231000" ;
-    private String UPDATE_EMPLOYEE_ADDRESS = "street 1012";
+    private static final String UPDATE_EMPLOYEE_USERNAME = "jude10111111";
+    private static final String UPDATE_EMPLOYEE_PASSWORD = "alkdalkdal";
+    private static final String UPDATE_EMPLOYEE_PHONENUM = "43820231000" ;
+    private static final String UPDATE_EMPLOYEE_ADDRESS = "street 1012";
 
     @AfterAll
     public void clearDatabase(){
