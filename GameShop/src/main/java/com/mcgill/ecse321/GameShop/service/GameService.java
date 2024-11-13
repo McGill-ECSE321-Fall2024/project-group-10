@@ -270,8 +270,8 @@ public class GameService {
             }
             if(!game.getPlatforms().contains(platform)){
                 game.addPlatform(platform);
-                // game.getPlatformSpecificMap().put(platform, new ArrayList<>());
-                // game.getHistoryMap().put(platform, new ArrayList<>());
+                game.getPlatformSpecificMap().put(platform, new ArrayList<>());
+                game.getHistoryMap().put(platform, new ArrayList<>());
             }
 
         }
@@ -333,130 +333,130 @@ public class GameService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform is already in the game");
         }
         game.addPlatform(platform);
-        // game.getPlatformSpecificMap().put(platform, new ArrayList<>());
-        // game.getHistoryMap().put(platform, new ArrayList<>());
+        game.getPlatformSpecificMap().put(platform, new ArrayList<>());
+        game.getHistoryMap().put(platform, new ArrayList<>());
         gameRepository.save(game);
         return game;
     }
 
-    // @Transactional
-    // public List<Integer> getSpecificGamesByPlatform(int game_id, int platform_id) {
-    //     if(game_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
-    //     }
-    //     if (platform_id <= 0) {
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform ID must be greater than 0");
-    //     }
-    //     Game game = findGameById(game_id);
-    //     if(game == null){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
-    //     }
-    //     Platform platform = platformRepository.findById(platform_id);
-    //     if(platform == null){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Platform with ID %d does not exist", platform_id));
-    //     }
-    //     if(!game.getPlatforms().contains(platform)){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, "Platform is not in the game");
-    //     }
-    //     return game.getPlatformSpecificMap().get(platform);
-    // }
+    @Transactional
+    public List<Integer> getSpecificGamesByPlatform(int game_id, int platform_id) {
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        if (platform_id <= 0) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform ID must be greater than 0");
+        }
+        Game game = findGameById(game_id);
+        if(game == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
+        }
+        Platform platform = platformRepository.findById(platform_id);
+        if(platform == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Platform with ID %d does not exist", platform_id));
+        }
+        if(!game.getPlatforms().contains(platform)){
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Platform is not in the game");
+        }
+        return game.getPlatformSpecificMap().get(platform);
+    }
 
-    // @Transactional
-    // public Platform findPlatformByGameHistory(int game_id, int specific_game_id){
-    //     if(game_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
-    //     }
-    //     if(specific_game_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific Game ID must be greater than 0");
-    //     }
-    //     Game game = findGameById(game_id);
-    //     if(game == null){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
-    //     }
+    @Transactional
+    public Platform findPlatformByGameHistory(int game_id, int specific_game_id){
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        if(specific_game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific Game ID must be greater than 0");
+        }
+        Game game = findGameById(game_id);
+        if(game == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
+        }
 
-    //     Map<Platform, List<Integer>> historyMap = game.getHistoryMap();
+        Map<Platform, List<Integer>> historyMap = game.getHistoryMap();
 
-    //     for( Map.Entry<Platform, List<Integer>> entry : historyMap.entrySet() ){
-    //         if(entry.getValue().contains(specific_game_id)){
-    //             return entry.getKey();
-    //         }
-    //     }
+        for( Map.Entry<Platform, List<Integer>> entry : historyMap.entrySet() ){
+            if(entry.getValue().contains(specific_game_id)){
+                return entry.getKey();
+            }
+        }
 
-    //     throw new GameShopException(HttpStatus.NOT_FOUND, "Specific game does not exist in the game");
-    // }
+        throw new GameShopException(HttpStatus.NOT_FOUND, "Specific game does not exist in the game");
+    }
 
-    // @Transactional
-    // public void addSpecificGameToSpecificGamesByPlatform(int game_id, int platform_id, int specificGame_id) {
-    //     if(game_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
-    //     }
-    //     if(platform_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform ID must be greater than 0");
-    //     }
-    //     if(specificGame_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific Game ID must be greater than 0");
-    //     }
-    //     Game game = findGameById(game_id);
-    //     if(game == null){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
-    //     }
-    //     Platform platform = platformRepository.findById(platform_id);
-    //     if(platform == null){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Platform with ID %d does not exist", platform_id));
-    //     }
-    //     if(!game.getPlatforms().contains(platform)){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, "Platform is not in the game");
-    //     }
-    //     if (!game.addToPlatformSpecificMap(platform, specificGame_id)) {
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific game already exists in the platform");
-    //     }
-    // }
+    @Transactional
+    public void addSpecificGameToSpecificGamesByPlatform(int game_id, int platform_id, int specificGame_id) {
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        if(platform_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform ID must be greater than 0");
+        }
+        if(specificGame_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific Game ID must be greater than 0");
+        }
+        Game game = findGameById(game_id);
+        if(game == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
+        }
+        Platform platform = platformRepository.findById(platform_id);
+        if(platform == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Platform with ID %d does not exist", platform_id));
+        }
+        if(!game.getPlatforms().contains(platform)){
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Platform is not in the game");
+        }
+        if (!game.addToPlatformSpecificMap(platform, specificGame_id)) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific game already exists in the platform");
+        }
+    }
 
-    // @Transactional
-    // public void addSpecificGameToHistoryMap(int game_id, int specificGame_id) {
-    //     if(game_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
-    //     }
-    //     if(specificGame_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific Game ID must be greater than 0");
-    //     }
-    //     Game game = findGameById(game_id);
-    //     if(game == null){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
-    //     }
-    //     Platform platform = findPlatformByGameHistory(game_id, specificGame_id);
-    //     if(platform == null){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, "Platform does not exist");
-    //     }
-    //     if (!game.addToHistoryMap(platform, specificGame_id)) {
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific game already exists in the history map");
-    //     }
-    // }
+    @Transactional
+    public void addSpecificGameToHistoryMap(int game_id, int specificGame_id) {
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        if(specificGame_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific Game ID must be greater than 0");
+        }
+        Game game = findGameById(game_id);
+        if(game == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
+        }
+        Platform platform = findPlatformByGameHistory(game_id, specificGame_id);
+        if(platform == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Platform does not exist");
+        }
+        if (!game.addToHistoryMap(platform, specificGame_id)) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific game already exists in the history map");
+        }
+    }
 
-    // @Transactional
-    // public void removeSpecificGameFromSpecificGamesByPlatform(int game_id, int platform_id, int specificGame_id) {
-    //     if(game_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
-    //     }
-    //     if(platform_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform ID must be greater than 0");
-    //     }
-    //     if(specificGame_id <= 0){
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific Game ID must be greater than 0");
-    //     }
-    //     Game game = findGameById(game_id);
-    //     if(game == null){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
-    //     }
-    //     Platform platform = platformRepository.findById(platform_id);
-    //     if(platform == null){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Platform with ID %d does not exist", platform_id));
-    //     }
-    //     if(!game.getPlatforms().contains(platform)){
-    //         throw new GameShopException(HttpStatus.NOT_FOUND, "Platform is not in the game");
-    //     }
-    //     if (!game.removeFromPlatformSpecificMap(platform, specificGame_id)) {
-    //         throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific game does not exist in the platform");
-    //     }
-    // }
+    @Transactional
+    public void removeSpecificGameFromSpecificGamesByPlatform(int game_id, int platform_id, int specificGame_id) {
+        if(game_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
+        }
+        if(platform_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform ID must be greater than 0");
+        }
+        if(specificGame_id <= 0){
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific Game ID must be greater than 0");
+        }
+        Game game = findGameById(game_id);
+        if(game == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d does not exist", game_id));
+        }
+        Platform platform = platformRepository.findById(platform_id);
+        if(platform == null){
+            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Platform with ID %d does not exist", platform_id));
+        }
+        if(!game.getPlatforms().contains(platform)){
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Platform is not in the game");
+        }
+        if (!game.removeFromPlatformSpecificMap(platform, specificGame_id)) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Specific game does not exist in the platform");
+        }
+    }
 }
