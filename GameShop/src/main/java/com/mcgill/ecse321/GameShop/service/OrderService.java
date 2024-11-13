@@ -131,20 +131,26 @@ public class OrderService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Insufficient stock");
         }
 
-        // Retrieve all SpecificGame instances for the game and ensure sufficient
-        // quantity
+        // Retrieve all SpecificGame instances for the game, filtering to only those not
+        // yet in the order
         Iterable<SpecificGame> specificGames = specificGameService.getSpecificGamesByGameId(game.getGame_id());
-        List<SpecificGame> specificGameList = new ArrayList<>();
-        specificGames.forEach(specificGameList::add);
+        List<SpecificGame> availableSpecificGames = new ArrayList<>();
+        specificGames.forEach(specificGame -> {
+            if (!specificGame.getOrder().contains(order)) {
+                availableSpecificGames.add(specificGame);
+            }
+        });
 
-        if (specificGameList.size() < quantity) {
+        // Check if there are enough available specific games to fulfill the quantity
+        // request
+        if (availableSpecificGames.size() < quantity) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
                     "Not enough SpecificGame instances available for game ID " + game.getGame_id());
         }
 
-        // Now add each SpecificGame instance to the order
+        // Add the specified quantity of SpecificGame instances to the order
         for (int i = 0; i < quantity; i++) {
-            SpecificGame specificGame = specificGameList.get(i);
+            SpecificGame specificGame = availableSpecificGames.get(i);
             specificGame.addOrder(order);
         }
 
@@ -203,4 +209,27 @@ public class OrderService {
         gameService.updateGameStockQuantity(game.getGame_id(), game.getStockQuantity());
     }
 
+    @Transactional
+    public List<Order> getOrdersWithCustomerEmail(String customerEmail) {
+        if (customerEmail == null || customerEmail.trim().isEmpty()) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Customer email cannot be empty or null");
+        }
+
+        Customer customer = customerRepository.findByEmail(customerEmail);
+        if (customer == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
+        }
+
+        List<Order> orders = new ArrayList<>();
+        for (Order order : getAllOrders()) {
+            if (order.getCustomer().equals(customer)) {
+                orders.add(order);
+            }
+        }
+        if (orders.isEmpty()) {
+            throw new GameShopException(HttpStatus.NOT_FOUND, "No orders found for customer email: " + customerEmail);
+        }
+
+        return orders;
+    }
 }

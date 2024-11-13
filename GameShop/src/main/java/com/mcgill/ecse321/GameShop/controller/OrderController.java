@@ -9,6 +9,8 @@ import com.mcgill.ecse321.GameShop.model.SpecificGame;
 import com.mcgill.ecse321.GameShop.service.OrderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -88,7 +90,7 @@ public class OrderController {
 
         }
 
-        @GetMapping("/orders/{trackingNumber}/specific-games")
+        @GetMapping("/orders/{trackingNumber}/specificGames")
         public SpecificGameListDto getSpecificGamesByOrder(@PathVariable String trackingNumber) {
                 List<SpecificGame> specificGames = orderService.getSpecificGamesByOrder(trackingNumber);
 
@@ -111,6 +113,16 @@ public class OrderController {
                                 .map(SpecificGameResponseDto::new)
                                 .collect(Collectors.toList());
                 return OrderResponseDto.create(order, specificGames);
+        }
+
+        @GetMapping("/orders/customer/{customerEmail}")
+        public OrderListDto getOrdersByCustomerEmail(@PathVariable String customerEmail) {
+                List<Order> orders = orderService.getOrdersWithCustomerEmail(customerEmail);
+
+                List<OrderSummaryDto> orderDtos = orders.stream().map(OrderSummaryDto::new)
+                                .collect(Collectors.toList());
+
+                return new OrderListDto(orderDtos);
         }
 
 }
