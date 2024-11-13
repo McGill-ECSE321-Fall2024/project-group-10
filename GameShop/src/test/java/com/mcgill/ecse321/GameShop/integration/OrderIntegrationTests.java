@@ -412,10 +412,8 @@ public class OrderIntegrationTests {
         @Order(8)
         public void testGetSpecificGamesByOrder() {
                 // Call the endpoint to get specific games for the existing order
-                ResponseEntity<SpecificGameListDto> response = client.exchange(
+                ResponseEntity<SpecificGameListDto> response = client.getForEntity(
                                 "/orders/" + trackingNumber + "/specificGames",
-                                HttpMethod.GET,
-                                null,
                                 SpecificGameListDto.class);
 
                 // Assertions
