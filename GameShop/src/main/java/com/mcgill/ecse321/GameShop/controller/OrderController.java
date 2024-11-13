@@ -88,7 +88,7 @@ public class OrderController {
 
         }
 
-        @GetMapping("/orders/{trackingNumber}/specific-games")
+        @GetMapping("/orders/{trackingNumber}/specificGames")
         public SpecificGameListDto getSpecificGamesByOrder(@PathVariable String trackingNumber) {
                 List<SpecificGame> specificGames = orderService.getSpecificGamesByOrder(trackingNumber);
 

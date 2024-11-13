@@ -55,6 +55,9 @@ public class Order {
     }
   }
 
+  public Order() {
+  }
+
   // ------------------------
   // INTERFACE
   // ------------------------

@@ -28,16 +28,10 @@ public class CartController {
     private AccountService customerService;
 
     // Get the cart associated with a customer
-    @GetMapping("/carts/{customerEmail}")
+    @GetMapping("/carts/customer/{customerEmail}")
     public CartResponseDto getCartByCustomerEmail(@PathVariable String customerEmail) {
-        Customer customer = customerService.getCustomerAccountByEmail(customerEmail);
-        if (customer == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND, "Customer not found");
-        }
-        Cart cart = customer.getCart();
-        if (cart == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND, "Cart not found for the customer");
-        }
+        Cart cart = cartService.getCartByCustomerEmail(customerEmail);
+
         Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cart.getCart_id());
         return CartResponseDto.create(cart, quantities);
     }
