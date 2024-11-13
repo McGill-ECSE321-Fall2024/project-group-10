@@ -16,9 +16,14 @@ import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountType;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
 import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
+import com.mcgill.ecse321.GameShop.model.Customer;
+import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Employee.EmployeeStatus;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CartRepository;
+import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
+import com.mcgill.ecse321.GameShop.repository.EmployeeRepository;
+import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import com.mcgill.ecse321.GameShop.repository.WishListRepository;
 
 import org.junit.jupiter.api.TestMethodOrder;
@@ -53,6 +58,15 @@ public class AccountIntegrationTests {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private ManagerRepository  managerRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     private String customerEmail;
     private String managerEmail;
@@ -98,6 +112,9 @@ public class AccountIntegrationTests {
     @AfterAll
     public void clearDatabase(){
         wishListRepository.deleteAll();
+        employeeRepository.deleteAll();
+        customerRepository.deleteAll();
+        managerRepository.deleteAll();
         accountRepository.deleteAll();
         cartRepository.deleteAll();
     }
@@ -259,22 +276,35 @@ public class AccountIntegrationTests {
         assertTrue(customerList.size() == 2);
 
         //Get the first customer that was created in previous test
-        AccountResponseDto firstCustomer = customerList.get(0);
+        boolean found = false;
+        for (AccountResponseDto firstCustomer : customerList) {
+            if (firstCustomer.getEmail().equals(CUSTOMER_EMAIL)) {
+                found = true;
+                assertNotNull(firstCustomer);
+                assertEquals(CUSTOMER_EMAIL, firstCustomer.getEmail());
+                assertEquals(CUSTOMER_USERNAME, firstCustomer.getUsername());
+                assertEquals(CUSTOMER_ADDRESS, firstCustomer.getAddress());
+                assertEquals(CUSTOMER_PHONENUM, firstCustomer.getPhoneNumber());
+                break;
+            }
+        }
         //Assert
-        assertNotNull(firstCustomer);
-        assertEquals(CUSTOMER_EMAIL, firstCustomer.getEmail());
-        assertEquals(CUSTOMER_USERNAME, firstCustomer.getUsername());
-        assertEquals(CUSTOMER_ADDRESS, firstCustomer.getAddress());
-        assertEquals(CUSTOMER_PHONENUM, firstCustomer.getPhoneNumber());
-
+        assertTrue(found);
         //Get the second customer that was created in this test
-        AccountResponseDto secondCustomer = customerList.get(1);
+        found = false;
+        for (AccountResponseDto secondCustomer : customerList) {
+            if (secondCustomer.getEmail().equals(SECCUSTOMER_EMAIL)) {
+                found = true;
+                assertNotNull(secondCustomer);
+                assertEquals(SECCUSTOMER_EMAIL, secondCustomer.getEmail());
+                assertEquals(SECCUSTOMER_USERNAME, secondCustomer.getUsername());
+                assertEquals(SECCUSTOMER_ADDRESS, secondCustomer.getAddress());
+                assertEquals(SECCUSTOMER_PHONENUM, secondCustomer.getPhoneNumber());
+                break;
+            }
+        }
         //Assert
-        assertNotNull(secondCustomer);
-        assertEquals(SECCUSTOMER_EMAIL, secondCustomer.getEmail());
-        assertEquals(SECCUSTOMER_USERNAME, secondCustomer.getUsername());
-        assertEquals(SECCUSTOMER_ADDRESS, secondCustomer.getAddress());
-        assertEquals(SECCUSTOMER_PHONENUM, secondCustomer.getPhoneNumber());
+        assertTrue(found);
 
     }
 

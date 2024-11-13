@@ -29,7 +29,6 @@ import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyRequestDto;
 import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyResponseDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewRequestDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewResponseDto;
-import com.mcgill.ecse321.GameShop.model.Employee;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.Reply.ReviewRating;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
@@ -98,6 +97,7 @@ public class ReplyIntegrationTests {
         managerRepo.deleteAll();
         customerRepo.deleteAll();
         cartRepo.deleteAll();
+        accountRepo.deleteAll();
     }
 
     @Test

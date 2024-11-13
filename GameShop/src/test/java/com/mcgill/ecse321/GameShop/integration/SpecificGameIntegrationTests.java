@@ -5,15 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
-import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
 import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameListDto;
 import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.SpecificGameDto.SpecificGameSummaryDto;
-import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
 import com.mcgill.ecse321.GameShop.model.SpecificGame.ItemStatus;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
@@ -144,6 +141,7 @@ public class SpecificGameIntegrationTests {
     }
 
 
+    @SuppressWarnings("null")
     @Test
     @Order(4)
     public void testGetAllSpecificGames() {
@@ -316,6 +314,7 @@ public class SpecificGameIntegrationTests {
         assertTrue(responseBody.contains("Game does not exist"));
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(12)
     public void testUpdateSpecificGameAssociatedGameInvalid() {
@@ -345,7 +344,6 @@ public class SpecificGameIntegrationTests {
         assertEquals(HttpStatus.OK, specificGameResponse.getStatusCode(), specificGameResponse.getBody().toString());
         SpecificGameResponseDto specificGame = specificGameResponse.getBody();
         assertNotNull(specificGame);
-        int lastSpecificGameId = specificGame.getSpecificGame_id();
 
         // Act: Attempt to associate with a non-existent Game ID
         int nonExistentGameId = 9999;

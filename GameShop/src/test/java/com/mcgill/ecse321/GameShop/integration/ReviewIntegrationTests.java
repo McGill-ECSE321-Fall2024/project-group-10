@@ -2,35 +2,24 @@ package com.mcgill.ecse321.GameShop.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
-import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategorySummaryDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformRequestDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
-import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformSummaryDto;
-import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyRequestDto;
-import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyResponseDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewListDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewRequestDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewResponseDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Category;
-import com.mcgill.ecse321.GameShop.model.Customer;
-import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Platform;
-import com.mcgill.ecse321.GameShop.model.Reply.ReviewRating;
 import com.mcgill.ecse321.GameShop.model.Review;
 import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
@@ -134,18 +123,6 @@ public class ReviewIntegrationTests {
             platformRepository.save(platform);
         }
 
-        for (Game game : gameRepository.findAll()) {
-            Iterator<Category> categoryIterator = game.getCategories().iterator();
-            while (categoryIterator.hasNext()) {
-                Category category = categoryIterator.next();
-            }
-    
-            Iterator<Platform> platformIterator = game.getPlatforms().iterator();
-            while (platformIterator.hasNext()) {
-                Platform platform = platformIterator.next();
-            }
-            gameRepository.save(game);
-        }
         wishListRepository.deleteAll();
         managerRepository.deleteAll();
         reviewRepository.deleteAll();
@@ -218,6 +195,7 @@ public class ReviewIntegrationTests {
         assertEquals(CUSTOMER_EMAIL, response.getBody().getCustomerEmail());
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(2)
     public void testGetReviewById(){
@@ -234,6 +212,7 @@ public class ReviewIntegrationTests {
     }
     
 
+    @SuppressWarnings("null")
     @Test
     @Order(3)
     public void testGetCustomerByReviewId(){
@@ -247,6 +226,7 @@ public class ReviewIntegrationTests {
         assertEquals(CUSTOMER_ADDRESS, response.getBody().getAddress());
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(4)
     public void testGetReviewsByGame(){
@@ -293,6 +273,7 @@ public class ReviewIntegrationTests {
         assertTrue(found);
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(5)
     public void getReviewsByCustomer(){
@@ -341,6 +322,7 @@ public class ReviewIntegrationTests {
         assertTrue(found);
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(6)
     public void testUpdateReview(){

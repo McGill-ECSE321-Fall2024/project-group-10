@@ -9,7 +9,6 @@ import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Reply;
 import com.mcgill.ecse321.GameShop.model.Review;
-import com.mcgill.ecse321.GameShop.model.Review.GameRating;
 import com.mcgill.ecse321.GameShop.service.ReviewService;
 
 import java.time.LocalDate;
