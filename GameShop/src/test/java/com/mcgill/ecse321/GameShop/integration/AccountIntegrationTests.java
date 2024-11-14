@@ -1,5 +1,18 @@
 package com.mcgill.ecse321.GameShop.integration;
 
+import java.util.List;
+
+import org.junit.jupiter.api.AfterAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -23,22 +36,6 @@ import com.mcgill.ecse321.GameShop.repository.CustomerRepository;
 import com.mcgill.ecse321.GameShop.repository.EmployeeRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
 import com.mcgill.ecse321.GameShop.repository.WishListRepository;
-
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.List;
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.Order;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
@@ -329,7 +326,15 @@ public class AccountIntegrationTests {
         assertFalse(employeeList.isEmpty(), "Employees were expected");
         assertTrue(employeeList.size() == 2);
 
-        EmployeeResponseDto firstEmployee = employeeList.get(0);
+        EmployeeResponseDto firstEmployee = null;
+
+        for (EmployeeResponseDto emp : employeeList) {
+            if (emp.getEmail().equals(EMPLOYEE_EMAIL)) {
+                firstEmployee = emp;
+                break;
+            }
+        }
+        
         assertNotNull(firstEmployee);
         assertEquals(EMPLOYEE_EMAIL, firstEmployee.getEmail());
         this.employeeEmail = firstEmployee.getEmail();
@@ -337,7 +342,15 @@ public class AccountIntegrationTests {
         assertEquals(EMPLOYEE_ADDRESS, firstEmployee.getAddress());
         assertEquals(EMPLOYEE_PHONENUM, firstEmployee.getPhoneNumber());
 
-        EmployeeResponseDto secondEmployee = employeeList.get(1);
+        EmployeeResponseDto secondEmployee = null;
+
+        for (EmployeeResponseDto secEmp : employeeList) {
+            if (secEmp.getEmail().equals(SECEMPLOYEE_EMAIL)) {
+                secondEmployee = secEmp;
+                break;
+            }
+        }
+
         assertNotNull(secondEmployee);
         assertEquals(SECEMPLOYEE_EMAIL, secondEmployee.getEmail());
         this.secondEmployeeEmail = secondEmployee.getEmail();
