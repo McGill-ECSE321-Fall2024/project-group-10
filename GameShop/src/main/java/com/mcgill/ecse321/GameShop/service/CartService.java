@@ -72,7 +72,8 @@ public class CartService {
                     String.format("Game with ID %d is not available for purchase", gameId));
         }
         // Retrieve or initialize the quantities map for the cart
-        Map<Integer, Integer> quantities = cartQuantities.computeIfAbsent(cart.getCart_id(), k -> new ConcurrentHashMap<>());
+        Map<Integer, Integer> quantities = cartQuantities.computeIfAbsent(cart.getCart_id(),
+                k -> new ConcurrentHashMap<>());
         int currentQuantity = quantities.getOrDefault(gameId, 0);
         int newQuantity = currentQuantity + quantity;
         if (newQuantity > game.getStockQuantity()) {

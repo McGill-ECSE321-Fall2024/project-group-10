@@ -35,7 +35,7 @@ public class WishListService {
         WishList wishList = wishListRepository.findById(id);
         if (wishList == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no WishList with Id %d.",id));
+                    String.format("There is no WishList with Id %d.", id));
         }
         return wishList;
     }
@@ -75,7 +75,7 @@ public class WishListService {
         Game gameSearch = gameRepository.findById(gameId);
         if (gameSearch == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND,
-                    String.format("There is no Game with Id %d.",gameId));
+                    String.format("There is no Game with Id %d.", gameId));
         }
 
         wishList.addGame(gameSearch);
@@ -98,7 +98,7 @@ public class WishListService {
             }
         }
         throw new GameShopException(HttpStatus.NOT_FOUND,
-                String.format("There is no Game with Id %d in the WishList with Id %d.",gameId,wishlistId));
+                String.format("There is no Game with Id %d in the WishList with Id %d.", gameId, wishlistId));
     }
 
     // Get the size of a wishlist
@@ -110,7 +110,7 @@ public class WishListService {
 
     // Get all games in a wishlist
     @Transactional
-    public List<Game> getGamesInWishList(int wishlistId){
+    public List<Game> getGamesInWishList(int wishlistId) {
         if (wishlistId <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Wishlist Id must be greater than 0");
         }
@@ -143,6 +143,6 @@ public class WishListService {
             }
         }
         throw new GameShopException(HttpStatus.NOT_FOUND,
-                String.format("There is no Game with Id %d in the WishList with Id %d.",gameId,wishlistId));
+                String.format("There is no Game with Id %d in the WishList with Id %d.", gameId, wishlistId));
     }
 }

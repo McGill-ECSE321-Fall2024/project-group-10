@@ -36,7 +36,7 @@ public class CategoryService {
         if (managerEmail == null || managerEmail.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Manager email cannot be empty or null");
         }
-    
+
         Manager manager = managerRepository.findByEmail(managerEmail);
         if (manager == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND,
@@ -45,7 +45,7 @@ public class CategoryService {
         Category category = new Category(categoryName, manager);
         return categoryRepository.save(category);
     }
-    
+
     // Method to get a category by its ID
     @Transactional
     public Category getCategory(int categoryId) {
@@ -54,17 +54,17 @@ public class CategoryService {
         }
         Category category = categoryRepository.findById(categoryId);
         if (category == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND,"Category does not exist");
+            throw new GameShopException(HttpStatus.NOT_FOUND, "Category does not exist");
         }
         return category;
     }
-    
+
     // Method to get all categories
     @Transactional
     public Iterable<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
-    
+
     // Method to update a category's name
     @Transactional
     public Category updateCategory(int categoryId, String categoryName) {
@@ -78,7 +78,7 @@ public class CategoryService {
         category.setCategoryName(categoryName);
         return categoryRepository.save(category);
     }
-    
+
     // Method to delete a category
     @Transactional
     public void deleteCategory(int categoryId) {
@@ -91,7 +91,7 @@ public class CategoryService {
             List<Category> categories = new ArrayList<>(game.getCategories());
             categories.remove(category);
             game.setCategories(categories);
-            gameRepository.save(game);  // Save to update the association in the join table
+            gameRepository.save(game); // Save to update the association in the join table
         }
         category.removeManager();
         categoryRepository.save(category);

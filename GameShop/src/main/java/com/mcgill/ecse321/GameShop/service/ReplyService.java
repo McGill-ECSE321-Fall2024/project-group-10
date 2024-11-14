@@ -38,7 +38,8 @@ public class ReplyService {
      * Create a new Reply.
      */
     @Transactional
-    public Reply createReply(Date replyDate, String description, ReviewRating reviewRating, int reviewId, String managerEmail) {
+    public Reply createReply(Date replyDate, String description, ReviewRating reviewRating, int reviewId,
+            String managerEmail) {
 
         // Validate inputs
         if (replyDate == null) {
@@ -54,7 +55,8 @@ public class ReplyService {
         // Retrieve the manager by email
         Manager manager = managerRepository.findByEmail(managerEmail);
         if (manager == null) {
-            throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Manager with email %s not found", managerEmail));
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("Manager with email %s not found", managerEmail));
         }
 
         // Retrieve the review by ID

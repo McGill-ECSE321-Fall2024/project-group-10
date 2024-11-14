@@ -152,7 +152,8 @@ public class OrderService {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Insufficient stock");
         }
 
-        // Retrieve all SpecificGame instances for the game, filtering to only those not yet in the order
+        // Retrieve all SpecificGame instances for the game, filtering to only those not
+        // yet in the order
         Iterable<SpecificGame> specificGames = specificGameService.getSpecificGamesByGameId(game.getGame_id());
         List<SpecificGame> availableSpecificGames = new ArrayList<>();
         specificGames.forEach(specificGame -> {
@@ -161,7 +162,8 @@ public class OrderService {
             }
         });
 
-        // Check if there are enough available specific games to fulfill the quantity request
+        // Check if there are enough available specific games to fulfill the quantity
+        // request
         if (availableSpecificGames.size() < quantity) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
                     "Not enough SpecificGame instances available for game ID " + game.getGame_id());
