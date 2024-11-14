@@ -23,7 +23,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class AccountService {
-    
+
     @Autowired
     private ManagerRepository managerRepo;
 
@@ -35,7 +35,7 @@ public class AccountService {
 
     @Autowired
     private CartRepository cartRepository;
-    
+
     @Autowired
     private WishListRepository wishListRepository;
 
@@ -43,30 +43,31 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     @Transactional
-    public Manager createManager(String email, String username, String password, String phoneNumber, String address){
+    public Manager createManager(String email, String username, String password, String phoneNumber, String address) {
         // Check that only one manager can be created
-        if (managerRepo.count() > 1){
+        if (managerRepo.count() > 1) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-            String.format("A manager already exists"));
+                    String.format("A manager already exists"));
         }
 
         // Input validation to ensure email, username, and password are not null
-        if (email == null || email.trim().isEmpty() ){
+        if (email == null || email.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
                     String.format("Email is invalid."));
         }
-        if (username == null || username.trim().isEmpty()){
+        if (username == null || username.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-            String.format("Invalid username %s", username));
+                    String.format("Invalid username %s", username));
         }
-        if (password == null || password.trim().isEmpty()){
+        if (password == null || password.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-            String.format("Invalid password"));
+                    String.format("Invalid password"));
         }
 
-        // Find the account using the email to check if an account with that email exists
+        // Find the account using the email to check if an account with that email
+        // exists
         Account account = accountRepository.findByEmail(email);
-        if (account != null){
+        if (account != null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
                     String.format("Account with email %s already exists.", email));
         }
@@ -77,24 +78,24 @@ public class AccountService {
     }
 
     @Transactional
-    public Employee createEmployee(String email, String username, String password, String phoneNumber, String address){
+    public Employee createEmployee(String email, String username, String password, String phoneNumber, String address) {
         // Input validation
-        if (email == null || email.trim().isEmpty() ){
+        if (email == null || email.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
                     String.format("Email is invalid."));
         }
-        if (username == null || username.trim().isEmpty()){
+        if (username == null || username.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-            String.format("Invalid username %s", username));
+                    String.format("Invalid username %s", username));
         }
-        if (password == null || password.trim().isEmpty()){
+        if (password == null || password.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-            String.format("Invalid password"));
+                    String.format("Invalid password"));
         }
 
         // Check to see if the email already exists in the system
         Account account = accountRepository.findByEmail(email);
-        if (account != null){
+        if (account != null) {
             throw new GameShopException(HttpStatus.NOT_FOUND,
                     String.format("Account with email %s already exists.", email));
         }
@@ -105,26 +106,26 @@ public class AccountService {
     }
 
     @Transactional
-    public Customer createCustomer(String email, String username, String password, String phoneNumber, String address){
+    public Customer createCustomer(String email, String username, String password, String phoneNumber, String address) {
         // Input validation
-        if (email == null || email.trim().isEmpty() ){
+        if (email == null || email.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
                     String.format("Email is invalid."));
         }
-        if (username == null || username.trim().isEmpty()){
+        if (username == null || username.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-            String.format("Invalid username %s", username));
+                    String.format("Invalid username %s", username));
         }
-        if (password == null || password.trim().isEmpty()){
+        if (password == null || password.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-            String.format("Invalid password"));
+                    String.format("Invalid password"));
         }
 
         // Check if the account already exists
         Account account = accountRepository.findByEmail(email);
-        if (account != null){
+        if (account != null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST,
-            String.format("Account with email %s already exists.", email));
+                    String.format("Account with email %s already exists.", email));
         }
 
         // A cart is mandatory when creating a customer
@@ -140,21 +141,21 @@ public class AccountService {
     }
 
     @Transactional
-    public Iterable<Account> getAllEmployees(){
+    public Iterable<Account> getAllEmployees() {
         return employeeRepo.findAll();
     }
 
     @Transactional
-    public Iterable<Account> getAllCustomers(){
+    public Iterable<Account> getAllCustomers() {
         return customerRepo.findAll();
     }
 
     @Transactional
-    public Manager getManager(){
+    public Manager getManager() {
         // Retrieve all accounts and find the manager
         Iterable<Account> accounts = accountRepository.findAll();
-        for (Account account: accounts){
-            if (account instanceof Manager){
+        for (Account account : accounts) {
+            if (account instanceof Manager) {
                 return (Manager) account;
             }
         }
@@ -162,19 +163,19 @@ public class AccountService {
     }
 
     @Transactional
-    public Account updateAccount(String email, String username, String password, String phoneNumber, String address){
+    public Account updateAccount(String email, String username, String password, String phoneNumber, String address) {
         // Ensure that the account exists
         Account account = getAccountByEmail(email);
         account.setUsername(username);
         account.setPassword(password);
         account.setPhoneNumber(phoneNumber);
         account.setAddress(address);
-        
+
         return accountRepository.save(account);
     }
 
     @Transactional
-    public Account getAccountByEmail(String email){
+    public Account getAccountByEmail(String email) {
         // Ensure the account exists
         Account account = accountRepository.findByEmail(email);
         if (account == null) {
@@ -185,7 +186,7 @@ public class AccountService {
     }
 
     @Transactional
-    public Employee getEmployeeAccountByEmail(String email){
+    public Employee getEmployeeAccountByEmail(String email) {
         // Ensure the employee account exists
         Employee account = employeeRepo.findByEmail(email);
         if (account == null) {
@@ -196,7 +197,7 @@ public class AccountService {
     }
 
     @Transactional
-    public Customer getCustomerAccountByEmail(String email){
+    public Customer getCustomerAccountByEmail(String email) {
         // Ensure the customer account exists
         Customer account = customerRepo.findByEmail(email);
         if (account == null) {
@@ -207,28 +208,28 @@ public class AccountService {
     }
 
     @Transactional
-    public Employee archiveEmployee(String email){
+    public Employee archiveEmployee(String email) {
         // Find the employee account using the email
         Employee employee = employeeRepo.findByEmail(email);
-        if (employee != null){
+        if (employee != null) {
             // Set the status of the employee to archived
             employee.setEmployeeStatus(EmployeeStatus.Archived);
             return employeeRepo.save(employee);
-        }else{
+        } else {
             throw new GameShopException(HttpStatus.NOT_FOUND,
-            String.format("Account with email %s does not exist.", email));
+                    String.format("Account with email %s does not exist.", email));
         }
     }
 
     @Transactional
-    public WishList getWishlistByCustomerEmail(String email){
+    public WishList getWishlistByCustomerEmail(String email) {
         // Find the customer account using the email
         Customer customer = customerRepo.findByEmail(email);
         WishList wishlistToReturn = null;
-        if (customer == null){
+        if (customer == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND,
-            String.format("Account with email %s does not exist.", email));
-        } else{
+                    String.format("Account with email %s does not exist.", email));
+        } else {
             WishList wishlist = wishListRepository.findByCustomer(customer);
             wishlistToReturn = wishlist;
         }

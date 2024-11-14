@@ -90,23 +90,23 @@ public class PlatformService {
     @Transactional
     public void deletePlatform(int platformId) {
         // Validate platform ID
-        if(platformId <= 0){
+        if (platformId <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Invalid platform ID");
         }
         // Retrieve platform by ID
         Platform platform = getPlatform(platformId);
         // Find all games associated with the platform
         List<Game> gamesInPlatform = gameRepository.findAllByPlatformsContains(platform);
-        for(Game game : gamesInPlatform){
+        for (Game game : gamesInPlatform) {
             // Remove platform from each game
-            List<Platform> platforms = new ArrayList<>( game.getPlatforms());
+            List<Platform> platforms = new ArrayList<>(game.getPlatforms());
             platforms.remove(platform);
             game.setPlatforms(platforms);
 
             // Save updated game
             gameRepository.save(game);
         }
-        
+
         // Delete platform
         platformRepository.delete(platform);
     }

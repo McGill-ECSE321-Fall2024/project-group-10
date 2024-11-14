@@ -39,7 +39,8 @@ public class PromotionService {
      * Create a new Promotion.
      */
     @Transactional
-    public Promotion createPromotion(String description, int discountRate, LocalDate startLocalDate, LocalDate endLocalDate,
+    public Promotion createPromotion(String description, int discountRate, LocalDate startLocalDate,
+            LocalDate endLocalDate,
             String managerEmail, List<Integer> gameIds) {
 
         // Validate inputs
@@ -67,10 +68,10 @@ public class PromotionService {
 
         // Fetch games by IDs
         List<Game> games = new ArrayList<>();
-        for (int  gameId : gameIds) {
+        for (int gameId : gameIds) {
             Game game = gameRepository.findById(gameId);
-            if (game == null){
-                    throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId));
+            if (game == null) {
+                throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId));
             }
             games.add(game);
         }
@@ -107,7 +108,8 @@ public class PromotionService {
      * Update an existing Promotion.
      */
     @Transactional
-    public Promotion updatePromotion(int promotionId, String description, Integer discountRate, LocalDate startLocalDate,
+    public Promotion updatePromotion(int promotionId, String description, Integer discountRate,
+            LocalDate startLocalDate,
             LocalDate endLocalDate, List<Integer> gameIds) {
         Promotion promotion = getPromotionById(promotionId);
 
@@ -138,10 +140,11 @@ public class PromotionService {
         // Update associated games if provided
         if (gameIds != null) {
             List<Game> games = new ArrayList<>();
-            for (int  gameId : gameIds) {
+            for (int gameId : gameIds) {
                 Game game = gameRepository.findById(gameId);
-                if (game == null){
-                        throw new GameShopException(HttpStatus.NOT_FOUND, String.format("Game with ID %d not found", gameId));
+                if (game == null) {
+                    throw new GameShopException(HttpStatus.NOT_FOUND,
+                            String.format("Game with ID %d not found", gameId));
                 }
                 games.add(game);
             }

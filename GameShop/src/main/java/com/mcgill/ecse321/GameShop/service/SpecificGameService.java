@@ -20,7 +20,7 @@ public class SpecificGameService {
 
     @Autowired
     private SpecificGameRepository specificGameRepository;
-    
+
     @Autowired
     private GameService gameService;
     @Autowired
@@ -29,10 +29,10 @@ public class SpecificGameService {
     @Transactional
     public SpecificGame createSpecificGame(Game game) {
         // Check if the provided game is null
-        if(game == null) {
+        if (game == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game cannot be null");
         }
-       
+
         // Create a new SpecificGame instance and set its status to Confirmed
         SpecificGame specificGame = new SpecificGame(game);
         specificGame.setItemStatus(SpecificGame.ItemStatus.Confirmed);
@@ -65,11 +65,11 @@ public class SpecificGameService {
         }
         // Retrieve the SpecificGame and Game instances
         SpecificGame specificGame = findSpecificGameById(specificGame_id);
-        if(specificGame == null) {
+        if (specificGame == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "SpecificGame does not exist");
         }
         Game game = gameService.findGameById(game_id);
-        if(game == null) {
+        if (game == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Game does not exist");
         }
         // Update the SpecificGame with the new Game
@@ -87,13 +87,13 @@ public class SpecificGameService {
         if (gameRepository.findById(game_id) == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Game does not exist");
         }
-    
+
         // Retrieve all SpecificGames
         Iterable<SpecificGame> specificGames = this.getAllSpecificGames();
         if (specificGames == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "No SpecificGame found at all");
         }
-        
+
         // Filter SpecificGames by the provided game_id
         List<SpecificGame> specificGameList = new ArrayList<>();
         for (SpecificGame specificGame : specificGames) {
@@ -109,7 +109,6 @@ public class SpecificGameService {
 
         return specificGameList;
     }
-    
 
     @Transactional
     public Iterable<SpecificGame> getAllSpecificGames() {
@@ -127,7 +126,7 @@ public class SpecificGameService {
         if (specificGame_id <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "SpecificGame ID must be greater than 0");
         }
-        if(newItemStatus == null) {
+        if (newItemStatus == null) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "ItemStatus cannot be null");
         }
         // Retrieve the SpecificGame by its ID
