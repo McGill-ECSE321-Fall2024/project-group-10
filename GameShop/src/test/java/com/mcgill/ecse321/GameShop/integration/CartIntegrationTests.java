@@ -1,5 +1,26 @@
 package com.mcgill.ecse321.GameShop.integration;
 
+import java.util.List;
+
+import org.junit.jupiter.api.AfterAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
 import com.mcgill.ecse321.GameShop.dto.CartDto.CartListDto;
@@ -16,18 +37,6 @@ import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.OrderRepository;
 import com.mcgill.ecse321.GameShop.repository.ReplyRepository;
 import com.mcgill.ecse321.GameShop.repository.WishListRepository;
-
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.http.*;
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
@@ -94,13 +103,21 @@ public class CartIntegrationTests {
                 "/account/customer",
                 customerRequest,
                 AccountResponseDto.class);
+
+        // Assert: Verify that the customer was created successfully
         assertNotNull(customerResponse);
         assertEquals(HttpStatus.OK, customerResponse.getStatusCode());
         AccountResponseDto customer = customerResponse.getBody();
         assertNotNull(customer);
         assertEquals(customerEmail, customer.getEmail());
+
+        // Arrange: Get the cart associated with the customer
         String url = String.format("/carts/customer/%s", customerEmail);
+
+        // Act: Send a GET request to retrieve the cart
         ResponseEntity<CartResponseDto> cartResponse = client.getForEntity(url, CartResponseDto.class);
+
+        // Assert: Verify that the cart was retrieved successfully
         assertNotNull(cartResponse);
         assertEquals(HttpStatus.OK, cartResponse.getStatusCode());
         CartResponseDto cart = cartResponse.getBody();

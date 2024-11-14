@@ -86,9 +86,6 @@ public class ReplyIntegrationTests {
     @BeforeAll
     @AfterAll
     public void clearDatabase() {
-        // replyRepo.deleteAll();
-        // reviewRepo.deleteAll();
-        // gameRepo.deleteAll();
         replyRepo.deleteAll();
         reviewRepo.deleteAll();
         gameRepo.deleteAll();
@@ -107,14 +104,14 @@ public class ReplyIntegrationTests {
 
         // Create a Game
         GameRequestDto gameRequest = new GameRequestDto(
-            "Test Game",
-            "Test Description",
-            50,
-            GameStatus.InStock,
-            100,
-            "http://example.com/game.jpg"
-        );
-        ResponseEntity<GameResponseDto> gameResponse = client.postForEntity("/games", gameRequest, GameResponseDto.class);
+                "Test Game",
+                "Test Description",
+                50,
+                GameStatus.InStock,
+                100,
+                "http://example.com/game.jpg");
+        ResponseEntity<GameResponseDto> gameResponse = client.postForEntity("/games", gameRequest,
+                GameResponseDto.class);
         assertNotNull(gameResponse);
         assertEquals(HttpStatus.OK, gameResponse.getStatusCode());
         GameResponseDto game = gameResponse.getBody();
@@ -123,13 +120,13 @@ public class ReplyIntegrationTests {
 
         // Create a Customer (Cart is automatically created and associated)
         AccountRequestDto customerRequest = new AccountRequestDto(
-            customerEmail,
-            "customerUser",
-            "customerPass",
-            "123-456-7890",
-            "123 Customer Street"
-        );
-        ResponseEntity<AccountResponseDto> customerResponse = client.postForEntity("/account/customer", customerRequest, AccountResponseDto.class);
+                customerEmail,
+                "customerUser",
+                "customerPass",
+                "123-456-7890",
+                "123 Customer Street");
+        ResponseEntity<AccountResponseDto> customerResponse = client.postForEntity("/account/customer", customerRequest,
+                AccountResponseDto.class);
         assertNotNull(customerResponse);
         assertEquals(HttpStatus.OK, customerResponse.getStatusCode());
         AccountResponseDto customer = customerResponse.getBody();
@@ -138,13 +135,13 @@ public class ReplyIntegrationTests {
 
         // Create a Manager
         AccountRequestDto managerRequest = new AccountRequestDto(
-            managerEmail,
-            "managerUser",
-            "managerPass",
-            "123-456-7890",
-            "123 Manager Street"
-        );
-        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", managerRequest, AccountResponseDto.class);
+                managerEmail,
+                "managerUser",
+                "managerPass",
+                "123-456-7890",
+                "123 Manager Street");
+        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", managerRequest,
+                AccountResponseDto.class);
         assertNotNull(managerResponse);
         assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
         AccountResponseDto manager = managerResponse.getBody();
@@ -153,12 +150,12 @@ public class ReplyIntegrationTests {
 
         // Create a Review with Game and Customer
         ReviewRequestDto reviewRequest = new ReviewRequestDto(
-            "Great game!",
-            GameRating.Five,
-            gameId,
-            customerEmail
-        );
-        ResponseEntity<ReviewResponseDto> reviewResponse = client.postForEntity("/reviews", reviewRequest, ReviewResponseDto.class);
+                "Great game!",
+                GameRating.Five,
+                gameId,
+                customerEmail);
+        ResponseEntity<ReviewResponseDto> reviewResponse = client.postForEntity("/reviews", reviewRequest,
+                ReviewResponseDto.class);
         assertNotNull(reviewResponse);
         assertEquals(HttpStatus.OK, reviewResponse.getStatusCode());
         ReviewResponseDto review = reviewResponse.getBody();
@@ -167,15 +164,15 @@ public class ReplyIntegrationTests {
 
         // Create a Reply
         ReplyRequestDto replyRequest = new ReplyRequestDto(
-            Date.valueOf("2023-10-02"),
-            "Thank you for your feedback!",
-            ReviewRating.Like,
-            reviewId,
-            managerEmail
-        );
+                Date.valueOf("2023-10-02"),
+                "Thank you for your feedback!",
+                ReviewRating.Like,
+                reviewId,
+                managerEmail);
 
         // Act
-        ResponseEntity<ReplyResponseDto> replyResponse = client.postForEntity("/replies", replyRequest, ReplyResponseDto.class);
+        ResponseEntity<ReplyResponseDto> replyResponse = client.postForEntity("/replies", replyRequest,
+                ReplyResponseDto.class);
 
         // Assert
         assertNotNull(replyResponse);
@@ -223,7 +220,8 @@ public class ReplyIntegrationTests {
         HttpEntity<ReplyRequestDto> requestEntity = new HttpEntity<>(updateRequest);
 
         // Act
-        ResponseEntity<ReplyResponseDto> response = client.exchange(url, HttpMethod.PUT, requestEntity, ReplyResponseDto.class);
+        ResponseEntity<ReplyResponseDto> response = client.exchange(url, HttpMethod.PUT, requestEntity,
+                ReplyResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -254,7 +252,6 @@ public class ReplyIntegrationTests {
         assertEquals(gameId, retrievedReview.getGameId());
         assertEquals(customerEmail, retrievedReview.getCustomerEmail());
     }
-
 
     @Test
     @Order(5)
@@ -349,7 +346,8 @@ public class ReplyIntegrationTests {
         HttpEntity<ReplyRequestDto> requestEntity = new HttpEntity<>(updateRequest);
 
         // Act
-        ResponseEntity<ReplyResponseDto> response = client.exchange(url, HttpMethod.PUT, requestEntity, ReplyResponseDto.class);
+        ResponseEntity<ReplyResponseDto> response = client.exchange(url, HttpMethod.PUT, requestEntity,
+                ReplyResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -368,12 +366,11 @@ public class ReplyIntegrationTests {
         // Arrange
         String invalidEmail = "invalid-email-format";
         ReplyRequestDto replyRequest = new ReplyRequestDto(
-            Date.valueOf("2023-10-06"),
-            "Thank you!",
-            ReviewRating.Like,
-            reviewId,
-            invalidEmail
-        );
+                Date.valueOf("2023-10-06"),
+                "Thank you!",
+                ReviewRating.Like,
+                reviewId,
+                invalidEmail);
 
         // Act
         ResponseEntity<String> response = client.postForEntity("/replies", replyRequest, String.class);
@@ -391,12 +388,11 @@ public class ReplyIntegrationTests {
     public void testCreateReplyWithNullReplyDate() {
         // Arrange
         ReplyRequestDto replyRequest = new ReplyRequestDto(
-            null, // Null reply date
-            "Thank you!",
-            ReviewRating.Like,
-            reviewId,
-            managerEmail
-        );
+                null, // Null reply date
+                "Thank you!",
+                ReviewRating.Like,
+                reviewId,
+                managerEmail);
 
         // Act
         ResponseEntity<String> response = client.postForEntity("/replies", replyRequest, String.class);
@@ -409,18 +405,16 @@ public class ReplyIntegrationTests {
         assertTrue(responseBody.contains("Reply date cannot be null"));
     }
 
-    
     @Test
     @Order(13)
     public void testCreateReplyWithNullReviewId() {
         // Arrange
         ReplyRequestDto replyRequest = new ReplyRequestDto(
-            Date.valueOf("2023-10-08"),
-            "Thank you!",
-            ReviewRating.Like,
-            null, // Null review ID
-            managerEmail
-        );
+                Date.valueOf("2023-10-08"),
+                "Thank you!",
+                ReviewRating.Like,
+                null, // Null review ID
+                managerEmail);
 
         // Act
         ResponseEntity<String> response = client.postForEntity("/replies", replyRequest, String.class);
@@ -438,12 +432,11 @@ public class ReplyIntegrationTests {
     public void testCreateReplyWithBlankDescription() {
         // Arrange
         ReplyRequestDto replyRequest = new ReplyRequestDto(
-            Date.valueOf("2023-10-09"),
-            "   ", // Blank description
-            ReviewRating.Like,
-            reviewId,
-            managerEmail
-        );
+                Date.valueOf("2023-10-09"),
+                "   ", // Blank description
+                ReviewRating.Like,
+                reviewId,
+                managerEmail);
 
         // Act
         ResponseEntity<String> response = client.postForEntity("/replies", replyRequest, String.class);
@@ -461,11 +454,11 @@ public class ReplyIntegrationTests {
     public void testCreateReplyWithBlankManagerEmail() {
         // Arrange
         ReplyRequestDto replyRequest = new ReplyRequestDto(
-            Date.valueOf("2023-10-10"),
-            "Thank you!",
-            ReviewRating.Like,
-            reviewId,
-            "   " // Blank manager email
+                Date.valueOf("2023-10-10"),
+                "Thank you!",
+                ReviewRating.Like,
+                reviewId,
+                "   " // Blank manager email
         );
 
         // Act

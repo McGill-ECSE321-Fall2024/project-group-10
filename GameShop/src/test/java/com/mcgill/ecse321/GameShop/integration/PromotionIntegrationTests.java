@@ -229,7 +229,7 @@ public class PromotionIntegrationTests {
         assertTrue(foundWinterSale, "Winter Sale promotion not found in the list");
     }
 
-    // @Test
+    @Test
     @Order(4)
     public void testUpdatePromotion() {
         // Arrange
@@ -497,7 +497,7 @@ public class PromotionIntegrationTests {
         assertTrue(responseBody.contains("Promotion not found") || responseBody.contains("Game not found"));
     }
 
-    // @Test
+    @Test
     @Order(16)
     public void testCreatePromotionInvalidManagerEmail() {
         // Arrange
@@ -519,7 +519,7 @@ public class PromotionIntegrationTests {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         String responseBody = response.getBody();
         assertNotNull(responseBody);
-        assertTrue(responseBody.contains(String.format("There is no manager with email: %s", invalidManagerEmail)));
+        assertTrue(responseBody.contains(String.format("Manager with email %s not found", invalidManagerEmail)));
     }
 
     @Test
@@ -546,7 +546,7 @@ public class PromotionIntegrationTests {
         assertTrue(responseBody.contains("Discount rate must be between 0 and 100"));
     }
 
-    // @Test
+    @Test
     @Order(18)
     public void testCreatePromotionStartDateAfterEndDate() {
         // Arrange: Start date after end date
@@ -567,7 +567,7 @@ public class PromotionIntegrationTests {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         String responseBody = response.getBody();
         assertNotNull(responseBody);
-        assertTrue(responseBody.contains("End date must be after start date"));
+        assertTrue(responseBody.contains("Start LocalDate cannot be after end LocalDate"));
     }
 
     @Test

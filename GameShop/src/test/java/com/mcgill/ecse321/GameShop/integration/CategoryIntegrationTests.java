@@ -1,13 +1,30 @@
 package com.mcgill.ecse321.GameShop.integration;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryListDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryResponseDto;
@@ -20,26 +37,10 @@ import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
+import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CategoryRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
-
-import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
-import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
-
-import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
@@ -195,6 +196,8 @@ public class CategoryIntegrationTests {
     @Order(5)
     public void testFindAllGamesInCategory() {
         // Arrange
+        // Create a category with name "Action Games for all categories" and assign the
+        // category ID to targetCategoryId
         CategoryRequestDto categoryRequest = new CategoryRequestDto("Action Games for all categories", MANAGER_EMAIL);
         ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequest,
                 CategoryResponseDto.class);
@@ -204,6 +207,8 @@ public class CategoryIntegrationTests {
         assertNotNull(initialCategory.getCategoryId(), "Category ID is null");
         int targetCategoryId = initialCategory.getCategoryId(); // Assign the created category ID
 
+        // Create another category with name "Adventure Games" and assign the category
+        // ID to otherCategoryId
         CategoryRequestDto otherCategoryRequest = new CategoryRequestDto("Adventure Games", MANAGER_EMAIL);
         ResponseEntity<CategoryResponseDto> otherCategoryResponse = client.postForEntity("/categories",
                 otherCategoryRequest, CategoryResponseDto.class);
@@ -214,6 +219,8 @@ public class CategoryIntegrationTests {
 
         String url = String.format("/categories/%d/games", targetCategoryId);
 
+        // Create a game with title "Rambo 2", assign it to both targetCategoryId and
+        // otherCategoryId
         GameRequestDto gameRequest1 = new GameRequestDto("Rambo 2", "This game is awesome", 59, GameStatus.InStock, 5,
                 "www.game.com");
         gameRequest1.setCategories(List.of(targetCategoryId, otherCategoryId));
@@ -224,6 +231,7 @@ public class CategoryIntegrationTests {
         assertNotNull(createdGame1);
         int gameId1 = createdGame1.getaGame_id();
 
+        // Create a game with title "Terminator", assign it to targetCategoryId
         GameRequestDto gameRequest2 = new GameRequestDto("Terminator", "An action-packed game", 49, GameStatus.InStock,
                 3, "www.terminator.com");
         gameRequest2.setCategories(List.of(targetCategoryId));
@@ -234,6 +242,7 @@ public class CategoryIntegrationTests {
         assertNotNull(createdGame2);
         int gameId2 = createdGame2.getaGame_id();
 
+        // Create a game with title "Adventure Time", assign it to otherCategoryId
         GameRequestDto gameRequest3 = new GameRequestDto("Adventure Time", "An adventure game", 39, GameStatus.InStock,
                 7, "www.adventure.com");
         gameRequest3.setCategories(List.of(otherCategoryId));
@@ -271,60 +280,61 @@ public class CategoryIntegrationTests {
         assertFalse(returnedGameIds.contains(gameId3), "Did not expect to find game with ID: " + gameId3);
 
     }
+
     @SuppressWarnings("null")
     @Test
-@Order(6)
-public void testCreateCategoryMissingName() {
+    @Order(6)
+    public void testCreateCategoryMissingName() {
 
+        // Arrange: Create a CategoryRequestDto with null categoryName
+        CategoryRequestDto request = new CategoryRequestDto(null, MANAGER_EMAIL);
 
-    // Arrange: Create a CategoryRequestDto with null categoryName
-    CategoryRequestDto request = new CategoryRequestDto(null, MANAGER_EMAIL);
+        // Act
+        ResponseEntity<String> response = client.postForEntity("/categories", request, String.class);
 
-    // Act
-    ResponseEntity<String> response = client.postForEntity("/categories", request, String.class);
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
-    // Assert
-    assertNotNull(response);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Category name cannot be empty"));
+    }
 
-    assertNotNull(response.getBody());
-    assertTrue(response.getBody().contains("Category name cannot be empty"));
-}
-@SuppressWarnings("null")
-@Test
-@Order(7)
-public void testGetCategoryByNonExistentId() {
-    // Arrange
-    int nonExistentId = 9999;
-    String url = String.format("/categories/%d", nonExistentId);
+    @SuppressWarnings("null")
+    @Test
+    @Order(7)
+    public void testGetCategoryByNonExistentId() {
+        // Arrange
+        int nonExistentId = 9999;
+        String url = String.format("/categories/%d", nonExistentId);
 
-    // Act
-    ResponseEntity<String> response = client.getForEntity(url, String.class);
+        // Act
+        ResponseEntity<String> response = client.getForEntity(url, String.class);
 
-    // Assert
-    assertNotNull(response);
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    assertTrue(response.getBody().contains("Category does not exist"));
-}
-@SuppressWarnings("null")
-@Test
-@Order(8)
-public void testUpdateCategoryInvalidId() {
-    // Arrange
-    int invalidId = -1;
-    String url = String.format("/categories/%d", invalidId);
-    CategoryRequestDto updateRequest = new CategoryRequestDto("newnameofthetest10", MANAGER_EMAIL);
-    HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<>(updateRequest);
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertTrue(response.getBody().contains("Category does not exist"));
+    }
 
-    // Act
-    ResponseEntity<String> response = client.exchange(url, HttpMethod.PUT, requestEntity, String.class);
+    @SuppressWarnings("null")
+    @Test
+    @Order(8)
+    public void testUpdateCategoryInvalidId() {
+        // Arrange
+        int invalidId = -1;
+        String url = String.format("/categories/%d", invalidId);
+        CategoryRequestDto updateRequest = new CategoryRequestDto("newnameofthetest10", MANAGER_EMAIL);
+        HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<>(updateRequest);
 
-    // Assert
-    assertNotNull(response);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    assertTrue(response.getBody().contains("Invalid category ID"));
-}
+        // Act
+        ResponseEntity<String> response = client.exchange(url, HttpMethod.PUT, requestEntity, String.class);
 
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertTrue(response.getBody().contains("Invalid category ID"));
+    }
 
     @Test
     @Order(9)
@@ -347,6 +357,7 @@ public void testUpdateCategoryInvalidId() {
         ResponseEntity<CategoryResponseDto> getResponse = client.getForEntity(url, CategoryResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
     }
+
     @SuppressWarnings("null")
     @Test
     @Order(10)
@@ -364,49 +375,49 @@ public void testUpdateCategoryInvalidId() {
         assertTrue(response.getBody().contains("Category does not exist"));
     }
 
-
     @Test
-@Order(11)
-public void testGetAllCategoriesEmpty() {
-    // Arrange: Clear all categories
-    for (Game game : gameRepo.findAll()) {
-        // Create a mutable copy of the categories list
-        List<Category> categories = new ArrayList<>(game.getCategories());
-        for (Category category : categories) {
-            game.removeCategory(category); // Remove each category from the game
+    @Order(11)
+    public void testGetAllCategoriesEmpty() {
+        // Arrange: Clear all categories
+        for (Game game : gameRepo.findAll()) {
+            // Create a mutable copy of the categories list
+            List<Category> categories = new ArrayList<>(game.getCategories());
+            for (Category category : categories) {
+                game.removeCategory(category); // Remove each category from the game
+            }
+            gameRepo.save(game); // Save changes to the game
         }
-        gameRepo.save(game); // Save changes to the game
+        categoryRepo.deleteAll();
+
+        // Act
+        ResponseEntity<CategoryListDto> response = client.getForEntity("/categories", CategoryListDto.class);
+
+        // Assert
+        assertNotNull(response);
+        // Assuming your API returns 200 OK with an empty list when no categories exist
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        CategoryListDto categories = response.getBody();
+        assertNotNull(categories);
+        List<CategorySummaryDto> categoryList = categories.getCategories();
+        assertNotNull(categoryList);
+        assertTrue(categoryList.isEmpty(), "Expected no categories in the list");
     }
-    categoryRepo.deleteAll();
 
-    // Act
-    ResponseEntity<CategoryListDto> response = client.getForEntity("/categories", CategoryListDto.class);
+    @SuppressWarnings("null")
+    @Test
+    @Order(12)
+    public void testFindAllGamesInCategoryInvalid() {
+        // Arrange
+        int nonExistentId = 9999;
+        String url = String.format("/categories/%d/games", nonExistentId);
 
-    // Assert
-    assertNotNull(response);
-    // Assuming your API returns 200 OK with an empty list when no categories exist
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    CategoryListDto categories = response.getBody();
-    assertNotNull(categories);
-    List<CategorySummaryDto> categoryList = categories.getCategories();
-    assertNotNull(categoryList);
-    assertTrue(categoryList.isEmpty(), "Expected no categories in the list");
-}
-@SuppressWarnings("null")
-@Test
-@Order(12)
-public void testFindAllGamesInCategoryInvalid() {
-    // Arrange
-    int nonExistentId = 9999;
-    String url = String.format("/categories/%d/games", nonExistentId);
+        // Act
+        ResponseEntity<String> response = client.getForEntity(url, String.class);
 
-    // Act
-    ResponseEntity<String> response = client.getForEntity(url, String.class);
-
-    // Assert
-    assertNotNull(response);
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    assertTrue(response.getBody().contains("Category does not exist"));
-}
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertTrue(response.getBody().contains("Category does not exist"));
+    }
 
 }

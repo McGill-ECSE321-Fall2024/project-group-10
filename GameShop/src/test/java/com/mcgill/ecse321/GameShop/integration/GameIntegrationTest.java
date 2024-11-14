@@ -1,13 +1,29 @@
 package com.mcgill.ecse321.GameShop.integration;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
 import com.mcgill.ecse321.GameShop.dto.CategoryDto.CategoryRequestDto;
@@ -22,30 +38,14 @@ import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformResponseDto;
 import com.mcgill.ecse321.GameShop.dto.PlatformDto.PlatformSummaryDto;
 import com.mcgill.ecse321.GameShop.model.Category;
 import com.mcgill.ecse321.GameShop.model.Game;
-import com.mcgill.ecse321.GameShop.model.Platform;
 import com.mcgill.ecse321.GameShop.model.Game.GameStatus;
+import com.mcgill.ecse321.GameShop.model.Platform;
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
 import com.mcgill.ecse321.GameShop.repository.CategoryRepository;
-import com.mcgill.ecse321.GameShop.repository.PlatformRepository;
-import com.mcgill.ecse321.GameShop.repository.SpecificGameRepository;
 import com.mcgill.ecse321.GameShop.repository.GameRepository;
 import com.mcgill.ecse321.GameShop.repository.ManagerRepository;
-
-import org.junit.jupiter.api.TestInstance;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.junit.jupiter.api.Order;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.mcgill.ecse321.GameShop.repository.PlatformRepository;
+import com.mcgill.ecse321.GameShop.repository.SpecificGameRepository;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
@@ -121,12 +121,14 @@ public class GameIntegrationTest {
         ArrayList<Integer> platformIds = new ArrayList<>();
         ArrayList<Integer> categoryIds = new ArrayList<>();
 
+        // Create a manager account
         AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE, MANAGER_ADDRESS);
         ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager, AccountResponseDto.class);
         assertNotNull(managerResponse);
         assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
         assertEquals(MANAGER_EMAIL, managerResponse.getBody().getEmail());
 
+        // Create platforms and categories
         for (int i = 1; i <= 3; i++) {
             PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
             ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
@@ -143,6 +145,7 @@ public class GameIntegrationTest {
             categoryIds.add(categoryResponse.getBody().getCategoryId());
         }
 
+        // Create a game with the created platforms and categories
         GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         gameRequestDto.setCategories(categoryIds);
         gameRequestDto.setPlatforms(platformIds);
@@ -163,8 +166,9 @@ public class GameIntegrationTest {
         assertEquals(GAME_PRICE, response.getBody().getaPrice());
         assertEquals(GAME_STATUS, response.getBody().getaGameStatus());
         assertEquals(GAME_STOCK_QUANTITY, response.getBody().getaStockQuantity());
-        assertEquals(GAME_PHOTO_URL, response.getBody().getaPhotoUrl()); // Check why changing the name fixed it.
+        assertEquals(GAME_PHOTO_URL, response.getBody().getaPhotoUrl());
 
+        // Verify the categories and platforms in the response
         for (CategorySummaryDto category : response.getBody().getCategories().getCategories()) {
             assertTrue(categoryIds.contains(category.getCategoryId()));
         }
@@ -205,12 +209,14 @@ public class GameIntegrationTest {
         ArrayList<Integer> platformIds = new ArrayList<>();
         ArrayList<Integer> categoryIds = new ArrayList<>();
 
+        // Create another manager account
         AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL + "m", MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE, MANAGER_ADDRESS);
         ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager, AccountResponseDto.class);
         assertNotNull(managerResponse);
         assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
         assertEquals(MANAGER_EMAIL + "m", managerResponse.getBody().getEmail());
 
+        // Create more platforms and categories
         for (int i = 1; i <= 3; i++) {
             PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL + "m");
             ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
@@ -227,12 +233,12 @@ public class GameIntegrationTest {
             categoryIds.add(categoryResponse.getBody().getCategoryId());
         }
 
+        // Create another game
         GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE + "V2.0", GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         gameRequestDto.setCategories(categoryIds);
         gameRequestDto.setPlatforms(platformIds);
 
         ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
-
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -247,8 +253,8 @@ public class GameIntegrationTest {
         List<GameSummaryDto> gamesList = games.getGames();
         assertEquals(HttpStatus.OK, allGamesResponse.getStatusCode());
         assertTrue(gamesList.get(1).getGameId() > 0, "The ID should be positive");
-        assertTrue(gamesList.get(1).getGameId() > 0, "The ID should be positive");
 
+        // Verify the games in the response
         for (GameSummaryDto game : gamesList) {
             assertTrue(gameIds.contains(game.getGameId()));
         }
@@ -269,7 +275,8 @@ public class GameIntegrationTest {
         List<Integer> platformIds = new ArrayList<>();
         List<Integer> categoryIds = new ArrayList<>();
 
-         for (int i = 1; i <= 3; i++) {
+        // Create platforms and categories for the update
+        for (int i = 1; i <= 3; i++) {
             PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
             ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
             assertNotNull(platformResponse);
@@ -285,6 +292,7 @@ public class GameIntegrationTest {
             categoryIds.add(categoryResponse.getBody().getCategoryId());
         }
 
+        // Update the game with new details
         HttpEntity<GameRequestDto> gameRequestDto = new HttpEntity<>(new GameRequestDto(newTitle, newDescription, newPrice, newStatus, newStockQuantity, newPhotoUrl));
         gameRequestDto.getBody().setCategories(categoryIds);
         gameRequestDto.getBody().setPlatforms(platformIds);
@@ -295,7 +303,7 @@ public class GameIntegrationTest {
         assertNotNull(updatedGame);
         assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
 
-        assertTrue(updatedGame.getaGame_id()>0, "The ID should be positive");
+        assertTrue(updatedGame.getaGame_id() > 0, "The ID should be positive");
         
         assertEquals(newTitle, updatedGame.getaTitle());
         assertEquals(newDescription, updatedGame.getaDescription());
@@ -304,6 +312,7 @@ public class GameIntegrationTest {
         assertEquals(newStockQuantity, updatedGame.getaStockQuantity());
         assertEquals(newPhotoUrl, updatedGame.getaPhotoUrl());
 
+        // Verify the categories and platforms in the updated game
         List<Integer> returned_categoryIds = new ArrayList<>();
 
         for (CategorySummaryDto category : updatedGame.getCategories().getCategories()) {
@@ -335,6 +344,7 @@ public class GameIntegrationTest {
     @Test
     @Order(5)
     public void testAddCategoryToGame() {
+        // Create a new category
         CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Name", MANAGER_EMAIL);
         ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto, CategoryResponseDto.class);
         assertNotNull(categoryResponse);
@@ -343,6 +353,7 @@ public class GameIntegrationTest {
 
         int categoryIdToAdd = categoryResponse.getBody().getCategoryId();
 
+        // Add the new category to the game
         ResponseEntity<GameResponseDto> response = client.exchange("/games/category/" + this.game_id + "/" + categoryIdToAdd, HttpMethod.PUT, null, GameResponseDto.class);
 
         assertNotNull(response);
@@ -351,6 +362,7 @@ public class GameIntegrationTest {
         assertNotNull(game);
         assertEquals(this.game_id, game.getaGame_id());
 
+        // Verify the categories in the game
         List<Integer> returned_categoryIds = new ArrayList<>();
 
         for (CategorySummaryDto category : game.getCategories().getCategories()) {
@@ -367,6 +379,7 @@ public class GameIntegrationTest {
     @Test
     @Order(6)
     public void testAddPlatformToGame() {
+        // Create a new platform
         PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
         ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
         assertNotNull(platformResponse);
@@ -375,6 +388,7 @@ public class GameIntegrationTest {
 
         int platformIdToAdd = platformResponse.getBody().getPlatformId();
 
+        // Add the new platform to the game
         ResponseEntity<GameResponseDto> response = client.exchange("/games/platform/" + this.game_id + "/" + platformIdToAdd, HttpMethod.PUT, null, GameResponseDto.class);
 
         assertNotNull(response);
@@ -383,6 +397,7 @@ public class GameIntegrationTest {
         assertNotNull(game);
         assertEquals(this.game_id, game.getaGame_id());
 
+        // Verify the platforms in the game
         List<Integer> returned_platformIds = new ArrayList<>();
 
         for (PlatformSummaryDto platform : game.getPlatforms().getPlatforms()) {
@@ -411,6 +426,7 @@ public class GameIntegrationTest {
         List<GameSummaryDto> gamesList = games.getGames();
         assertTrue(gamesList.get(0).getGameId() > 0, "The ID should be positive");
 
+        // Verify the games in the response
         for (GameSummaryDto game : gamesList) {
             assertTrue(gameIds.contains(game.getGameId()));
         }
@@ -432,6 +448,7 @@ public class GameIntegrationTest {
         List<GameSummaryDto> gamesList = games.getGames();
         assertTrue(gamesList.get(0).getGameId() > 0, "The ID should be positive");
 
+        // Verify the games in the response
         for (GameSummaryDto game : gamesList) {
             assertTrue(gameIds.contains(game.getGameId()));
         }
@@ -453,6 +470,7 @@ public class GameIntegrationTest {
         List<GameSummaryDto> gamesList = games.getGames();
         assertTrue(gamesList.get(0).getGameId() > 0, "The ID should be positive");
 
+        // Verify the games in the response
         for (GameSummaryDto game : gamesList) {
             assertTrue(gameIds.contains(game.getGameId()));
         }
