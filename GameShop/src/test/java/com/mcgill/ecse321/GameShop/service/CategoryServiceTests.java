@@ -55,8 +55,8 @@ public class CategoryServiceTests {
     @Test
     public void testCreateValidCategory() {
         // Arrange
-        Manager manager = new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
-        
+        Manager manager = new Manager(VALID_MANAGER_EMAIL, "managerUser", "managerPass", "123-456-7890",
+                "123 Manager Street");
 
         // Mock the manager repository to return the manager
         when(managerRepository.findByEmail(VALID_MANAGER_EMAIL)).thenReturn(manager);
@@ -218,7 +218,6 @@ public class CategoryServiceTests {
 
         Category category2 = new Category(SECOND_CATEGORY_NAME, manager);
         category2.setCategory_id(46);
-  
 
         List<Category> categories = Arrays.asList(category1, category2);
 
@@ -242,26 +241,25 @@ public class CategoryServiceTests {
         assertEquals(manager, resultList.get(0).getManager());
         assertEquals(manager, resultList.get(1).getManager());
 
+        verify(categoryRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void testGetAllCategoriesEmpty() {
+        // Arrange
+        when(categoryRepository.findAll()).thenReturn(new ArrayList<>());
+
+        // Act
+        Iterable<Category> result = categoryService.getAllCategories();
+
+        // Assert
+        assertNotNull(result);
+        List<Category> resultList = new ArrayList<>();
+        result.forEach(resultList::add);
+        assertTrue(resultList.isEmpty());
 
         verify(categoryRepository, times(1)).findAll();
     }
-    @Test
-public void testGetAllCategoriesEmpty() {
-    // Arrange
-    when(categoryRepository.findAll()).thenReturn(new ArrayList<>());
-
-    // Act
-    Iterable<Category> result = categoryService.getAllCategories();
-
-    // Assert
-    assertNotNull(result);
-    List<Category> resultList = new ArrayList<>();
-    result.forEach(resultList::add);
-    assertTrue(resultList.isEmpty());
-
-    verify(categoryRepository, times(1)).findAll();
-}
-
 
     // --- Tests for getAllGamesInCategory ---
 
@@ -274,12 +272,12 @@ public void testGetAllCategoriesEmpty() {
         Category category = new Category(VALID_CATEGORY_NAME, manager);
         category.setCategory_id(7);
 
-
-        Game game1 = new Game( "game1", "String aDescription of game 1", 7, GameStatus.InStock, 7,"phoyourkl");
+        // Create two games in the category
+        Game game1 = new Game("game1", "String aDescription of game 1", 7, GameStatus.InStock, 7, "phoyourkl");
         game1.setGame_id(7);
         game1.addCategory(category);
 
-        Game game2 = new Game( "game2", "String aDescription of game 2", 7, GameStatus.InStock, 6,"phoyofghurkl");
+        Game game2 = new Game("game2", "String aDescription of game 2", 7, GameStatus.InStock, 6, "phoyofghurkl");
         game2.setGame_id(8);
         game2.addCategory(category);
 
@@ -301,9 +299,8 @@ public void testGetAllCategoriesEmpty() {
         assertEquals("game1", result.get(0).getTitle());
         assertEquals("game2", result.get(1).getTitle());
 
-
         verify(categoryRepository, times(1)).findById(VALID_CATEGORY_ID);
-       
+
     }
 
     @Test
@@ -327,7 +324,7 @@ public void testGetAllCategoriesEmpty() {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(categoryRepository, times(1)).findById(VALID_CATEGORY_ID);
-    
+
     }
 
     @Test
@@ -358,10 +355,10 @@ public void testGetAllCategoriesEmpty() {
         // Mock the platform repository to find the existing platform
         Category category = new Category(VALID_CATEGORY_NAME, manager);
         category.setCategory_id(13);
- 
 
         when(categoryRepository.findById(13)).thenReturn(category);
-        when(categoryRepository.save(any(Category.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
+        when(categoryRepository.save(any(Category.class)))
+                .thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         // Act
         Category updatedCategory = categoryService.updateCategory(13, UPDATED_CATEGORY_NAME);
@@ -450,7 +447,6 @@ public void testGetAllCategoriesEmpty() {
         Category category = new Category("platformName", manager);
         category.setCategory_id(14);
 
-
         when(categoryRepository.findById(14)).thenReturn(category);
 
         // Act
@@ -497,31 +493,32 @@ public void testGetAllCategoriesEmpty() {
     }
 
     @Test
-public void testDeleteCategoryWithAssociatedGames() {
-    // Arrange
-    Manager manager = new Manager(VALID_MANAGER_EMAIL + "assocGames", "managerUser", "managerPass", "123-456-7890", "123 Manager Street");
-    Category category = new Category("Action", manager);
-    category.setCategory_id(20);
+    public void testDeleteCategoryWithAssociatedGames() {
+        // Arrange
+        Manager manager = new Manager(VALID_MANAGER_EMAIL + "assocGames", "managerUser", "managerPass", "123-456-7890",
+                "123 Manager Street");
+        Category category = new Category("Action", manager);
+        category.setCategory_id(20);
 
-    Game game1 = new Game("Game1", "Description1", 60, GameStatus.InStock, 5, "photo1.jpg");
-    game1.addCategory(category);
-    Game game2 = new Game("Game2", "Description2", 70, GameStatus.InStock, 10, "photo2.jpg");
-    game2.addCategory(category);
+        Game game1 = new Game("Game1", "Description1", 60, GameStatus.InStock, 5, "photo1.jpg");
+        game1.addCategory(category);
+        Game game2 = new Game("Game2", "Description2", 70, GameStatus.InStock, 10, "photo2.jpg");
+        game2.addCategory(category);
 
-    List<Game> gamesInCategory = Arrays.asList(game1, game2);
-    
-    when(categoryRepository.findById(20)).thenReturn(category);
-    when(gameRepository.findAllByCategoriesContains(category)).thenReturn(gamesInCategory);
+        List<Game> gamesInCategory = Arrays.asList(game1, game2);
 
-    // Act
-    categoryService.deleteCategory(20);
+        when(categoryRepository.findById(20)).thenReturn(category);
+        when(gameRepository.findAllByCategoriesContains(category)).thenReturn(gamesInCategory);
 
-    // Assert
-    for (Game game : gamesInCategory) {
-        assertFalse(game.getCategories().contains(category));
-        verify(gameRepository, times(1)).save(game);
+        // Act
+        categoryService.deleteCategory(20);
+
+        // Assert
+        for (Game game : gamesInCategory) {
+            assertFalse(game.getCategories().contains(category));
+            verify(gameRepository, times(1)).save(game);
+        }
+        verify(categoryRepository, times(1)).delete(category);
+        verify(categoryRepository, times(1)).findById(20);
     }
-    verify(categoryRepository, times(1)).delete(category);
-    verify(categoryRepository, times(1)).findById(20);
-}
 }

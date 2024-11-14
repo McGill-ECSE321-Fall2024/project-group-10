@@ -251,6 +251,7 @@ public class CartServiceTests {
 
     @Test
     public void testAddGameToCartNullQuantity() {
+        // Arrange
         Cart cart = new Cart();
         cart.setCart_id(11564);
 
@@ -261,6 +262,7 @@ public class CartServiceTests {
             cartService.addGameToCart(11564, 114, null);
         });
 
+        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Quantity must be at least 1.", exception.getMessage());
 
@@ -270,7 +272,7 @@ public class CartServiceTests {
 
     @Test
     public void testAddGameToCartZeroOrNegativeQuantity() {
-
+        // Arrange
         GameShopException exceptionZero = assertThrows(GameShopException.class, () -> {
             cartService.addGameToCart(115, 116, 0);
         });
@@ -335,6 +337,7 @@ public class CartServiceTests {
         Game game = new Game("Title", "Description", 50, GameStatus.InStock, 10, "photoUrl");
         game.setGame_id(21);
 
+        // Mock the repository calls
         when(cartRepository.findById(14)).thenReturn(cart);
         when(gameRepository.findById(21)).thenReturn(game);
         when(cartRepository.save(any(Cart.class)))
@@ -371,6 +374,7 @@ public class CartServiceTests {
             cartService.removeGameFromCart(1712, 1713, 1);
         });
 
+        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Game is not in the cart.", exception.getMessage());
 
@@ -882,7 +886,7 @@ public class CartServiceTests {
     }
 
     @Test
-    public void testGetInvalidGameFromCart(){
+    public void testGetInvalidGameFromCart() {
         // Arrange
         Cart cart = new Cart();
         cart.setCart_id(16789);
@@ -901,15 +905,15 @@ public class CartServiceTests {
     }
 
     @Test
-    public void testUpdateInvalidGameQUanityInCart(){
+    public void testUpdateInvalidGameQUanityInCart() {
         // Arrange
         Cart cart = new Cart();
         cart.setCart_id(167810);
         when(cartRepository.findById(167810)).thenReturn(cart);
 
-        //Act
+        // Act
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            cartService.updateGameQuantityInCart(167810, 1789,13);
+            cartService.updateGameQuantityInCart(167810, 1789, 13);
         });
 
         // Assert

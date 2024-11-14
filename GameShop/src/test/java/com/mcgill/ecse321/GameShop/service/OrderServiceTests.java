@@ -65,6 +65,7 @@ public class OrderServiceTests {
     public void testGetOrderByTrackingNumberValid() {
         Cart cart = new Cart();
         cart.setCart_id(701);
+        // Create a new customer
         Customer customer = new Customer(
                 VALID_CUSTOMER_EMAIL,
                 "username",
@@ -72,6 +73,8 @@ public class OrderServiceTests {
                 "1234567890",
                 "123 Street",
                 cart);
+
+        // Create a new order
         Order order = new Order(new Date(), VALID_NOTE, VALID_PAYMENT_CARD,
                 customer);
         order.setTrackingNumber(VALID_TRACKING_NUMBER + "1");
@@ -112,6 +115,7 @@ public class OrderServiceTests {
             orderService.getOrderByTrackingNumber(null);
         });
 
+        // Assert
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Order not found", exception.getMessage());
 
@@ -377,6 +381,7 @@ public class OrderServiceTests {
                     VALID_PAYMENT_CARD);
         });
 
+        // Assert
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Order not found", exception.getMessage());
 
@@ -393,6 +398,7 @@ public class OrderServiceTests {
         LocalDate newDate = LocalDate.of(2024, 10, 15);
         Date NEW_VALID_ORDER_DATE = java.sql.Date.valueOf(newDate);
 
+        // Create a customer and two orders
         Cart cart = new Cart();
         cart.setCart_id(8717);
         Customer customer = new Customer(
