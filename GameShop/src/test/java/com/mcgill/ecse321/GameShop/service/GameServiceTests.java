@@ -358,22 +358,22 @@ public class GameServiceTests {
     }
 
     @Test
-public void testUpdateGameDescription() {
-    VALID_GAME_ID = 9;
-    Game game = new Game("Game Title", "Old Description", 30, Game.GameStatus.InStock, 100, "http://example.com/image1.jpg");
-    game.setGame_id(VALID_GAME_ID);
+    public void testUpdateGameDescription() {
+        VALID_GAME_ID = 9;
+        Game game = new Game("Game Title", "Old Description", 30, Game.GameStatus.InStock, 100, "http://example.com/image1.jpg");
+        game.setGame_id(VALID_GAME_ID);
 
-    when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
-    when(gameRepository.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
+        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+        when(gameRepository.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
-    Game updatedGame = gameService.updateGameDescription(VALID_GAME_ID, "New Description");
+        Game updatedGame = gameService.updateGameDescription(VALID_GAME_ID, "New Description");
 
-    assertNotNull(updatedGame);
-    assertEquals(VALID_GAME_ID, updatedGame.getGame_id());
-    assertEquals("New Description", updatedGame.getDescription());
-    verify(gameRepository, times(1)).save(any(Game.class));
-    verify(gameRepository, times(1)).findById(VALID_GAME_ID);
-}
+        assertNotNull(updatedGame);
+        assertEquals(VALID_GAME_ID, updatedGame.getGame_id());
+        assertEquals("New Description", updatedGame.getDescription());
+        verify(gameRepository, times(1)).save(any(Game.class));
+        verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+    }
 
 @Test
 public void testUpdateGameDescriptionWithNullDescription() {

@@ -1,6 +1,5 @@
 package com.mcgill.ecse321.GameShop.integration;
 
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,93 +72,94 @@ public class PromotionIntegrationTests {
     @Order(1)
     public void testCreateValidPromotion() {
         // Arrange
-    
+
         // Create a Manager
         AccountRequestDto managerRequest = new AccountRequestDto(
-            managerEmail,
-            "managerUser",
-            "managerPass",
-            "123-456-7890",
-            "123 Manager Street"
-        );
-        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", managerRequest, AccountResponseDto.class);
+                managerEmail,
+                "managerUser",
+                "managerPass",
+                "123-456-7890",
+                "123 Manager Street");
+        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", managerRequest,
+                AccountResponseDto.class);
         assertNotNull(managerResponse);
         assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
         AccountResponseDto manager = managerResponse.getBody();
         assertNotNull(manager);
         assertEquals(managerEmail, manager.getEmail());
-    
+
         // Create Games
         GameRequestDto gameRequest1 = new GameRequestDto(
-            "Game One",
-            "First game description",
-            60,
-            GameStatus.InStock,
-            10,
-            "http://example.com/game1.jpg"
-        );
-        ResponseEntity<GameResponseDto> gameResponse1 = client.postForEntity("/games", gameRequest1, GameResponseDto.class);
+                "Game One",
+                "First game description",
+                60,
+                GameStatus.InStock,
+                10,
+                "http://example.com/game1.jpg");
+        ResponseEntity<GameResponseDto> gameResponse1 = client.postForEntity("/games", gameRequest1,
+                GameResponseDto.class);
         assertNotNull(gameResponse1);
         assertEquals(HttpStatus.OK, gameResponse1.getStatusCode());
         GameResponseDto game1 = gameResponse1.getBody();
         assertNotNull(game1);
         gameId1 = game1.getaGame_id();
-    
+
         GameRequestDto gameRequest2 = new GameRequestDto(
-            "Game Two",
-            "Second game description",
-            80,
-            GameStatus.InStock,
-            5,
-            "http://example.com/game2.jpg"
-        );
-        ResponseEntity<GameResponseDto> gameResponse2 = client.postForEntity("/games", gameRequest2, GameResponseDto.class);
+                "Game Two",
+                "Second game description",
+                80,
+                GameStatus.InStock,
+                5,
+                "http://example.com/game2.jpg");
+        ResponseEntity<GameResponseDto> gameResponse2 = client.postForEntity("/games", gameRequest2,
+                GameResponseDto.class);
         assertNotNull(gameResponse2);
         assertEquals(HttpStatus.OK, gameResponse2.getStatusCode());
         GameResponseDto game2 = gameResponse2.getBody();
         assertNotNull(game2);
         gameId2 = game2.getaGame_id();
-    
+
         gameIds.add(gameId1);
         gameIds.add(gameId2);
-    
+
         // Create Promotion
         PromotionRequestDto promotionRequest = new PromotionRequestDto(
-            "Fall Sale",
-            20,
-            LocalDate.parse("2023-10-01"),
-            LocalDate.parse("2023-10-31"),
-            managerEmail,
-            gameIds
-        );
-    
+                "Fall Sale",
+                20,
+                LocalDate.parse("2023-10-01"),
+                LocalDate.parse("2023-10-31"),
+                managerEmail,
+                gameIds);
+
         // Debugging output to verify dates
         System.out.println("Promotion Start Date in Request: " + promotionRequest.getStartLocalDate());
         System.out.println("Promotion End Date in Request: " + promotionRequest.getEndLocalDate());
-    
+
         // Act
-        ResponseEntity<PromotionResponseDto> promotionResponse = client.postForEntity("/promotions", promotionRequest, PromotionResponseDto.class);
-    
+        ResponseEntity<PromotionResponseDto> promotionResponse = client.postForEntity("/promotions", promotionRequest,
+                PromotionResponseDto.class);
+
         // Assert
         assertNotNull(promotionResponse);
         assertEquals(HttpStatus.OK, promotionResponse.getStatusCode());
         PromotionResponseDto promotion = promotionResponse.getBody();
         assertNotNull(promotion);
-    
+
         // Debugging output to verify response dates
         System.out.println("Promotion Start Date in Response: " + promotion.getStartLocalDate());
         System.out.println("Promotion End Date in Response: " + promotion.getEndLocalDate());
-    
+
         assertTrue(promotion.getPromotionId() > 0);
         promotionId = promotion.getPromotionId();
         assertEquals("Fall Sale", promotion.getDescription());
         assertEquals(20, promotion.getDiscountRate());
-        assertEquals(LocalDate.parse("2023-10-01"), promotion.getStartLocalDate());  // Check if still failing here
+        assertEquals(LocalDate.parse("2023-10-01"), promotion.getStartLocalDate()); // Check if still failing here
         assertEquals(LocalDate.parse("2023-10-31"), promotion.getEndLocalDate());
         assertEquals(managerEmail, promotion.getManagerEmail());
         assertNotNull(promotion.getGames());
         assertEquals(2, promotion.getGames().size());
     }
+
     @Test
     @Order(2)
     public void testGetPromotionById() {
@@ -188,14 +188,14 @@ public class PromotionIntegrationTests {
         // Arrange
         // Create another promotion
         PromotionRequestDto promotionRequest = new PromotionRequestDto(
-            "Winter Sale",
-            30,
-            LocalDate.parse("2023-12-01"),
-            LocalDate.parse("2023-12-31"),
-            managerEmail,
-            gameIds
-        );
-        ResponseEntity<PromotionResponseDto> promotionResponse = client.postForEntity("/promotions", promotionRequest, PromotionResponseDto.class);
+                "Winter Sale",
+                30,
+                LocalDate.parse("2023-12-01"),
+                LocalDate.parse("2023-12-31"),
+                managerEmail,
+                gameIds);
+        ResponseEntity<PromotionResponseDto> promotionResponse = client.postForEntity("/promotions", promotionRequest,
+                PromotionResponseDto.class);
         assertNotNull(promotionResponse);
         assertEquals(HttpStatus.OK, promotionResponse.getStatusCode());
         PromotionResponseDto promotion = promotionResponse.getBody();
@@ -229,7 +229,7 @@ public class PromotionIntegrationTests {
         assertTrue(foundWinterSale, "Winter Sale promotion not found in the list");
     }
 
-    // @Test
+    @Test
     @Order(4)
     public void testUpdatePromotion() {
         // Arrange
@@ -244,7 +244,8 @@ public class PromotionIntegrationTests {
         HttpEntity<PromotionRequestDto> requestEntity = new HttpEntity<>(updateRequest);
 
         // Act
-        ResponseEntity<PromotionResponseDto> response = client.exchange(url, HttpMethod.PUT, requestEntity, PromotionResponseDto.class);
+        ResponseEntity<PromotionResponseDto> response = client.exchange(url, HttpMethod.PUT, requestEntity,
+                PromotionResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -264,14 +265,14 @@ public class PromotionIntegrationTests {
         // Arrange
         // Create a promotion to delete
         PromotionRequestDto promotionRequest = new PromotionRequestDto(
-            "Delete Sale",
-            15,
-            LocalDate.parse("2023-11-01"),
-            LocalDate.parse("2023-11-30"),
-            managerEmail,
-            gameIds
-        );
-        ResponseEntity<PromotionResponseDto> promotionResponse = client.postForEntity("/promotions", promotionRequest, PromotionResponseDto.class);
+                "Delete Sale",
+                15,
+                LocalDate.parse("2023-11-01"),
+                LocalDate.parse("2023-11-30"),
+                managerEmail,
+                gameIds);
+        ResponseEntity<PromotionResponseDto> promotionResponse = client.postForEntity("/promotions", promotionRequest,
+                PromotionResponseDto.class);
         assertNotNull(promotionResponse);
         assertEquals(HttpStatus.OK, promotionResponse.getStatusCode());
         PromotionResponseDto promotion = promotionResponse.getBody();
@@ -334,14 +335,14 @@ public class PromotionIntegrationTests {
         // Arrange
         // Create a new game
         GameRequestDto gameRequest = new GameRequestDto(
-            "Game Three",
-            "Third game description",
-            70,
-            GameStatus.InStock,
-            15,
-            "http://example.com/game3.jpg"
-        );
-        ResponseEntity<GameResponseDto> gameResponse = client.postForEntity("/games", gameRequest, GameResponseDto.class);
+                "Game Three",
+                "Third game description",
+                70,
+                GameStatus.InStock,
+                15,
+                "http://example.com/game3.jpg");
+        ResponseEntity<GameResponseDto> gameResponse = client.postForEntity("/games", gameRequest,
+                GameResponseDto.class);
         assertNotNull(gameResponse);
         assertEquals(HttpStatus.OK, gameResponse.getStatusCode());
         GameResponseDto game = gameResponse.getBody();
@@ -369,7 +370,8 @@ public class PromotionIntegrationTests {
         String url = String.format("/promotions/%d/games/%d", promotionId, gameId2);
 
         // Act
-        ResponseEntity<PromotionResponseDto> response = client.exchange(url, HttpMethod.DELETE, null, PromotionResponseDto.class);
+        ResponseEntity<PromotionResponseDto> response = client.exchange(url, HttpMethod.DELETE, null,
+                PromotionResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -497,19 +499,18 @@ public class PromotionIntegrationTests {
         assertTrue(responseBody.contains("Promotion not found") || responseBody.contains("Game not found"));
     }
 
-    // @Test
+    @Test
     @Order(16)
     public void testCreatePromotionInvalidManagerEmail() {
         // Arrange
         String invalidManagerEmail = "invalidmanager@example.com";
         PromotionRequestDto promotionRequest = new PromotionRequestDto(
-            "Invalid Manager Promotion",
-            20,
-            LocalDate.parse("2023-10-01"),
-            LocalDate.parse("2023-10-31"),
-            invalidManagerEmail,
-            gameIds
-        );
+                "Invalid Manager Promotion",
+                20,
+                LocalDate.parse("2023-10-01"),
+                LocalDate.parse("2023-10-31"),
+                invalidManagerEmail,
+                gameIds);
 
         // Act
         ResponseEntity<String> response = client.postForEntity("/promotions", promotionRequest, String.class);
@@ -519,7 +520,7 @@ public class PromotionIntegrationTests {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         String responseBody = response.getBody();
         assertNotNull(responseBody);
-        assertTrue(responseBody.contains(String.format("There is no manager with email: %s", invalidManagerEmail)));
+        assertTrue(responseBody.contains(String.format("Manager with email %s not found", invalidManagerEmail)));
     }
 
     @Test
@@ -527,13 +528,12 @@ public class PromotionIntegrationTests {
     public void testCreatePromotionInvalidDiscountRate() {
         // Arrange: Discount rate above 100
         PromotionRequestDto promotionRequest = new PromotionRequestDto(
-            "Invalid Discount Rate",
-            150, // Invalid
-            LocalDate.parse("2023-10-01"),
-            LocalDate.parse("2023-10-31"),
-            managerEmail,
-            gameIds
-        );
+                "Invalid Discount Rate",
+                150, // Invalid
+                LocalDate.parse("2023-10-01"),
+                LocalDate.parse("2023-10-31"),
+                managerEmail,
+                gameIds);
 
         // Act
         ResponseEntity<String> response = client.postForEntity("/promotions", promotionRequest, String.class);
@@ -546,18 +546,17 @@ public class PromotionIntegrationTests {
         assertTrue(responseBody.contains("Discount rate must be between 0 and 100"));
     }
 
-    // @Test
+    @Test
     @Order(18)
     public void testCreatePromotionStartDateAfterEndDate() {
         // Arrange: Start date after end date
         PromotionRequestDto promotionRequest = new PromotionRequestDto(
-            "Invalid Dates",
-            20,
-            LocalDate.parse("2023-11-01"),
-            LocalDate.parse("2023-10-01"), // End date before start date
-            managerEmail,
-            gameIds
-        );
+                "Invalid Dates",
+                20,
+                LocalDate.parse("2023-11-01"),
+                LocalDate.parse("2023-10-01"), // End date before start date
+                managerEmail,
+                gameIds);
 
         // Act
         ResponseEntity<String> response = client.postForEntity("/promotions", promotionRequest, String.class);
@@ -567,7 +566,7 @@ public class PromotionIntegrationTests {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         String responseBody = response.getBody();
         assertNotNull(responseBody);
-        assertTrue(responseBody.contains("End date must be after start date"));
+        assertTrue(responseBody.contains("Start LocalDate cannot be after end LocalDate"));
     }
 
     @Test

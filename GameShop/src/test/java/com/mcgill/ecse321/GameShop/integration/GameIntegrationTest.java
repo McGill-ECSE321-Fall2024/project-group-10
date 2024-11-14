@@ -100,7 +100,6 @@ public class GameIntegrationTest {
             category.removeManager();
             categoryRepository.save(category);
         }
-        
 
         // Clear Managers before platforms
         for (Platform platform : platformRepository.findAll()) {
@@ -124,8 +123,10 @@ public class GameIntegrationTest {
         ArrayList<Integer> platformIds = new ArrayList<>();
         ArrayList<Integer> categoryIds = new ArrayList<>();
 
-        AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE, MANAGER_ADDRESS);
-        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager, AccountResponseDto.class);
+        AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD,
+                MANAGER_PHONE, MANAGER_ADDRESS);
+        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager,
+                AccountResponseDto.class);
         assertNotNull(managerResponse);
         assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
         assertEquals(MANAGER_EMAIL, managerResponse.getBody().getEmail());
@@ -134,26 +135,30 @@ public class GameIntegrationTest {
         // and set the requestDto's categories and platforms to the created ones
         for (int i = 1; i <= 3; i++) {
             PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
-            ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
+            ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms",
+                    platformRequestDto, PlatformResponseDto.class);
             assertNotNull(platformResponse);
             assertEquals(HttpStatus.OK, platformResponse.getStatusCode());
             assertEquals("Platform Name", platformResponse.getBody().getPlatformName());
             platformIds.add(platformResponse.getBody().getPlatformId());
 
             CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Name", MANAGER_EMAIL);
-            ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto, CategoryResponseDto.class);
+            ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories",
+                    categoryRequestDto, CategoryResponseDto.class);
             assertNotNull(categoryResponse);
             assertEquals(HttpStatus.OK, categoryResponse.getStatusCode());
             assertEquals("Category Name", categoryResponse.getBody().getCategoryName());
             categoryIds.add(categoryResponse.getBody().getCategoryId());
         }
 
-        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS,
+                GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         gameRequestDto.setCategories(categoryIds);
         gameRequestDto.setPlatforms(platformIds);
 
         // Act
-        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
+        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto,
+                GameResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -217,8 +222,10 @@ public class GameIntegrationTest {
         ArrayList<Integer> platformIds = new ArrayList<>();
         ArrayList<Integer> categoryIds = new ArrayList<>();
 
-        AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL + "m", MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE, MANAGER_ADDRESS);
-        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager, AccountResponseDto.class);
+        AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL + "m", MANAGER_USERNAME, MANAGER_PASSWORD,
+                MANAGER_PHONE, MANAGER_ADDRESS);
+        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager,
+                AccountResponseDto.class);
         assertNotNull(managerResponse);
         assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
         assertEquals(MANAGER_EMAIL + "m", managerResponse.getBody().getEmail());
@@ -227,26 +234,29 @@ public class GameIntegrationTest {
         // that are different from the previous ones
         for (int i = 1; i <= 3; i++) {
             PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL + "m");
-            ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
+            ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms",
+                    platformRequestDto, PlatformResponseDto.class);
             assertNotNull(platformResponse);
             assertEquals(HttpStatus.OK, platformResponse.getStatusCode());
             assertEquals("Platform Name", platformResponse.getBody().getPlatformName());
             platformIds.add(platformResponse.getBody().getPlatformId());
 
             CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Name", MANAGER_EMAIL + "m");
-            ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto, CategoryResponseDto.class);
+            ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories",
+                    categoryRequestDto, CategoryResponseDto.class);
             assertNotNull(categoryResponse);
             assertEquals(HttpStatus.OK, categoryResponse.getStatusCode());
             assertEquals("Category Name", categoryResponse.getBody().getCategoryName());
             categoryIds.add(categoryResponse.getBody().getCategoryId());
         }
 
-        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE + "V2.0", GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE + "V2.0", GAME_DESCRIPTION, GAME_PRICE,
+                GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
         gameRequestDto.setCategories(categoryIds);
         gameRequestDto.setPlatforms(platformIds);
 
-        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
-
+        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto,
+                GameResponseDto.class);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -270,7 +280,7 @@ public class GameIntegrationTest {
             assertTrue(gameIds.contains(game.getGameId()));
         }
     }
-    
+
     @SuppressWarnings("null")
     @Test
     @Order(4)
@@ -287,36 +297,40 @@ public class GameIntegrationTest {
         List<Integer> platformIds = new ArrayList<>();
         List<Integer> categoryIds = new ArrayList<>();
 
-         for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 3; i++) {
             PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
-            ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
+            ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms",
+                    platformRequestDto, PlatformResponseDto.class);
             assertNotNull(platformResponse);
             assertEquals(HttpStatus.OK, platformResponse.getStatusCode());
             assertEquals("Platform Name", platformResponse.getBody().getPlatformName());
             platformIds.add(platformResponse.getBody().getPlatformId());
 
             CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Name", MANAGER_EMAIL);
-            ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto, CategoryResponseDto.class);
+            ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories",
+                    categoryRequestDto, CategoryResponseDto.class);
             assertNotNull(categoryResponse);
             assertEquals(HttpStatus.OK, categoryResponse.getStatusCode());
             assertEquals("Category Name", categoryResponse.getBody().getCategoryName());
             categoryIds.add(categoryResponse.getBody().getCategoryId());
         }
 
-        HttpEntity<GameRequestDto> gameRequestDto = new HttpEntity<>(new GameRequestDto(newTitle, newDescription, newPrice, newStatus, newStockQuantity, newPhotoUrl));
+        HttpEntity<GameRequestDto> gameRequestDto = new HttpEntity<>(
+                new GameRequestDto(newTitle, newDescription, newPrice, newStatus, newStockQuantity, newPhotoUrl));
         gameRequestDto.getBody().setCategories(categoryIds);
         gameRequestDto.getBody().setPlatforms(platformIds);
 
         // Act
-        ResponseEntity<GameResponseDto> updateResponse = client.exchange("/games/" + this.game_id, HttpMethod.PUT, gameRequestDto, GameResponseDto.class);
+        ResponseEntity<GameResponseDto> updateResponse = client.exchange("/games/" + this.game_id, HttpMethod.PUT,
+                gameRequestDto, GameResponseDto.class);
 
         // Assert
         GameResponseDto updatedGame = updateResponse.getBody();
         assertNotNull(updatedGame);
         assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
 
-        assertTrue(updatedGame.getaGame_id()>0, "The ID should be positive");
-        
+        assertTrue(updatedGame.getaGame_id() > 0, "The ID should be positive");
+
         assertEquals(newTitle, updatedGame.getaTitle());
         assertEquals(newDescription, updatedGame.getaDescription());
         assertEquals(newPrice, updatedGame.getaPrice());
@@ -358,7 +372,8 @@ public class GameIntegrationTest {
 
         // Arrange
         CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Name", MANAGER_EMAIL);
-        ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto, CategoryResponseDto.class);
+        ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto,
+                CategoryResponseDto.class);
         assertNotNull(categoryResponse);
         assertEquals(HttpStatus.OK, categoryResponse.getStatusCode());
         assertEquals("Category Name", categoryResponse.getBody().getCategoryName());
@@ -366,7 +381,8 @@ public class GameIntegrationTest {
         int categoryIdToAdd = categoryResponse.getBody().getCategoryId();
 
         // Act
-        ResponseEntity<GameResponseDto> response = client.exchange("/games/category/" + this.game_id + "/" + categoryIdToAdd, HttpMethod.PUT, null, GameResponseDto.class);
+        ResponseEntity<GameResponseDto> response = client.exchange(
+                "/games/category/" + this.game_id + "/" + categoryIdToAdd, HttpMethod.PUT, null, GameResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -393,7 +409,8 @@ public class GameIntegrationTest {
     public void testAddPlatformToGame() {
         // Arrange
         PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
-        ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
+        ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto,
+                PlatformResponseDto.class);
         assertNotNull(platformResponse);
         assertEquals(HttpStatus.OK, platformResponse.getStatusCode());
         assertEquals("Platform Name", platformResponse.getBody().getPlatformName());
@@ -401,7 +418,8 @@ public class GameIntegrationTest {
         int platformIdToAdd = platformResponse.getBody().getPlatformId();
 
         // Act
-        ResponseEntity<GameResponseDto> response = client.exchange("/games/platform/" + this.game_id + "/" + platformIdToAdd, HttpMethod.PUT, null, GameResponseDto.class);
+        ResponseEntity<GameResponseDto> response = client.exchange(
+                "/games/platform/" + this.game_id + "/" + platformIdToAdd, HttpMethod.PUT, null, GameResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -547,70 +565,86 @@ public class GameIntegrationTest {
     @Test
     @Order(14)
     public void testCreateGameWithInvalidPrice() {
-        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, -1, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
-        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, -1, GAME_STATUS,
+                GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto,
+                GameResponseDto.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     @Order(15)
     public void testCreateGameWithInvalidTitle() {
-        GameRequestDto gameRequestDto = new GameRequestDto("", GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
-        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
+        GameRequestDto gameRequestDto = new GameRequestDto("", GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS,
+                GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto,
+                GameResponseDto.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     @Order(16)
     public void testCreateGameWithInvalidStatus() {
-        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, null, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
-        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto, GameResponseDto.class);
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, null,
+                GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.postForEntity("/games", gameRequestDto,
+                GameResponseDto.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     @Order(17)
     public void testUpdateGameWithInvalidId() {
-        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
-        ResponseEntity<GameResponseDto> response = client.exchange("/games/9999", HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS,
+                GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/9999", HttpMethod.PUT,
+                new HttpEntity<>(gameRequestDto), GameResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     @Order(18)
     public void testupdateGameWithInvalidPrice() {
-        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, -1, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
-        ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, -1, GAME_STATUS,
+                GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT,
+                new HttpEntity<>(gameRequestDto), GameResponseDto.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     @Order(19)
     public void testupdateGameWithInvalidTitle() {
-        GameRequestDto gameRequestDto = new GameRequestDto("", GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
-        ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
+        GameRequestDto gameRequestDto = new GameRequestDto("", GAME_DESCRIPTION, GAME_PRICE, GAME_STATUS,
+                GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT,
+                new HttpEntity<>(gameRequestDto), GameResponseDto.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     @Order(20)
     public void testupdateGameWithInvalidStatus() {
-        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, null, GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
-        ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT, new HttpEntity<>(gameRequestDto), GameResponseDto.class);
+        GameRequestDto gameRequestDto = new GameRequestDto(GAME_TITLE, GAME_DESCRIPTION, GAME_PRICE, null,
+                GAME_STOCK_QUANTITY, GAME_PHOTO_URL);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/" + this.game_id, HttpMethod.PUT,
+                new HttpEntity<>(gameRequestDto), GameResponseDto.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     @Order(21)
     public void testAddInvalidCategoryToGame() {
-        ResponseEntity<GameResponseDto> response = client.exchange("/games/category/" + this.game_id + "/9999", HttpMethod.PUT, null, GameResponseDto.class);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/category/" + this.game_id + "/9999",
+                HttpMethod.PUT, null, GameResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     @Order(22)
     public void testAddInvalidPlatformToGame() {
-        ResponseEntity<GameResponseDto> response = client.exchange("/games/platform/" + this.game_id + "/9999", HttpMethod.PUT, null, GameResponseDto.class);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/platform/" + this.game_id + "/9999",
+                HttpMethod.PUT, null, GameResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -633,7 +667,8 @@ public class GameIntegrationTest {
     public void testCreateSpecificGameForGame() {
         Game orginalGame = gameRepository.findById(this.game_id);
         int originalQtity = orginalGame.getStockQuantity();
-        ResponseEntity<GameResponseDto> response = client.exchange("/games/specificGame/" + this.game_id + "/10", HttpMethod.PUT, null, GameResponseDto.class);
+        ResponseEntity<GameResponseDto> response = client.exchange("/games/specificGame/" + this.game_id + "/10",
+                HttpMethod.PUT, null, GameResponseDto.class);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         GameResponseDto game = response.getBody();
@@ -647,8 +682,9 @@ public class GameIntegrationTest {
     @Order(26)
     public void testDeleteGame() {
         // Arrange
-        ResponseEntity<GameResponseDto> getResponse = client.getForEntity("/games/" + this.game_id, GameResponseDto.class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());        
+        ResponseEntity<GameResponseDto> getResponse = client.getForEntity("/games/" + this.game_id,
+                GameResponseDto.class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
         ResponseEntity<Void> response = client.exchange("/games/" + this.game_id, HttpMethod.DELETE, null, Void.class);
         assertNotNull(response);
@@ -663,7 +699,7 @@ public class GameIntegrationTest {
         assertEquals(HttpStatus.OK, invalidResp.getStatusCode());
         GameListDto games = invalidResp.getBody();
         assertEquals(games.getNumberOfGames(), 1);
-    
+
     }
 
     @Test

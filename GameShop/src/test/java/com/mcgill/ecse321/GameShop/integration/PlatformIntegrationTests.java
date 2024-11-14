@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameListDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameRequestDto;
 import com.mcgill.ecse321.GameShop.dto.GameDto.GameResponseDto;
@@ -44,6 +43,7 @@ import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
 
 import com.mcgill.ecse321.GameShop.repository.AccountRepository;
+
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -74,11 +74,10 @@ public class PlatformIntegrationTests {
     private static final String UPDATED_PLATFORM_NAME = "Xbox Series X";
     private static final String SECOND_NAME = "Nintendo Switch";
 
-
     @BeforeAll
     @AfterAll
     public void clearDatabase() {
-        // Clear associated platform to games 
+        // Clear associated platform to games
         for (Game game : gameRepo.findAll()) {
             List<Platform> platforms = new ArrayList<>(game.getPlatforms());
             for (Platform platform : platforms) {
@@ -89,27 +88,31 @@ public class PlatformIntegrationTests {
 
         gameRepo.deleteAll();
         platformRepo.deleteAll();
-      
+
         managerRepo.deleteAll();
         accountRepo.deleteAll();
     }
+
     @SuppressWarnings("null")
     @Test
     @Order(1)
     public void testCreateValidPlatform() {
         // Arrange
-        AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE, MANAGER_ADDRESS);
-        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager, AccountResponseDto.class);
+        AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD,
+                MANAGER_PHONE, MANAGER_ADDRESS);
+        ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager,
+                AccountResponseDto.class);
         PlatformRequestDto request = new PlatformRequestDto(PLATFORM_NAME, MANAGER_EMAIL);
 
         // Act
-        ResponseEntity<PlatformResponseDto> response = client.postForEntity("/platforms", request, PlatformResponseDto.class);
+        ResponseEntity<PlatformResponseDto> response = client.postForEntity("/platforms", request,
+                PlatformResponseDto.class);
 
         // Assert
         assertNotNull(managerResponse);
         assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
         assertEquals(MANAGER_EMAIL, managerResponse.getBody().getEmail());
-        
+
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         PlatformResponseDto platform = response.getBody();
@@ -148,7 +151,8 @@ public class PlatformIntegrationTests {
         HttpEntity<PlatformRequestDto> requestEntity = new HttpEntity<>(updateRequest);
 
         // Act
-        ResponseEntity<PlatformResponseDto> updateResponse = client.exchange(url, HttpMethod.PUT, requestEntity, PlatformResponseDto.class);
+        ResponseEntity<PlatformResponseDto> updateResponse = client.exchange(url, HttpMethod.PUT, requestEntity,
+                PlatformResponseDto.class);
 
         // Assert
         assertNotNull(updateResponse);
@@ -160,15 +164,16 @@ public class PlatformIntegrationTests {
         assertEquals(MANAGER_EMAIL, updatedPlatform.getManagerEmail());
     }
 
-      @Test
+    @Test
     @Order(4)
     public void testGetAllPlatforms() {
         // Arrange
         PlatformRequestDto request = new PlatformRequestDto(SECOND_NAME, MANAGER_EMAIL);
-        ResponseEntity<PlatformResponseDto> createResponse = client.postForEntity("/platforms", request, PlatformResponseDto.class);
+        ResponseEntity<PlatformResponseDto> createResponse = client.postForEntity("/platforms", request,
+                PlatformResponseDto.class);
         assertNotNull(createResponse);
         assertEquals(HttpStatus.OK, createResponse.getStatusCode());
-        
+
         // Act
         ResponseEntity<PlatformListDto> response = client.getForEntity("/platforms", PlatformListDto.class);
 
@@ -180,8 +185,9 @@ public class PlatformIntegrationTests {
         List<PlatformSummaryDto> platformList = platforms.getPlatforms();
         assertNotNull(platformList);
         assertTrue(platformList.size() >= 2);
-        
+
     }
+
     @Test
     @Order(5)
     public void testDeletePlatform() {
@@ -190,228 +196,221 @@ public class PlatformIntegrationTests {
 
         assertNotNull(responseBefore);
         assertEquals(HttpStatus.OK, responseBefore.getStatusCode(), "Platform does not exist before deletion");
-    
+
         ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);
-    
+
         assertNotNull(response);
-    
+
         ResponseEntity<PlatformResponseDto> getResponse = client.getForEntity(url, PlatformResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
     }
 
     @SuppressWarnings("null")
     @Test
-@Order(6)
-public void testFindAllGamesInPlatform() {
-    // Arrange: Create target platform and another platform
-    PlatformRequestDto platformRequest = new PlatformRequestDto("Nintendo Switch", MANAGER_EMAIL);
-    ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequest, PlatformResponseDto.class);
-    assertEquals(HttpStatus.OK, platformResponse.getStatusCode(), "Platform creation failed");
-    PlatformResponseDto initialPlatform = platformResponse.getBody();
-    assertNotNull(initialPlatform);
-    assertNotNull(platformResponse.getBody().getPlatformId());
-    int targetPlatformId = platformResponse.getBody().getPlatformId();
+    @Order(6)
+    public void testFindAllGamesInPlatform() {
+        // Arrange: Create target platform and another platform
+        PlatformRequestDto platformRequest = new PlatformRequestDto("Nintendo Switch", MANAGER_EMAIL);
+        ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequest,
+                PlatformResponseDto.class);
+        assertEquals(HttpStatus.OK, platformResponse.getStatusCode(), "Platform creation failed");
+        PlatformResponseDto initialPlatform = platformResponse.getBody();
+        assertNotNull(initialPlatform);
+        assertNotNull(platformResponse.getBody().getPlatformId());
+        int targetPlatformId = platformResponse.getBody().getPlatformId();
 
-    PlatformRequestDto otherPlatformRequest = new PlatformRequestDto("PC", MANAGER_EMAIL);
-    ResponseEntity<PlatformResponseDto> otherPlatformResponse = client.postForEntity("/platforms", otherPlatformRequest, PlatformResponseDto.class);
-    assertEquals(HttpStatus.OK, otherPlatformResponse.getStatusCode(), "Other platform creation failed");
-    PlatformResponseDto otherPlatform = otherPlatformResponse.getBody();
-    assertNotNull(otherPlatform);
-    assertNotNull(otherPlatformResponse.getBody().getPlatformId());
-    int otherPlatformId = otherPlatformResponse.getBody().getPlatformId();
+        PlatformRequestDto otherPlatformRequest = new PlatformRequestDto("PC", MANAGER_EMAIL);
+        ResponseEntity<PlatformResponseDto> otherPlatformResponse = client.postForEntity("/platforms",
+                otherPlatformRequest, PlatformResponseDto.class);
+        assertEquals(HttpStatus.OK, otherPlatformResponse.getStatusCode(), "Other platform creation failed");
+        PlatformResponseDto otherPlatform = otherPlatformResponse.getBody();
+        assertNotNull(otherPlatform);
+        assertNotNull(otherPlatformResponse.getBody().getPlatformId());
+        int otherPlatformId = otherPlatformResponse.getBody().getPlatformId();
 
-    // Create games associated with platforms
-    GameRequestDto gameRequest1 = new GameRequestDto("Zelda", "Adventure game", 60, GameStatus.InStock, 3, "zelda.com");
-    gameRequest1.setPlatforms(List.of(targetPlatformId, otherPlatformId));
-    ResponseEntity<GameResponseDto> gameResponse1 = client.postForEntity("/games", gameRequest1, GameResponseDto.class);
-    assertEquals(HttpStatus.OK, gameResponse1.getStatusCode(), "Failed to create Game 1");
-    int gameId1 = gameResponse1.getBody().getaGame_id();
+        // Create games associated with platforms
+        GameRequestDto gameRequest1 = new GameRequestDto("Zelda", "Adventure game", 60, GameStatus.InStock, 3,
+                "zelda.com");
+        gameRequest1.setPlatforms(List.of(targetPlatformId, otherPlatformId));
+        ResponseEntity<GameResponseDto> gameResponse1 = client.postForEntity("/games", gameRequest1,
+                GameResponseDto.class);
+        assertEquals(HttpStatus.OK, gameResponse1.getStatusCode(), "Failed to create Game 1");
+        int gameId1 = gameResponse1.getBody().getaGame_id();
 
-    GameRequestDto gameRequest2 = new GameRequestDto("Mario", "Platform game", 50, GameStatus.InStock, 2, "mario.com");
-    gameRequest2.setPlatforms(List.of(targetPlatformId));
-    ResponseEntity<GameResponseDto> gameResponse2 = client.postForEntity("/games", gameRequest2, GameResponseDto.class);
-    assertEquals(HttpStatus.OK, gameResponse2.getStatusCode(), "Failed to create Game ");
-    int gameId2 = gameResponse2.getBody().getaGame_id();
+        GameRequestDto gameRequest2 = new GameRequestDto("Mario", "Platform game", 50, GameStatus.InStock, 2,
+                "mario.com");
+        gameRequest2.setPlatforms(List.of(targetPlatformId));
+        ResponseEntity<GameResponseDto> gameResponse2 = client.postForEntity("/games", gameRequest2,
+                GameResponseDto.class);
+        assertEquals(HttpStatus.OK, gameResponse2.getStatusCode(), "Failed to create Game ");
+        int gameId2 = gameResponse2.getBody().getaGame_id();
 
-    GameRequestDto gameRequest3 = new GameRequestDto("Halo", "Shooter game", 70, GameStatus.InStock, 4, "halo.com");
-    gameRequest3.setPlatforms(List.of(otherPlatformId));
-    ResponseEntity<GameResponseDto> gameResponse3 = client.postForEntity("/games", gameRequest3, GameResponseDto.class);
-    assertEquals(HttpStatus.OK, gameResponse3.getStatusCode(), "Failed to create Game 3");
-    int gameId3 = gameResponse3.getBody().getaGame_id();
+        GameRequestDto gameRequest3 = new GameRequestDto("Halo", "Shooter game", 70, GameStatus.InStock, 4, "halo.com");
+        gameRequest3.setPlatforms(List.of(otherPlatformId));
+        ResponseEntity<GameResponseDto> gameResponse3 = client.postForEntity("/games", gameRequest3,
+                GameResponseDto.class);
+        assertEquals(HttpStatus.OK, gameResponse3.getStatusCode(), "Failed to create Game 3");
+        int gameId3 = gameResponse3.getBody().getaGame_id();
 
-    // Act: Fetch all games within the target platform
-    String url = String.format("/platforms/%d/games", targetPlatformId);
-    ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
+        // Act: Fetch all games within the target platform
+        String url = String.format("/platforms/%d/games", targetPlatformId);
+        ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
 
-    // Assert: Verify that the response contains only the games associated with the target platform
-    assertNotNull(response);
-    assertEquals(HttpStatus.OK, response.getStatusCode(), "Games not found in platform");
-    GameListDto games = response.getBody();
-    assertNotNull(games);
-    List<GameSummaryDto> gameList = games.getGames();
-    assertNotNull(gameList);
+        // Assert: Verify that the response contains only the games associated with the
+        // target platform
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "Games not found in platform");
+        GameListDto games = response.getBody();
+        assertNotNull(games);
+        List<GameSummaryDto> gameList = games.getGames();
+        assertNotNull(gameList);
 
-    // Verify that exactly 2 games are returned in the target platform and they match the expected game IDs
-    assertEquals(2, gameList.size(), "Expected 2 games in the platform");
+        // Verify that exactly 2 games are returned in the target platform and they
+        // match the expected game IDs
+        assertEquals(2, gameList.size(), "Expected 2 games in the platform");
 
-    List<Integer> returnedGameIds = new ArrayList<>();
-    for (GameSummaryDto game : gameList) {
-        returnedGameIds.add(game.getGameId());
-    }
-    assertTrue(returnedGameIds.contains(gameId1), "Expected to find game with ID: " + gameId1);
-    assertTrue(returnedGameIds.contains(gameId2), "Expected to find game with ID: " + gameId2);
-    assertFalse(returnedGameIds.contains(gameId3), "Did not expect to find game with ID: " + gameId3);
-}
-
-@Test
-@Order(7)
-public void testCreatePlatformMissingName() {
-
-
-    // Arrange: Create a PlatformRequestDto with null platformName
-    PlatformRequestDto request = new PlatformRequestDto(null, MANAGER_EMAIL);
-
-    // Act
-    ResponseEntity<String> response = client.postForEntity("/platforms", request, String.class);
-
-    // Assert
-    assertNotNull(response);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    String platform = response.getBody();
-    assertNotNull(platform);
-    assertTrue(platform.contains("Platform name cannot be empty"));
-}
-
-/**
- * Test retrieving a Platform by an invalid ID (non-existent)
- */
-@Test
-@Order(8)
-public void testGetPlatformByNonExistentId() {
-    // Arrange
-    int nonExistentId = 9999;
-    String url = String.format("/platforms/%d", nonExistentId);
-
-    // Act
-    ResponseEntity<String> response = client.getForEntity(url, String.class);
-
-    // Assert
-    assertNotNull(response);
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    String platform = response.getBody();
-    assertNotNull(platform);
-    assertTrue(platform.contains("Platform does not exist"));
-}
-
-/**
- * Test updating a Platform with invalid input: invalid ID
- */
-@Test
-@Order(9)
-public void testUpdatePlatformInvalidId() {
-    // Arrange
-    int invalidId = -1;
-    String url = String.format("/platforms/%d", invalidId);
-    PlatformRequestDto updateRequest = new PlatformRequestDto("New Platform Name", MANAGER_EMAIL);
-    HttpEntity<PlatformRequestDto> requestEntity = new HttpEntity<>(updateRequest);
-
-    // Act
-    ResponseEntity<String> response = client.exchange(url, HttpMethod.PUT, requestEntity, String.class);
-
-    // Assert
-    assertNotNull(response);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    String platform = response.getBody();
-    assertNotNull(platform);
-    assertTrue(platform.contains("Invalid platform ID"));
-}
-
-/**
- * Test retrieving all Platforms when none exist
- */
-@Test
-@Order(10)
-public void testGetAllPlatformsEmpty() {
-    for (Game game : gameRepo.findAll()) {
-        List<Platform> platforms = new ArrayList<>(game.getPlatforms());
-        for (Platform platform : platforms) {
-            game.removePlatform(platform);
+        List<Integer> returnedGameIds = new ArrayList<>();
+        for (GameSummaryDto game : gameList) {
+            returnedGameIds.add(game.getGameId());
         }
-        gameRepo.save(game);
+        assertTrue(returnedGameIds.contains(gameId1), "Expected to find game with ID: " + gameId1);
+        assertTrue(returnedGameIds.contains(gameId2), "Expected to find game with ID: " + gameId2);
+        assertFalse(returnedGameIds.contains(gameId3), "Did not expect to find game with ID: " + gameId3);
     }
-    // Arrange: Clear all platforms
-    platformRepo.deleteAll();
 
-    // Act
-    ResponseEntity<PlatformListDto> response = client.getForEntity("/platforms", PlatformListDto.class);
+    @Test
+    @Order(7)
+    public void testCreatePlatformMissingName() {
 
-    // Assert
-    assertNotNull(response);
-    // Assuming your API returns 200 OK with an empty list when no platforms exist
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    PlatformListDto platforms = response.getBody();
-    assertNotNull(platforms);
-    List<PlatformSummaryDto> platformList = platforms.getPlatforms();
-    assertNotNull(platformList);
-    assertTrue(platformList.isEmpty(), "Expected no platforms in the list");
-}
+        // Arrange: Create a PlatformRequestDto with null platformName
+        PlatformRequestDto request = new PlatformRequestDto(null, MANAGER_EMAIL);
 
-/**
- * Test deleting a Platform with non-existent ID
- */
-@Test
-@Order(11)
-public void testDeletePlatformNonExistentId() {
-    // Arrange
-    int nonExistentId = 9999;
-    String url = String.format("/platforms/%d", nonExistentId);
+        // Act
+        ResponseEntity<String> response = client.postForEntity("/platforms", request, String.class);
 
-    // Act
-    ResponseEntity<String> response = client.exchange(url, HttpMethod.DELETE, null, String.class);
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        String platform = response.getBody();
+        assertNotNull(platform);
+        assertTrue(platform.contains("Platform name cannot be empty"));
+    }
 
-    // Assert
-    assertNotNull(response);
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    String platform = response.getBody();
+    /**
+     * Test retrieving a Platform by an invalid ID (non-existent)
+     */
+    @Test
+    @Order(8)
+    public void testGetPlatformByNonExistentId() {
+        // Arrange
+        int nonExistentId = 9999;
+        String url = String.format("/platforms/%d", nonExistentId);
 
-    assertNotNull(platform);
-    assertTrue(platform.contains("Platform does not exist"));
-}
+        // Act
+        ResponseEntity<String> response = client.getForEntity(url, String.class);
 
-/**
- * Test retrieving all Games in a Platform with non-existent ID
- */
-@Test
-@Order(12)
-public void testFindAllGamesInPlatformNonExistentId() {
-    // Arrange
-    int nonExistentId = 9999;
-    String url = String.format("/platforms/%d/games", nonExistentId);
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        String platform = response.getBody();
+        assertNotNull(platform);
+        assertTrue(platform.contains("Platform does not exist"));
+    }
 
-    // Act
-    ResponseEntity<String> response = client.getForEntity(url, String.class);
+    /**
+     * Test updating a Platform with invalid input: invalid ID
+     */
+    @Test
+    @Order(9)
+    public void testUpdatePlatformInvalidId() {
+        // Arrange
+        int invalidId = -1;
+        String url = String.format("/platforms/%d", invalidId);
+        PlatformRequestDto updateRequest = new PlatformRequestDto("New Platform Name", MANAGER_EMAIL);
+        HttpEntity<PlatformRequestDto> requestEntity = new HttpEntity<>(updateRequest);
 
-    // Assert
-    assertNotNull(response);
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    String platform = response.getBody();
-    assertNotNull(platform);
-    assertTrue(platform.contains("Platform does not exist"));
-}
+        // Act
+        ResponseEntity<String> response = client.exchange(url, HttpMethod.PUT, requestEntity, String.class);
 
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        String platform = response.getBody();
+        assertNotNull(platform);
+        assertTrue(platform.contains("Invalid platform ID"));
+    }
 
+    /**
+     * Test retrieving all Platforms when none exist
+     */
+    @Test
+    @Order(10)
+    public void testGetAllPlatformsEmpty() {
+        for (Game game : gameRepo.findAll()) {
+            List<Platform> platforms = new ArrayList<>(game.getPlatforms());
+            for (Platform platform : platforms) {
+                game.removePlatform(platform);
+            }
+            gameRepo.save(game);
+        }
+        // Arrange: Clear all platforms
+        platformRepo.deleteAll();
 
+        // Act
+        ResponseEntity<PlatformListDto> response = client.getForEntity("/platforms", PlatformListDto.class);
 
+        // Assert
+        assertNotNull(response);
+        // Assuming your API returns 200 OK with an empty list when no platforms exist
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        PlatformListDto platforms = response.getBody();
+        assertNotNull(platforms);
+        List<PlatformSummaryDto> platformList = platforms.getPlatforms();
+        assertNotNull(platformList);
+        assertTrue(platformList.isEmpty(), "Expected no platforms in the list");
+    }
 
+    /**
+     * Test deleting a Platform with non-existent ID
+     */
+    @Test
+    @Order(11)
+    public void testDeletePlatformNonExistentId() {
+        // Arrange
+        int nonExistentId = 9999;
+        String url = String.format("/platforms/%d", nonExistentId);
 
+        // Act
+        ResponseEntity<String> response = client.exchange(url, HttpMethod.DELETE, null, String.class);
 
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        String platform = response.getBody();
 
+        assertNotNull(platform);
+        assertTrue(platform.contains("Platform does not exist"));
+    }
 
+    /**
+     * Test retrieving all Games in a Platform with non-existent ID
+     */
+    @Test
+    @Order(12)
+    public void testFindAllGamesInPlatformNonExistentId() {
+        // Arrange
+        int nonExistentId = 9999;
+        String url = String.format("/platforms/%d/games", nonExistentId);
 
+        // Act
+        ResponseEntity<String> response = client.getForEntity(url, String.class);
 
-
-
-
-
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        String platform = response.getBody();
+        assertNotNull(platform);
+        assertTrue(platform.contains("Platform does not exist"));
+    }
 
 }

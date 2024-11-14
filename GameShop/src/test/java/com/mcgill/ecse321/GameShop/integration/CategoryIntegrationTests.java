@@ -195,31 +195,34 @@ public class CategoryIntegrationTests {
     @Order(5)
     public void testFindAllGamesInCategory() {
         // Arrange
-        // Create a category with name "Action Games for all categories" and assign the category ID to targetCategoryId
+        // Create a category with name "Action Games for all categories" and assign the
+        // category ID to targetCategoryId
         CategoryRequestDto categoryRequest = new CategoryRequestDto("Action Games for all categories", MANAGER_EMAIL);
         ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequest,
-            CategoryResponseDto.class);
+                CategoryResponseDto.class);
         assertEquals(HttpStatus.OK, categoryResponse.getStatusCode(), "Category creation failed");
         CategoryResponseDto initialCategory = categoryResponse.getBody();
         assertNotNull(initialCategory, "Category is null");
         assertNotNull(initialCategory.getCategoryId(), "Category ID is null");
         int targetCategoryId = initialCategory.getCategoryId();
 
-        // Create another category with name "Adventure Games" and assign the category ID to otherCategoryId
+        // Create another category with name "Adventure Games" and assign the category
+        // ID to otherCategoryId
         CategoryRequestDto otherCategoryRequest = new CategoryRequestDto("Adventure Games", MANAGER_EMAIL);
         ResponseEntity<CategoryResponseDto> otherCategoryResponse = client.postForEntity("/categories",
-            otherCategoryRequest, CategoryResponseDto.class);
+                otherCategoryRequest, CategoryResponseDto.class);
         assertEquals(HttpStatus.OK, otherCategoryResponse.getStatusCode(), "Other category creation failed");
         CategoryResponseDto otherCategory = otherCategoryResponse.getBody();
         assertNotNull(otherCategory);
         int otherCategoryId = otherCategory.getCategoryId();
 
-        // Create a game with title "Rambo 2", assign it to both targetCategoryId and otherCategoryId
+        // Create a game with title "Rambo 2", assign it to both targetCategoryId and
+        // otherCategoryId
         GameRequestDto gameRequest1 = new GameRequestDto("Rambo 2", "This game is awesome", 59, GameStatus.InStock, 5,
-            "www.game.com");
+                "www.game.com");
         gameRequest1.setCategories(List.of(targetCategoryId, otherCategoryId));
         ResponseEntity<GameResponseDto> gameResponse1 = client.postForEntity("/games", gameRequest1,
-            GameResponseDto.class);
+                GameResponseDto.class);
         assertEquals(HttpStatus.OK, gameResponse1.getStatusCode(), "Failed to create Game 1");
         GameResponseDto createdGame1 = gameResponse1.getBody();
         assertNotNull(createdGame1);
@@ -227,10 +230,10 @@ public class CategoryIntegrationTests {
 
         // Create a game with title "Terminator", assign it to targetCategoryId
         GameRequestDto gameRequest2 = new GameRequestDto("Terminator", "An action-packed game", 49, GameStatus.InStock,
-            3, "www.terminator.com");
+                3, "www.terminator.com");
         gameRequest2.setCategories(List.of(targetCategoryId));
         ResponseEntity<GameResponseDto> gameResponse2 = client.postForEntity("/games", gameRequest2,
-            GameResponseDto.class);
+                GameResponseDto.class);
         assertEquals(HttpStatus.OK, gameResponse2.getStatusCode(), "Failed to create Game 2");
         GameResponseDto createdGame2 = gameResponse2.getBody();
         assertNotNull(createdGame2);
@@ -238,10 +241,10 @@ public class CategoryIntegrationTests {
 
         // Create a game with title "Adventure Time", assign it to otherCategoryId
         GameRequestDto gameRequest3 = new GameRequestDto("Adventure Time", "An adventure game", 39, GameStatus.InStock,
-            7, "www.adventure.com");
+                7, "www.adventure.com");
         gameRequest3.setCategories(List.of(otherCategoryId));
         ResponseEntity<GameResponseDto> gameResponse3 = client.postForEntity("/games", gameRequest3,
-            GameResponseDto.class);
+                GameResponseDto.class);
         assertEquals(HttpStatus.OK, gameResponse3.getStatusCode(), "Failed to create Game 3");
         GameResponseDto createdGame3 = gameResponse3.getBody();
         assertNotNull(createdGame3);
@@ -276,6 +279,7 @@ public class CategoryIntegrationTests {
         assertFalse(returnedGameIds.contains(gameId3), "Did not expect to find game with ID: " + gameId3);
 
     }
+
     @SuppressWarnings("null")
     @Test
     @Order(6)
@@ -330,7 +334,6 @@ public class CategoryIntegrationTests {
         assertTrue(response.getBody().contains("Invalid category ID"));
     }
 
-
     @Test
     @Order(9)
     public void testDeleteCategory() {
@@ -369,7 +372,6 @@ public class CategoryIntegrationTests {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertTrue(response.getBody().contains("Category does not exist"));
     }
-
 
     @Test
     @Order(11)

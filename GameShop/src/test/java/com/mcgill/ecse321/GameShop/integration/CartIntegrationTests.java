@@ -86,31 +86,31 @@ public class CartIntegrationTests {
     public void testCreateCartWithCustomerAndGetIt() {
         // Arrange: Create a Customer (which should automatically create a Cart)
         AccountRequestDto customerRequest = new AccountRequestDto(
-            customerEmail,
-            customerUsername,
-            customerPassword,
-            customerPhone,
-            customerAddress);
-        
+                customerEmail,
+                customerUsername,
+                customerPassword,
+                customerPhone,
+                customerAddress);
+
         // Act: Send a POST request to create a customer
         ResponseEntity<AccountResponseDto> customerResponse = client.postForEntity(
-            "/account/customer",
-            customerRequest,
-            AccountResponseDto.class);
-        
+                "/account/customer",
+                customerRequest,
+                AccountResponseDto.class);
+
         // Assert: Verify that the customer was created successfully
         assertNotNull(customerResponse);
         assertEquals(HttpStatus.OK, customerResponse.getStatusCode());
         AccountResponseDto customer = customerResponse.getBody();
         assertNotNull(customer);
         assertEquals(customerEmail, customer.getEmail());
-        
+
         // Arrange: Get the cart associated with the customer
         String url = String.format("/carts/customer/%s", customerEmail);
-        
+
         // Act: Send a GET request to retrieve the cart
         ResponseEntity<CartResponseDto> cartResponse = client.getForEntity(url, CartResponseDto.class);
-        
+
         // Assert: Verify that the cart was retrieved successfully
         assertNotNull(cartResponse);
         assertEquals(HttpStatus.OK, cartResponse.getStatusCode());
