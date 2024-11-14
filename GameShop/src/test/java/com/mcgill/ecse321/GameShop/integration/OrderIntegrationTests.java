@@ -90,7 +90,7 @@ public class OrderIntegrationTests {
         @Test
         @Order(1)
         public void testCreateValidOrder() {
-                // Create Customer Account
+                // Arrange
                 AccountRequestDto customerRequest = new AccountRequestDto(
                                 customerEmail,
                                 "customerUser",
@@ -170,11 +170,13 @@ public class OrderIntegrationTests {
                                 customerEmail,
                                 specificGamesIds);
 
+                // Act
                 ResponseEntity<OrderResponseDto> orderResponse = client.postForEntity(
                                 "/orders",
                                 orderRequest,
                                 OrderResponseDto.class);
 
+                // Assert
                 assertNotNull(orderResponse);
                 assertEquals(HttpStatus.OK, orderResponse.getStatusCode());
                 OrderResponseDto order = orderResponse.getBody();

@@ -95,12 +95,14 @@ public class GameIntegrationTest {
     @BeforeAll
     @AfterAll
     public void clearDatabase() {
-
+        // Clear Managers before Categories
         for (Category category : categoryRepository.findAll()) {
             category.removeManager();
             categoryRepository.save(category);
         }
+        
 
+        // Clear Managers before platforms
         for (Platform platform : platformRepository.findAll()) {
             platform.removeManager();
             platformRepository.save(platform);
@@ -118,6 +120,7 @@ public class GameIntegrationTest {
     @Test
     @Order(1)
     public void testCreateValidGame() {
+        // Arrange
         ArrayList<Integer> platformIds = new ArrayList<>();
         ArrayList<Integer> categoryIds = new ArrayList<>();
 
@@ -127,6 +130,8 @@ public class GameIntegrationTest {
         assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
         assertEquals(MANAGER_EMAIL, managerResponse.getBody().getEmail());
 
+        // Create 3 platforms and 3 categories
+        // and set the requestDto's categories and platforms to the created ones
         for (int i = 1; i <= 3; i++) {
             PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
             ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
@@ -165,10 +170,12 @@ public class GameIntegrationTest {
         assertEquals(GAME_STOCK_QUANTITY, response.getBody().getaStockQuantity());
         assertEquals(GAME_PHOTO_URL, response.getBody().getaPhotoUrl()); // Check why changing the name fixed it.
 
+        // Check if the categories are the same
         for (CategorySummaryDto category : response.getBody().getCategories().getCategories()) {
             assertTrue(categoryIds.contains(category.getCategoryId()));
         }
 
+        // Check if the platforms are the same
         for (PlatformSummaryDto platformInResponse : response.getBody().getPlatforms().getPlatforms()) {
             assertTrue(platformIds.contains(platformInResponse.getPlatformId()));
         }
@@ -181,9 +188,13 @@ public class GameIntegrationTest {
     @Test
     @Order(2)
     public void testGetGameById() {
+        // Arrange
         String url = "/games/" + this.game_id;
+
+        // Act
         ResponseEntity<GameResponseDto> response = client.getForEntity(url, GameResponseDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         GameResponseDto game = response.getBody();
@@ -202,6 +213,7 @@ public class GameIntegrationTest {
     @Order(3)
     public void testGetAllGames() {
 
+        // Arrange
         ArrayList<Integer> platformIds = new ArrayList<>();
         ArrayList<Integer> categoryIds = new ArrayList<>();
 
@@ -211,6 +223,8 @@ public class GameIntegrationTest {
         assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
         assertEquals(MANAGER_EMAIL + "m", managerResponse.getBody().getEmail());
 
+        // Create 3 platforms and 3 categories
+        // that are different from the previous ones
         for (int i = 1; i <= 3; i++) {
             PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL + "m");
             ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
@@ -238,8 +252,11 @@ public class GameIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().getaGame_id() > 0, "The ID should be positive");
         this.gameIds.add(response.getBody().getaGame_id());
+
+        // Act
         ResponseEntity<GameListDto> allGamesResponse = client.getForEntity("/games", GameListDto.class);
 
+        // Assert
         GameListDto games = allGamesResponse.getBody();
         assertNotNull(games);
         assertTrue(games.getNumberOfGames() == 2, "There should be two games");
@@ -259,6 +276,7 @@ public class GameIntegrationTest {
     @Order(4)
     public void testUpdateGame() {
 
+        // Arrange
         String newTitle = "New Title";
         String newDescription = "New Description";
         int newPrice = 100;
@@ -289,8 +307,10 @@ public class GameIntegrationTest {
         gameRequestDto.getBody().setCategories(categoryIds);
         gameRequestDto.getBody().setPlatforms(platformIds);
 
+        // Act
         ResponseEntity<GameResponseDto> updateResponse = client.exchange("/games/" + this.game_id, HttpMethod.PUT, gameRequestDto, GameResponseDto.class);
 
+        // Assert
         GameResponseDto updatedGame = updateResponse.getBody();
         assertNotNull(updatedGame);
         assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
@@ -335,6 +355,8 @@ public class GameIntegrationTest {
     @Test
     @Order(5)
     public void testAddCategoryToGame() {
+
+        // Arrange
         CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Category Name", MANAGER_EMAIL);
         ResponseEntity<CategoryResponseDto> categoryResponse = client.postForEntity("/categories", categoryRequestDto, CategoryResponseDto.class);
         assertNotNull(categoryResponse);
@@ -343,8 +365,10 @@ public class GameIntegrationTest {
 
         int categoryIdToAdd = categoryResponse.getBody().getCategoryId();
 
+        // Act
         ResponseEntity<GameResponseDto> response = client.exchange("/games/category/" + this.game_id + "/" + categoryIdToAdd, HttpMethod.PUT, null, GameResponseDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         GameResponseDto game = response.getBody();
@@ -367,6 +391,7 @@ public class GameIntegrationTest {
     @Test
     @Order(6)
     public void testAddPlatformToGame() {
+        // Arrange
         PlatformRequestDto platformRequestDto = new PlatformRequestDto("Platform Name", MANAGER_EMAIL);
         ResponseEntity<PlatformResponseDto> platformResponse = client.postForEntity("/platforms", platformRequestDto, PlatformResponseDto.class);
         assertNotNull(platformResponse);
@@ -375,8 +400,10 @@ public class GameIntegrationTest {
 
         int platformIdToAdd = platformResponse.getBody().getPlatformId();
 
+        // Act
         ResponseEntity<GameResponseDto> response = client.exchange("/games/platform/" + this.game_id + "/" + platformIdToAdd, HttpMethod.PUT, null, GameResponseDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         GameResponseDto game = response.getBody();
@@ -398,10 +425,14 @@ public class GameIntegrationTest {
     @Test
     @Order(7)
     public void testGetGamesByTitle() {
+        // Arrange
         String title = "New Title";
         String url = "/games/Title/" + title;
+
+        // Act
         ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         GameListDto games = response.getBody();
@@ -419,10 +450,14 @@ public class GameIntegrationTest {
     @Test
     @Order(8)
     public void testGetGamesByStatus() {
+        // Arrange
         GameStatus status = GameStatus.OutOfStock;
         String url = "/games/Status/" + status;
+
+        // Act
         ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         GameListDto games = response.getBody();
@@ -440,10 +475,14 @@ public class GameIntegrationTest {
     @Test
     @Order(9)
     public void testGetGamesbyStockQuantity() {
+        // Arrange
         int stockQuantity = 5;
         String url = "/games/SpecificGame/" + stockQuantity;
+
+        // Act
         ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         GameListDto games = response.getBody();
@@ -461,10 +500,14 @@ public class GameIntegrationTest {
     @Test
     @Order(10)
     public void testGetGamesByInvalidStockQuantity() {
+        // Arrange
         int stockQuantity = -1;
         String url = "/games/SpecificGame/" + stockQuantity;
+
+        // Act
         ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -472,10 +515,14 @@ public class GameIntegrationTest {
     @Test
     @Order(11)
     public void testGetGamesByStockQuantityNoResult() {
+        // Arrange
         int stockQuantity = 9999;
         String url = "/games/SpecificGame/" + stockQuantity;
+
+        // Act
         ResponseEntity<GameListDto> response = client.getForEntity(url, GameListDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         GameListDto games = response.getBody();
@@ -599,7 +646,7 @@ public class GameIntegrationTest {
     @Test
     @Order(26)
     public void testDeleteGame() {
-
+        // Arrange
         ResponseEntity<GameResponseDto> getResponse = client.getForEntity("/games/" + this.game_id, GameResponseDto.class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());        
 
@@ -608,9 +655,12 @@ public class GameIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         GameStatus status = GameStatus.Archived;
-        ResponseEntity<GameListDto> invalidResp = client.getForEntity("/games/Status/" + status, GameListDto.class);
-        assertEquals(HttpStatus.OK, invalidResp.getStatusCode());
 
+        // Act
+        ResponseEntity<GameListDto> invalidResp = client.getForEntity("/games/Status/" + status, GameListDto.class);
+
+        // Assert
+        assertEquals(HttpStatus.OK, invalidResp.getStatusCode());
         GameListDto games = invalidResp.getBody();
         assertEquals(games.getNumberOfGames(), 1);
     

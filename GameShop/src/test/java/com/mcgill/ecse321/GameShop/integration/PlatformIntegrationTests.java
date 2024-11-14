@@ -78,6 +78,7 @@ public class PlatformIntegrationTests {
     @BeforeAll
     @AfterAll
     public void clearDatabase() {
+        // Clear associated platform to games 
         for (Game game : gameRepo.findAll()) {
             List<Platform> platforms = new ArrayList<>(game.getPlatforms());
             for (Platform platform : platforms) {
@@ -96,12 +97,15 @@ public class PlatformIntegrationTests {
     @Test
     @Order(1)
     public void testCreateValidPlatform() {
+        // Arrange
         AccountRequestDto manager = new AccountRequestDto(MANAGER_EMAIL, MANAGER_USERNAME, MANAGER_PASSWORD, MANAGER_PHONE, MANAGER_ADDRESS);
         ResponseEntity<AccountResponseDto> managerResponse = client.postForEntity("/account/manager", manager, AccountResponseDto.class);
         PlatformRequestDto request = new PlatformRequestDto(PLATFORM_NAME, MANAGER_EMAIL);
 
+        // Act
         ResponseEntity<PlatformResponseDto> response = client.postForEntity("/platforms", request, PlatformResponseDto.class);
 
+        // Assert
         assertNotNull(managerResponse);
         assertEquals(HttpStatus.OK, managerResponse.getStatusCode());
         assertEquals(MANAGER_EMAIL, managerResponse.getBody().getEmail());
@@ -119,9 +123,13 @@ public class PlatformIntegrationTests {
     @Test
     @Order(2)
     public void testGetPlatformById() {
+        // Arrange
         String url = String.format("/platforms/%d", this.platformId);
+
+        // Act
         ResponseEntity<PlatformResponseDto> response = client.getForEntity(url, PlatformResponseDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         PlatformResponseDto platform = response.getBody();
@@ -134,12 +142,15 @@ public class PlatformIntegrationTests {
     @Test
     @Order(3)
     public void testUpdatePlatform() {
+        // Arrange
         String url = String.format("/platforms/%d", this.platformId);
         PlatformRequestDto updateRequest = new PlatformRequestDto(UPDATED_PLATFORM_NAME, MANAGER_EMAIL);
         HttpEntity<PlatformRequestDto> requestEntity = new HttpEntity<>(updateRequest);
 
+        // Act
         ResponseEntity<PlatformResponseDto> updateResponse = client.exchange(url, HttpMethod.PUT, requestEntity, PlatformResponseDto.class);
 
+        // Assert
         assertNotNull(updateResponse);
         assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
         PlatformResponseDto updatedPlatform = updateResponse.getBody();
@@ -152,13 +163,16 @@ public class PlatformIntegrationTests {
       @Test
     @Order(4)
     public void testGetAllPlatforms() {
+        // Arrange
         PlatformRequestDto request = new PlatformRequestDto(SECOND_NAME, MANAGER_EMAIL);
         ResponseEntity<PlatformResponseDto> createResponse = client.postForEntity("/platforms", request, PlatformResponseDto.class);
         assertNotNull(createResponse);
         assertEquals(HttpStatus.OK, createResponse.getStatusCode());
         
+        // Act
         ResponseEntity<PlatformListDto> response = client.getForEntity("/platforms", PlatformListDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         PlatformListDto platforms = response.getBody();
