@@ -32,17 +32,21 @@ public class OrderController {
         /**
          * Create a new order.
          * 
-         * @param request the order request data transfer object containing the details of the order to be created
-         * @return the response data transfer object containing the details of the created order
+         * @param request the order request data transfer object containing the details
+         *                of the order to be created
+         * @return the response data transfer object containing the details of the
+         *         created order
          */
         @PostMapping("/orders")
         public OrderResponseDto createOrder(@RequestBody OrderRequestDto request) {
+                // Create the order
                 Order order = orderService.createOrder(
                                 request.getOrderDate(),
                                 request.getNote(),
                                 request.getPaymentCard(),
                                 request.getCustomerEmail());
 
+                // retrieve the specific games associated with the order
                 List<SpecificGameResponseDto> specificGames = orderService
                                 .getSpecificGamesByOrder(order.getTrackingNumber())
                                 .stream()
@@ -56,11 +60,15 @@ public class OrderController {
          * Get an order by tracking number.
          * 
          * @param trackingNumber the tracking number of the order to retrieve
-         * @return the response data transfer object containing the details of the retrieved order
+         * @return the response data transfer object containing the details of the
+         *         retrieved order
          */
         @GetMapping("/orders/{trackingNumber}")
         public OrderResponseDto getOrderByTrackingNumber(@PathVariable String trackingNumber) {
+                // get the order by tracking number
                 Order order = orderService.getOrderByTrackingNumber(trackingNumber);
+
+                // retrieve the specific games associated with the order
                 List<SpecificGameResponseDto> specificGames = orderService.getSpecificGamesByOrder(trackingNumber)
                                 .stream()
                                 .map(SpecificGameResponseDto::new)
@@ -85,19 +93,23 @@ public class OrderController {
          * Update an existing order.
          * 
          * @param trackingNumber the tracking number of the order to update
-         * @param request the order request data transfer object containing the updated details of the order
-         * @return the response data transfer object containing the details of the updated order
+         * @param request        the order request data transfer object containing the
+         *                       updated details of the order
+         * @return the response data transfer object containing the details of the
+         *         updated order
          */
         @PutMapping("/orders/{trackingNumber}")
         public OrderResponseDto updateOrder(
                         @PathVariable String trackingNumber,
                         @RequestBody OrderRequestDto request) {
+                // Update the order
                 Order order = orderService.updateOrder(
                                 trackingNumber,
                                 request.getOrderDate(),
                                 request.getNote(),
                                 request.getPaymentCard());
 
+                // Retrieve the specific games associated with the order
                 List<SpecificGameResponseDto> specificGames = orderService
                                 .getSpecificGamesByOrder(order.getTrackingNumber())
                                 .stream()
@@ -111,15 +123,22 @@ public class OrderController {
          * Add a game to an order.
          * 
          * @param trackingNumber the tracking number of the order to add the game to
-         * @param request the order add game request data transfer object containing the game ID and quantity to add
-         * @return the response data transfer object containing the details of the updated order
+         * @param request        the order add game request data transfer object
+         *                       containing the game ID and quantity to add
+         * @return the response data transfer object containing the details of the
+         *         updated order
          */
         @PostMapping("/orders/{trackingNumber}/games")
         public OrderResponseDto addGameToOrder(
                         @PathVariable String trackingNumber,
                         @RequestBody OrderAddGameRequestDto request) {
+                // Add the game to the order
                 orderService.addGameToOrder(trackingNumber, request.getGameId(), request.getQuantity());
+
+                // Get the order by tracking number
                 Order order = orderService.getOrderByTrackingNumber(trackingNumber);
+
+                // Retrieve the specific games associated with the order
                 List<SpecificGameResponseDto> specificGames = orderService.getSpecificGamesByOrder(trackingNumber)
                                 .stream()
                                 .map(SpecificGameResponseDto::new)
@@ -131,8 +150,10 @@ public class OrderController {
         /**
          * Get specific games by order tracking number.
          * 
-         * @param trackingNumber the tracking number of the order to retrieve specific games from
-         * @return a list data transfer object containing the summaries of the specific games in the order
+         * @param trackingNumber the tracking number of the order to retrieve specific
+         *                       games from
+         * @return a list data transfer object containing the summaries of the specific
+         *         games in the order
          */
         @GetMapping("/orders/{trackingNumber}/specificGames")
         public SpecificGameListDto getSpecificGamesByOrder(@PathVariable String trackingNumber) {
@@ -149,16 +170,24 @@ public class OrderController {
         /**
          * Return a specific game from an order.
          * 
-         * @param trackingNumber the tracking number of the order to return the game from
+         * @param trackingNumber the tracking number of the order to return the game
+         *                       from
          * @param specificGameId the ID of the specific game to return
-         * @return the response data transfer object containing the details of the updated order
+         * @return the response data transfer object containing the details of the
+         *         updated order
          */
         @PostMapping("/orders/{trackingNumber}/return/{specificGameId}")
         public OrderResponseDto returnGame(
                         @PathVariable String trackingNumber,
                         @PathVariable int specificGameId) {
+
+                // Return the game
                 orderService.returnGame(trackingNumber, specificGameId);
+
+                // Get order by tracking number
                 Order order = orderService.getOrderByTrackingNumber(trackingNumber);
+
+                // Get the specific games associated with the order
                 List<SpecificGameResponseDto> specificGames = orderService.getSpecificGamesByOrder(trackingNumber)
                                 .stream()
                                 .map(SpecificGameResponseDto::new)
@@ -170,12 +199,15 @@ public class OrderController {
          * Get orders by customer email.
          * 
          * @param customerEmail the email of the customer to retrieve orders for
-         * @return a list data transfer object containing the summaries of the orders for the specified customer
+         * @return a list data transfer object containing the summaries of the orders
+         *         for the specified customer
          */
         @GetMapping("/orders/customer/{customerEmail}")
         public OrderListDto getOrdersByCustomerEmail(@PathVariable String customerEmail) {
+                // Get the orders associated with the customer
                 List<Order> orders = orderService.getOrdersWithCustomerEmail(customerEmail);
 
+                // Map Order to OrderSummaryDto
                 List<OrderSummaryDto> orderDtos = orders.stream().map(OrderSummaryDto::new)
                                 .collect(Collectors.toList());
 
