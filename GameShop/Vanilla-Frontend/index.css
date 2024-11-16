@@ -1,0 +1,38 @@
+html {
+    background-color: wheat;
+    font-family: 'Arial', sans-serif;
+}
+/* we havent linked the css yet ot the html */
+
+h2 {
+    text-decoration: underline;
+}
+td, th {
+    padding: 1em;
+    /* space between the elements */
+    /* relative scale ot the padding scale relatively whatever you wanna use ot the pading  */
+    border: 1px solid black;
+    /* border around the elements */
+
+}
+/* how to only select the button o create event i don t wnat all of them
+ */
+ /* this hashtag is per id */
+#create-btn{
+    border: 1px solid green;
+    color: green;
+
+}
+/* category as a whole uses . */
+.notice-btn{
+    border: 1px solid red;
+    color: red;
+}
+
+img{
+    width: 400px;
+    height: 400px;
+    /* width and height of the image */
+    border-radius: 100px;
+    /* border radius of the image */
+}

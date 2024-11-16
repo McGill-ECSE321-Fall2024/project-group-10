@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GameShop</title>
+    <link rel="stylesheet" href="./index.css">
+    <script src="./index.js"></script>
+    <!-- what if i want to set the color for just a section  -->
+</head>
+<body>
+    <img src="D:\ecse321-group-project-321\project-group-10\GameShop\Vanilla-Frontend\images\unable to play podcast-spotify.png" alt="GameShop Logo"> 
+    <!-- the text of alt is the title of the picture  -->
+     <!-- we will learn how to resize it in the css -->
+<h1>Welcome to GameShop</h1>
+<h2> Schedule new in person event</h2>
+<p> Please fill out the form below to schedule a new in person event</p>
+<div> 
+    <!-- input fields -->
+     <!-- type is what the type are we expecitng to have in it  -->
+      <!-- palceholder is what we see if it s empty -->
+    <input id="name-input"type="text" placeholder="Event Name"/>
+    <input type="date" placeholder="Date" id="date-input"/>
+    <input type="time" placeholder="Start  Time" id="start-time-input"/>
+    <input type="time" placeholder="End Time"/>
+    <input type="text" placeholder="Registration Limit" id="reg-limit-input"/>
+    <input type="text" placeholder="Location"/>
+    <!-- <select type="int" /> -->
+
+    <!-- buttons -->
+     <button id="create-btn">Create event</button>
+     <button class="notice-btn" id="clear-btn">clear</button>
+     <button class="notice-btn" id="del-all-btn">Delete all event</button>
+
+     <h2> Events</h2>
+     <table>
+        <tbody id="event-table-body">
+            <!-- tr is the rows -->
+            <tr>
+                 <!-- <table head></table> -->
+                
+
+                <th> Name</th>
+                <th>Date</th>
+                <th>Registration Limit</th>
+
+            </tr>
+            <tr>
+                <td>Party</td>
+                <td>1996-03-20</td>
+                <td>10</td>
+            </tr>
+
+
+
+        </tbody>
+     </table>
+
+</div>
+<!-- each here is an elemente and we need to put the inside the div and we cna give htem all the stuff in the div wiht the same css 
+ we re going to see hwo to put boxes for input  -->
+</body>
+</html>
