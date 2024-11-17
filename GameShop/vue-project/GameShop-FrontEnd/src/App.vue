@@ -12,8 +12,8 @@ import GameShop from './views/GameShop.vue'
       <HelloWorld msg="You did it!" />
 
       <nav>
-        <RouterLink to="/ga">kaka</RouterLink>
-        <RouterLink to="/hello">About</RouterLink>
+        <RouterLink to="/ga">createAccount</RouterLink>
+        <RouterLink to="/">About</RouterLink>
       </nav>
     </div>
   </header>
