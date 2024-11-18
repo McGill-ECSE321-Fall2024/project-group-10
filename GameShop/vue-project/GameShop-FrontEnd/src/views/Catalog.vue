@@ -7,34 +7,36 @@
       <!-- Promotions Filter -->
       <div class="filter-section">
         <h4>Promotions</h4>
-        <div
-          class="custom-checkbox"
-          v-for="(promotion, index) in [filters.onSale]"
-          :key="'promotion-' + index"
-        >
+        <div class="custom-checkbox">
           <input
             type="checkbox"
-            id="promotion"
+            id="onSale"
             v-model="filters.onSale"
             @change="applyFilters"
           />
-          <label for="promotion">On Sale</label>
+          <label for="onSale">On Sale</label>
         </div>
       </div>
 
       <!-- Category Filter -->
-<!-- Category Filter -->
-<div class="filter-section">
-  <h4>Category</h4>
-  <v-checkbox
-    v-for="category in categories"
-    :key="category.categoryId"
-    :label="category.categoryName"
-    :value="category.categoryId"
-    v-model.number="filters.categories" 
-    @change="applyFilters"
-  ></v-checkbox>
-</div>
+      <div class="filter-section">
+        <h4>Category</h4>
+        <div
+          class="custom-checkbox"
+          v-for="category in categories"
+          :key="category.categoryId"
+        >
+          <input
+            type="checkbox"
+            :id="'category-' + category.categoryId"
+            :checked="filters.categories.includes(category.categoryId)"
+            @change="toggleCategoryFilter(category.categoryId)"
+          />
+          <label :for="'category-' + category.categoryId">
+            {{ category.categoryName }}
+          </label>
+        </div>
+      </div>
 
       <!-- Platform Filter -->
       <div class="filter-section">
@@ -47,9 +49,8 @@
           <input
             type="checkbox"
             :id="'platform-' + platform"
-            :value="platform"
-            v-model="filters.platforms"
-            @change="applyFilters"
+            :checked="filters.platforms.includes(platform)"
+            @change="togglePlatformFilter(platform)"
           />
           <label :for="'platform-' + platform">{{ platform }}</label>
         </div>
@@ -100,45 +101,92 @@ export default defineComponent({
     const platforms = ref([]);
 
     const filteredProducts = computed(() => {
-  return store.products.filter((product) => {
-    let matches = true;
+      return store.products.filter((product) => {
+        let matches = true;
 
-    // Filter by Promotions
-    if (filters.value.onSale) {
-      matches =
-        matches &&
-        product.promotions &&
-        product.promotions.length > 0;
-    }
+        // Filter by Promotions
+        if (filters.value.onSale) {
+          matches =
+            matches &&
+            product.promotions &&
+            product.promotions.length > 0;
+        }
 
-    // Filter by Categories
-    if (filters.value.categories.length > 0) {
-      matches =
-        matches &&
-        product.categories &&
-        product.categories.some((cat) =>
-          filters.value.categories.includes(cat.categoryId)
+        // Filter by Platforms
+        if (filters.value.platforms.length > 0) {
+          matches =
+            matches &&
+            product.platforms &&
+            product.platforms.some((plat) =>
+              filters.value.platforms.includes(plat.platformName)
+            );
+        }
+
+        return matches;
+      });
+    });
+
+    const applyFilters = async () => {
+      if (filters.value.categories.length > 0) {
+        await fetchGamesByCategories(filters.value.categories);
+      } else {
+        await store.fetchProductsFromDB();
+      }
+    };
+
+    const fetchGamesByCategories = async (categoryIds) => {
+      try {
+        let gamesSet = new Set();
+        for (const id of categoryIds) {
+          const response = await fetch(
+            `http://localhost:8080/categories/${id}/games`
+          );
+          const data = await response.json();
+
+          data.games.forEach((game) => {
+            // Convert game object to string for Set uniqueness
+            gamesSet.add(JSON.stringify(game));
+          });
+        }
+
+        // Convert Set back to array of game objects
+        const gamesArray = Array.from(gamesSet).map((gameStr) =>
+          JSON.parse(gameStr)
         );
-    }
 
-    // Filter by Platforms (if applicable)
-    if (filters.value.platforms.length > 0) {
-      matches =
-        matches &&
-        product.platforms &&
-        product.platforms.some((plat) =>
-          filters.value.platforms.includes(plat.platformName)
+        // Process gamesArray as needed
+        const games = gamesArray.map((game) => ({
+          ...game,
+          categories: game.categories?.categories || [],
+          platforms: game.platforms?.platforms || [],
+          promotions: game.promotions || [],
+        }));
+
+        store.products = games;
+      } catch (error) {
+        console.error("Error fetching games by categories:", error);
+      }
+    };
+
+    const toggleCategoryFilter = async (categoryId) => {
+      if (filters.value.categories.includes(categoryId)) {
+        filters.value.categories = filters.value.categories.filter(
+          (id) => id !== categoryId
         );
-    }
-    console.log("Product ID:", product.gameId);
-console.log("Product Categories:", product.categories.map(cat => cat.categoryId));
-console.log("Selected Categories:", filters.value.categories);
-    return matches;
-  });
-});
+      } else {
+        filters.value.categories.push(categoryId);
+      }
+      await applyFilters();
+    };
 
-    const applyFilters = () => {
-      // Trigger computed property recalculation
+    const togglePlatformFilter = (platformName) => {
+      if (filters.value.platforms.includes(platformName)) {
+        filters.value.platforms = filters.value.platforms.filter(
+          (name) => name !== platformName
+        );
+      } else {
+        filters.value.platforms.push(platformName);
+      }
     };
 
     const goToProductPage = (id) => {
@@ -177,6 +225,8 @@ console.log("Selected Categories:", filters.value.categories);
       filteredProducts,
       goToProductPage,
       applyFilters,
+      toggleCategoryFilter,
+      togglePlatformFilter,
     };
   },
 });
@@ -220,9 +270,7 @@ console.log("Selected Categories:", filters.value.categories);
   outline: none;
   cursor: pointer;
   margin-right: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
 }
 
 .custom-checkbox input[type="checkbox"]:checked {
@@ -233,10 +281,9 @@ console.log("Selected Categories:", filters.value.categories);
   content: "✔";
   color: white;
   font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  position: absolute;
+  left: 2px;
+  top: -2px;
 }
 
 .custom-checkbox label {
