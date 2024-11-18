@@ -1,3 +1,5 @@
+<!-- File: src/views/Cart.vue -->
+
 <template>
   <v-btn @click="router.push({ name: 'Catalog' })">Back to catalog</v-btn>
   <div v-if="!store.cart.length" style="text-align: center">
@@ -7,16 +9,17 @@
     <div
       class="cart-item"
       v-for="item in store.cart"
-      :key="item.gameId"
+      :key="item.game_id"
     >
       <div class="item-details">
         <img :src="item.photoUrl" alt="" />
         <span>Title: {{ item.title }}</span>
-        <span>Category: {{ (item.categories || []).map(cat => cat.categoryName).join(', ') }}</span>
         <span>Price: ${{ item.price }}</span>
-        <v-btn @click="removeFromCart(item.gameId)">Remove</v-btn>
+        <v-btn @click="removeFromCart(item.game_id)">Remove</v-btn>
       </div>
     </div>
+    <!-- Proceed to Checkout Button -->
+    <v-btn color="success" @click="proceedToCheckout">Proceed to Checkout</v-btn>
   </div>
 </template>
 
@@ -24,28 +27,43 @@
 import { defineComponent } from 'vue';
 import { productsStore } from '@/stores/products';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from "@/stores/auth";
 
 export default defineComponent({
   name: 'CartView',
   setup() {
     const store = productsStore();
     const router = useRouter();
+    const auth = useAuthStore();
 
     const removeFromCart = (id) => {
       store.removeFromCart(id);
+    };
+
+    const proceedToCheckout = () => {
+      if (!auth.user) {
+        router.push({ name: 'Login' }); // Require login before checkout
+      } else {
+        router.push({ name: 'Checkout' }); // Proceed to checkout page
+      }
     };
 
     return {
       store,
       router,
       removeFromCart,
+      proceedToCheckout,
     };
   },
 });
 </script>
 
 <style scoped>
-.item-details {
+.cart-items {
+  padding: 16px;
+}
+
+.cart-item {
   display: flex;
   flex-direction: column;
   margin-bottom: 32px;
@@ -54,8 +72,14 @@ export default defineComponent({
   padding: 16px;
 }
 
+.item-details {
+  display: flex;
+  align-items: center;
+}
+
 .item-details img {
-  width: 20%;
-  margin-bottom: 16px;
+  width: 100px;
+  margin-right: 16px;
+  border-radius: 8px;
 }
 </style>
