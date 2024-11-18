@@ -1,6 +1,7 @@
-import { defineStore } from 'pinia';
 
-export const productsStore = defineStore('products', {
+import { defineStore } from "pinia";
+
+export const productsStore = defineStore("products", {
   state: () => ({
     products: [],
     cart: [],
@@ -9,19 +10,18 @@ export const productsStore = defineStore('products', {
   actions: {
     async fetchProductsFromDB() {
       try {
-        const response = await fetch('http://localhost:8080/games');
+        const response = await fetch("http://localhost:8080/games");
         const data = await response.json();
         this.products = data.games.map((game) => ({
           ...game,
-          categories: game.categories || [],
-          platforms: game.platforms || [],
+          categories: game.categories?.categories || [], // Flatten categories
+          platforms: game.platforms?.platforms || [], // Flatten platforms
           promotions: game.promotions || [],
         }));
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error("Error fetching products:", error);
       }
     },
-
     addToCart(product) {
       this.cart.push(product);
     },
@@ -69,15 +69,14 @@ export const productsStore = defineStore('products', {
     },
 
     async fetchCategories() {
-      try {
-        const response = await fetch('http://localhost:8080/categories');
-        const data = await response.json();
-        return data.categories;
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-        return [];
-      }
-    },
+        try {
+          const response = await fetch('http://localhost:8080/categories');
+          const data = await response.json();
+          this.categories = data.categories || []; // Ensure categories are updated in the store
+        } catch (error) {
+          console.error('Error fetching categories:', error);
+        }
+      },
 
     async fetchPlatforms() {
       try {
