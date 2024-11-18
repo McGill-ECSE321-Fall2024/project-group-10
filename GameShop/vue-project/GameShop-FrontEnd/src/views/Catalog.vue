@@ -3,41 +3,56 @@
     <!-- Sidebar with Filters -->
     <div class="sidebar">
       <h3>Filters</h3>
-      
+
       <!-- Promotions Filter -->
       <div class="filter-section">
         <h4>Promotions</h4>
-        <v-checkbox
-          label="On Sale"
-          v-model="filters.onSale"
-          @change="applyFilters"
-        ></v-checkbox>
+        <div
+          class="custom-checkbox"
+          v-for="(promotion, index) in [filters.onSale]"
+          :key="'promotion-' + index"
+        >
+          <input
+            type="checkbox"
+            id="promotion"
+            v-model="filters.onSale"
+            @change="applyFilters"
+          />
+          <label for="promotion">On Sale</label>
+        </div>
       </div>
 
       <!-- Category Filter -->
-      <div class="filter-section">
-        <h4>Category</h4>
-        <v-checkbox
-          v-for="category in categories"
-          :key="category"
-          :label="category"
-          :value="category"
-          v-model="filters.categories"
-          @change="applyFilters"
-        ></v-checkbox>
-      </div>
+<!-- Category Filter -->
+<div class="filter-section">
+  <h4>Category</h4>
+  <v-checkbox
+    v-for="category in categories"
+    :key="category.categoryId"
+    :label="category.categoryName"
+    :value="category.categoryId"
+    v-model.number="filters.categories" 
+    @change="applyFilters"
+  ></v-checkbox>
+</div>
 
       <!-- Platform Filter -->
       <div class="filter-section">
         <h4>Platform</h4>
-        <v-checkbox
+        <div
+          class="custom-checkbox"
           v-for="platform in platforms"
           :key="platform"
-          :label="platform"
-          :value="platform"
-          v-model="filters.platforms"
-          @change="applyFilters"
-        ></v-checkbox>
+        >
+          <input
+            type="checkbox"
+            :id="'platform-' + platform"
+            :value="platform"
+            v-model="filters.platforms"
+            @change="applyFilters"
+          />
+          <label :for="'platform-' + platform">{{ platform }}</label>
+        </div>
       </div>
     </div>
 
@@ -61,13 +76,13 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted } from 'vue';
-import ProductItem from '@/components/ProductItem.vue';
-import { productsStore } from '@/stores/products';
-import { useRouter } from 'vue-router';
+import { defineComponent, ref, computed, onMounted } from "vue";
+import ProductItem from "@/components/ProductItem.vue";
+import { productsStore } from "@/stores/products";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
-  name: 'CatalogView',
+  name: "CatalogView",
   components: {
     ProductItem,
   },
@@ -85,52 +100,72 @@ export default defineComponent({
     const platforms = ref([]);
 
     const filteredProducts = computed(() => {
-      return store.products.filter((product) => {
-        let matches = true;
+  return store.products.filter((product) => {
+    let matches = true;
 
-        // Filter by Promotions
-        if (filters.value.onSale) {
-          matches = matches && product.promotions && product.promotions.length > 0;
-        }
+    // Filter by Promotions
+    if (filters.value.onSale) {
+      matches =
+        matches &&
+        product.promotions &&
+        product.promotions.length > 0;
+    }
 
-        // Filter by Categories
-        if (filters.value.categories.length > 0) {
-          matches = matches && product.categories && product.categories.some((cat) =>
-            filters.value.categories.includes(cat.categoryName)
-          );
-        }
+    // Filter by Categories
+    if (filters.value.categories.length > 0) {
+      matches =
+        matches &&
+        product.categories &&
+        product.categories.some((cat) =>
+          filters.value.categories.includes(cat.categoryId)
+        );
+    }
 
-        // Filter by Platforms
-        if (filters.value.platforms.length > 0) {
-          matches = matches && product.platforms && product.platforms.some((plat) =>
-            filters.value.platforms.includes(plat.platformName)
-          );
-        }
-
-        return matches;
-      });
-    });
+    // Filter by Platforms (if applicable)
+    if (filters.value.platforms.length > 0) {
+      matches =
+        matches &&
+        product.platforms &&
+        product.platforms.some((plat) =>
+          filters.value.platforms.includes(plat.platformName)
+        );
+    }
+    console.log("Product ID:", product.gameId);
+console.log("Product Categories:", product.categories.map(cat => cat.categoryId));
+console.log("Selected Categories:", filters.value.categories);
+    return matches;
+  });
+});
 
     const applyFilters = () => {
       // Trigger computed property recalculation
     };
 
     const goToProductPage = (id) => {
-      router.push({ name: 'ProductView', params: { id } });
+      router.push({ name: "ProductView", params: { id } });
     };
 
     onMounted(async () => {
       await store.fetchProductsFromDB();
 
-      // Initialize categories and platforms
-      categories.value = [
-        ...new Set(
-          store.products.flatMap((p) => (p.categories || []).map((cat) => cat.categoryName))
-        ),
-      ];
+      // Fetch categories dynamically from the backend
+      try {
+        const response = await fetch("http://localhost:8080/categories");
+        const data = await response.json();
+        categories.value = data.categories.map((cat) => ({
+          categoryName: cat.categoryName,
+          categoryId: cat.categoryId,
+        }));
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+
+      // Initialize platforms dynamically based on products
       platforms.value = [
         ...new Set(
-          store.products.flatMap((p) => (p.platforms || []).map((plat) => plat.platformName))
+          store.products.flatMap((p) =>
+            (p.platforms || []).map((plat) => plat.platformName)
+          )
         ),
       ];
     });
@@ -167,5 +202,45 @@ export default defineComponent({
 .products-list {
   flex: 1;
   padding: 16px;
+}
+
+/* Custom Checkbox Styles */
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.custom-checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid black;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-checkbox input[type="checkbox"]:checked {
+  background-color: black;
+}
+
+.custom-checkbox input[type="checkbox"]:checked::before {
+  content: "✔";
+  color: white;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.custom-checkbox label {
+  cursor: pointer;
+  font-size: 14px;
 }
 </style>
