@@ -12,6 +12,7 @@ public class AccountResponseDto {
     private String username;
     private String phoneNumber;
     private String address;
+    private String password;
 
     protected AccountResponseDto(){}
 
@@ -29,6 +30,7 @@ public class AccountResponseDto {
         this.username = account.getUsername();
         this.phoneNumber = account.getPhoneNumber();
         this.address = account.getAddress();
+        this.password = account.getPassword();
     }
 
     public static AccountResponseDto create(Account account){
@@ -58,5 +60,8 @@ public class AccountResponseDto {
 
     public String getAddress(){
         return address;
+    }
+    public String getPassword(){
+        return password;
     }
 }
