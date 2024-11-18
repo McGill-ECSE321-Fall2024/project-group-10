@@ -1,87 +1,73 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-import GameShop from './views/GameShop.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/ga">createAccount</RouterLink>
-        <RouterLink to="/">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
-  <h1>Event Registration</h1>
+  <div>
+    <v-app>
+      <v-toolbar title="Game Shop">
+        <v-spacer></v-spacer>
+        <v-btn
+          @click="goToCart"
+          color="primary"
+          variant="elevated"
+        >
+          Cart ({{ cartItemCount }})
+        </v-btn>
+        <v-btn
+          v-if="auth.user"
+          @click="logout"
+          color="secondary"
+          variant="elevated"
+        >
+          Logout
+        </v-btn>
+        <v-btn
+          v-else
+          @click="router.push({ name: 'Login' })"
+          color="secondary"
+          variant="elevated"
+        >
+          Login
+        </v-btn>
+      </v-toolbar>
+      <router-view />
+    </v-app>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+<script>
+import { defineComponent, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { productsStore } from '@/stores/products';
+import { useAuthStore } from '@/stores/auth';
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+export default defineComponent({
+  name: 'App',
+  setup() {
+    const router = useRouter();
+    const store = productsStore();
+    const auth = useAuthStore();
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+    const cartItemCount = computed(() => store.cart.length);
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
+    const goToCart = () => {
+      router.push({ name: 'CartView' });
+    };
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
+    const logout = () => {
+      auth.logout();
+      router.push({ name: 'Catalog' });
+    };
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
+    return {
+      router,
+      store,
+      auth,
+      cartItemCount,
+      goToCart,
+      logout,
+    };
+  },
+});
+</script>
 
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
+<style>
+/* Add global styles if needed */
 </style>
