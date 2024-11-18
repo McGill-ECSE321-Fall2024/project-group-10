@@ -14,6 +14,7 @@ import AddGame from '@/views/manager/AddGame.vue';
 import EditGame from '@/views/manager/EditGame.vue';
 import Checkout from '@/views/Checkout.vue';
 import ManageCategories from '@/views/manager/ManageCategories.vue';
+import ManagePlatforms from '@/views/manager/ManagePlatforms.vue';
 
 const routes = [
   {
@@ -68,6 +69,11 @@ const routes = [
         path: 'categories', // Changed from '/manager/categories' to 'categories'
         name: 'ManageCategories',
         component: ManageCategories,
+      },
+      {
+        path: 'platforms',
+        name: 'ManagePlatforms',
+        component: ManagePlatforms,
       },
       // Add other manager routes as needed
     ],
