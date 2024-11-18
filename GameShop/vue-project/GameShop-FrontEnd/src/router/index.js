@@ -16,7 +16,38 @@ import Checkout from '@/views/Checkout.vue';
 import ManageCategories from '@/views/manager/ManageCategories.vue';
 
 const routes = [
-  // ... other routes
+  {
+    path: '/',
+    name: 'Catalog',
+    component: Catalog,
+  },
+  {
+    path: '/product/:id',
+    name: 'ProductView',
+    component: ProductDetail,
+  },
+  {
+    path: '/cart',
+    name: 'CartView',
+    component: Cart,
+    // Removed meta: { requiresAuth: true } to allow access without login
+  },
+  {
+    path: '/checkout',
+    name: 'Checkout',
+    component: Checkout,
+    meta: { requiresAuth: true, role: 'customer' }, // Require login here
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register,
+  },
   {
     path: '/manager',
     name: 'ManagerDashboard',
