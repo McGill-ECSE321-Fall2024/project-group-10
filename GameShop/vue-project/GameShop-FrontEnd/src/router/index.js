@@ -1,3 +1,5 @@
+// File: src/router/index.js
+
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
@@ -10,6 +12,7 @@ import Register from '@/views/Register.vue';
 import ManagerDashboard from '@/views/manager/ManagerDashboard.vue';
 import AddGame from '@/views/manager/AddGame.vue';
 import EditGame from '@/views/manager/EditGame.vue';
+import Checkout from '@/views/Checkout.vue'; // Import the Checkout view
 
 const routes = [
   {
@@ -26,7 +29,13 @@ const routes = [
     path: '/cart',
     name: 'CartView',
     component: Cart,
-    meta: { requiresAuth: true, role: 'customer' },
+    // Removed meta: { requiresAuth: true } to allow access without login
+  },
+  {
+    path: '/checkout',
+    name: 'Checkout',
+    component: Checkout,
+    meta: { requiresAuth: true, role: 'customer' }, // Require login here
   },
   {
     path: '/login',

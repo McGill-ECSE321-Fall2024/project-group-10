@@ -1,5 +1,3 @@
-// File: src/stores/auth.js
-
 import { defineStore } from "pinia";
 
 export const useAuthStore = defineStore("auth", {
@@ -22,8 +20,6 @@ export const useAuthStore = defineStore("auth", {
             this.role = "customer";
             console.log("Customer account found:", customer);
             return;
-          } else {
-            console.log("Customer credentials mismatch");
           }
         }
 
@@ -38,8 +34,6 @@ export const useAuthStore = defineStore("auth", {
             this.role = "employee";
             console.log("Employee account found:", employee);
             return;
-          } else {
-            console.log("Employee credentials mismatch");
           }
         }
 
@@ -52,8 +46,6 @@ export const useAuthStore = defineStore("auth", {
             this.role = "manager";
             console.log("Manager account found:", manager);
             return;
-          } else {
-            console.log("Manager credentials mismatch");
           }
         }
 
@@ -87,71 +79,6 @@ export const useAuthStore = defineStore("auth", {
         console.log("Customer registered successfully:", data);
       } catch (error) {
         console.error("Registration error:", error);
-        throw error;
-      }
-    },
-
-    async registerEmployee(accountData) {
-      try {
-        const response = await fetch(
-          "http://localhost:8080/account/employee",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(accountData),
-          }
-        );
-        const data = await response.json();
-        console.log("Employee registered successfully:", data);
-      } catch (error) {
-        console.error("Employee registration error:", error);
-        throw error;
-      }
-    },
-
-    async registerManager(accountData) {
-      try {
-        const response = await fetch(
-          "http://localhost:8080/account/manager",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(accountData),
-          }
-        );
-        const data = await response.json();
-        console.log("Manager registered successfully:", data);
-      } catch (error) {
-        console.error("Manager registration error:", error);
-        throw error;
-      }
-    },
-
-    async fetchAccounts() {
-      try {
-        const customerResponse = await fetch(
-          "http://localhost:8080/account/customers"
-        );
-        const employeeResponse = await fetch(
-          "http://localhost:8080/account/employees"
-        );
-        const managerResponse = await fetch(
-          "http://localhost:8080/account/getmanager"
-        );
-
-        const customers = await customerResponse.json();
-        const employees = await employeeResponse.json();
-        const manager = managerResponse.ok
-          ? await managerResponse.json()
-          : null;
-
-        return {
-          customers: customers.accounts || [],
-          employees: employees.employees || [],
-          manager: manager ? [manager] : [],
-        };
-      } catch (error) {
-        console.error("Error fetching accounts:", error);
         throw error;
       }
     },
