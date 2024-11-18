@@ -11,7 +11,6 @@ export const productsStore = defineStore('products', {
       try {
         const response = await fetch('http://localhost:8080/games');
         const data = await response.json();
-        // Map games to ensure categories and platforms are arrays
         this.products = data.games.map((game) => ({
           ...game,
           categories: game.categories || [],
@@ -35,7 +34,6 @@ export const productsStore = defineStore('products', {
       try {
         const response = await fetch(`http://localhost:8080/carts/customer/${customerEmail}`);
         const data = await response.json();
-        // Assuming data contains cart information with games and quantities
         this.cart = data.games;
       } catch (error) {
         console.error('Error fetching cart:', error);
@@ -50,14 +48,12 @@ export const productsStore = defineStore('products', {
           body: JSON.stringify({ gameId, quantity }),
         });
         const data = await response.json();
-        // Update cart based on response
         this.cart = data.games;
       } catch (error) {
         console.error('Error adding game to cart:', error);
       }
     },
 
-    // Additional methods for manager actions
     async addGame(gameData) {
       try {
         const response = await fetch('http://localhost:8080/games', {

@@ -22,7 +22,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['item-clicked']);
-
 const store = productsStore();
 
 const goToProductPage = (productId) => {
