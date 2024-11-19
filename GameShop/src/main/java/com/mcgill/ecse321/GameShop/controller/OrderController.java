@@ -128,7 +128,7 @@ public class OrderController {
          * @return the response data transfer object containing the details of the
          *         updated order
          */
-        @PostMapping("/orders/{trackingNumber}/games")
+        @PutMapping("/orders/{trackingNumber}/games")
         public OrderResponseDto addGameToOrder(
                         @PathVariable String trackingNumber,
                         @RequestBody OrderAddGameRequestDto request) {
@@ -176,7 +176,7 @@ public class OrderController {
          * @return the response data transfer object containing the details of the
          *         updated order
          */
-        @PostMapping("/orders/{trackingNumber}/return/{specificGameId}")
+        @PutMapping("/orders/{trackingNumber}/return/{specificGameId}")
         public OrderResponseDto returnGame(
                         @PathVariable String trackingNumber,
                         @PathVariable int specificGameId) {

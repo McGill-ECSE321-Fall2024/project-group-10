@@ -177,7 +177,6 @@ public class CartIntegrationTests {
     @Test
     @Order(4)
     public void testAddGameToCart() {
-        // Arrange: Create a Game
         GameRequestDto gameRequest1 = new GameRequestDto(
                 "Game One",
                 "First game description",
@@ -196,7 +195,11 @@ public class CartIntegrationTests {
         // Act: Add game to cart
         String url = String.format("/carts/%d/games", cartId);
         CartRequestDto requestDto = new CartRequestDto(gameId1, 2);
-        ResponseEntity<CartResponseDto> response = client.postForEntity(url, requestDto, CartResponseDto.class);
+        ResponseEntity<CartResponseDto> response = client.exchange(
+                url,
+                HttpMethod.PUT,
+                new HttpEntity<>(requestDto),
+                CartResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -222,14 +225,19 @@ public class CartIntegrationTests {
         CartRequestDto requestDto = new CartRequestDto(gameId1, -1);
 
         // Act
-        ResponseEntity<String> response = client.postForEntity(url, requestDto, String.class);
+        ResponseEntity<String> response = client.exchange(
+                url,
+                HttpMethod.PUT,
+                new HttpEntity<>(requestDto),
+                String.class);
 
         // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response, "Response was null; expected a valid response entity.");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(),
+                "Expected status BAD_REQUEST for invalid quantity.");
         String body = response.getBody();
-        assertNotNull(body);
-        assertTrue(body.contains("Quantity must be at least 1"));
+        assertNotNull(body, "Response body was null; expected error message.");
+        assertTrue(body.contains("Quantity must be at least 1"), "Expected error message about invalid quantity.");
     }
 
     /**
@@ -256,7 +264,10 @@ public class CartIntegrationTests {
 
         String addUrl = String.format("/carts/%d/games", cartId);
         CartRequestDto addRequestDto = new CartRequestDto(gameId2, 3);
-        ResponseEntity<CartResponseDto> addResponse = client.postForEntity(addUrl, addRequestDto,
+        ResponseEntity<CartResponseDto> addResponse = client.exchange(
+                addUrl,
+                HttpMethod.PUT,
+                new HttpEntity<>(addRequestDto),
                 CartResponseDto.class);
         assertNotNull(addResponse);
         assertEquals(HttpStatus.OK, addResponse.getStatusCode());
@@ -264,7 +275,10 @@ public class CartIntegrationTests {
         // Act: Remove some quantity of gameId2 from cart
         String removeUrl = String.format("/carts/%d/games/remove", cartId);
         CartRequestDto removeRequestDto = new CartRequestDto(gameId2, 2);
-        ResponseEntity<CartResponseDto> response = client.postForEntity(removeUrl, removeRequestDto,
+        ResponseEntity<CartResponseDto> response = client.exchange(
+                removeUrl,
+                HttpMethod.PUT,
+                new HttpEntity<>(removeRequestDto),
                 CartResponseDto.class);
 
         // Assert
@@ -276,6 +290,7 @@ public class CartIntegrationTests {
         assertTrue(cart.getGames().stream().anyMatch(g -> g.getGame().getaGame_id() == gameId1));
         assertTrue(cart.getGames().stream().anyMatch(g -> g.getGame().getaGame_id() == gameId2));
         assertEquals(50 * 2 + 70 * 1, cart.getTotalPrice());
+
     }
 
     /**
@@ -289,14 +304,19 @@ public class CartIntegrationTests {
         CartRequestDto requestDto = new CartRequestDto(gameId2, -1);
 
         // Act
-        ResponseEntity<String> response = client.postForEntity(url, requestDto, String.class);
+        ResponseEntity<String> response = client.exchange(
+                url,
+                HttpMethod.PUT,
+                new HttpEntity<>(requestDto),
+                String.class);
 
         // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response, "Response was null; expected a valid response entity.");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(),
+                "Expected status BAD_REQUEST for invalid quantity.");
         String body = response.getBody();
-        assertNotNull(body);
-        assertTrue(body.contains("Quantity must be at least 1"));
+        assertNotNull(body, "Response body was null; expected error message.");
+        assertTrue(body.contains("Quantity must be at least 1"), "Expected error message about invalid quantity.");
     }
 
     /**
@@ -308,7 +328,10 @@ public class CartIntegrationTests {
         // Arrange: Ensure initial quantity of gameId1 is set to 1
         String addUrl = String.format("/carts/%d/games", cartId);
         CartRequestDto addRequestDto = new CartRequestDto(gameId1, 1);
-        ResponseEntity<CartResponseDto> addResponse = client.postForEntity(addUrl, addRequestDto,
+        ResponseEntity<CartResponseDto> addResponse = client.exchange(
+                addUrl,
+                HttpMethod.PUT,
+                new HttpEntity<>(addRequestDto),
                 CartResponseDto.class);
         assertNotNull(addResponse);
         CartResponseDto cartesponse = addResponse.getBody();
@@ -372,7 +395,11 @@ public class CartIntegrationTests {
         String url = String.format("/carts/%d/clear", cartId);
 
         // Act
-        ResponseEntity<CartResponseDto> response = client.postForEntity(url, null, CartResponseDto.class);
+        ResponseEntity<CartResponseDto> response = client.exchange(
+                url,
+                HttpMethod.PUT,
+                null,
+                CartResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -413,21 +440,26 @@ public class CartIntegrationTests {
         // Arrange: Add game back to cart
         String addUrl = String.format("/carts/%d/games", cartId);
         CartRequestDto addRequestDto = new CartRequestDto(gameId1, 2);
-        ResponseEntity<CartResponseDto> addResponse = client.postForEntity(addUrl, addRequestDto,
+        ResponseEntity<CartResponseDto> addResponse = client.exchange(
+                addUrl,
+                HttpMethod.PUT,
+                new HttpEntity<>(addRequestDto),
                 CartResponseDto.class);
-        assertNotNull(addResponse);
-        assertEquals(HttpStatus.OK, addResponse.getStatusCode());
 
-        // Act
+        // Assert: Verify that the game was added successfully
+        assertNotNull(addResponse, "Response was null; expected a valid response entity.");
+        assertEquals(HttpStatus.OK, addResponse.getStatusCode(), "Expected status OK for adding game to cart.");
+
+        // Act: Retrieve the game from the cart
         String url = String.format("/carts/%d/games/%d", cartId, gameId1);
         ResponseEntity<GameResponseDto> response = client.getForEntity(url, GameResponseDto.class);
 
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        // Assert: Verify the retrieved game details
+        assertNotNull(response, "Response was null; expected a valid response entity.");
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "Expected status OK for retrieving game from cart.");
         GameResponseDto game = response.getBody();
-        assertNotNull(game);
-        assertEquals(gameId1, game.getaGame_id());
+        assertNotNull(game, "GameResponseDto was null; expected a valid game response.");
+        assertEquals(gameId1, game.getaGame_id(), "Game ID mismatch; expected the added game's ID.");
     }
 
     /**
@@ -500,24 +532,30 @@ public class CartIntegrationTests {
                 "http://example.com/game_low_stock.jpg");
         ResponseEntity<GameResponseDto> gameResponse = client.postForEntity("/games", gameRequest,
                 GameResponseDto.class);
-        assertNotNull(gameResponse);
-        assertEquals(HttpStatus.OK, gameResponse.getStatusCode());
+        assertNotNull(gameResponse, "Response was null; expected a valid response entity.");
+        assertEquals(HttpStatus.OK, gameResponse.getStatusCode(), "Expected status OK for game creation.");
 
         GameResponseDto game = gameResponse.getBody();
-        assertNotNull(game);
+        assertNotNull(game, "GameResponseDto was null; expected a valid response.");
         int createdGameId = game.getaGame_id(); // Use this ID for the current test
 
         // Act: Try to add more than available stock (quantity of 5) to the cart
         String url = String.format("/carts/%d/games", cartId);
         CartRequestDto requestDto = new CartRequestDto(createdGameId, 5);
-        ResponseEntity<String> response = client.postForEntity(url, requestDto, String.class);
+        ResponseEntity<String> response = client.exchange(
+                url,
+                HttpMethod.PUT,
+                new HttpEntity<>(requestDto),
+                String.class);
 
         // Assert: Expect BAD_REQUEST due to insufficient stock
-        assertNotNull(response);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response, "Response was null; expected a valid response entity.");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(),
+                "Expected status BAD_REQUEST due to insufficient stock.");
         String body = response.getBody();
-        assertNotNull(body);
-        assertTrue(body.contains("Only 1 units of Game ID " + createdGameId + " are available"));
+        assertNotNull(body, "Response body was null; expected an error message.");
+        assertTrue(body.contains("Only 1 units of Game ID " + createdGameId + " are available"),
+                "Expected error message indicating insufficient stock.");
     }
 
     /**
@@ -532,14 +570,20 @@ public class CartIntegrationTests {
         CartRequestDto requestDto = new CartRequestDto(nonExistentGameId, 1);
 
         // Act
-        ResponseEntity<String> response = client.postForEntity(url, requestDto, String.class);
+        ResponseEntity<String> response = client.exchange(
+                url,
+                HttpMethod.PUT,
+                new HttpEntity<>(requestDto),
+                String.class);
 
         // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response, "Response was null; expected a valid response entity.");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(),
+                "Expected status NOT_FOUND for non-existent game.");
         String body = response.getBody();
-        assertNotNull(body);
-        assertTrue(body.contains("Game with ID " + nonExistentGameId + " does not exist"));
+        assertNotNull(body, "Response body was null; expected an error message.");
+        assertTrue(body.contains("Game with ID " + nonExistentGameId + " does not exist"),
+                "Expected error message indicating game does not exist.");
     }
 
     @Test

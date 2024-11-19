@@ -201,11 +201,23 @@ public class OrderService {
 
     @Transactional
     public void returnGame(String trackingNumber, int specificGameId) {
-        // Find and validate the specific game
+        // Find and validate the order
         Order order = getOrderByTrackingNumber(trackingNumber);
         if (order == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "Order not found");
         }
+
+        // Check if the return is within the allowable period (7 days)
+        Date currentDate = new Date();
+        long differenceInMilliseconds = currentDate.getTime() - order.getOrderDate().getTime();
+        long differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+
+        if (differenceInDays > 7) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST,
+                    "Game return period has expired. Returns are allowed within 7 days of the order date.");
+        }
+
+        // Find and validate the specific game
         SpecificGame specificGame = specificGameService.findSpecificGameById(specificGameId);
         if (specificGame == null) {
             throw new GameShopException(HttpStatus.NOT_FOUND, "SpecificGame not found");

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,7 +54,7 @@ public class CartController {
      *                   quantity
      * @return a response data transfer object representing the updated cart
      */
-    @PostMapping("/carts/{cartId}/games")
+    @PutMapping("/carts/{cartId}/games")
     public CartResponseDto addGameToCart(
             @PathVariable int cartId,
             @Valid @RequestBody CartRequestDto requestDto) {
@@ -79,7 +78,7 @@ public class CartController {
      *                   quantity to be removed
      * @return a CartResponseDto containing the updated cart and its game quantities
      */
-    @PostMapping("/carts/{cartId}/games/remove")
+    @PutMapping("/carts/{cartId}/games/remove")
     public CartResponseDto removeGameFromCart(
             @PathVariable int cartId,
             @Valid @RequestBody CartRequestDto requestDto) {
@@ -166,7 +165,7 @@ public class CartController {
      * @return a CartResponseDto containing the updated cart information and item
      *         quantities
      */
-    @PostMapping("/carts/{cartId}/clear")
+    @PutMapping("/carts/{cartId}/clear")
     public CartResponseDto clearCart(@PathVariable int cartId) {
         // call service method to clear the cart
         cartService.clearCart(cartId);
