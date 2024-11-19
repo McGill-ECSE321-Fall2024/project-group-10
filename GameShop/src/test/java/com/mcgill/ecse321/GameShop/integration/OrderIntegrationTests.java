@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterAll;
@@ -277,7 +276,7 @@ public class OrderIntegrationTests {
         @Test
         @Order(5)
         public void testAddGameToOrder() {
-                // Ensure a fresh game and specific game instance setup if needed
+                // Create a new game
                 GameRequestDto newGameRequest = new GameRequestDto(
                                 "Additional Test Game",
                                 "Description for additional game",
@@ -296,6 +295,22 @@ public class OrderIntegrationTests {
                 GameResponseDto additionalGame = gameResponse.getBody();
                 assertNotNull(additionalGame);
                 int additionalGameId = additionalGame.getaGame_id();
+
+                // **Create SpecificGame instances for the new game**
+                SpecificGameRequestDto specificGameRequest = new SpecificGameRequestDto(
+                                SpecificGame.ItemStatus.Confirmed,
+                                new ArrayList<>(),
+                                additionalGameId);
+
+                // Let's create multiple SpecificGame instances if needed
+                for (int i = 0; i < 5; i++) {
+                        ResponseEntity<SpecificGameResponseDto> specificGameResponse = client.postForEntity(
+                                        "/specificGames",
+                                        specificGameRequest,
+                                        SpecificGameResponseDto.class);
+                        assertNotNull(specificGameResponse);
+                        assertEquals(HttpStatus.OK, specificGameResponse.getStatusCode());
+                }
 
                 // Add the game to the existing order
                 OrderAddGameRequestDto addGameRequest = new OrderAddGameRequestDto(additionalGameId, 1);
@@ -420,7 +435,7 @@ public class OrderIntegrationTests {
         public void testReturnGame() {
                 // Retrieve initial stock quantity for accurate assertions
                 GameResponseDto initialGame = client.getForObject("/games/" + gameId, GameResponseDto.class);
-                assertNotNull(initialGame);
+                assertNotNull(initialGame, "Expected non-null GameResponseDto, but got null");
                 int initialStockQuantity = initialGame.getaStockQuantity();
 
                 // Create a specific game instance to be added to an order
@@ -434,6 +449,7 @@ public class OrderIntegrationTests {
                                 specificGameRequest,
                                 SpecificGameResponseDto.class);
                 assertNotNull(specificGameResponse);
+                assertEquals(HttpStatus.OK, specificGameResponse.getStatusCode());
 
                 SpecificGameResponseDto specificGame = specificGameResponse.getBody();
                 assertNotNull(specificGame);
@@ -447,6 +463,7 @@ public class OrderIntegrationTests {
                                 new HttpEntity<>(addGameRequest),
                                 OrderResponseDto.class);
                 assertNotNull(addGameResponse);
+                assertEquals(HttpStatus.OK, addGameResponse.getStatusCode());
 
                 // Return the specific game within the order
                 ResponseEntity<OrderResponseDto> returnGameResponse = client.exchange(
@@ -456,16 +473,31 @@ public class OrderIntegrationTests {
                                 OrderResponseDto.class);
 
                 // Assertions to confirm return success
-                assertNotNull(returnGameResponse);
-                assertEquals(HttpStatus.OK, returnGameResponse.getStatusCode());
+                assertNotNull(returnGameResponse, "Response was null; expected a valid response entity.");
+                assertEquals(HttpStatus.OK, returnGameResponse.getStatusCode(),
+                                "Expected status OK but got " + returnGameResponse.getStatusCode());
 
                 OrderResponseDto updatedOrder = returnGameResponse.getBody();
-                assertNotNull(updatedOrder);
+                assertNotNull(updatedOrder, "Expected non-null OrderResponseDto, but got null");
+
+                // Verify that the specific game's status is updated to "Returned"
+                boolean isReturned = updatedOrder.getSpecificGames().stream()
+                                .anyMatch(sg -> sg.getSpecificGame_id() == specificGameId
+                                                && sg.getItemStatus().equals(ItemStatus.Returned));
+                assertTrue(isReturned, "Expected specific game to be marked as Returned, but it was not.");
 
                 // Verify stock quantity is incremented by 1 after returning
                 GameResponseDto updatedGame = client.getForObject("/games/" + gameId, GameResponseDto.class);
-                assertNotNull(updatedGame);
-                assertEquals(initialStockQuantity + 1, updatedGame.getaStockQuantity());
+                assertNotNull(updatedGame, "Expected non-null GameResponseDto, but got null");
+                assertEquals(initialStockQuantity, updatedGame.getaStockQuantity(),
+                                "Expected stock quantity to be restored to initial quantity after return.");
+
+                // Retrieve the specific game again to confirm item status is "Returned"
+                SpecificGameResponseDto returnedSpecificGame = client.getForObject("/specificGames/" + specificGameId,
+                                SpecificGameResponseDto.class);
+                assertNotNull(returnedSpecificGame, "Expected non-null SpecificGameResponseDto after return.");
+                assertEquals(ItemStatus.Returned, returnedSpecificGame.getItemStatus(),
+                                "Expected specific game status to be 'Returned' after returning.");
         }
 
         @SuppressWarnings("null")
