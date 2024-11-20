@@ -126,8 +126,8 @@ public class CartController {
                     int cartId = cart.getCart_id();
                     Map<Integer, Integer> quantities = cartService.getQuantitiesForCart(cartId);
                     int totalItems = quantities.values().stream().mapToInt(Integer::intValue).sum();
-                    int totalPrice = cart.getGames().stream()
-                            .mapToInt(game -> game.getPrice() * quantities.getOrDefault(game.getGame_id(), 1))
+                    double totalPrice = cart.getGames().stream()
+                            .mapToDouble(game -> game.getPrice() * quantities.getOrDefault(game.getGame_id(), 1))
                             .sum();
                     return new CartSummaryDto(cart, totalItems, totalPrice);
                 })
