@@ -804,7 +804,7 @@ public class OrderServiceTests {
                 "specificGame2 should be associated with the order after adding");
 
         // Act: Return one of the specific games
-        orderService.returnGame(VALID_TRACKING_NUMBER + "leb1", 27248421);
+        orderService.returnGame(VALID_TRACKING_NUMBER + "leb1", 27248421, "damagedCD");
 
         // Assert
         // Check the item statuses
@@ -854,7 +854,7 @@ public class OrderServiceTests {
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            orderService.returnGame(VALID_TRACKING_NUMBER + "co", 6724843);
+            orderService.returnGame(VALID_TRACKING_NUMBER + "co", 6724843, "");
         });
 
         // Verify exception details
@@ -893,7 +893,7 @@ public class OrderServiceTests {
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            orderService.returnGame(VALID_TRACKING_NUMBER + "24", 67248436);
+            orderService.returnGame(VALID_TRACKING_NUMBER + "24", 67248436, null);
         });
 
         // Verify exception details
@@ -926,7 +926,7 @@ public class OrderServiceTests {
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            orderService.returnGame(INVALID_TRACKING_NUMBER + "25", 67248412);
+            orderService.returnGame(INVALID_TRACKING_NUMBER + "25", 67248412, "");
         });
 
         // Verify exception details
@@ -957,7 +957,7 @@ public class OrderServiceTests {
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            orderService.returnGame(INVALID_TRACKING_NUMBER + "23", 67248463);
+            orderService.returnGame(INVALID_TRACKING_NUMBER + "23", 67248463, "");
         });
 
         // Verify exception details
@@ -999,7 +999,7 @@ public class OrderServiceTests {
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            orderService.returnGame(VALID_TRACKING_NUMBER + "late", 4728474);
+            orderService.returnGame(VALID_TRACKING_NUMBER + "late", 4728474, "");
         });
 
         // Verify exception details

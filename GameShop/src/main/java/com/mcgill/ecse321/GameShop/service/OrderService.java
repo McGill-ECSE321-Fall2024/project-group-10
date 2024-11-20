@@ -200,7 +200,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void returnGame(String trackingNumber, int specificGameId) {
+    public void returnGame(String trackingNumber, int specificGameId, String customerNote) {
         // Find and validate the order
         Order order = getOrderByTrackingNumber(trackingNumber);
         if (order == null) {
@@ -242,6 +242,12 @@ public class OrderService {
 
         // Persist the stock quantity update
         gameService.updateGameStockQuantity(game.getGame_id(), game.getStockQuantity());
+
+        // Update the order note if a customer note is provided
+        if (customerNote != null && !customerNote.trim().isEmpty()) {
+            order.setNote(customerNote.trim());
+            orderRepository.save(order);
+        }
     }
 
     @Transactional
