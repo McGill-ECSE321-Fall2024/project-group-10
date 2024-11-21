@@ -15,6 +15,7 @@ import EditGame from '@/views/manager/EditGame.vue';
 import Checkout from '@/views/Checkout.vue';
 import ManageCategories from '@/views/manager/ManageCategories.vue';
 import ManagePlatforms from '@/views/manager/ManagePlatforms.vue';
+import AddEmployee from '@/views/manager/AddEmployee.vue';
 
 const routes = [
   {
@@ -37,7 +38,7 @@ const routes = [
     path: '/checkout',
     name: 'Checkout',
     component: Checkout,
-    meta: { requiresAuth: true, role: 'customer' }, // Require login here
+    meta: { requiresAuth: true, role: 'CUSTOMER' }, // Require login here
   },
   {
     path: '/login',
@@ -50,10 +51,15 @@ const routes = [
     component: Register,
   },
   {
+    path: '/add-employee',
+    name: 'AddEmployee',
+    component: AddEmployee,
+  },
+  {
     path: '/manager',
     name: 'ManagerDashboard',
     component: ManagerDashboard,
-    meta: { requiresAuth: false, role: 'manager' },
+    meta: { requiresAuth: false, role: 'MANAGER' },
     children: [
       {
         path: 'add-game', // Relative path

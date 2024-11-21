@@ -65,12 +65,18 @@
       };
   
       const submitRegister = async () => {
+        try {
+        // Attempt registration
         await auth.registerCustomer(accountData.value);
-        if (auth.user) {
-          router.push({ name: 'Catalog' });
-        } else {
-          alert('Registration failed');
-        }
+        
+        // If successful, redirect to the Login page
+        alert('Registration successful! Please log in.');
+        router.push({ name: 'Login' });
+      } catch (error) {
+        // Handle failure
+        console.error('Registration failed:', error);
+        alert('Registration failed. Please try again.');
+      }
       };
   
       return {
