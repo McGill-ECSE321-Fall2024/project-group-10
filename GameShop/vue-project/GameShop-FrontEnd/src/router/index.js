@@ -16,6 +16,10 @@ import Checkout from '@/views/Checkout.vue';
 import ManageCategories from '@/views/manager/ManageCategories.vue';
 import ManagePlatforms from '@/views/manager/ManagePlatforms.vue';
 import AddEmployee from '@/views/manager/AddEmployee.vue';
+import UpdateAccount from '@/views/UpdateAccount.vue';
+import ArchiveEmployee from '@/views/manager/ArchiveEmployee.vue';
+import ListEmployees from '@/views/manager/ListEmployees.vue';
+import ListCustomers from '@/views/manager/ListCustomers.vue';
 
 const routes = [
   {
@@ -56,6 +60,11 @@ const routes = [
     component: AddEmployee,
   },
   {
+    path: "/update-account",
+    name: "UpdateAccount",
+    component: UpdateAccount,
+  },
+  {
     path: '/manager',
     name: 'ManagerDashboard',
     component: ManagerDashboard,
@@ -80,6 +89,21 @@ const routes = [
         path: 'platforms',
         name: 'ManagePlatforms',
         component: ManagePlatforms,
+      },
+      {
+        path: "/manager/archive-employee",
+        name: "ArchiveEmployee",
+        component: ArchiveEmployee,
+      },
+      {
+        path: "/manager/list-employees",
+        name: "ListEmployees",
+        component: ListEmployees,
+      },
+      {
+        path: "/manager/list-customers",
+        name: "ListCustomers",
+        component: ListCustomers,
       },
       // Add other manager routes as needed
     ],
