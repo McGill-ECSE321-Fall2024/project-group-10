@@ -3,82 +3,56 @@ import { defineStore } from "pinia";
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
-    role: null,
+    accountType: null,
   }),
 
   actions: {
     async login(email, password) {
       try {
-        // Attempt to fetch customer account
-        let response = await fetch(
-          `http://localhost:8080/account/customer/${email}`
-        );
-        if (response.ok) {
-          const customer = await response.json();
-          if (customer.password === password) {
-            this.user = customer;
-            this.role = "customer";
-            console.log("Customer account found:", customer);
-            return;
-          }
+        console.log("Starting login process for:", email);
+
+        const response = await fetch("http://localhost:8080/account/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Invalid credentials or account not found.");
         }
 
-        // Attempt to fetch employee account
-        response = await fetch(
-          `http://localhost:8080/account/employee/${email}`
-        );
-        if (response.ok) {
-          const employee = await response.json();
-          if (employee.password === password) {
-            this.user = employee;
-            this.role = "employee";
-            console.log("Employee account found:", employee);
-            return;
-          }
-        }
+        const data = await response.json();
+        console.log("Login successful:", data);
 
-        // Attempt to fetch manager account
-        response = await fetch("http://localhost:8080/account/getmanager");
-        if (response.ok) {
-          const manager = await response.json();
-          if (manager.email === email && manager.password === password) {
-            this.user = manager;
-            this.role = "manager";
-            console.log("Manager account found:", manager);
-            return;
-          }
-        }
-
-        throw new Error("Invalid credentials or account not found.");
+        this.user = { email: data.email };
+        this.accountType = data.type;
       } catch (error) {
         console.error("Login error:", error.message);
         this.user = null;
-        this.role = null;
+        this.accountType = null;
         throw error;
       }
     },
 
-    async logout() {
-      this.user = null;
-      this.role = null;
-    },
-
     async registerCustomer(accountData) {
       try {
-        const response = await fetch(
-          "http://localhost:8080/account/customer",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(accountData),
-          }
-        );
+        const response = await fetch("http://localhost:8080/account/customer", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(accountData),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Registration failed: ${errorText}`);
+        }
+
         const data = await response.json();
-        this.user = data;
-        this.role = "customer";
-        console.log("Customer registered successfully:", data);
+        console.log("Customer registration successful:", data);
+
+        return data; // Return the registered account data
       } catch (error) {
-        console.error("Registration error:", error);
+        console.error("Registration error:", error.message);
         throw error;
       }
     },
