@@ -44,6 +44,7 @@
         email: '',
         username: '',
         password: '',
+        employeeStatus: 'Active', // Set default status as Active
       });
   
       // Form validity and rules
@@ -68,6 +69,7 @@
               email: employee.value.email,
               username: employee.value.username,
               password: employee.value.password,
+              employeeStatus: employee.value.employeeStatus, // Include employeeStatus in request body
             }),
           });
   
@@ -90,6 +92,7 @@
           email: '',
           username: '',
           password: '',
+          employeeStatus: 'Active', // Reset to Active
         };
       };
   
