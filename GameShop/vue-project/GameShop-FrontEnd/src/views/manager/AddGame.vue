@@ -4,8 +4,67 @@
   <v-container>
     <h2>Add New Game</h2>
     <v-form ref="form" v-model="valid" @submit.prevent="submitForm">
-      <!-- Existing fields -->
-      <!-- ... -->
+      <v-text-field
+        v-model="game.aTitle"
+        label="Game Title"
+        :rules="[rules.required]"
+        required
+      ></v-text-field>
+      <v-textarea
+        v-model="game.aDescription"
+        label="Description"
+        :rules="[rules.required]"
+        required
+      ></v-textarea>
+      <v-text-field
+        v-model.number="game.aPrice"
+        label="Price"
+        type="number"
+        :rules="[rules.required, rules.number]"
+        required
+      ></v-text-field>
+      <v-select
+        v-model="game.aGameStatus"
+        :items="gameStatuses"
+        label="Game Status"
+        :rules="[rules.required]"
+        required
+      ></v-select>
+      <v-text-field
+        v-model.number="game.aStockQuantity"
+        label="Stock Quantity"
+        type="number"
+        :rules="[rules.required, rules.number]"
+        required
+      ></v-text-field>
+      <v-text-field
+        v-model="game.aPhotoUrl"
+        label="Photo URL"
+        :rules="[rules.required]"
+        required
+      ></v-text-field>
+      <!-- Categories Selection -->
+      <v-select
+        v-model="game.categories"
+        :items="categories"
+        label="Categories"
+        multiple
+        item-text="categoryName"
+        item-value="categoryId"
+        :rules="[rules.required]"
+        required
+      ></v-select>
+      <!-- Platforms Selection -->
+      <v-select
+        v-model="game.platforms"
+        :items="platforms"
+        label="Platforms"
+        multiple
+        item-text="platformName"
+        item-value="platformId"
+        :rules="[rules.required]"
+        required
+      ></v-select>
       <!-- Promotions Selection -->
       <v-select
         v-model="game.promotions"
@@ -15,7 +74,6 @@
         item-text="description"
         item-value="promotionId"
       ></v-select>
-      <!-- Submit Button -->
       <v-btn :disabled="!valid" type="submit" color="success">Add Game</v-btn>
       <v-btn @click="clearForm" color="error" text>Clear</v-btn>
     </v-form>
@@ -48,7 +106,7 @@ export default defineComponent({
     const categories = ref([]);
     const platforms = ref([]);
     const promotions = ref([]);
-    const gameStatuses = ref(['InStock', 'OutOfStock', 'Archived']);
+    const gameStatuses = ref(['InStock', 'OutOfStock', 'PreOrder']);
 
     const valid = ref(false);
     const form = ref(null);
@@ -60,17 +118,21 @@ export default defineComponent({
 
     const submitForm = async () => {
       try {
-        await store.addGame({
+        // Prepare the data for the API call
+        const gameData = {
           aTitle: game.value.aTitle,
           aDescription: game.value.aDescription,
           aPrice: game.value.aPrice,
           aGameStatus: game.value.aGameStatus,
           aStockQuantity: game.value.aStockQuantity,
           aPhotoUrl: game.value.aPhotoUrl,
-          categories: game.value.categories,
-          platforms: game.value.platforms,
-          promotions: game.value.promotions,
-        });
+          categories: game.value.categories.map((cat) => cat.categoryId),
+          platforms: game.value.platforms.map((plat) => plat.platformId),
+          promotions: game.value.promotions.map((promo) => promo.promotionId),
+        };
+
+        // Call the store action to add the game
+        await store.addGame(gameData);
         router.push({ name: 'ManagerDashboard' });
       } catch (error) {
         console.error('Error adding game:', error);
@@ -96,7 +158,7 @@ export default defineComponent({
       try {
         const response = await fetch('http://localhost:8080/categories');
         const data = await response.json();
-        categories.value = data.categories.map((cat) => cat.categoryName);
+        categories.value = data.categories;
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
@@ -106,7 +168,7 @@ export default defineComponent({
       try {
         const response = await fetch('http://localhost:8080/platforms');
         const data = await response.json();
-        platforms.value = data.platforms.map((plat) => plat.platformName);
+        platforms.value = data.platforms;
       } catch (error) {
         console.error('Error fetching platforms:', error);
       }
