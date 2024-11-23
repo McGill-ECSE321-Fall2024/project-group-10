@@ -5,6 +5,9 @@ export const productsStore = defineStore("products", {
   state: () => ({
     products: [],
     cart: [],
+    categories: [],
+    platforms: [],
+    promotions: [],
   }),
 
   actions: {
@@ -14,9 +17,9 @@ export const productsStore = defineStore("products", {
         const data = await response.json();
         this.products = data.games.map((game) => ({
           ...game,
-          categories: game.categories?.categories || [], // Flatten categories
-          platforms: game.platforms?.platforms || [], // Flatten platforms
-          promotions: game.promotions || [],
+          categories: game.categories?.categories || [],
+          platforms: game.platforms?.platforms || [],
+          promotions: game.promotions?.promotions || [],
         }));
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -86,6 +89,47 @@ export const productsStore = defineStore("products", {
       } catch (error) {
         console.error('Error fetching platforms:', error);
         return [];
+      }
+    },
+
+    async fetchPromotions() {
+      try {
+        const response = await fetch('http://localhost:8080/promotions');
+        const data = await response.json();
+        this.promotions = data.promotions || [];
+      } catch (error) {
+        console.error('Error fetching promotions:', error);
+      }
+    },
+
+    async addGame(gameData) {
+      try {
+        const response = await fetch('http://localhost:8080/games', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(gameData),
+        });
+        const newGame = await response.json();
+        this.products.push(newGame);
+      } catch (error) {
+        console.error('Error adding game:', error);
+      }
+    },
+
+    async updateGame(gameId, gameData) {
+      try {
+        const response = await fetch(`http://localhost:8080/games/${gameId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(gameData),
+        });
+        const updatedGame = await response.json();
+        const index = this.products.findIndex((game) => game.gameId === gameId);
+        if (index !== -1) {
+          this.products.splice(index, 1, updatedGame);
+        }
+      } catch (error) {
+        console.error('Error updating game:', error);
       }
     },
   },

@@ -20,6 +20,7 @@ import UpdateAccount from '@/views/UpdateAccount.vue';
 import ArchiveEmployee from '@/views/manager/ArchiveEmployee.vue';
 import ListEmployees from '@/views/manager/ListEmployees.vue';
 import ListCustomers from '@/views/manager/ListCustomers.vue';
+import ManagePromotions from '@/views/manager/ManagePromotions.vue'; // Import the new component
 
 const routes = [
   {
@@ -36,13 +37,12 @@ const routes = [
     path: '/cart',
     name: 'CartView',
     component: Cart,
-    // Removed meta: { requiresAuth: true } to allow access without login
   },
   {
     path: '/checkout',
     name: 'Checkout',
     component: Checkout,
-    meta: { requiresAuth: true, role: 'CUSTOMER' }, // Require login here
+    meta: { requiresAuth: true, role: 'CUSTOMER' },
   },
   {
     path: '/login',
@@ -60,8 +60,8 @@ const routes = [
     component: AddEmployee,
   },
   {
-    path: "/update-account",
-    name: "UpdateAccount",
+    path: '/update-account',
+    name: 'UpdateAccount',
     component: UpdateAccount,
   },
   {
@@ -71,17 +71,17 @@ const routes = [
     meta: { requiresAuth: false, role: 'MANAGER' },
     children: [
       {
-        path: 'add-game', // Relative path
+        path: 'add-game',
         name: 'AddGame',
         component: AddGame,
       },
       {
-        path: 'edit-game/:id', // Relative path
+        path: 'edit-game/:id',
         name: 'EditGame',
         component: EditGame,
       },
       {
-        path: 'categories', // Changed from '/manager/categories' to 'categories'
+        path: 'categories',
         name: 'ManageCategories',
         component: ManageCategories,
       },
@@ -91,21 +91,25 @@ const routes = [
         component: ManagePlatforms,
       },
       {
-        path: "/manager/archive-employee",
-        name: "ArchiveEmployee",
+        path: 'promotions', // Added promotions route
+        name: 'ManagePromotions',
+        component: ManagePromotions,
+      },
+      {
+        path: 'archive-employee',
+        name: 'ArchiveEmployee',
         component: ArchiveEmployee,
       },
       {
-        path: "/manager/list-employees",
-        name: "ListEmployees",
+        path: 'list-employees',
+        name: 'ListEmployees',
         component: ListEmployees,
       },
       {
-        path: "/manager/list-customers",
-        name: "ListCustomers",
+        path: 'list-customers',
+        name: 'ListCustomers',
         component: ListCustomers,
       },
-      // Add other manager routes as needed
     ],
   },
 ];

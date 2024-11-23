@@ -114,104 +114,34 @@ export default defineComponent({
             product.promotions.length > 0;
         }
 
-        // Since we fetch games by categories and platforms from the backend,
-        // we only need to filter by promotions here.
+        // Filter by Categories
+        if (filters.value.categories.length > 0) {
+          matches =
+            matches &&
+            product.categories.some((category) =>
+              filters.value.categories.includes(category.categoryId)
+            );
+        }
+
+        // Filter by Platforms
+        if (filters.value.platforms.length > 0) {
+          matches =
+            matches &&
+            product.platforms.some((platform) =>
+              filters.value.platforms.includes(platform.platformId)
+            );
+        }
 
         return matches;
       });
     });
 
-    const applyFilters = async () => {
-      if (filters.value.categories.length > 0 && filters.value.platforms.length > 0) {
-        // Fetch games by categories and platforms
-        await fetchGamesByCategoriesAndPlatforms(filters.value.categories, filters.value.platforms);
-      } else if (filters.value.categories.length > 0) {
-        await fetchGamesByCategories(filters.value.categories);
-      } else if (filters.value.platforms.length > 0) {
-        await fetchGamesByPlatforms(filters.value.platforms);
-      } else {
-        await store.fetchProductsFromDB();
-      }
+    const applyFilters = () => {
+      // Since we're filtering on the frontend using computed properties,
+      // we don't need to fetch products again here.
     };
 
-    const fetchGamesByCategories = async (categoryIds) => {
-      try {
-        let gamesMap = new Map();
-        for (const id of categoryIds) {
-          const response = await fetch(
-            `http://localhost:8080/categories/${id}/games`
-          );
-          const data = await response.json();
-
-          data.games.forEach((game) => {
-            gamesMap.set(game.gameId, {
-              ...game,
-              categories: game.categories?.categories || [],
-              platforms: game.platforms?.platforms || [],
-              promotions: game.promotions || [],
-            });
-          });
-        }
-
-        store.products = Array.from(gamesMap.values());
-      } catch (error) {
-        console.error("Error fetching games by categories:", error);
-      }
-    };
-
-    const fetchGamesByPlatforms = async (platformIds) => {
-      try {
-        let gamesMap = new Map();
-        for (const id of platformIds) {
-          const response = await fetch(
-            `http://localhost:8080/platforms/${id}/games`
-          );
-          const data = await response.json();
-
-          data.games.forEach((game) => {
-            gamesMap.set(game.gameId, {
-              ...game,
-              categories: game.categories?.categories || [],
-              platforms: game.platforms?.platforms || [],
-              promotions: game.promotions || [],
-            });
-          });
-        }
-
-        store.products = Array.from(gamesMap.values());
-      } catch (error) {
-        console.error("Error fetching games by platforms:", error);
-      }
-    };
-
-    const fetchGamesByCategoriesAndPlatforms = async (categoryIds, platformIds) => {
-      try {
-        let gamesMap = new Map();
-        for (const catId of categoryIds) {
-          for (const platId of platformIds) {
-            const response = await fetch(
-              `http://localhost:8080/games?categoryId=${catId}&platformId=${platId}`
-            );
-            const data = await response.json();
-
-            data.games.forEach((game) => {
-              gamesMap.set(game.gameId, {
-                ...game,
-                categories: game.categories?.categories || [],
-                platforms: game.platforms?.platforms || [],
-                promotions: game.promotions || [],
-              });
-            });
-          }
-        }
-
-        store.products = Array.from(gamesMap.values());
-      } catch (error) {
-        console.error("Error fetching games by categories and platforms:", error);
-      }
-    };
-
-    const toggleCategoryFilter = async (categoryId) => {
+    const toggleCategoryFilter = (categoryId) => {
       if (filters.value.categories.includes(categoryId)) {
         filters.value.categories = filters.value.categories.filter(
           (id) => id !== categoryId
@@ -219,10 +149,9 @@ export default defineComponent({
       } else {
         filters.value.categories.push(categoryId);
       }
-      await applyFilters();
     };
 
-    const togglePlatformFilter = async (platformId) => {
+    const togglePlatformFilter = (platformId) => {
       if (filters.value.platforms.includes(platformId)) {
         filters.value.platforms = filters.value.platforms.filter(
           (id) => id !== platformId
@@ -230,39 +159,36 @@ export default defineComponent({
       } else {
         filters.value.platforms.push(platformId);
       }
-      await applyFilters();
     };
 
     const goToProductPage = (id) => {
       router.push({ name: "ProductView", params: { id } });
     };
 
-    onMounted(async () => {
-      await store.fetchProductsFromDB();
-
-      // Fetch categories dynamically from the backend
+    const fetchCategories = async () => {
       try {
         const response = await fetch("http://localhost:8080/categories");
         const data = await response.json();
-        categories.value = data.categories.map((cat) => ({
-          categoryName: cat.categoryName,
-          categoryId: cat.categoryId,
-        }));
+        categories.value = data.categories;
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
+    };
 
-      // Fetch platforms dynamically from the backend
+    const fetchPlatforms = async () => {
       try {
         const response = await fetch("http://localhost:8080/platforms");
         const data = await response.json();
-        platforms.value = data.platforms.map((plat) => ({
-          platformName: plat.platformName,
-          platformId: plat.platformId,
-        }));
+        platforms.value = data.platforms;
       } catch (error) {
         console.error("Error fetching platforms:", error);
       }
+    };
+
+    onMounted(async () => {
+      await store.fetchProductsFromDB();
+      await fetchCategories();
+      await fetchPlatforms();
     });
 
     return {
