@@ -41,38 +41,14 @@
         <v-card-text>
           <v-text-field label="Description" v-model="newPromotion.description"></v-text-field>
           <v-text-field label="Discount Rate (%)" v-model.number="newPromotion.discountRate" type="number"></v-text-field>
-
-          <!-- Start Date Picker -->
           <v-text-field
-            label="Start Date"
+            label="Start Date (YYYY-MM-DD)"
             v-model="newPromotion.startDate"
-            readonly
-            @click="startDatePicker = true"
           ></v-text-field>
-          <v-dialog v-model="startDatePicker" width="290">
-            <v-date-picker
-              v-model="newPromotion.startDate"
-              @update:modelValue="startDatePicker = false"
-              @blur="startDatePicker = false"
-              scrollable
-            ></v-date-picker>
-          </v-dialog>
-
-          <!-- End Date Picker -->
           <v-text-field
-            label="End Date"
+            label="End Date (YYYY-MM-DD)"
             v-model="newPromotion.endDate"
-            readonly
-            @click="endDatePicker = true"
           ></v-text-field>
-          <v-dialog v-model="endDatePicker" width="290">
-            <v-date-picker
-              v-model="newPromotion.endDate"
-              @update:modelValue="endDatePicker = false"
-              @blur="endDatePicker = false"
-              scrollable
-            ></v-date-picker>
-          </v-dialog>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -91,39 +67,14 @@
         <v-card-text>
           <v-text-field label="Description" v-model="selectedPromotion.description"></v-text-field>
           <v-text-field label="Discount Rate (%)" v-model.number="selectedPromotion.discountRate" type="number"></v-text-field>
-
-          <!-- Start Date Picker -->
           <v-text-field
-            label="Start Date"
+            label="Start Date (YYYY-MM-DD)"
             v-model="selectedPromotion.startDate"
-            readonly
-            @click="editStartDatePicker = true"
           ></v-text-field>
-          <v-dialog v-model="editStartDatePicker" width="290">
-            <v-date-picker
-              v-model="selectedPromotion.startDate"
-              @update:modelValue="editStartDatePicker = false"
-              @blur="editStartDatePicker = false"
-              scrollable
-            ></v-date-picker>
-          </v-dialog>
-
-          <!-- End Date Picker -->
           <v-text-field
-            label="End Date"
+            label="End Date (YYYY-MM-DD)"
             v-model="selectedPromotion.endDate"
-            readonly
-            @click="editEndDatePicker = true"
           ></v-text-field>
-          <v-dialog v-model="editEndDatePicker" width="290">
-            <v-date-picker
-              v-model="selectedPromotion.endDate"
-              @update:modelValue="editEndDatePicker = false"
-              @blur="editEndDatePicker = false"
-              scrollable
-            ></v-date-picker>
-          </v-dialog>
-
           <!-- Assign Games -->
           <v-select
             label="Assign Games"
@@ -200,10 +151,6 @@ export default defineComponent({
     const showDeleteDialog = ref(false);
     const promotionToDeleteId = ref(null);
     const deleteError = ref('');
-    const startDatePicker = ref(false);
-    const endDatePicker = ref(false);
-    const editStartDatePicker = ref(false);
-    const editEndDatePicker = ref(false);
 
     const authStore = useAuthStore();
 
@@ -311,10 +258,6 @@ export default defineComponent({
       showDeleteDialog,
       promotionToDeleteId,
       deleteError,
-      startDatePicker,
-      endDatePicker,
-      editStartDatePicker,
-      editEndDatePicker,
       fetchPromotions,
       createPromotion,
       editPromotion,
