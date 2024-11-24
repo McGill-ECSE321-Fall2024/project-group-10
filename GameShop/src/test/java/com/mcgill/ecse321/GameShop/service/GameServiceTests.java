@@ -387,7 +387,7 @@ public class GameServiceTests {
 
     @Test
     public void testUpdateGameDescription() {
-        VALID_GAME_ID = 9;
+        VALID_GAME_ID = 9093476;
         Game game = new Game("Game Title", "Old Description", 30, Game.GameStatus.InStock, 100,
                 "http://example.com/image1.jpg");
         game.setGame_id(VALID_GAME_ID);
