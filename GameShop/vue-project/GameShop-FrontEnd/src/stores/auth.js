@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useRouter } from "vue-router";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -54,6 +55,24 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         console.error("Registration error:", error.message);
         throw error;
+      }
+    },
+
+    logout(router) {
+      console.log("Logging out...");
+    
+      // Clear user state
+      this.user = null;
+      this.accountType = null;
+    
+      // Clear persistent storage if used
+      localStorage.removeItem("user");
+    
+      // Redirect using the router instance
+      if (router) {
+        router.push({ name: "Catalog" });
+      } else {
+        console.error("Router instance is required for navigation.");
       }
     },
   },

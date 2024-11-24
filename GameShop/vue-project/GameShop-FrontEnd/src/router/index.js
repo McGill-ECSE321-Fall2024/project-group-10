@@ -20,6 +20,7 @@ import UpdateAccount from '@/views/UpdateAccount.vue';
 import ArchiveEmployee from '@/views/manager/ArchiveEmployee.vue';
 import ListEmployees from '@/views/manager/ListEmployees.vue';
 import ListCustomers from '@/views/manager/ListCustomers.vue';
+import EmployeeDashboard from '@/views/employee/EmployeeDashboard.vue';
 
 const routes = [
   {
@@ -63,6 +64,18 @@ const routes = [
     path: "/update-account",
     name: "UpdateAccount",
     component: UpdateAccount,
+  },
+  {
+    path: "/logout",
+    name: "Logout",
+    component: () => import("@/views/Logout.vue"),
+    //meta: { requiresAuth: true }, // Optional: Restrict access to authenticated users
+  },
+  {
+    path: "/employee/dashboard",
+    name: "EmployeeDashboard",
+    component: EmployeeDashboard,
+    meta: { requiresAuth: true, role: "EMPLOYEE" }, // Restrict access to employees
   },
   {
     path: '/manager',
