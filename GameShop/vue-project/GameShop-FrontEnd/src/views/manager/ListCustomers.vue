@@ -2,7 +2,6 @@
     <v-container>
       <h1>List of Customers</h1>
   
-      <!-- Customer Table -->
       <v-simple-table dense>
         <template v-slot:default>
           <thead>
@@ -24,7 +23,6 @@
         </template>
       </v-simple-table>
   
-      <!-- Error Message -->
       <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
     </v-container>
   </template>

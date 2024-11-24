@@ -1,4 +1,3 @@
-<!-- File: src/views/manager/ManagerDashboard.vue -->
 
 <template>
     <v-container>
@@ -10,9 +9,6 @@
       <v-btn @click="router.push({ name: 'AddGame' })">Add New Game</v-btn>
       <v-btn color="primary" @click="router.push({ name: 'ManageCategories' })">Manage Categories</v-btn>
       <v-btn color="primary" @click="router.push({ name: 'ManagePlatforms' })">Manage Platforms</v-btn>
-      <!-- Add other manager functionalities -->
-      
-      <!-- Add router-view to render child components -->
       <router-view></router-view>
     </v-container>
   </template>
