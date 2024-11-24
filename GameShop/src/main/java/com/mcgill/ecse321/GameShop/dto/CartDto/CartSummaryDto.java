@@ -5,15 +5,15 @@ import com.mcgill.ecse321.GameShop.model.Cart;
 public class CartSummaryDto {
     private int cartId;
     private int totalItems;
-    private int totalPrice;
+    private double totalPrice;
 
     public CartSummaryDto() {
     }
 
-    public CartSummaryDto(Cart cart, int totalItems, int totalPrice) {
+    public CartSummaryDto(Cart cart, int totalItems, double totalPrice2) {
         this.cartId = cart.getCart_id();
         this.totalItems = totalItems;
-        this.totalPrice = totalPrice;
+        this.totalPrice = totalPrice2;
     }
 
     public int getCartId() {
@@ -32,7 +32,7 @@ public class CartSummaryDto {
         this.totalItems = totalItems;
     }
 
-    public int getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
     }
 

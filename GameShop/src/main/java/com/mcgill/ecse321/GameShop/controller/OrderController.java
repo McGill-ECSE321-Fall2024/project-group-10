@@ -128,7 +128,7 @@ public class OrderController {
          * @return the response data transfer object containing the details of the
          *         updated order
          */
-        @PostMapping("/orders/{trackingNumber}/games")
+        @PutMapping("/orders/{trackingNumber}/games")
         public OrderResponseDto addGameToOrder(
                         @PathVariable String trackingNumber,
                         @RequestBody OrderAddGameRequestDto request) {
@@ -173,18 +173,21 @@ public class OrderController {
          * @param trackingNumber the tracking number of the order to return the game
          *                       from
          * @param specificGameId the ID of the specific game to return
+         * @param note           an optional note provided by the customer for the
+         *                       return
          * @return the response data transfer object containing the details of the
          *         updated order
          */
-        @PostMapping("/orders/{trackingNumber}/return/{specificGameId}")
+        @PutMapping("/orders/{trackingNumber}/return/{specificGameId}")
         public OrderResponseDto returnGame(
                         @PathVariable String trackingNumber,
-                        @PathVariable int specificGameId) {
+                        @PathVariable int specificGameId,
+                        @RequestBody(required = false) String note) {
 
-                // Return the game
-                orderService.returnGame(trackingNumber, specificGameId);
+                // Return the game with the optional note
+                orderService.returnGame(trackingNumber, specificGameId, note);
 
-                // Get order by tracking number
+                // Get the updated order by tracking number
                 Order order = orderService.getOrderByTrackingNumber(trackingNumber);
 
                 // Get the specific games associated with the order
@@ -192,6 +195,7 @@ public class OrderController {
                                 .stream()
                                 .map(SpecificGameResponseDto::new)
                                 .collect(Collectors.toList());
+
                 return OrderResponseDto.create(order, specificGames);
         }
 

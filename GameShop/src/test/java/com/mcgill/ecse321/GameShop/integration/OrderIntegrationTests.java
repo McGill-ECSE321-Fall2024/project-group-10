@@ -70,9 +70,9 @@ public class OrderIntegrationTests {
         @Autowired
         private CartRepository cartRepository;
 
-        private String trackingNumber = "HELLOHELLOTRACKINGNUMBERHELLOHELLO";
+        private String trackingNumber;
         private String customerEmail = "customer@hellohello.com";
-        private int gameId = 74289562;
+        private int gameId;
         private int specificGameId;
         private int paymentCard = 1234567890;
 
@@ -137,9 +137,10 @@ public class OrderIntegrationTests {
 
                 // Add Game to Customer's Cart
                 CartRequestDto cartRequestDto = new CartRequestDto(gameId, 1);
-                ResponseEntity<CartResponseDto> updatedCartResponse = client.postForEntity(
+                ResponseEntity<CartResponseDto> updatedCartResponse = client.exchange(
                                 "/carts/" + cartId + "/games",
-                                cartRequestDto,
+                                HttpMethod.PUT,
+                                new HttpEntity<>(cartRequestDto),
                                 CartResponseDto.class);
                 assertNotNull(updatedCartResponse);
                 assertEquals(HttpStatus.OK, updatedCartResponse.getStatusCode());
@@ -275,7 +276,7 @@ public class OrderIntegrationTests {
         @Test
         @Order(5)
         public void testAddGameToOrder() {
-                // Ensure a fresh game and specific game instance setup if needed
+                // Create a new game
                 GameRequestDto newGameRequest = new GameRequestDto(
                                 "Additional Test Game",
                                 "Description for additional game",
@@ -292,14 +293,49 @@ public class OrderIntegrationTests {
                 assertEquals(HttpStatus.OK, gameResponse.getStatusCode());
 
                 GameResponseDto additionalGame = gameResponse.getBody();
-                assertNotNull(additionalGame, "Expected non-null GameResponseDto, but got null");
+                assertNotNull(additionalGame);
                 int additionalGameId = additionalGame.getaGame_id();
 
-                // Create specific game instance for the newly created game
+                // **Create SpecificGame instances for the new game**
                 SpecificGameRequestDto specificGameRequest = new SpecificGameRequestDto(
                                 SpecificGame.ItemStatus.Confirmed,
                                 new ArrayList<>(),
                                 additionalGameId);
+
+                // Let's create multiple SpecificGame instances if needed
+                for (int i = 0; i < 5; i++) {
+                        ResponseEntity<SpecificGameResponseDto> specificGameResponse = client.postForEntity(
+                                        "/specificGames",
+                                        specificGameRequest,
+                                        SpecificGameResponseDto.class);
+                        assertNotNull(specificGameResponse);
+                        assertEquals(HttpStatus.OK, specificGameResponse.getStatusCode());
+                }
+
+                // Add the game to the existing order
+                OrderAddGameRequestDto addGameRequest = new OrderAddGameRequestDto(additionalGameId, 1);
+                ResponseEntity<OrderResponseDto> response = client.exchange(
+                                "/orders/" + trackingNumber + "/games",
+                                HttpMethod.PUT,
+                                new HttpEntity<>(addGameRequest),
+                                OrderResponseDto.class);
+
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+
+                OrderResponseDto order = response.getBody();
+                assertNotNull(order);
+                assertTrue(order.getSpecificGames().size() >= 2);
+        }
+
+        @Test
+        @Order(6)
+        public void testAddAnotherSpecificGameToOrder() {
+                // Create a second SpecificGame instance for the same Game
+                SpecificGameRequestDto specificGameRequest = new SpecificGameRequestDto(
+                                SpecificGame.ItemStatus.Confirmed,
+                                new ArrayList<>(),
+                                gameId);
 
                 ResponseEntity<SpecificGameResponseDto> specificGameResponse = client.postForEntity(
                                 "/specificGames",
@@ -308,55 +344,21 @@ public class OrderIntegrationTests {
                 assertNotNull(specificGameResponse);
                 assertEquals(HttpStatus.OK, specificGameResponse.getStatusCode());
 
-                // Add the game to the existing order
-                OrderAddGameRequestDto addGameRequest = new OrderAddGameRequestDto(additionalGameId, 1);
-                ResponseEntity<OrderResponseDto> response = client.postForEntity(
-                                "/orders/" + trackingNumber + "/games",
-                                addGameRequest,
-                                OrderResponseDto.class);
-
-                // Assertions
-                assertNotNull(response, "Response was null; expected a valid response entity.");
-                assertEquals(HttpStatus.OK, response.getStatusCode(),
-                                "Expected status OK but got " + response.getStatusCode());
-
-                OrderResponseDto order = response.getBody();
-                assertNotNull(order, "Expected non-null OrderResponseDto, but got null");
-
-                // Confirm that the order contains at least two specific games after addition
-                assertTrue(order.getSpecificGames().size() >= 2,
-                                "Expected at least 2 specific games in the order after addition, but found: "
-                                                + order.getSpecificGames().size());
-        }
-
-        @Test
-        @Order(6)
-        public void testAddAnotherSpecificGameToOrder() {
-
-                // Create a second SpecificGame instance for the same Game
-                SpecificGameRequestDto specificGameRequest2 = new SpecificGameRequestDto(
-                                SpecificGame.ItemStatus.Confirmed,
-                                new ArrayList<>(),
-                                gameId);
-                ResponseEntity<SpecificGameResponseDto> specificGameResponse2 = client.postForEntity(
-                                "/specificGames",
-                                specificGameRequest2,
-                                SpecificGameResponseDto.class);
-                assertNotNull(specificGameResponse2);
-                assertEquals(HttpStatus.OK, specificGameResponse2.getStatusCode());
-
-                SpecificGameResponseDto specificGame2 = specificGameResponse2.getBody();
-                assertNotNull(specificGame2);
-                int specificGameId2 = specificGame2.getSpecificGame_id();
+                SpecificGameResponseDto specificGame = specificGameResponse.getBody();
+                assertNotNull(specificGame);
+                int specificGameId2 = specificGame.getSpecificGame_id();
 
                 // Add the second SpecificGame instance to the order
-                OrderAddGameRequestDto addGameRequest2 = new OrderAddGameRequestDto(gameId, 1);
-                client.postForEntity(
+                OrderAddGameRequestDto addGameRequest = new OrderAddGameRequestDto(gameId, 1);
+                ResponseEntity<OrderResponseDto> response = client.exchange(
                                 "/orders/" + trackingNumber + "/games",
-                                addGameRequest2,
+                                HttpMethod.PUT,
+                                new HttpEntity<>(addGameRequest),
                                 OrderResponseDto.class);
 
-                // Retrieve the updated order
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+
                 ResponseEntity<OrderResponseDto> updatedOrderResponse = client.getForEntity(
                                 "/orders/" + trackingNumber,
                                 OrderResponseDto.class);
@@ -367,21 +369,12 @@ public class OrderIntegrationTests {
                 OrderResponseDto updatedOrder = updatedOrderResponse.getBody();
                 assertNotNull(updatedOrder);
 
-                // Log the specific game IDs in the order for verification
                 List<Integer> specificGameIds = updatedOrder.getSpecificGames().stream()
                                 .map(SpecificGameResponseDto::getSpecificGame_id)
                                 .collect(Collectors.toList());
 
-                // Ensure that both specific games are present
-                assertTrue(specificGameIds.contains(specificGameId), "Order should contain the first SpecificGame");
-                assertTrue(specificGameIds.contains(specificGameId2), "Order should contain the second SpecificGame");
-
-                // Confirm the count of specific games with the same gameId
-                long count = updatedOrder.getSpecificGames().stream()
-                                .filter(sg -> sg.getGame_id() == gameId)
-                                .count();
-                assertTrue(count >= 2,
-                                "Expected at least 2 specific games with gameId " + gameId + " but found: " + count);
+                assertTrue(specificGameIds.contains(specificGameId));
+                assertTrue(specificGameIds.contains(specificGameId2));
         }
 
         @Test
@@ -412,10 +405,8 @@ public class OrderIntegrationTests {
         @Order(8)
         public void testGetSpecificGamesByOrder() {
                 // Call the endpoint to get specific games for the existing order
-                ResponseEntity<SpecificGameListDto> response = client.exchange(
+                ResponseEntity<SpecificGameListDto> response = client.getForEntity(
                                 "/orders/" + trackingNumber + "/specificGames",
-                                HttpMethod.GET,
-                                null,
                                 SpecificGameListDto.class);
 
                 // Assertions
@@ -427,16 +418,13 @@ public class OrderIntegrationTests {
                 assertNotNull(specificGameListDto, "Expected non-null SpecificGameListDto, but got null");
 
                 // Extract the list of specific game summaries
-                List<SpecificGameSummaryDto> specificGames = specificGameListDto.getGames(); // Confirm that
-                                                                                             // `getGames()` or a
-                                                                                             // similar method exists
+                List<SpecificGameSummaryDto> specificGames = specificGameListDto.getGames();
 
                 assertNotNull(specificGames, "Expected non-null list of SpecificGameSummaryDto, but got null");
                 assertFalse(specificGames.isEmpty(), "Expected specific games, but found none");
 
                 // Check available fields in each SpecificGameSummaryDto
                 specificGames.forEach(sg -> {
-                        // Replace these assertions with actual fields present in SpecificGameSummaryDto
                         assertNotNull(sg.getSpecificGame_id(), "Expected specific game ID to be present");
                         assertNotNull(sg.getItemStatus(), "Expected item status to be present");
                 });
@@ -455,6 +443,7 @@ public class OrderIntegrationTests {
                                 SpecificGame.ItemStatus.Confirmed,
                                 new ArrayList<>(),
                                 gameId);
+
                 ResponseEntity<SpecificGameResponseDto> specificGameResponse = client.postForEntity(
                                 "/specificGames",
                                 specificGameRequest,
@@ -468,16 +457,18 @@ public class OrderIntegrationTests {
 
                 // Add the specific game to an existing order
                 OrderAddGameRequestDto addGameRequest = new OrderAddGameRequestDto(gameId, 1);
-                ResponseEntity<OrderResponseDto> addGameResponse = client.postForEntity(
+                ResponseEntity<OrderResponseDto> addGameResponse = client.exchange(
                                 "/orders/" + trackingNumber + "/games",
-                                addGameRequest,
+                                HttpMethod.PUT,
+                                new HttpEntity<>(addGameRequest),
                                 OrderResponseDto.class);
                 assertNotNull(addGameResponse);
                 assertEquals(HttpStatus.OK, addGameResponse.getStatusCode());
 
                 // Return the specific game within the order
-                ResponseEntity<OrderResponseDto> returnGameResponse = client.postForEntity(
+                ResponseEntity<OrderResponseDto> returnGameResponse = client.exchange(
                                 "/orders/" + trackingNumber + "/return/" + specificGameId,
+                                HttpMethod.PUT,
                                 null,
                                 OrderResponseDto.class);
 
@@ -540,13 +531,15 @@ public class OrderIntegrationTests {
         }
 
         @SuppressWarnings("null")
+        @Test
         @Order(12)
         public void testAddGameToOrderWithInvalidGameId() {
                 OrderAddGameRequestDto addGameRequest = new OrderAddGameRequestDto(9999999, 1); // Invalid game ID
 
-                ResponseEntity<String> response = client.postForEntity(
+                ResponseEntity<String> response = client.exchange(
                                 "/orders/" + trackingNumber + "/games",
-                                addGameRequest,
+                                HttpMethod.PUT,
+                                new HttpEntity<>(addGameRequest),
                                 String.class);
 
                 assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(),
@@ -558,22 +551,16 @@ public class OrderIntegrationTests {
         @Test
         @Order(13)
         public void testReturnNonExistentSpecificGame() {
-                int nonExistentSpecificGameId = 91929398; // Non-existent specific game ID
+                int nonExistentSpecificGameId = 91929398;
 
-                ResponseEntity<String> response = client.postForEntity(
+                ResponseEntity<String> response = client.exchange(
                                 "/orders/" + trackingNumber + "/return/" + nonExistentSpecificGameId,
+                                HttpMethod.PUT,
                                 null,
                                 String.class);
 
-                // Assert status code is NOT_FOUND
-                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(),
-                                "Expected status NOT_FOUND for non-existent specific game ID.");
-
-                // Check if the response body is non-null and contains the exact expected
-                // message
-                assertNotNull(response.getBody(), "Expected a non-null response body for error message.");
-                assertTrue(response.getBody().contains("SpecificGame does not exist"),
-                                "Expected 'SpecificGame does not exist' error message but got: " + response.getBody());
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+                assertTrue(response.getBody().contains("SpecificGame does not exist"));
         }
 
         @SuppressWarnings("null")
@@ -591,22 +578,20 @@ public class OrderIntegrationTests {
                                 specificGameRequest,
                                 SpecificGameResponseDto.class);
                 assertNotNull(specificGameResponse);
-                assertEquals(HttpStatus.OK, specificGameResponse.getStatusCode());
 
                 SpecificGameResponseDto specificGame = specificGameResponse.getBody();
                 assertNotNull(specificGame);
                 int specificGameIdNotInOrder = specificGame.getSpecificGame_id();
 
                 // Attempt to return a specific game that was never added to the order
-                ResponseEntity<String> response = client.postForEntity(
+                ResponseEntity<String> response = client.exchange(
                                 "/orders/" + trackingNumber + "/return/" + specificGameIdNotInOrder,
+                                HttpMethod.PUT,
                                 null,
                                 String.class);
 
-                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(),
-                                "Expected status BAD_REQUEST for specific game not in order.");
-                assertTrue(response.getBody().contains("Game not in order"),
-                                "Expected 'Game not in order' error message.");
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+                assertTrue(response.getBody().contains("Game not in order"));
         }
 
 }

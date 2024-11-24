@@ -45,7 +45,7 @@ public class Game {
   private int game_id;
   private String title;
   private String description;
-  private int price;
+  private double price;
 
   @Enumerated(EnumType.STRING)
   private GameStatus gameStatus;
@@ -65,7 +65,7 @@ public class Game {
   // CONSTRUCTOR
   // ------------------------
 
-  public Game(String aTitle, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity,
+  public Game(String aTitle, String aDescription, double aPrice, GameStatus aGameStatus, int aStockQuantity,
       String aPhotoUrl) {
     title = aTitle;
     description = aDescription;
@@ -116,7 +116,7 @@ public class Game {
     return wasSet;
   }
 
-  public boolean setPrice(int aPrice) {
+  public boolean setPrice(double aPrice) {
     boolean wasSet = false;
     price = aPrice;
     wasSet = true;
@@ -166,7 +166,7 @@ public class Game {
     return description;
   }
 
-  public int getPrice() {
+  public double getPrice() {
     return price;
   }
 
@@ -218,6 +218,7 @@ public class Game {
     List<Platform> newPlatforms = Collections.unmodifiableList(platforms);
     return newPlatforms;
   }
+
   public void setPlatforms(List<Platform> platforms) {
     this.platforms = platforms;
   }
@@ -338,6 +339,7 @@ public class Game {
     }
     return wasAdded;
   }
+
   public void setCategories(List<Category> categories) {
     this.categories = categories;
   }

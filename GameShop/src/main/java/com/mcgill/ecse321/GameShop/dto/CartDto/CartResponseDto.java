@@ -10,16 +10,16 @@ public class CartResponseDto {
     private int cartId;
     private List<CartGameDto> games;
     private int totalItems;
-    private int totalPrice;
+    private double totalPrice;
 
     public CartResponseDto() {
     }
 
-    public CartResponseDto(int cartId, List<CartGameDto> games, int totalItems, int totalPrice) {
+    public CartResponseDto(int cartId, List<CartGameDto> games, int totalItems, double totalPrice2) {
         this.cartId = cartId;
         this.games = games;
         this.totalItems = totalItems;
-        this.totalPrice = totalPrice;
+        this.totalPrice = totalPrice2;
     }
 
     public int getCartId() {
@@ -46,7 +46,7 @@ public class CartResponseDto {
         this.totalItems = totalItems;
     }
 
-    public int getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
     }
 
@@ -60,8 +60,8 @@ public class CartResponseDto {
                 .collect(Collectors.toList());
 
         int totalItems = quantities.values().stream().mapToInt(Integer::intValue).sum();
-        int totalPrice = cart.getGames().stream()
-                .mapToInt(game -> game.getPrice() * quantities.getOrDefault(game.getGame_id(), 1))
+        double totalPrice = cart.getGames().stream()
+                .mapToDouble(game -> game.getPrice() * quantities.getOrDefault(game.getGame_id(), 1))
                 .sum();
 
         return new CartResponseDto(cart.getCart_id(), games, totalItems, totalPrice);

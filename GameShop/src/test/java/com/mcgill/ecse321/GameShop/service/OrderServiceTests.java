@@ -58,6 +58,7 @@ public class OrderServiceTests {
     private static final String INVALID_CUSTOMER_EMAIL = "invalid@ca.ca";
     private static final String VALID_NOTE = "Please deliver between 5-6 PM";
     private static final int VALID_PAYMENT_CARD = 1234567890;
+    private static final LocalDate CURRENT_DATE = LocalDate.now();
 
     // --- Tests for getOrderByTrackingNumber ---
 
@@ -803,7 +804,7 @@ public class OrderServiceTests {
                 "specificGame2 should be associated with the order after adding");
 
         // Act: Return one of the specific games
-        orderService.returnGame(VALID_TRACKING_NUMBER + "leb1", 27248421);
+        orderService.returnGame(VALID_TRACKING_NUMBER + "leb1", 27248421, "damagedCD");
 
         // Assert
         // Check the item statuses
@@ -853,7 +854,7 @@ public class OrderServiceTests {
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            orderService.returnGame(VALID_TRACKING_NUMBER + "co", 6724843);
+            orderService.returnGame(VALID_TRACKING_NUMBER + "co", 6724843, "");
         });
 
         // Verify exception details
@@ -892,7 +893,7 @@ public class OrderServiceTests {
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            orderService.returnGame(VALID_TRACKING_NUMBER + "24", 67248436);
+            orderService.returnGame(VALID_TRACKING_NUMBER + "24", 67248436, null);
         });
 
         // Verify exception details
@@ -925,7 +926,7 @@ public class OrderServiceTests {
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            orderService.returnGame(INVALID_TRACKING_NUMBER + "25", 67248412);
+            orderService.returnGame(INVALID_TRACKING_NUMBER + "25", 67248412, "");
         });
 
         // Verify exception details
@@ -956,7 +957,7 @@ public class OrderServiceTests {
 
         // Act & Assert
         GameShopException exception = assertThrows(GameShopException.class, () -> {
-            orderService.returnGame(INVALID_TRACKING_NUMBER + "23", 67248463);
+            orderService.returnGame(INVALID_TRACKING_NUMBER + "23", 67248463, "");
         });
 
         // Verify exception details
@@ -966,6 +967,49 @@ public class OrderServiceTests {
         // Verify interactions
         verify(orderRepository, times(1)).findByTrackingNumber(INVALID_TRACKING_NUMBER + "23");
         verify(specificGameService, never()).findSpecificGameById(67248463);
+        verify(specificGameService, never()).updateSpecificGameItemStatus(anyInt(), any());
+        verify(gameService, never()).updateGameStockQuantity(anyInt(), anyInt());
+    }
+
+    @Test
+    public void testReturnGameAfter7Days() {
+        // Arrange
+        Cart cart = new Cart();
+        cart.setCart_id(4728472);
+
+        Game game = new Game("Old Game", "Past Description", 60, Game.GameStatus.InStock, 5, "photoUrl");
+        game.setGame_id(4728473);
+        cart.addGame(game);
+
+        SpecificGame specificGame = new SpecificGame(game);
+        specificGame.setSpecificGame_id(4728474);
+        specificGame.setItemStatus(SpecificGame.ItemStatus.Confirmed);
+
+        Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "late", "lateUser", "latePass", "0987654321",
+                "Late Ave",
+                cart);
+
+        // Set order date to 8 days before the CURRENT_DATE
+        Date pastDate = java.sql.Date.valueOf(CURRENT_DATE.minusDays(8));
+        Order order = new Order(pastDate, "Late order note", 5678, customer);
+        order.setTrackingNumber(VALID_TRACKING_NUMBER + "late");
+
+        // Mock
+        when(orderRepository.findByTrackingNumber(VALID_TRACKING_NUMBER + "late")).thenReturn(order);
+
+        // Act & Assert
+        GameShopException exception = assertThrows(GameShopException.class, () -> {
+            orderService.returnGame(VALID_TRACKING_NUMBER + "late", 4728474, "");
+        });
+
+        // Verify exception details
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Game return period has expired. Returns are allowed within 7 days of the order date.",
+                exception.getMessage());
+
+        // Verify interactions
+        verify(orderRepository, times(1)).findByTrackingNumber(VALID_TRACKING_NUMBER + "late");
+        verify(specificGameService, never()).findSpecificGameById(4728474);
         verify(specificGameService, never()).updateSpecificGameItemStatus(anyInt(), any());
         verify(gameService, never()).updateGameStockQuantity(anyInt(), anyInt());
     }

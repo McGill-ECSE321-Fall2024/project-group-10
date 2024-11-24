@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public class GameRequestDto {
-    
+
     @NotBlank(message = "Game title cannot be empty")
     private String aTitle;
 
@@ -17,7 +17,7 @@ public class GameRequestDto {
     private String aDescription;
 
     @Positive(message = "Game price cannot be negative")
-    private int aPrice;
+    private double aPrice;
 
     @NotNull(message = "Game status cannot be null")
     private GameStatus aGameStatus;
@@ -32,9 +32,11 @@ public class GameRequestDto {
     private List<Integer> Categories;
     private List<Integer> Platforms;
 
-    protected GameRequestDto() {}
+    protected GameRequestDto() {
+    }
 
-    public GameRequestDto(String aTitle, String aDescription, int aPrice, GameStatus aGameStatus, int aStockQuantity, String aPhotoUrl) {
+    public GameRequestDto(String aTitle, String aDescription, double aPrice, GameStatus aGameStatus, int aStockQuantity,
+            String aPhotoUrl) {
         this.aTitle = aTitle;
         this.aDescription = aDescription;
         this.aPrice = aPrice;
@@ -59,11 +61,11 @@ public class GameRequestDto {
         this.aDescription = aDescription;
     }
 
-    public int getaPrice() {
+    public double getaPrice() {
         return aPrice;
-    }  
+    }
 
-    public void setaPrice(int aPrice) {
+    public void setaPrice(double aPrice) {
         this.aPrice = aPrice;
     }
 
@@ -77,7 +79,7 @@ public class GameRequestDto {
 
     public int getaStockQuantity() {
         return aStockQuantity;
-    }  
+    }
 
     public void setaStockQuantity(int aStockQuantity) {
         this.aStockQuantity = aStockQuantity;
@@ -98,9 +100,11 @@ public class GameRequestDto {
     public List<Integer> getCategories() {
         return Categories;
     }
+
     public void setPlatforms(List<Integer> Platforms) {
         this.Platforms = Platforms;
     }
+
     public List<Integer> getPlatforms() {
         return Platforms;
     }

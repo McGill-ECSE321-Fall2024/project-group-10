@@ -36,7 +36,7 @@ public class GameService {
     }
 
     @Transactional
-    public Game createGame(String title, String aDescription, int aPrice, Game.GameStatus aGameStatus,
+    public Game createGame(String title, String aDescription, double aPrice, Game.GameStatus aGameStatus,
             int aStockQuantity, String aPhotoUrl) {
         // Validate input parameters
         if (isEmpty(title)) {
@@ -156,7 +156,7 @@ public class GameService {
     }
 
     @Transactional
-    public Game updateGamePrice(int game_id, int newPrice) {
+    public Game updateGamePrice(int game_id, double newPrice) {
         // Validate new price and game ID
         if (newPrice <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Price cannot be negative nor null");

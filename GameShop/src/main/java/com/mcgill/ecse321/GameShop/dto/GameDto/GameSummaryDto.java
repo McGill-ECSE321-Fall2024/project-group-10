@@ -3,10 +3,10 @@ package com.mcgill.ecse321.GameShop.dto.GameDto;
 import com.mcgill.ecse321.GameShop.model.Game;
 
 public class GameSummaryDto {
-    
+
     private String title;
     private String description;
-    private int price;
+    private double price;
     private String photoUrl;
     private int gameId;
 
@@ -17,6 +17,7 @@ public class GameSummaryDto {
         this.photoUrl = game.getPhotoUrl();
         this.gameId = game.getGame_id();
     }
+
     protected GameSummaryDto() {
     }
 
@@ -28,19 +29,20 @@ public class GameSummaryDto {
         return description;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
     public String getPhotoUrl() {
         return photoUrl;
     }
+
     public int getGameId() {
         return gameId;
     }
+
     public void setGameId(int gameId) {
         this.gameId = gameId;
     }
-
 
 }
