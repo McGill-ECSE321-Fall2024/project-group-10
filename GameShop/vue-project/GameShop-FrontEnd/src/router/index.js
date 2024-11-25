@@ -140,6 +140,22 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  const auth = useAuthStore();
+
+  if (to.meta.requiresAuth) {
+    if (!auth.user) {
+      return next({ name: "Login" });
+    }
+
+    if (to.meta.role && auth.accountType !== to.meta.role.toUpperCase()) {
+      return next({ name: "Catalog" });
+    }
+  }
+
+  next();
+});
+
 // Navigation Guards (no changes)
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore();

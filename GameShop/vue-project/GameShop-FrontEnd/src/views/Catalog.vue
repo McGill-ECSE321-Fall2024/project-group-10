@@ -187,28 +187,77 @@ export default defineComponent({
       }
     };
 
+    // const fetchGamesByCategoriesAndPlatforms = async (categoryIds, platformIds) => {
+    //   try {
+    //     let gamesMap = new Map();
+    //     for (const catId of categoryIds) {
+    //       for (const platId of platformIds) {
+    //         const response = await fetch(
+    //           `http://localhost:8080/games?categoryId=${catId}&platformId=${platId}`
+    //         );
+    //         const data = await response.json();
+
+    //         data.games.forEach((game) => {
+    //           gamesMap.set(game.gameId, {
+    //             ...game,
+    //             categories: game.categories?.categories || [],
+    //             platforms: game.platforms?.platforms || [],
+    //             promotions: game.promotions || [],
+    //           });
+    //         });
+    //       }
+    //     }
+
+    //     store.products = Array.from(gamesMap.values());
+    //   } catch (error) {
+    //     console.error("Error fetching games by categories and platforms:", error);
+    //   }
+    // };
     const fetchGamesByCategoriesAndPlatforms = async (categoryIds, platformIds) => {
       try {
-        let gamesMap = new Map();
-        for (const catId of categoryIds) {
-          for (const platId of platformIds) {
-            const response = await fetch(
-              `http://localhost:8080/games?categoryId=${catId}&platformId=${platId}`
-            );
-            const data = await response.json();
+        let categoryGamesMap = new Map();
+        let platformGamesMap = new Map();
 
-            data.games.forEach((game) => {
-              gamesMap.set(game.gameId, {
-                ...game,
-                categories: game.categories?.categories || [],
-                platforms: game.platforms?.platforms || [],
-                promotions: game.promotions || [],
-              });
+        // Fetch games by categories
+        for (const id of categoryIds) {
+          const response = await fetch(
+            `http://localhost:8080/categories/${id}/games`
+          );
+          const data = await response.json();
+
+          data.games.forEach((game) => {
+            categoryGamesMap.set(game.gameId, {
+              ...game,
+              categories: game.categories?.categories || [],
+              platforms: game.platforms?.platforms || [],
+              promotions: game.promotions || [],
             });
-          }
+          });
         }
 
-        store.products = Array.from(gamesMap.values());
+        // Fetch games by platforms
+        for (const id of platformIds) {
+          const response = await fetch(
+            `http://localhost:8080/platforms/${id}/games`
+          );
+          const data = await response.json();
+
+          data.games.forEach((game) => {
+            platformGamesMap.set(game.gameId, {
+              ...game,
+              categories: game.categories?.categories || [],
+              platforms: game.platforms?.platforms || [],
+              promotions: game.promotions || [],
+            });
+          });
+        }
+
+        // Find intersection of games in both maps
+        const intersectionGames = Array.from(categoryGamesMap.values()).filter((game) =>
+          platformGamesMap.has(game.gameId)
+        );
+
+        store.products = intersectionGames;
       } catch (error) {
         console.error("Error fetching games by categories and platforms:", error);
       }
