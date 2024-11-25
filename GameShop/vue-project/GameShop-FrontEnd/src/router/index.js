@@ -45,7 +45,7 @@ const routes = [
     path: '/checkout',
     name: 'Checkout',
     component: Checkout,
-    meta: { requiresAuth: true, role: 'CUSTOMER' }, // Require login here
+    meta: { requiresAuth: true, role: 'customer' },
   },
   {
     path: '/login',
@@ -61,6 +61,7 @@ const routes = [
     path: '/add-employee',
     name: 'AddEmployee',
     component: AddEmployee,
+    meta: { requiresAuth: true, role: 'manager' },
   },
   {
     path: "/update-account",
@@ -71,13 +72,12 @@ const routes = [
     path: "/logout",
     name: "Logout",
     component: () => import("@/views/Logout.vue"),
-    //meta: { requiresAuth: true }, // Optional: Restrict access to authenticated users
   },
   {
     path: '/employee',
     name: 'EmployeeDashboard',
     component: EmployeeDashboard,
-    meta: { requiresAuth: false, role: 'EMPLOYEE' },
+    meta: { requiresAuth: true, role: 'employee' },
     children: [{
       path: "/employee/view-employees",
       name: "ViewEmployees",
@@ -93,20 +93,20 @@ const routes = [
     path: '/manager',
     name: 'ManagerDashboard',
     component: ManagerDashboard,
-    meta: { requiresAuth: false, role: 'MANAGER' },
+    meta: { requiresAuth: true, role: 'manager' },
     children: [
       {
-        path: 'add-game', // Relative path
+        path: 'add-game',
         name: 'AddGame',
         component: AddGame,
       },
       {
-        path: 'edit-game/:id', // Relative path
+        path: 'edit-game/:id',
         name: 'EditGame',
         component: EditGame,
       },
       {
-        path: 'categories', // Changed from '/manager/categories' to 'categories'
+        path: 'categories',
         name: 'ManageCategories',
         component: ManageCategories,
       },
@@ -130,7 +130,6 @@ const routes = [
         name: "ListCustomers",
         component: ListCustomers,
       },
-      // Add other manager routes as needed
     ],
   },
 ];
@@ -140,22 +139,20 @@ const router = createRouter({
   routes,
 });
 
-// Navigation Guards (no changes)
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore();
+
   if (to.meta.requiresAuth) {
-    if (auth.user) {
-      if (to.meta.role && auth.user.role !== to.meta.role) {
-        next({ name: 'Catalog' });
-      } else {
-        next();
-      }
-    } else {
-      next({ name: 'Login' });
+    if (!auth.user) {
+      return next({ name: "Login" });
     }
-  } else {
-    next();
+
+    if (to.meta.role && auth.accountType !== to.meta.role.toUpperCase()) {
+      return next({ name: "Catalog" });
+    }
   }
+
+  next();
 });
 
 export default router;
