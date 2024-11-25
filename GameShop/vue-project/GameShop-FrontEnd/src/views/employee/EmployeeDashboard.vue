@@ -2,8 +2,8 @@
 <template>
     <v-container>
       <h1>Employee Dashboard</h1>
-      <!-- <v-btn color="primary" @click="router.push({ name: 'ListEmployees' })">View all Employees</v-btn>   
-      <v-btn color="primary" @click="router.push({ name: 'ListCustomers' })">View all Customers</v-btn> -->
+      <v-btn color="primary" @click="router.push({ name: 'ViewEmployees' })">View all Employees</v-btn>   
+      <v-btn color="primary" @click="router.push({ name: 'ViewCustomers' })">View all Customers</v-btn>
       <router-view></router-view>
     </v-container>
   </template>
@@ -25,6 +25,5 @@
   </script>
   
   <style scoped>
-  /* Add styles if needed */
   </style>
   

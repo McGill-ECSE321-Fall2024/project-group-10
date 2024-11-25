@@ -21,6 +21,8 @@ import ArchiveEmployee from '@/views/manager/ArchiveEmployee.vue';
 import ListEmployees from '@/views/manager/ListEmployees.vue';
 import ListCustomers from '@/views/manager/ListCustomers.vue';
 import EmployeeDashboard from '@/views/employee/EmployeeDashboard.vue';
+import ViewEmployees from '@/views/employee/ViewEmployees.vue';
+import ViewCustomers from '@/views/employee/ViewCustomers.vue';
 
 const routes = [
   {
@@ -77,14 +79,14 @@ const routes = [
     component: EmployeeDashboard,
     meta: { requiresAuth: false, role: 'EMPLOYEE' },
     children: [{
-      path: "/manager/list-employees",
-      name: "ListEmployees",
-      component: ListEmployees,
+      path: "/employee/view-employees",
+      name: "ViewEmployees",
+      component: ViewEmployees,
     },
     {
-      path: "/manager/list-customers",
-      name: "ListCustomers",
-      component: ListCustomers,
+      path: "/employee/view-customers",
+      name: "ViewCustomers",
+      component: ViewCustomers,
     },]
   },
   {
