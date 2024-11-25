@@ -8,7 +8,6 @@
             <tr>
               <th>Email</th>
               <th>Username</th>
-              <th>Phone Number</th>
               <th>Address</th>
             </tr>
           </thead>
@@ -16,7 +15,6 @@
             <tr v-for="customer in customers" :key="customer.email">
               <td>{{ customer.email }}</td>
               <td>{{ customer.username }}</td>
-              <td>{{ customer.phoneNumber }}</td>
               <td>{{ customer.address }}</td>
             </tr>
           </tbody>
