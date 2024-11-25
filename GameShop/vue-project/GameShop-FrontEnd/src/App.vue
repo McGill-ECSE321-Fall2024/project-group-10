@@ -12,7 +12,7 @@
         </v-btn>
         <v-btn
           v-if="auth.user"
-          @click="logout"
+         @click="router.push({ name: 'Logout' })"
           color="secondary"
           variant="elevated"
         >
@@ -53,7 +53,8 @@ export default defineComponent({
 
     const logout = () => {
       auth.logout();
-      router.push({ name: 'Catalog' });
+      router.push({ name: "Catalog" });
+      //router.push({ name: 'Catalog' });
     };
 
     return {

@@ -104,6 +104,9 @@ export default defineComponent({
 
     const filteredProducts = computed(() => {
       return store.products.filter((product) => {
+        console.log('Product:', product);
+      console.log('Product Categories:', product.categories);
+      console.log('Product Platforms:', product.platforms);
         let matches = true;
 
         // Filter by Promotions

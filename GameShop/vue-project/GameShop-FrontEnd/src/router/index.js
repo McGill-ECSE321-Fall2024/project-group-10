@@ -15,6 +15,14 @@ import EditGame from '@/views/manager/EditGame.vue';
 import Checkout from '@/views/Checkout.vue';
 import ManageCategories from '@/views/manager/ManageCategories.vue';
 import ManagePlatforms from '@/views/manager/ManagePlatforms.vue';
+import AddEmployee from '@/views/manager/AddEmployee.vue';
+import UpdateAccount from '@/views/UpdateAccount.vue';
+import ArchiveEmployee from '@/views/manager/ArchiveEmployee.vue';
+import ListEmployees from '@/views/manager/ListEmployees.vue';
+import ListCustomers from '@/views/manager/ListCustomers.vue';
+import EmployeeDashboard from '@/views/employee/EmployeeDashboard.vue';
+import ViewEmployees from '@/views/employee/ViewEmployees.vue';
+import ViewCustomers from '@/views/employee/ViewCustomers.vue';
 
 const routes = [
   {
@@ -37,7 +45,7 @@ const routes = [
     path: '/checkout',
     name: 'Checkout',
     component: Checkout,
-    meta: { requiresAuth: true, role: 'customer' }, // Require login here
+    meta: { requiresAuth: true, role: 'CUSTOMER' }, // Require login here
   },
   {
     path: '/login',
@@ -50,10 +58,42 @@ const routes = [
     component: Register,
   },
   {
+    path: '/add-employee',
+    name: 'AddEmployee',
+    component: AddEmployee,
+  },
+  {
+    path: "/update-account",
+    name: "UpdateAccount",
+    component: UpdateAccount,
+  },
+  {
+    path: "/logout",
+    name: "Logout",
+    component: () => import("@/views/Logout.vue"),
+    //meta: { requiresAuth: true }, // Optional: Restrict access to authenticated users
+  },
+  {
+    path: '/employee',
+    name: 'EmployeeDashboard',
+    component: EmployeeDashboard,
+    meta: { requiresAuth: false, role: 'EMPLOYEE' },
+    children: [{
+      path: "/employee/view-employees",
+      name: "ViewEmployees",
+      component: ViewEmployees,
+    },
+    {
+      path: "/employee/view-customers",
+      name: "ViewCustomers",
+      component: ViewCustomers,
+    },]
+  },
+  {
     path: '/manager',
     name: 'ManagerDashboard',
     component: ManagerDashboard,
-    meta: { requiresAuth: false, role: 'manager' },
+    meta: { requiresAuth: false, role: 'MANAGER' },
     children: [
       {
         path: 'add-game', // Relative path
@@ -74,6 +114,21 @@ const routes = [
         path: 'platforms',
         name: 'ManagePlatforms',
         component: ManagePlatforms,
+      },
+      {
+        path: "/manager/archive-employee",
+        name: "ArchiveEmployee",
+        component: ArchiveEmployee,
+      },
+      {
+        path: "/manager/list-employees",
+        name: "ListEmployees",
+        component: ListEmployees,
+      },
+      {
+        path: "/manager/list-customers",
+        name: "ListCustomers",
+        component: ListCustomers,
       },
       // Add other manager routes as needed
     ],

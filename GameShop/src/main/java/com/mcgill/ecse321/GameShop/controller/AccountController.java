@@ -1,24 +1,31 @@
 package com.mcgill.ecse321.GameShop.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.ArrayList;
 
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountRequestDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountType;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeListDto;
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.EmployeeResponseDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.LoginRequestDto;
+import com.mcgill.ecse321.GameShop.dto.AccountDtos.LoginResponseDto;
 import com.mcgill.ecse321.GameShop.dto.WishListDto.WishListResponseDto;
 import com.mcgill.ecse321.GameShop.model.Account;
 import com.mcgill.ecse321.GameShop.model.Customer;
 import com.mcgill.ecse321.GameShop.model.Employee;
+import com.mcgill.ecse321.GameShop.model.Manager;
 import com.mcgill.ecse321.GameShop.model.WishList;
 import com.mcgill.ecse321.GameShop.service.AccountService;
 
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -207,5 +214,32 @@ public class AccountController {
         WishList wishlist = accountService.getWishlistByCustomerEmail(email);
         return new WishListResponseDto(wishlist);
     }
+
+    @PostMapping("/account/login")
+public LoginResponseDto login(@RequestBody LoginRequestDto loginRequest) {
+    String email = loginRequest.getEmail();
+    String password = loginRequest.getPassword();
+
+    // Validate Customer
+    Account account = accountService.getAccountByEmail(email);
+    if (account != null && (account instanceof Customer) && account.getPassword().equals(password)) {
+        return new LoginResponseDto(account.getEmail(), AccountType.CUSTOMER);
+    }
+
+    // Validate Employee
+    if (account != null && (account instanceof Employee) && account.getPassword().equals(password)) {
+        return new LoginResponseDto(account.getEmail(), AccountType.EMPLOYEE);
+    }
+
+    // Validate Manager
+    if (account != null && (account instanceof Manager) && account.getEmail().equals(email) && account.getPassword().equals(password)) {
+        return new LoginResponseDto(account.getEmail(), AccountType.MANAGER);
+    }
+
+    // If no account matches
+    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+}
+
+
 
 }
