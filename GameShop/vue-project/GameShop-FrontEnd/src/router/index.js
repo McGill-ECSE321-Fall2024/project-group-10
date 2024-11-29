@@ -24,7 +24,7 @@ import EmployeeDashboard from '@/views/employee/EmployeeDashboard.vue';
 import ViewEmployees from '@/views/employee/ViewEmployees.vue';
 import ViewCustomers from '@/views/employee/ViewCustomers.vue';
 import ManageEmployees from '@/views/manager/ManageEmployees.vue';
-
+import ManagePromotions from '@/views/manager/ManagePromotions.vue';
 
 const routes = [
   {
@@ -112,6 +112,11 @@ const routes = [
         path: 'platforms',
         name: 'ManagePlatforms',
         component: ManagePlatforms,
+      },
+      {
+        path: 'promotions',
+        name: 'ManagePromotions',
+        component: ManagePromotions,
       },
       {
         path: "/list-customers",

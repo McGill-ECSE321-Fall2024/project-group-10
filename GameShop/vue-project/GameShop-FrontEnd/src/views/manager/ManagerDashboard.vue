@@ -18,6 +18,9 @@
       <v-col cols="auto">
         <v-btn color="primary" @click="router.push({ name: 'ManagePlatforms' })">Manage Platforms</v-btn>
       </v-col>
+      <v-col cols="auto">
+        <v-btn color="primary" @click="router.push({ name: 'ManagePromotions' })">Manage Promotions</v-btn>
+      </v-col>
     </v-row>
 
     <router-view></router-view>

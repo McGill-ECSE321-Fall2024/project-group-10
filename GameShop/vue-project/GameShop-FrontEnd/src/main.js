@@ -1,3 +1,5 @@
+// main.js
+
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import './assets/styles.css';
@@ -5,19 +7,32 @@ import './assets/styles.css';
 import App from './App.vue';
 import router from './router';
 
-// Vuetify
-import 'vuetify/styles';
+// Vuetify Imports
+import 'vuetify/styles'; // Vuetify CSS
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 
+// Icon Configuration Imports
+import '@mdi/font/css/materialdesignicons.css'; // Material Design Icons CSS
+import { aliases, mdi } from 'vuetify/iconsets/mdi'; // MDI Icon Sets
+
 import axios from 'axios';
 
+// Create Vuetify Instance with Icon Configuration
 const vuetify = createVuetify({
   components,
   directives,
+  icons: {
+    defaultSet: 'mdi', // Set MDI as the default icon set
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
 });
 
+// Create Vue App Instance
 const app = createApp(App);
 
 // Function to ensure the manager account exists
@@ -30,20 +45,25 @@ const ensureManagerAccount = async () => {
       console.log('Manager account already exists:', managerResponse.data);
     } else {
       console.warn('Manager account check returned no data; proceeding to creation.');
+      // Optionally, you can call the creation function here if needed
     }
   } catch (error) {
     if (error.response && error.response.status === 404) {
       // If the manager does not exist, create it
       try {
-        const creationResponse = await axios.post('http://localhost:8080/account/manager', {
-          email: 'manager@manager.com',
-          password: 'manager123',
-          username: 'manager',
-          phoneNumber: '123456',
-          address: 'manager street',
-        }, {
-          headers: { 'Content-Type': 'application/json' },
-        });
+        const creationResponse = await axios.post(
+          'http://localhost:8080/account/manager',
+          {
+            email: 'manager@manager.com',
+            password: 'manager123',
+            username: 'manager',
+            phoneNumber: '123456',
+            address: 'manager street',
+          },
+          {
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
 
         console.log('Manager account created successfully:', creationResponse.data);
       } catch (creationError) {
