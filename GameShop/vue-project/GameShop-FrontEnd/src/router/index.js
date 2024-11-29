@@ -23,6 +23,7 @@ import ListCustomers from '@/views/manager/ListCustomers.vue';
 import EmployeeDashboard from '@/views/employee/EmployeeDashboard.vue';
 import ViewEmployees from '@/views/employee/ViewEmployees.vue';
 import ViewCustomers from '@/views/employee/ViewCustomers.vue';
+import ManageEmployees from '@/views/manager/ManageEmployees.vue';
 
 const routes = [
   {
@@ -39,13 +40,13 @@ const routes = [
     path: '/cart',
     name: 'CartView',
     component: Cart,
-    // Removed meta: { requiresAuth: true } to allow access without login
+    meta: { requiresAuth: true }
   },
   {
     path: '/checkout',
     name: 'Checkout',
     component: Checkout,
-    meta: { requiresAuth: true, role: 'customer' },
+    meta: { requiresAuth: true, role: 'CUSTOMER' },
   },
   {
     path: '/login',
@@ -58,15 +59,10 @@ const routes = [
     component: Register,
   },
   {
-    path: '/add-employee',
-    name: 'AddEmployee',
-    component: AddEmployee,
-    meta: { requiresAuth: true, role: 'manager' },
-  },
-  {
     path: "/update-account",
     name: "UpdateAccount",
     component: UpdateAccount,
+    meta: { requiresAuth: true },
   },
   {
     path: "/logout",
@@ -77,7 +73,7 @@ const routes = [
     path: '/employee',
     name: 'EmployeeDashboard',
     component: EmployeeDashboard,
-    meta: { requiresAuth: true, role: 'employee' },
+    meta: { requiresAuth: true, role: 'EMPLOYEE' },
     children: [{
       path: "/employee/view-employees",
       name: "ViewEmployees",
@@ -87,13 +83,13 @@ const routes = [
       path: "/employee/view-customers",
       name: "ViewCustomers",
       component: ViewCustomers,
-    },]
+    },],
   },
   {
     path: '/manager',
     name: 'ManagerDashboard',
     component: ManagerDashboard,
-    meta: { requiresAuth: true, role: 'manager' },
+    meta: { requiresAuth: true, role: 'MANAGER' },
     children: [
       {
         path: 'add-game',
@@ -116,21 +112,30 @@ const routes = [
         component: ManagePlatforms,
       },
       {
-        path: "/manager/archive-employee",
-        name: "ArchiveEmployee",
-        component: ArchiveEmployee,
-      },
-      {
-        path: "/manager/list-employees",
-        name: "ListEmployees",
-        component: ListEmployees,
-      },
-      {
-        path: "/manager/list-customers",
+        path: "/list-customers",
         name: "ListCustomers",
         component: ListCustomers,
       },
     ],
+  },
+  {
+    path: "/manage-employees",
+    name: "ManageEmployees",
+    component: ManageEmployees,
+  },
+  {
+    path: "/manage-employees/manage-archive-employee",
+    name: "ArchiveEmployee",
+    component: ArchiveEmployee,
+  },
+  {path: "/manage-employees/add-employee",
+    name: "AddEmployee",
+    component: AddEmployee,
+  },
+  {
+    path: "/manage-employees/list-employees",
+    name: "ListEmployees",
+    component: ListEmployees,
   },
 ];
 
@@ -156,3 +161,174 @@ router.beforeEach((to, from, next) => {
 });
 
 export default router;
+
+
+
+
+
+
+
+// import { createRouter, createWebHistory } from 'vue-router';
+// import { useAuthStore } from '@/stores/auth';
+
+// // Import views
+// import Catalog from '@/views/Catalog.vue';
+// import ProductDetail from '@/views/ProductDetail.vue';
+// import Cart from '@/views/Cart.vue';
+// import Login from '@/views/Login.vue';
+// import Register from '@/views/Register.vue';
+// import ManagerDashboard from '@/views/manager/ManagerDashboard.vue';
+// import AddGame from '@/views/manager/AddGame.vue';
+// import EditGame from '@/views/manager/EditGame.vue';
+// import Checkout from '@/views/Checkout.vue';
+// import ManageCategories from '@/views/manager/ManageCategories.vue';
+// import ManagePlatforms from '@/views/manager/ManagePlatforms.vue';
+// import AddEmployee from '@/views/manager/AddEmployee.vue';
+// import UpdateAccount from '@/views/UpdateAccount.vue';
+// import ArchiveEmployee from '@/views/manager/ArchiveEmployee.vue';
+// import ListEmployees from '@/views/manager/ListEmployees.vue';
+// import ListCustomers from '@/views/manager/ListCustomers.vue';
+// import EmployeeDashboard from '@/views/employee/EmployeeDashboard.vue';
+// import ViewEmployees from '@/views/employee/ViewEmployees.vue';
+// import ViewCustomers from '@/views/employee/ViewCustomers.vue';
+// import ManageEmployees from '@/views/manager/ManageEmployees.vue';
+
+// const routes = [
+//   {
+//     path: '/',
+//     name: 'Catalog',
+//     component: Catalog,
+//   },
+//   {
+//     path: '/product/:id',
+//     name: 'ProductView',
+//     component: ProductDetail,
+//   },
+//   {
+//     path: '/cart',
+//     name: 'CartView',
+//     component: Cart,
+//   },
+//   {
+//     path: '/checkout',
+//     name: 'Checkout',
+//     component: Checkout,
+//     meta: { requiresAuth: true, role: 'CUSTOMER' },
+//   },
+//   {
+//     path: '/login',
+//     name: 'Login',
+//     component: Login,
+//   },
+//   {
+//     path: '/register',
+//     name: 'Register',
+//     component: Register,
+//   },
+//   {
+//     path: '/manager/manage-employees/add-employee',
+//     name: 'AddEmployee',
+//     component: AddEmployee,
+//     meta: { requiresAuth: true, role: 'MANAGER' },
+//   },
+//   {
+//     path: '/update-account',
+//     name: 'UpdateAccount',
+//     component: UpdateAccount,
+//   },
+//   {
+//     path: '/logout',
+//     name: 'Logout',
+//     component: () => import('@/views/Logout.vue'),
+//   },
+//   {
+//     path: '/manager',
+//     name: 'ManagerDashboard',
+//     component: ManagerDashboard,
+//     meta: { requiresAuth: true, role: 'MANAGER' },
+//   },
+//   {
+//     path: '/manager/add-game',
+//     name: 'AddGame',
+//     component: AddGame,
+//     meta: { requiresAuth: true, role: 'MANAGER' },
+//   },
+//   {
+//     path: '/manager/edit-game/:id',
+//     name: 'EditGame',
+//     component: EditGame,
+//     meta: { requiresAuth: true, role: 'MANAGER' },
+//   },
+//   {
+//     path: '/manager/categories',
+//     name: 'ManageCategories',
+//     component: ManageCategories,
+//     meta: { requiresAuth: true, role: 'MANAGER' },
+//   },
+//   {
+//     path: '/manager/platforms',
+//     name: 'ManagePlatforms',
+//     component: ManagePlatforms,
+//     meta: { requiresAuth: true, role: 'MANAGER' },
+//   },
+//   {
+//     path: '/manager/list-customers',
+//     name: 'ListCustomers',
+//     component: ListCustomers,
+//     meta: { requiresAuth: true, role: 'MANAGER' },
+//   },
+//   {
+//     path: '/manager/manage-employees/list-employees',
+//     name: 'ListEmployees',
+//     component: ListEmployees,
+//   },
+//   {
+//     path: '/manager/manage-employees/archive-employee',
+//     name: 'ArchiveEmployee',
+//     component: ArchiveEmployee,
+//   },
+//   {
+//     path: '/employee',
+//     name: 'EmployeeDashboard',
+//     component: EmployeeDashboard,
+//     meta: { requiresAuth: true, role: 'EMPLOYEE' },
+//   },
+//   {
+//     path: '/employee/view-employees',
+//     name: 'ViewEmployees',
+//     component: ViewEmployees,
+//   },
+//   {
+//     path: '/employee/view-customers',
+//     name: 'ViewCustomers',
+//     component: ViewCustomers,
+//   },
+//   {
+//     path: '/manager/manage-employees',
+//     name: 'ManageEmployees',
+//     component: ManageEmployees,
+//   },
+// ];
+
+// const router = createRouter({
+//   history: createWebHistory(import.meta.env.BASE_URL),
+//   routes,
+// });
+
+// router.beforeEach((to, from, next) => {
+//   const auth = useAuthStore();
+
+//   if (to.meta.requiresAuth) {
+//     if (!auth.user) {
+//       return next({ name: 'Login' });
+//     }
+
+//     if (to.meta.role && auth.accountType !== to.meta.role.toUpperCase()) {
+//       return next({ name: 'Catalog' });
+//     }
+//   }
+
+//   next();
+// });
+
+// export default router;

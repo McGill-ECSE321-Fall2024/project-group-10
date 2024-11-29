@@ -2,7 +2,6 @@
     <v-container>
       <h1>Update Account Information</h1>
   
-      <!-- Update account information form -->
       <v-form ref="updateForm" v-model="updateValid" lazy-validation @submit.prevent="updateAccount">
         <v-text-field
           v-model="email"
@@ -114,8 +113,3 @@
     },
   };
   </script>
-  
-  <style scoped>
-  /* Add any necessary styles */
-  </style>
-  

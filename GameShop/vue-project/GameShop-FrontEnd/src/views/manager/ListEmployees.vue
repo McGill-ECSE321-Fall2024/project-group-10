@@ -27,17 +27,23 @@
   
       <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
     </v-container>
+    <v-btn @click="goBack">Back</v-btn>
   </template>
   
   <script>
   import { ref, onMounted } from "vue";
+  import { useRouter } from "vue-router";
   
   export default {
     name: "ListEmployees",
     setup() {
+      const router = useRouter();
       const employees = ref([]); // Employee list fetched from the database
       const errorMessage = ref(""); // Error message in case of failure
   
+      const goBack = () => {
+        router.push({ name: 'ManageEmployees' });
+      };
       // Fetch employees from the backend
       const fetchEmployees = async () => {
   try {
@@ -76,6 +82,7 @@
       return {
         employees,
         errorMessage,
+        goBack,
       };
     },
   };

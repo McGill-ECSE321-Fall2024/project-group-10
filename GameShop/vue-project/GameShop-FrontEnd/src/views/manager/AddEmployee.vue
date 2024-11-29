@@ -24,6 +24,7 @@
   
         <v-btn :disabled="!valid" type="submit" color="success">Add Employee</v-btn>
         <v-btn @click="clearForm" color="error" text>Clear</v-btn>
+        <v-btn @click="goBack" color="primary" text>Back</v-btn>
       </v-form>
     </v-container>
   </template>
@@ -39,6 +40,9 @@
       const router = useRouter();
       const authStore = useAuthStore();
   
+      const goBack = () => {
+        router.push({ name: 'ManageEmployees' });
+      };
       // Employee data
       const employee = ref({
         email: '',
@@ -102,6 +106,7 @@
         rules,
         submitForm,
         clearForm,
+        goBack,
       };
     },
   });

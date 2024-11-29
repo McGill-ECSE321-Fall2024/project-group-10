@@ -1,8 +1,6 @@
 <template>
     <v-container>
       <h1>Archive Employee Account</h1>
-  
-      <!-- Form to archive employee -->
       <v-form ref="archiveForm" v-model="formValid" lazy-validation @submit.prevent="archiveEmployee">
         <v-text-field
           v-model="email"
@@ -11,25 +9,30 @@
           required
         ></v-text-field>
         <v-btn :disabled="!formValid" type="submit" color="error">Archive Employee</v-btn>
+        <v-btn @click="goBack">Back</v-btn>
       </v-form>
-  
-      <!-- Success and Error Messages -->
-      <p v-if="successMessage" style="color: green;">{{ successMessage }}</p>
+        <p v-if="successMessage" style="color: green;">{{ successMessage }}</p>
       <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
     </v-container>
   </template>
   
   <script>
   import { ref } from "vue";
+  import { useRouter } from "vue-router";
   
   export default {
     name: "ArchiveEmployee",
     setup() {
+      const router = useRouter();
       const email = ref(""); // Employee email
       const formValid = ref(false); // Form validation status
       const successMessage = ref(""); // Success message
       const errorMessage = ref(""); // Error message
   
+      const goBack = () => {
+        router.push({ name: "ManageEmployees" });
+      };
+
       const rules = {
         required: (value) => !!value || "Required.",
         email: (value) => /.+@.+\..+/.test(value) || "Invalid email.",
@@ -56,11 +59,9 @@
             }
           }
   
-          // Success message
           successMessage.value = `Employee account with email ${email.value} has been archived successfully.`;
           email.value = ""; // Clear the email field after success
         } catch (error) {
-          // Error message
           errorMessage.value = error.message;
         }
       };
@@ -72,6 +73,7 @@
         errorMessage,
         rules,
         archiveEmployee,
+        goBack,
       };
     },
   };
