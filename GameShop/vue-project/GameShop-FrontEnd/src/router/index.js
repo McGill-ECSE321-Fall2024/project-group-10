@@ -23,6 +23,8 @@ import ListCustomers from '@/views/manager/ListCustomers.vue';
 import EmployeeDashboard from '@/views/employee/EmployeeDashboard.vue';
 import ViewEmployees from '@/views/employee/ViewEmployees.vue';
 import ViewCustomers from '@/views/employee/ViewCustomers.vue';
+import ManageEmployees from '@/views/manager/ManageEmployees.vue';
+
 
 const routes = [
   {
@@ -39,13 +41,13 @@ const routes = [
     path: '/cart',
     name: 'CartView',
     component: Cart,
-    // Removed meta: { requiresAuth: true } to allow access without login
+    meta: { requiresAuth: true }
   },
   {
     path: '/checkout',
     name: 'Checkout',
     component: Checkout,
-    meta: { requiresAuth: true, role: 'CUSTOMER' }, // Require login here
+    meta: { requiresAuth: true, role: 'CUSTOMER' },
   },
   {
     path: '/login',
@@ -57,27 +59,23 @@ const routes = [
     name: 'Register',
     component: Register,
   },
-  {
-    path: '/add-employee',
-    name: 'AddEmployee',
-    component: AddEmployee,
-  },
+
   {
     path: "/update-account",
     name: "UpdateAccount",
     component: UpdateAccount,
+    meta: { requiresAuth: true },
   },
   {
     path: "/logout",
     name: "Logout",
     component: () => import("@/views/Logout.vue"),
-    //meta: { requiresAuth: true }, // Optional: Restrict access to authenticated users
   },
   {
     path: '/employee',
     name: 'EmployeeDashboard',
     component: EmployeeDashboard,
-    meta: { requiresAuth: false, role: 'EMPLOYEE' },
+    meta: { requiresAuth: true, role: 'EMPLOYEE' },
     children: [{
       path: "/employee/view-employees",
       name: "ViewEmployees",
@@ -87,13 +85,13 @@ const routes = [
       path: "/employee/view-customers",
       name: "ViewCustomers",
       component: ViewCustomers,
-    },]
+    },],
   },
   {
     path: '/manager',
     name: 'ManagerDashboard',
     component: ManagerDashboard,
-    meta: { requiresAuth: false, role: 'MANAGER' },
+    meta: { requiresAuth: true, role: 'MANAGER' },
     children: [
       {
         path: 'add-game', // Relative path
@@ -116,23 +114,32 @@ const routes = [
         component: ManagePlatforms,
       },
       {
-        path: "/manager/archive-employee",
-        name: "ArchiveEmployee",
-        component: ArchiveEmployee,
-      },
-      {
-        path: "/manager/list-employees",
-        name: "ListEmployees",
-        component: ListEmployees,
-      },
-      {
-        path: "/manager/list-customers",
+        path: "/list-customers",
         name: "ListCustomers",
         component: ListCustomers,
       },
-      // Add other manager routes as needed
     ],
   },
+  {
+    path: "/manage-employees",
+    name: "ManageEmployees",
+    component: ManageEmployees,
+  },
+  {
+    path: "/manage-employees/manage-archive-employee",
+    name: "ArchiveEmployee",
+    component: ArchiveEmployee,
+  },
+  {path: "/manage-employees/add-employee",
+    name: "AddEmployee",
+    component: AddEmployee,
+  },
+  {
+    path: "/manage-employees/list-employees",
+    name: "ListEmployees",
+    component: ListEmployees,
+  },
+
 ];
 
 const router = createRouter({
@@ -159,19 +166,18 @@ router.beforeEach((to, from, next) => {
 // Navigation Guards (no changes)
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore();
+
   if (to.meta.requiresAuth) {
-    if (auth.user) {
-      if (to.meta.role && auth.user.role !== to.meta.role) {
-        next({ name: 'Catalog' });
-      } else {
-        next();
-      }
-    } else {
-      next({ name: 'Login' });
+    if (!auth.user) {
+      return next({ name: "Login" });
     }
-  } else {
-    next();
+
+    if (to.meta.role && auth.accountType !== to.meta.role.toUpperCase()) {
+      return next({ name: "Catalog" });
+    }
   }
+
+  next();
 });
 
 export default router;
