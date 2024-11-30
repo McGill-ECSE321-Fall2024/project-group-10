@@ -7,9 +7,11 @@
     <v-card-title>{{ props.productData.title }}</v-card-title>
     <v-card-subtitle>$ {{ props.productData.price }}</v-card-subtitle>
     <v-card-text>{{ props.productData.description }}</v-card-text>
-    <v-btn v-if="isCustomer" @click.stop="addToCart(props.productData)">
-      Add to cart
-    </v-btn>
+    <v-card-actions>
+      <v-btn v-if="isCustomer" @click.stop="addToCart(props.productData)">
+        Add to cart
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
