@@ -17,6 +17,14 @@
         <v-spacer></v-spacer>
         <v-btn
           v-if="isCustomer"
+          @click="goToWishlist"
+          color="secondary"
+          variant="elevated"
+        >
+          Wishlist ({{ wishlistItemCount }})
+        </v-btn>
+        <v-btn
+          v-if="isCustomer"
           @click="goToCart"
           color="primary"
           variant="elevated"
@@ -71,11 +79,12 @@
 </template>
 
 <script>
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useCartStore } from "@/stores/cart";
 import { productsStore } from "@/stores/products";
 import { useAuthStore } from "@/stores/auth";
+import { useWishlistStore } from "@/stores/wishlist";
 
 export default defineComponent({
   name: "App",
@@ -99,10 +108,14 @@ export default defineComponent({
     const store = productsStore();
     const auth = useAuthStore();
     const cartStore = useCartStore();
+    const wishlistStore = useWishlistStore();
+
     const cartItemCount = computed(() =>
       cartStore.cartItems.reduce((total, item) => total + item.quantity, 0)
     );
-
+    const wishlistItemCount = computed(
+      () => wishlistStore.wishlistItems.length
+    );
     const goToEmployeeDashboard = () => {
       router.push({ name: "EmployeeDashboard" });
     };
@@ -117,10 +130,19 @@ export default defineComponent({
     const goToUpdateAccount = () => {
       router.push("/update-account");
     };
+    onMounted(() => {
+      if (auth.user && auth.accountType === "CUSTOMER") {
+        wishlistStore.fetchWishlist();
+      }
+    });
 
     const logout = () => {
       auth.logout();
       router.push({ name: "Catalog" });
+    };
+
+    const goToWishlist = () => {
+      router.push({ name: "WishlistView" });
     };
 
     return {
@@ -133,6 +155,8 @@ export default defineComponent({
       goToUpdateAccount,
       goToManagerDashboard,
       goToEmployeeDashboard,
+      wishlistItemCount,
+      goToWishlist,
     };
   },
 });

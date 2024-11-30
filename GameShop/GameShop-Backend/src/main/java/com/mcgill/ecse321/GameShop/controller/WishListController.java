@@ -109,4 +109,17 @@ public class WishListController {
         Game game = wishListService.getGameInWishList(wishlist_id, game_id);
         return new GameResponseDto(game);
     }
+
+    /**
+     * Find a wishlist by customer email.
+     * 
+     * @param email the email of the customer
+     * @return the response DTO containing the wishlist details
+     */
+    @GetMapping("/wishlist/customer/{email}")
+    public WishListResponseDto findWishlistByCustomerEmail(@PathVariable String email) {
+        WishList wishList = wishListService.findWishlistByCustomerEmail(email);
+        return WishListResponseDto.create(wishList);
+    }
+
 }

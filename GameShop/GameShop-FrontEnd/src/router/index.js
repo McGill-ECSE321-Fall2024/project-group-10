@@ -74,6 +74,13 @@ const routes = [
     component: () => import("@/views/Logout.vue"),
   },
   {
+    path: "/wishlist",
+    name: "WishlistView",
+    component: () => import("@/views/Wishlist.vue"),
+    meta: { requiresAuth: true, role: "CUSTOMER" },
+  },
+  
+  {
     path: '/employee',
     name: 'EmployeeDashboard',
     component: EmployeeDashboard,

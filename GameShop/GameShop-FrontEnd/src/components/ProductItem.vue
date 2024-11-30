@@ -11,6 +11,14 @@
       <v-btn v-if="isCustomer" @click.stop="addToCart(props.productData)">
         Add to cart
       </v-btn>
+      <v-btn
+        v-if="isCustomer"
+        @click.stop="addToWishlist(props.productData)"
+        color="secondary"
+        variant="elevated"
+      >
+        Add to Wishlist
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -20,7 +28,9 @@ import { defineProps, defineEmits } from "vue";
 import { productsStore } from "@/stores/products";
 import { useCartStore } from "@/stores/cart";
 import { useAuthStore } from "@/stores/auth";
+import { useWishlistStore } from "@/stores/wishlist";
 import { computed } from "vue";
+
 const props = defineProps({
   productData: {
     type: Object,
@@ -32,6 +42,7 @@ const emit = defineEmits(["item-clicked"]);
 const store = productsStore();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const wishlistStore = useWishlistStore();
 
 const isCustomer = computed(() => authStore.accountType === "CUSTOMER");
 
@@ -42,9 +53,16 @@ const goToProductPage = (productId) => {
 const addToCart = async (product) => {
   try {
     await cartStore.addGameToCart(product.gameId, 1);
-    // Optionally, show a confirmation message or handle UI feedback
   } catch (error) {
     console.error("Error adding to cart:", error);
+  }
+};
+
+const addToWishlist = async (product) => {
+  try {
+    await wishlistStore.addGameToWishlist(product.gameId);
+  } catch (error) {
+    console.error("Error adding to wishlist:", error);
   }
 };
 </script>

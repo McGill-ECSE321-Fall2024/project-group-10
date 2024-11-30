@@ -18,6 +18,14 @@
       <v-btn variant="elevated" color="indigo-lighten-3" @click="addToCart">
         Add to cart
       </v-btn>
+      <v-btn
+        v-if="isCustomer"
+        variant="elevated"
+        color="secondary"
+        @click="addToWishlist"
+      >
+        Add to Wishlist
+      </v-btn>
     </div>
   </div>
 </template>
@@ -29,12 +37,14 @@ import { productsStore } from "@/stores/products";
 import { useRoute, useRouter } from "vue-router";
 import { useCartStore } from "@/stores/cart";
 import { useAuthStore } from "@/stores/auth";
+import { useWishlistStore } from "@/stores/wishlist";
 
 export default defineComponent({
   name: "ProductDetails",
   setup() {
     const store = productsStore();
     const cartStore = useCartStore();
+    const wishlistStore = useWishlistStore();
     const router = useRouter();
     const route = useRoute();
     const authStore = useAuthStore();
@@ -51,11 +61,19 @@ export default defineComponent({
       router.push({ name: "CartView" });
     };
 
+    const addToWishlist = async () => {
+      try {
+        await wishlistStore.addGameToWishlist(selectedProduct.value.gameId);
+      } catch (error) {
+        console.error("Error adding to wishlist:", error);
+      }
+    };
     return {
       router,
       selectedProduct,
       addToCart,
       isCustomer,
+      addToWishlist,
     };
   },
 });

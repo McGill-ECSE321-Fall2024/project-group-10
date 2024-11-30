@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useRouter } from "vue-router";
 import { useCartStore } from "@/stores/cart";
+import { useWishlistStore } from "@/stores/wishlist";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -31,6 +32,8 @@ export const useAuthStore = defineStore("auth", {
 
         const cartStore = useCartStore();
         await cartStore.fetchCart();
+        const wishlistStore = useWishlistStore();
+        await wishlistStore.fetchWishlist();
       } catch (error) {
         console.error("Login error:", error.message);
         this.user = null;
