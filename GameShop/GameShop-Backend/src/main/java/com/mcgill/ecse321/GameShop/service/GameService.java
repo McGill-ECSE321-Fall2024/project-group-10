@@ -251,6 +251,12 @@ public class GameService {
         }
         // Find game and update categories
         Game game = findGameById(gameId);
+        if(categories.isEmpty()) {
+            game.setCategories(new ArrayList<>());
+            gameRepository.save(game);
+            return game;
+        }
+        List<Category> categoryList = new ArrayList<>();
         for (int category_id : categories) {
             if (category_id <= 0) {
                 throw new GameShopException(HttpStatus.BAD_REQUEST, "Invalid category ID");
@@ -259,26 +265,41 @@ public class GameService {
             if (category == null) {
                 throw new GameShopException(HttpStatus.NOT_FOUND, "Category does not exist");
             }
-            if (!game.getCategories().contains(category)) {
-                game.addCategory(category);
-            }
+            
+            categoryList.add(category);
+            
+
         }
+        game.setCategories(categoryList);
+
 
         gameRepository.save(game);
         return game;
     }
 
-    @Transactional
     public Game updatePlatforms(int gameId, List<Integer> platforms) {
-        // Validate platforms and game ID
-        if (platforms == null) {
-            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platforms cannot be null");
-        }
+        // Validate game ID
         if (gameId <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Game ID must be greater than 0");
         }
-        // Find game and update platforms
+    
+        // Find the game by ID
+       
+    
+        // If platforms is null, throw an exception (platforms must be provided as a list)
+        if (platforms == null) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Platforms cannot be null");
+        }
         Game game = findGameById(gameId);
+        // If the provided list is empty, remove all platforms from the game
+        if (platforms.isEmpty()) {
+            game.setPlatforms(new ArrayList<>()); // Clear the platforms
+            gameRepository.save(game);
+            return game; // Return the updated game with no platforms
+        }
+    
+        // Validate and update the platforms
+        List<Platform> platformList = new ArrayList<>();
         for (int platform_id : platforms) {
             if (platform_id <= 0) {
                 throw new GameShopException(HttpStatus.BAD_REQUEST, "Platform ID must be greater than 0");
@@ -287,11 +308,10 @@ public class GameService {
             if (platform == null) {
                 throw new GameShopException(HttpStatus.NOT_FOUND, "Platform does not exist");
             }
-            if (!game.getPlatforms().contains(platform)) {
-                game.addPlatform(platform);
-            }
-
+            platformList.add(platform);
         }
+    
+        game.setPlatforms(platformList); // Update the platforms
         gameRepository.save(game);
         return game;
     }

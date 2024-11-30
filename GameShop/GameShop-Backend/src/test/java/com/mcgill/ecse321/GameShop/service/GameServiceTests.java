@@ -1162,6 +1162,46 @@ public class GameServiceTests {
     }
 
     @Test
+    public void testUpdatePlatform_empty(){
+        VALID_GAME_ID = 100032;
+        Game game = new Game("Game Title", "Description", 30, Game.GameStatus.InStock, 100,
+                "http://example.com/image1.jpg");
+        game.setGame_id(VALID_GAME_ID);
+
+        List<Integer> platformIds = new ArrayList<>();
+        // Act
+        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+        when(gameRepository.save(any(Game.class)))
+                .thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
+
+        Game updatedGame = gameService.updatePlatforms(VALID_GAME_ID, platformIds);
+
+        // Assert
+        assertNotNull(updatedGame);
+        assertTrue(updatedGame.getPlatforms().isEmpty());
+        verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+        verify(gameRepository, times(1)).save(game);
+    }
+    public void testUpdateGameCategories_EmptyCategoriesList() {
+        // Arrange
+        VALID_GAME_ID = 10003148;
+        Game game = new Game("Game Title", "Description", 30, Game.GameStatus.InStock, 100,
+                "http://example.com/image.jpg");
+        game.setGame_id(VALID_GAME_ID);
+
+        List<Integer> categoryIds = new ArrayList<>();
+        // Act
+        when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
+        when(gameRepository.save(any(Game.class)))
+                .thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
+
+        Game updatedGame = gameService.updateCategories(VALID_GAME_ID, categoryIds);
+        assertNotNull(updatedGame);
+        assertTrue(updatedGame.getCategories().isEmpty());
+        verify(gameRepository, times(1)).findById(VALID_GAME_ID);
+        verify(gameRepository, times(1)).save(game);}
+
+    @Test
     public void testUpdatePlatforms_AddDuplicatePlatforms() {
         // Arrange
         VALID_GAME_ID = 30;

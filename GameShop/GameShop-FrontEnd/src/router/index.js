@@ -25,6 +25,8 @@ import ViewEmployees from '@/views/employee/ViewEmployees.vue';
 import ViewCustomers from '@/views/employee/ViewCustomers.vue';
 import ManageEmployees from '@/views/manager/ManageEmployees.vue';
 import ManagePromotions from '@/views/manager/ManagePromotions.vue';
+import ManageGames from '@/views/manager/ManageGames.vue';
+import ListGames from '@/views/manager/ListGames.vue';
 
 const routes = [
   {
@@ -94,14 +96,27 @@ const routes = [
     meta: { requiresAuth: true, role: 'MANAGER' },
     children: [
       {
-        path: 'add-game', // Relative path
-        name: 'AddGame',
-        component: AddGame,
-      },
-      {
-        path: 'edit-game/:id', // Relative path
-        name: 'EditGame',
-        component: EditGame,
+        path: 'manage-games',
+        name: 'ManageGames',
+        component: ManageGames,
+        children: [
+          {
+            path: 'add-game',
+            name: 'AddGame',
+            component: AddGame,
+          },
+          {
+            path: 'view-all-games',
+            name: 'ViewAllGames',
+            component: ListGames,
+          },
+          {
+            path: 'edit-game/:id',
+            name: 'EditGame',
+            component: EditGame,
+            props: true,
+          },
+        ],
       },
       {
         path: 'categories', // Changed from '/manager/categories' to 'categories'

@@ -1,5 +1,3 @@
-<!-- File: src/views/manager/AddGame.vue -->
-
 <template>
   <v-container>
     <h2>Add New Game</h2>
@@ -43,7 +41,7 @@
         :rules="[rules.required]"
         required
       ></v-text-field>
-      <!-- Categories and Platforms Selection -->
+      <!-- Categories Selection -->
       <v-select
         v-model="game.categories"
         :items="categories"
@@ -52,6 +50,7 @@
         :rules="[rules.required]"
         required
       ></v-select>
+      <!-- Platforms Selection -->
       <v-select
         v-model="game.platforms"
         :items="platforms"
@@ -68,13 +67,13 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
-import { productsStore } from '@/stores/products'; // Corrected import
+import { productsStore } from '@/stores/products';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'AddGame',
   setup() {
-    const store = productsStore(); // Initialize using productsStore
+    const store = productsStore();
     const router = useRouter();
 
     const game = ref({
@@ -90,8 +89,9 @@ export default defineComponent({
 
     const categories = ref([]);
     const platforms = ref([]);
-    const gameStatuses = ref(['InStock', 'OutOfStock', 'PreOrder']); // Example statuses
-
+    const categoryMap = ref({});
+    const platformMap = ref({});
+    const gameStatuses = ref(['InStock', 'OutOfStock', 'PreOrder']);
     const valid = ref(false);
     const form = ref(null);
 
@@ -100,8 +100,39 @@ export default defineComponent({
       number: (value) => !isNaN(value) || 'Must be a number.',
     };
 
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/categories');
+        const data = await response.json();
+        categories.value = data.categories.map((cat) => cat.categoryName);
+        categoryMap.value = {};
+        data.categories.forEach((cat) => {
+          categoryMap.value[cat.categoryName] = cat.categoryId;
+        });
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    const fetchPlatforms = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/platforms');
+        const data = await response.json();
+        platforms.value = data.platforms.map((plat) => plat.platformName);
+        platformMap.value = {};
+        data.platforms.forEach((plat) => {
+          platformMap.value[plat.platformName] = plat.platformId;
+        });
+      } catch (error) {
+        console.error('Error fetching platforms:', error);
+      }
+    };
+
     const submitForm = async () => {
       try {
+        const categoryIds = game.value.categories.map((name) => categoryMap.value[name]);
+        const platformIds = game.value.platforms.map((name) => platformMap.value[name]);
+
         await store.addGame({
           aTitle: game.value.aTitle,
           aDescription: game.value.aDescription,
@@ -109,8 +140,8 @@ export default defineComponent({
           aGameStatus: game.value.aGameStatus,
           aStockQuantity: game.value.aStockQuantity,
           aPhotoUrl: game.value.aPhotoUrl,
-          categories: game.value.categories,
-          platforms: game.value.platforms,
+          categories: categoryIds,
+          platforms: platformIds,
         });
         router.push({ name: 'ManagerDashboard' });
       } catch (error) {
@@ -132,31 +163,9 @@ export default defineComponent({
       };
     };
 
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/categories');
-        const data = await response.json();
-        return data.categories.map((cat) => cat.categoryName);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-        return [];
-      }
-    };
-
-    const fetchPlatforms = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/platforms');
-        const data = await response.json();
-        return data.platforms.map((plat) => plat.platformName);
-      } catch (error) {
-        console.error('Error fetching platforms:', error);
-        return [];
-      }
-    };
-
     onMounted(async () => {
-      categories.value = await fetchCategories();
-      platforms.value = await fetchPlatforms();
+      await fetchCategories();
+      await fetchPlatforms();
     });
 
     return {
