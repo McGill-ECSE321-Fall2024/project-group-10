@@ -37,7 +37,8 @@
     </div>
 
     <!-- Proceed to Checkout Button -->
-    <div class="checkout-button">
+    <div class="action-buttons">
+      <v-btn color="error" @click="clearCart">Clear Cart</v-btn>
       <v-btn color="success" @click="proceedToCheckout">
         Proceed to Checkout
       </v-btn>
@@ -95,6 +96,14 @@ export default defineComponent({
       }
     };
 
+    const clearCart = async () => {
+      try {
+        await cartStore.clearCart();
+      } catch (error) {
+        console.error("Error clearing cart:", error);
+      }
+    };
+
     const proceedToCheckout = () => {
       if (auth.user) {
         router.push({ name: "Checkout" });
@@ -109,6 +118,7 @@ export default defineComponent({
       increaseQuantity,
       decreaseQuantity,
       removeAllFromCart,
+      clearCart,
       proceedToCheckout,
     };
   },
@@ -163,8 +173,11 @@ export default defineComponent({
   margin-top: 20px;
 }
 
-.checkout-button {
+.action-buttons {
   text-align: right;
   margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
 }
 </style>

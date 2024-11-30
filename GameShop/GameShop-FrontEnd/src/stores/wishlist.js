@@ -62,6 +62,7 @@ export const useWishlistStore = defineStore("wishlist", {
         }
 
         await this.fetchWishlist(); // Refresh the wishlist after adding
+        alert("Game added to WishList!");
       } catch (error) {
         console.error("Error adding game to wishlist:", error);
       }
@@ -120,6 +121,7 @@ export const useWishlistStore = defineStore("wishlist", {
           await cartStore.addGameToCart(item.gameId, 1);
         }
         await this.clearWishlist();
+        alert("WishList moved to Cart!");
       } catch (error) {
         console.error("Error moving wishlist to cart:", error);
       }

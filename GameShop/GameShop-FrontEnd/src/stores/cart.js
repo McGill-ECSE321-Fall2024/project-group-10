@@ -49,6 +49,7 @@ export const useCartStore = defineStore("cart", {
           body: JSON.stringify({ gameId, quantity }),
         });
         await this.fetchCart();
+        alert("Game added to Cart!");
       } catch (error) {
         console.error("Error adding game to cart:", error);
       }
