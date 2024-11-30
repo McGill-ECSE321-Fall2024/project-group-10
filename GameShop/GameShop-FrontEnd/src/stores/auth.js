@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useRouter } from "vue-router";
+import { useCartStore } from "@/stores/cart";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -27,6 +28,9 @@ export const useAuthStore = defineStore("auth", {
 
         this.user = { email: data.email };
         this.accountType = data.type;
+
+        const cartStore = useCartStore();
+        await cartStore.fetchCart();
       } catch (error) {
         console.error("Login error:", error.message);
         this.user = null;
@@ -59,14 +63,14 @@ export const useAuthStore = defineStore("auth", {
     },
     logout(router) {
       console.log("Logging out...");
-    
+
       // Clear user state
       this.user = null;
       this.accountType = null;
-    
+
       // Clear persistent storage if used
       localStorage.removeItem("user");
-    
+
       // Redirect using the router instance
       if (router) {
         router.push({ name: "Catalog" });

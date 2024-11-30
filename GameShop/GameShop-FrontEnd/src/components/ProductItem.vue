@@ -1,19 +1,24 @@
 <template>
-  <v-card class="product-item" @click="goToProductPage(props.productData.gameId)">
+  <v-card
+    class="product-item"
+    @click="goToProductPage(props.productData.gameId)"
+  >
     <v-img :src="props.productData.photoUrl" height="200px" cover />
     <v-card-title>{{ props.productData.title }}</v-card-title>
     <v-card-subtitle>$ {{ props.productData.price }}</v-card-subtitle>
     <v-card-text>{{ props.productData.description }}</v-card-text>
-    <v-card-actions>
-      <v-btn @click.stop="addToCart(props.productData)">Add to cart</v-btn>
-    </v-card-actions>
+    <v-btn v-if="isCustomer" @click.stop="addToCart(props.productData)">
+      Add to cart
+    </v-btn>
   </v-card>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
-import { productsStore } from '@/stores/products';
-
+import { defineProps, defineEmits } from "vue";
+import { productsStore } from "@/stores/products";
+import { useCartStore } from "@/stores/cart";
+import { useAuthStore } from "@/stores/auth";
+import { computed } from "vue";
 const props = defineProps({
   productData: {
     type: Object,
@@ -21,15 +26,24 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['item-clicked']);
+const emit = defineEmits(["item-clicked"]);
 const store = productsStore();
+const cartStore = useCartStore();
+const authStore = useAuthStore();
+
+const isCustomer = computed(() => authStore.accountType === "CUSTOMER");
 
 const goToProductPage = (productId) => {
-  emit('item-clicked', productId);
+  emit("item-clicked", productId);
 };
 
-const addToCart = (product) => {
-  store.addToCart(product);
+const addToCart = async (product) => {
+  try {
+    await cartStore.addGameToCart(product.gameId, 1);
+    // Optionally, show a confirmation message or handle UI feedback
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+  }
 };
 </script>
 

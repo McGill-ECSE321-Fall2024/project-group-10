@@ -50,7 +50,7 @@ public class CartResponseDto {
         return totalPrice;
     }
 
-    public void setTotalPrice(int totalPrice) {
+    public void setTotalPrice(double totalPrice) {
         this.totalPrice = Math.round(totalPrice * 100.0) / 100.0;
     }
 

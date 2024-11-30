@@ -1,64 +1,64 @@
 // File: src/router/index.js
 
-import { createRouter, createWebHistory } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
+import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
 // Import views
-import Catalog from '@/views/Catalog.vue';
-import ProductDetail from '@/views/ProductDetail.vue';
-import Cart from '@/views/Cart.vue';
-import Login from '@/views/Login.vue';
-import Register from '@/views/Register.vue';
-import ManagerDashboard from '@/views/manager/ManagerDashboard.vue';
-import AddGame from '@/views/manager/AddGame.vue';
-import EditGame from '@/views/manager/EditGame.vue';
-import Checkout from '@/views/Checkout.vue';
-import ManageCategories from '@/views/manager/ManageCategories.vue';
-import ManagePlatforms from '@/views/manager/ManagePlatforms.vue';
-import AddEmployee from '@/views/manager/AddEmployee.vue';
-import UpdateAccount from '@/views/UpdateAccount.vue';
-import ArchiveEmployee from '@/views/manager/ArchiveEmployee.vue';
-import ListEmployees from '@/views/manager/ListEmployees.vue';
-import ListCustomers from '@/views/manager/ListCustomers.vue';
-import EmployeeDashboard from '@/views/employee/EmployeeDashboard.vue';
-import ViewEmployees from '@/views/employee/ViewEmployees.vue';
-import ViewCustomers from '@/views/employee/ViewCustomers.vue';
-import ManageEmployees from '@/views/manager/ManageEmployees.vue';
-import ManagePromotions from '@/views/manager/ManagePromotions.vue';
-import ManageGames from '@/views/manager/ManageGames.vue';
-import ListGames from '@/views/manager/ListGames.vue';
+import Catalog from "@/views/Catalog.vue";
+import ProductDetail from "@/views/ProductDetail.vue";
+import Cart from "@/views/Cart.vue";
+import Login from "@/views/Login.vue";
+import Register from "@/views/Register.vue";
+import ManagerDashboard from "@/views/manager/ManagerDashboard.vue";
+import AddGame from "@/views/manager/AddGame.vue";
+import EditGame from "@/views/manager/EditGame.vue";
+import Checkout from "@/views/Checkout.vue";
+import ManageCategories from "@/views/manager/ManageCategories.vue";
+import ManagePlatforms from "@/views/manager/ManagePlatforms.vue";
+import AddEmployee from "@/views/manager/AddEmployee.vue";
+import UpdateAccount from "@/views/UpdateAccount.vue";
+import ArchiveEmployee from "@/views/manager/ArchiveEmployee.vue";
+import ListEmployees from "@/views/manager/ListEmployees.vue";
+import ListCustomers from "@/views/manager/ListCustomers.vue";
+import EmployeeDashboard from "@/views/employee/EmployeeDashboard.vue";
+import ViewEmployees from "@/views/employee/ViewEmployees.vue";
+import ViewCustomers from "@/views/employee/ViewCustomers.vue";
+import ManageEmployees from "@/views/manager/ManageEmployees.vue";
+import ManagePromotions from "@/views/manager/ManagePromotions.vue";
+import ManageGames from "@/views/manager/ManageGames.vue";
+import ListGames from "@/views/manager/ListGames.vue";
 
 const routes = [
   {
-    path: '/',
-    name: 'Catalog',
+    path: "/",
+    name: "Catalog",
     component: Catalog,
   },
   {
-    path: '/product/:id',
-    name: 'ProductView',
+    path: "/product/:id",
+    name: "ProductView",
     component: ProductDetail,
   },
   {
-    path: '/cart',
-    name: 'CartView',
+    path: "/cart",
+    name: "CartView",
     component: Cart,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, role: "CUSTOMER" },
   },
   {
-    path: '/checkout',
-    name: 'Checkout',
+    path: "/checkout",
+    name: "Checkout",
     component: Checkout,
-    meta: { requiresAuth: true, role: 'CUSTOMER' },
+    meta: { requiresAuth: true, role: "CUSTOMER" },
   },
   {
-    path: '/login',
-    name: 'Login',
+    path: "/login",
+    name: "Login",
     component: Login,
   },
   {
-    path: '/register',
-    name: 'Register',
+    path: "/register",
+    name: "Register",
     component: Register,
   },
 
@@ -74,63 +74,65 @@ const routes = [
     component: () => import("@/views/Logout.vue"),
   },
   {
-    path: '/employee',
-    name: 'EmployeeDashboard',
+    path: "/employee",
+    name: "EmployeeDashboard",
     component: EmployeeDashboard,
-    meta: { requiresAuth: true, role: 'EMPLOYEE' },
-    children: [{
-      path: "/employee/view-employees",
-      name: "ViewEmployees",
-      component: ViewEmployees,
-    },
-    {
-      path: "/employee/view-customers",
-      name: "ViewCustomers",
-      component: ViewCustomers,
-    },],
-  },
-  {
-    path: '/manager',
-    name: 'ManagerDashboard',
-    component: ManagerDashboard,
-    meta: { requiresAuth: true, role: 'MANAGER' },
+    meta: { requiresAuth: true, role: "EMPLOYEE" },
     children: [
       {
-        path: 'manage-games',
-        name: 'ManageGames',
+        path: "/employee/view-employees",
+        name: "ViewEmployees",
+        component: ViewEmployees,
+      },
+      {
+        path: "/employee/view-customers",
+        name: "ViewCustomers",
+        component: ViewCustomers,
+      },
+    ],
+  },
+  {
+    path: "/manager",
+    name: "ManagerDashboard",
+    component: ManagerDashboard,
+    meta: { requiresAuth: true, role: "MANAGER" },
+    children: [
+      {
+        path: "manage-games",
+        name: "ManageGames",
         component: ManageGames,
         children: [
           {
-            path: 'add-game',
-            name: 'AddGame',
+            path: "add-game",
+            name: "AddGame",
             component: AddGame,
           },
           {
-            path: 'view-all-games',
-            name: 'ViewAllGames',
+            path: "view-all-games",
+            name: "ViewAllGames",
             component: ListGames,
           },
           {
-            path: 'edit-game/:id',
-            name: 'EditGame',
+            path: "edit-game/:id",
+            name: "EditGame",
             component: EditGame,
             props: true,
           },
         ],
       },
       {
-        path: 'categories', // Changed from '/manager/categories' to 'categories'
-        name: 'ManageCategories',
+        path: "categories", // Changed from '/manager/categories' to 'categories'
+        name: "ManageCategories",
         component: ManageCategories,
       },
       {
-        path: 'platforms',
-        name: 'ManagePlatforms',
+        path: "platforms",
+        name: "ManagePlatforms",
         component: ManagePlatforms,
       },
       {
-        path: 'promotions',
-        name: 'ManagePromotions',
+        path: "promotions",
+        name: "ManagePromotions",
         component: ManagePromotions,
       },
       {
@@ -150,7 +152,8 @@ const routes = [
     name: "ArchiveEmployee",
     component: ArchiveEmployee,
   },
-  {path: "/manage-employees/add-employee",
+  {
+    path: "/manage-employees/add-employee",
     name: "AddEmployee",
     component: AddEmployee,
   },
@@ -159,7 +162,6 @@ const routes = [
     name: "ListEmployees",
     component: ListEmployees,
   },
-
 ];
 
 const router = createRouter({
