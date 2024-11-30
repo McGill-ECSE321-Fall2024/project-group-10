@@ -1,18 +1,18 @@
 <template>
     <v-container>
-      <h2>All Games</h2>
+      <h2 class="text-center mb-4">All Games</h2>
+      <v-btn color="primary" class="mb-4" @click="sortGames">Sort Alphabetically</v-btn>
       <v-list>
         <v-list-item
           v-for="game in games"
           :key="game.gameId"
           @click="editGame(game.gameId)"
-          class="hoverable"
+          class="hoverable game-item"
         >
           <div>
-            <strong>{{ game.title }}</strong><br />
-            <span>{{ game.description }}</span>
+            <strong>{{ game.title }}</strong>
           </div>
-          <v-icon>mdi-pencil</v-icon>
+          <v-icon color="blue">mdi-pencil</v-icon>
         </v-list-item>
       </v-list>
     </v-container>
@@ -46,16 +46,21 @@
         }
       };
   
+      const sortGames = () => {
+        games.value.sort((a, b) => a.title.localeCompare(b.title));
+      };
+  
       const editGame = (gameId) => {
         router.push({ name: 'EditGame', params: { id: gameId } });
       };
   
       onMounted(() => {
-        fetchGames();
+        fetchGames().then(() => sortGames()); // Fetch and sort the games
       });
   
       return {
         games,
+        sortGames,
         editGame,
       };
     },
@@ -65,5 +70,20 @@
   <style scoped>
   .hoverable {
     cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .hoverable:hover {
+    background-color: #f5f5f5;
+  }
+  .game-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+  }
+  .text-center {
+    text-align: center;
   }
   </style>
+  
