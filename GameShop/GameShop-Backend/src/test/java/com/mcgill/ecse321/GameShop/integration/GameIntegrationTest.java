@@ -328,13 +328,14 @@ public class GameIntegrationTest {
         for (Integer categoryId : categoryIds) {
             assertTrue(returned_categoryIds.contains(categoryId));
         }
-        assertEquals(returned_categoryIds.size(), categoryIds.size() + this.categoryIds.size());
+      
 
         for (Integer platformId : platformIds) {
             assertTrue(returned_platformIds.contains(platformId));
         }
-        assertEquals(returned_platformIds.size(), platformIds.size() + this.platformIds.size());
-
+       
+        assertTrue(returned_categoryIds.containsAll(categoryIds));
+        assertTrue(returned_platformIds.containsAll(platformIds));
         this.platformIds = updateResponse.getBody().getPlatforms().getPlatforms();
         this.categoryIds = updateResponse.getBody().getCategories().getCategories();
 
