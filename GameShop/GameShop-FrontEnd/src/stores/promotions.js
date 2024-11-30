@@ -1,18 +1,21 @@
-import { defineStore } from 'pinia';
-import axios from 'axios';
+import { defineStore } from "pinia";
+import axios from "axios";
 
-export const usePromotionsStore = defineStore('promotions', {
+export const usePromotionsStore = defineStore("promotions", {
   state: () => ({
-    promotions: [],
+    promotions: [], // Array to hold promotions
   }),
 
   actions: {
     async fetchPromotions() {
       try {
-        const response = await axios.get('http://localhost:8080/promotions');
+        const response = await axios.get("http://localhost:8080/promotions");
+        console.log("Promotions fetched from backend:", response.data.promotions);
         this.promotions = response.data.promotions || [];
+        return this.promotions; // Return the array of promotions
       } catch (error) {
-        console.error('Error fetching promotions:', error);
+        console.error("Error fetching promotions:", error);
+        return []; // Return empty array on error
       }
     },
 

@@ -1,7 +1,11 @@
 package com.mcgill.ecse321.GameShop.dto.PromotionDto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.mcgill.ecse321.GameShop.dto.GameDto.GameSummaryDto;
+import com.mcgill.ecse321.GameShop.model.Game;
 import com.mcgill.ecse321.GameShop.model.Promotion;
 
 public class PromotionSummaryDto {
@@ -11,6 +15,7 @@ public class PromotionSummaryDto {
     private int discountRate;
     private LocalDate startLocalDate;
     private LocalDate endLocalDate;
+    private List<GameSummaryDto> games;
 
     public PromotionSummaryDto() {
     }
@@ -21,6 +26,14 @@ public class PromotionSummaryDto {
         this.discountRate = promotion.getDiscountRate();
         this.startLocalDate = promotion.getStartLocalDate();
         this.endLocalDate = promotion.getEndLocalDate();
+        this.games = new ArrayList<GameSummaryDto>();
+
+        List<Game> games = promotion.getGames();
+
+        for (Game game : games) {
+            this.games.add(new GameSummaryDto(game));
+        }
+
     }
 
     // Getters
@@ -40,4 +53,8 @@ public class PromotionSummaryDto {
     public LocalDate getStartLocalDate() { return startLocalDate; }
 
     public LocalDate getEndLocalDate() { return endLocalDate; }
+
+    public List<GameSummaryDto> getGames() {
+        return games;
+    }
 }
