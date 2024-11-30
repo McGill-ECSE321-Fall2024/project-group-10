@@ -45,21 +45,25 @@
       ></v-text-field>
       <!-- Categories and Platforms Selection -->
       <v-select
-        v-model="game.categories"
-        :items="categories"
-        label="Categories"
-        multiple
-        :rules="[rules.required]"
-        required
-      ></v-select>
-      <v-select
-        v-model="game.platforms"
-        :items="platforms"
-        label="Platforms"
-        multiple
-        :rules="[rules.required]"
-        required
-      ></v-select>
+  v-model="game.categories"
+  :items="categories"
+  item-text="categoryName"
+  item-value="categoryId" 
+  label="Categories"
+  multiple
+  :rules="[rules.required]"
+  required
+></v-select>
+<v-select
+  v-model="game.platforms"
+  :items="platforms"
+  item-text="platformName"
+  item-value="platformId" 
+  label="Platforms"
+  multiple
+  :rules="[rules.required]"
+  required
+></v-select>
       <v-btn :disabled="!valid" type="submit" color="success">Add Game</v-btn>
       <v-btn @click="clearForm" color="error" text>Clear</v-btn>
     </v-form>
@@ -136,7 +140,7 @@ export default defineComponent({
       try {
         const response = await fetch('http://localhost:8080/categories');
         const data = await response.json();
-        return data.categories.map((cat) => cat.categoryName);
+        return data.categories; 
       } catch (error) {
         console.error('Error fetching categories:', error);
         return [];
@@ -147,7 +151,7 @@ export default defineComponent({
       try {
         const response = await fetch('http://localhost:8080/platforms');
         const data = await response.json();
-        return data.platforms.map((plat) => plat.platformName);
+        return data.platforms; 
       } catch (error) {
         console.error('Error fetching platforms:', error);
         return [];
