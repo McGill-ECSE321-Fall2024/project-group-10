@@ -160,16 +160,16 @@ export default defineComponent({
       // }
 
       // Fetch all Promotions from the backend
-      let allPromotions = await promos.fetchPromotions();
+      let allPromotions = await promos.fetchValidPromotions();
       const promotionsArray = Array.isArray(allPromotions) ? allPromotions : [];
 
       // --Space for handling returned promotions from BE--
-      if (
-        (Array.isArray(allPromotions) && allPromotions.length === 0) || // Empty array
-        (typeof allPromotions === "object" && Object.keys(allPromotions).length === 0) // Empty object
-      ) {
-        throw new Error("The response JSON from BE promotions is empty!");
-      }
+      // if (
+      //   (Array.isArray(allPromotions) && allPromotions.length === 0) || // Empty array
+      //   (typeof allPromotions === "object" && Object.keys(allPromotions).length === 0) // Empty object
+      // ) {
+      //   throw new Error("The response JSON from BE promotions is empty!");
+      // }
 
       // Update the store.products to display
       try{
@@ -191,8 +191,6 @@ export default defineComponent({
               // categories: game.categories?.categories || [],
               // platforms: game.platforms?.platforms || [],
             });
-            console.log("Bool value", gamesMap.values());
-            console.log("Arrayed Version", Array.from(gamesMap.values()));
           });
         }
         store.products = Array.from(gamesMap.values());
