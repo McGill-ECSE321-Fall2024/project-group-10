@@ -145,4 +145,26 @@ public class WishListService {
         throw new GameShopException(HttpStatus.NOT_FOUND,
                 String.format("There is no Game with Id %d in the WishList with Id %d.", gameId, wishlistId));
     }
+
+    @Transactional
+    public WishList findWishlistByCustomerEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Customer email cannot be empty or null");
+        }
+
+        Customer customer = customerRepository.findByEmail(email);
+        if (customer == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("No customer found with email: %s", email));
+        }
+
+        WishList wishList = wishListRepository.findByCustomer(customer);
+        if (wishList == null) {
+            throw new GameShopException(HttpStatus.NOT_FOUND,
+                    String.format("No wishlist found for customer with email: %s", email));
+        }
+
+        return wishList;
+    }
+
 }

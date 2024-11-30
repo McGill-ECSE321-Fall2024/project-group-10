@@ -2,11 +2,29 @@
   <div>
     <v-app>
       <v-toolbar>
-        <router-link to="/" class="title-link" style="text-decoration: none; color: black; margin-left: 15px; font-size: 20px;">
+        <router-link
+          to="/"
+          class="title-link"
+          style="
+            text-decoration: none;
+            color: black;
+            margin-left: 15px;
+            font-size: 20px;
+          "
+        >
           <span class="title">Game Shop</span>
         </router-link>
         <v-spacer></v-spacer>
         <v-btn
+          v-if="isCustomer"
+          @click="goToWishlist"
+          color="secondary"
+          variant="elevated"
+        >
+          Wishlist ({{ wishlistItemCount }})
+        </v-btn>
+        <v-btn
+          v-if="isCustomer"
           @click="goToCart"
           color="primary"
           variant="elevated"
@@ -14,6 +32,7 @@
           Cart ({{ cartItemCount }})
         </v-btn>
         <v-btn
+          v-if="isManager || isEmployee || isCustomer"
           @click="goToUpdateAccount"
           color="primary"
           variant="elevated"
@@ -36,10 +55,10 @@
         >
           Employee Dashboard
         </v-btn>
-        
+
         <v-btn
           v-if="auth.user"
-         @click="router.push({ name: 'Logout' })"
+          @click="router.push({ name: 'Logout' })"
           color="secondary"
           variant="elevated"
         >
@@ -60,21 +79,27 @@
 </template>
 
 <script>
-import { defineComponent, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { productsStore } from '@/stores/products';
-import { useAuthStore } from '@/stores/auth';
+import { defineComponent, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useCartStore } from "@/stores/cart";
+import { productsStore } from "@/stores/products";
+import { useAuthStore } from "@/stores/auth";
+import { useWishlistStore } from "@/stores/wishlist";
 
 export default defineComponent({
-  name: 'App',
+  name: "App",
   computed: {
-  isManager() {
+    isManager() {
       const authStore = useAuthStore();
-      return authStore.accountType === 'MANAGER'; // Adjust according to your role naming
+      return authStore.accountType === "MANAGER"; // Adjust according to your role naming
     },
     isEmployee() {
       const authStore = useAuthStore();
-      return authStore.accountType === 'EMPLOYEE'; // Adjust according to your role naming
+      return authStore.accountType === "EMPLOYEE"; // Adjust according to your role naming
+    },
+    isCustomer() {
+      const authStore = useAuthStore();
+      return authStore.accountType === "CUSTOMER";
     },
   },
 
@@ -82,27 +107,42 @@ export default defineComponent({
     const router = useRouter();
     const store = productsStore();
     const auth = useAuthStore();
+    const cartStore = useCartStore();
+    const wishlistStore = useWishlistStore();
 
-    const cartItemCount = computed(() => store.cart.length);
-
+    const cartItemCount = computed(() =>
+      cartStore.cartItems.reduce((total, item) => total + item.quantity, 0)
+    );
+    const wishlistItemCount = computed(
+      () => wishlistStore.wishlistItems.length
+    );
     const goToEmployeeDashboard = () => {
-      router.push({ name: 'EmployeeDashboard' });
+      router.push({ name: "EmployeeDashboard" });
     };
     const goToManagerDashboard = () => {
-      router.push({ name: 'ManagerDashboard' });
+      router.push({ name: "ManagerDashboard" });
     };
 
     const goToCart = () => {
-      router.push({ name: 'CartView' });
+      router.push({ name: "CartView" });
     };
 
     const goToUpdateAccount = () => {
       router.push("/update-account");
     };
+    onMounted(() => {
+      if (auth.user && auth.accountType === "CUSTOMER") {
+        wishlistStore.fetchWishlist();
+      }
+    });
 
     const logout = () => {
       auth.logout();
       router.push({ name: "Catalog" });
+    };
+
+    const goToWishlist = () => {
+      router.push({ name: "WishlistView" });
     };
 
     return {
@@ -115,6 +155,8 @@ export default defineComponent({
       goToUpdateAccount,
       goToManagerDashboard,
       goToEmployeeDashboard,
+      wishlistItemCount,
+      goToWishlist,
     };
   },
 });
