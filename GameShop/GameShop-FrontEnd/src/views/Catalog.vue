@@ -107,22 +107,12 @@ export default defineComponent({
     const promotions = ref([]);
 
     const filteredProducts = computed(() => {
+      if (!store.products.length) {
+        return [];
+      }
+
       return store.products.filter((product) => {
         let matches = true;
-
-        if (filters.value.onSale) {
-          matches = matches && store.products.length > 0 && product.gameId > 0;
-          // console.log("Matches - On Sale:", matches);
-        }
-
-        // if (matches){
-        //   console.log("Input product:", product);
-        //   console.log(promotions.value); // Logs the array of promotions
-        //   promotions.value.forEach(promotion => {
-        //     console.log(promotion); // Logs each promotion
-        //   });
-        // }
-
         return matches;
       });
     });
@@ -167,8 +157,6 @@ export default defineComponent({
               discountedPrice: discountedPrice !== game.price ? discountedPrice : game.price,
               originalPrice: game.price,
             });
-            console.log("Appended Game", game);
-            console.log("GamesMap", gamesMap);
           });
         }
         store.products = Array.from(gamesMap.values());
@@ -187,14 +175,24 @@ export default defineComponent({
           );
           const data = await response.json();
 
-          data.games.forEach((game) => {
+          for (let game of data.games) {
+            game = await store.refreshPrices(game);
             gamesMap.set(game.gameId, {
               ...game,
               categories: game.categories?.categories || [],
               platforms: game.platforms?.platforms || [],
               promotions: game.promotions || [],
             });
-          });
+          }
+
+          // data.games.forEach((game) => {
+          //   gamesMap.set(game.gameId, {
+          //     ...game,
+          //     categories: game.categories?.categories || [],
+          //     platforms: game.platforms?.platforms || [],
+          //     promotions: game.promotions || [],
+          //   });
+          // });
         }
 
         store.products = Array.from(gamesMap.values());
@@ -212,14 +210,26 @@ export default defineComponent({
           );
           const data = await response.json();
 
-          data.games.forEach((game) => {
+          for (let game of data.games) {
+            game = await store.refreshPrices(game);
             gamesMap.set(game.gameId, {
               ...game,
               categories: game.categories?.categories || [],
               platforms: game.platforms?.platforms || [],
               promotions: game.promotions || [],
             });
-          });
+          }
+
+          // data.games.forEach((game) => {
+          //   game = await store.refreshPrices(game);
+          //   console.log("UpdatedProduct", game);  
+          //   gamesMap.set(game.gameId, {
+          //     ...game,
+          //     categories: game.categories?.categories || [],
+          //     platforms: game.platforms?.platforms || [],
+          //     promotions: game.promotions || [],
+          //   });
+          // });
         }
 
         store.products = Array.from(gamesMap.values());
@@ -298,6 +308,13 @@ export default defineComponent({
           platformGamesMap.has(game.gameId)
         );
 
+        // Call the refreshPrices method for each game
+        for (let i = 0; i < intersectionGames.length; i++) {
+          const updatedGame = await store.refreshPrices(intersectionGames[i]);
+          intersectionGames[i] = updatedGame;
+        }
+
+        // Assign updated array to store.products
         store.products = intersectionGames;
       } catch (error) {
         console.error("Error fetching games by categories and platforms:", error);
