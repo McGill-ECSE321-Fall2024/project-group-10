@@ -89,7 +89,7 @@ public class CartRepositoryTests {
         CartRepositoryTests.testEmails.add(aCustomer.getEmail());
 
         // Create and save order with customer
-        Order order = new Order(aOrderDate, "notes of the order", 123456, aCustomer);
+        Order order = new Order(aOrderDate, "notes of the order", "1234567890123456", aCustomer);
         order = orderRepository.save(order);
         CartRepositoryTests.testTrackingNumbers.add(order.getTrackingNumber());
 

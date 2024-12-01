@@ -93,7 +93,7 @@ public class SpecificGameRepositoryTests {
                 // Create and save an Order entity associated with the Customer
                 Date orderDate = Date.valueOf("2021-10-10");
                 String note = "testing";
-                int paymentCard = 1209028310;
+                String paymentCard = "1234567890123456";
 
                 Order order = new Order(orderDate, note, paymentCard, customer1);
                 order = orderRepository.save(order);
@@ -187,7 +187,7 @@ public class SpecificGameRepositoryTests {
                                 new Customer("400@400.com", "400", "password", "+1 (400) 456-7890", "400 rue Ottawa",
                                                 cart));
                 Order order = orderRepository
-                                .save(new Order(Date.valueOf("2021-03-01"), "OrderNote", 3333333, customer));
+                                .save(new Order(Date.valueOf("2021-03-01"), "OrderNote", "1234567890123456", customer));
                 SpecificGameRepositoryTests.testEmails.add(customer.getEmail());
                 SpecificGameRepositoryTests.testTrackingNumbers.add(order.getTrackingNumber());
 

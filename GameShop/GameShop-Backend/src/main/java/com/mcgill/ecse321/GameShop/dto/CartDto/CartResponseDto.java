@@ -50,8 +50,8 @@ public class CartResponseDto {
         return totalPrice;
     }
 
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = Math.round(totalPrice * 100.0) / 100.0;
     }
 
     public static CartResponseDto create(Cart cart, Map<Integer, Integer> quantities) {

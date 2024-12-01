@@ -74,7 +74,7 @@ public class OrderIntegrationTests {
         private String customerEmail = "customer@hellohello.com";
         private int gameId;
         private int specificGameId;
-        private int paymentCard = 1234567890;
+        private String paymentCard = "1234567890123456";
 
         @BeforeAll
         @AfterAll
@@ -244,7 +244,7 @@ public class OrderIntegrationTests {
                 // Updated details
                 String updatedNote = "Updated delivery instructions";
                 Date updatedOrderDate = new Date(); // Current date for simplicity
-                int updatedPaymentCard = 987654321;
+                String updatedPaymentCard = "9876543210123456"; // New payment card
 
                 OrderRequestDto updateRequest = new OrderRequestDto(
                                 updatedOrderDate,

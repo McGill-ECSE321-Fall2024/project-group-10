@@ -57,7 +57,7 @@ public class OrderServiceTests {
     private static final String VALID_CUSTOMER_EMAIL = "customer@tata.ca";
     private static final String INVALID_CUSTOMER_EMAIL = "invalid@ca.ca";
     private static final String VALID_NOTE = "Please deliver between 5-6 PM";
-    private static final int VALID_PAYMENT_CARD = 1234567890;
+    private static final String VALID_PAYMENT_CARD = "1234567890123456";
     private static final LocalDate CURRENT_DATE = LocalDate.now();
 
     // --- Tests for getOrderByTrackingNumber ---
@@ -346,7 +346,7 @@ public class OrderServiceTests {
 
         Date newOrderDate = java.sql.Date.valueOf(localDate);
         String newNote = "Updated note";
-        int newPaymentCard = 987654321;
+        String newPaymentCard = "1234567890123457";
 
         // Act
         Order updatedOrder = orderService.updateOrder(
@@ -410,8 +410,8 @@ public class OrderServiceTests {
                 "123 Street",
                 cart);
 
-        Order order1 = new Order(VALID_ORDER_DATE, "Note 1", 111111111, customer);
-        Order order2 = new Order(NEW_VALID_ORDER_DATE, "Note 2", 22222, customer);
+        Order order1 = new Order(VALID_ORDER_DATE, "Note 1", "1234567890123456", customer);
+        Order order2 = new Order(NEW_VALID_ORDER_DATE, "Note 2", "1234567890123456", customer);
         List<Order> orders = Arrays.asList(order1, order2);
 
         when(orderRepository.findAll()).thenReturn(orders);
@@ -772,7 +772,7 @@ public class OrderServiceTests {
         // Create a customer and an order
         Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "cana", "username", "password", "1234567890",
                 "123 Street", cart);
-        Order order = new Order(new Date(), "Return order note", 1234, customer);
+        Order order = new Order(new Date(), "Return order note", "1234567890123456", customer);
         order.setTrackingNumber(VALID_TRACKING_NUMBER + "leb1");
 
         // Prepare a list of SpecificGames for the mocks
@@ -841,7 +841,7 @@ public class OrderServiceTests {
 
         Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "co", "username", "password", "1234567890",
                 "123 Street", cart);
-        Order order = new Order(new Date(), "Order note", 1234, customer);
+        Order order = new Order(new Date(), "Order note", "1234567890123456", customer);
         order.setTrackingNumber(VALID_TRACKING_NUMBER + "co");
 
         // Associate the specific game with the order
@@ -883,7 +883,7 @@ public class OrderServiceTests {
 
         Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "wa", "user", "pass", "0987654321", "456 Avenue",
                 cart);
-        Order order = new Order(new Date(), "Order note", 5678, customer);
+        Order order = new Order(new Date(), "Order note", "1234567890123456", customer);
         order.setTrackingNumber(VALID_TRACKING_NUMBER + "24");
 
         // Mocking behavior
@@ -917,7 +917,7 @@ public class OrderServiceTests {
         cart.addGame(game);
 
         Customer customer = new Customer(VALID_CUSTOMER_EMAIL + "wb", "user", "pass", "0987654321", "456 Avenue", cart);
-        Order order = new Order(new Date(), "Order note", 5678, customer);
+        Order order = new Order(new Date(), "Order note", "1234567890123456", customer);
         order.setTrackingNumber(INVALID_TRACKING_NUMBER + "25");
 
         // Arrange
@@ -991,7 +991,7 @@ public class OrderServiceTests {
 
         // Set order date to 8 days before the CURRENT_DATE
         Date pastDate = java.sql.Date.valueOf(CURRENT_DATE.minusDays(8));
-        Order order = new Order(pastDate, "Late order note", 5678, customer);
+        Order order = new Order(pastDate, "Late order note", "1234567890123456", customer);
         order.setTrackingNumber(VALID_TRACKING_NUMBER + "late");
 
         // Mock

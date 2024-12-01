@@ -43,7 +43,7 @@ const routes = [
     path: '/cart',
     name: 'CartView',
     component: Cart,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, role: 'CUSTOMER' },
   },
   {
     path: '/checkout',
@@ -73,6 +73,13 @@ const routes = [
     name: "Logout",
     component: () => import("@/views/Logout.vue"),
   },
+  {
+    path: "/wishlist",
+    name: "WishlistView",
+    component: () => import("@/views/Wishlist.vue"),
+    meta: { requiresAuth: true, role: "CUSTOMER" },
+  },
+  
   {
     path: '/employee',
     name: 'EmployeeDashboard',

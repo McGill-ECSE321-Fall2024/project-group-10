@@ -42,12 +42,20 @@ public class OrderService {
     private GameService gameService;
 
     @Transactional
-    public Order createOrder(Date orderDate, String note, int paymentCard, String customerEmail) {
+    public Order createOrder(Date orderDate, String note, String paymentCard, String customerEmail) {
         // Validate customer email
         if (customerEmail == null || customerEmail.trim().isEmpty()) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Customer email cannot be empty or null");
         }
-
+        if (paymentCard == null || paymentCard.trim().isEmpty()) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Payment card cannot be empty or null");
+        }
+        if (paymentCard.length() != 16) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Payment card must be 16 digits long");
+        }
+        if (paymentCard.matches("[0-9]+") == false) {
+            throw new GameShopException(HttpStatus.BAD_REQUEST, "Payment card must be a number");
+        }
         // Retrieve customer by email
         Customer customer = customerRepository.findByEmail(customerEmail);
         if (customer == null) {
@@ -120,7 +128,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order updateOrder(String trackingNumber, Date orderDate, String note, int paymentCard) {
+    public Order updateOrder(String trackingNumber, Date orderDate, String note, String paymentCard) {
         // Retrieve order by tracking number
         Order order = orderRepository.findByTrackingNumber(trackingNumber);
         if (order == null) {
