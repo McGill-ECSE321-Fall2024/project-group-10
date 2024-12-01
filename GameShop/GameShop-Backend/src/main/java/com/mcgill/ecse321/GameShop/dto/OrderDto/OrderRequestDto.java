@@ -14,7 +14,8 @@ public class OrderRequestDto {
     private String note;
 
     @NotNull(message = "Payment card cannot be null")
-    private int paymentCard;
+    @Size(min = 16, max = 16, message = "Card should be 16 digist long")
+    private String paymentCard;
 
     @NotEmpty(message = "Customer email cannot be empty")
     private String customerEmail;
@@ -26,7 +27,7 @@ public class OrderRequestDto {
 
     // Constructors
 
-    public OrderRequestDto(Date orderDate, String note, int paymentCard, String customerEmail,
+    public OrderRequestDto(Date orderDate, String note, String paymentCard, String customerEmail,
             List<Integer> specificGameIds) {
         this.orderDate = orderDate;
         this.note = note;
@@ -54,11 +55,11 @@ public class OrderRequestDto {
         this.note = note;
     }
 
-    public int getPaymentCard() {
+    public String getPaymentCard() {
         return paymentCard;
     }
 
-    public void setPaymentCard(int paymentCard) {
+    public void setPaymentCard(String paymentCard) {
         this.paymentCard = paymentCard;
     }
 

@@ -35,7 +35,7 @@ public class Order {
   private String trackingNumber;
   private Date orderDate;
   private String note;
-  private int paymentCard;
+  private String paymentCard;
 
   // Order Associations
   @ManyToOne(cascade = CascadeType.ALL)
@@ -44,7 +44,7 @@ public class Order {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
-  public Order(Date aOrderDate, String aNote, int aPaymentCard, Customer aCustomer) {
+  public Order(Date aOrderDate, String aNote, String aPaymentCard, Customer aCustomer) {
     orderDate = aOrderDate;
     note = aNote;
     paymentCard = aPaymentCard;
@@ -94,7 +94,7 @@ public class Order {
     return wasSet;
   }
 
-  public boolean setPaymentCard(int aPaymentCard) {
+  public boolean setPaymentCard(String aPaymentCard) {
     boolean wasSet = false;
     paymentCard = aPaymentCard;
     wasSet = true;
@@ -123,7 +123,7 @@ public class Order {
     return note;
   }
 
-  public int getPaymentCard() {
+  public String getPaymentCard() {
     return paymentCard;
   }
 

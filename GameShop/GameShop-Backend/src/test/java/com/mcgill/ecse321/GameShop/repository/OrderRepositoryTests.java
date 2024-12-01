@@ -91,7 +91,7 @@ public class OrderRepositoryTests {
                 // Define and save first Order
                 Date orderDate = Date.valueOf("2021-10-10");
                 String note = "testing";
-                int paymentCard = 1209028310;
+                String paymentCard = "1234567890123456";
                 Order firstOrder = new Order(orderDate, note, paymentCard, firstCustomer);
                 firstOrder = orderRepository.save(firstOrder);
                 OrderRepositoryTests.testTrackingNumbers.add(firstOrder.getTrackingNumber());
@@ -111,7 +111,7 @@ public class OrderRepositoryTests {
                 // Define and save second Order
                 Date orderDate2 = Date.valueOf("2021-10-12");
                 String note2 = "testingorder2";
-                int paymentCard2 = 12090;
+                String paymentCard2 = "1234567890123456";
                 Order secondOrder = new Order(orderDate2, note2, paymentCard2, firstCustomer);
                 secondOrder = orderRepository.save(secondOrder);
                 OrderRepositoryTests.testTrackingNumbers.add(secondOrder.getTrackingNumber());
