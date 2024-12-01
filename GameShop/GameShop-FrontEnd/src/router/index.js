@@ -43,7 +43,7 @@ const routes = [
     path: '/cart',
     name: 'CartView',
     component: Cart,
-    meta: { requiresAuth: true, role: 'CUSTOMER' },
+    meta: { requiresAuth: true }
   },
   {
     path: '/checkout',
@@ -73,13 +73,6 @@ const routes = [
     name: "Logout",
     component: () => import("@/views/Logout.vue"),
   },
-  {
-    path: "/wishlist",
-    name: "WishlistView",
-    component: () => import("@/views/Wishlist.vue"),
-    meta: { requiresAuth: true, role: "CUSTOMER" },
-  },
-  
   {
     path: '/employee',
     name: 'EmployeeDashboard',
@@ -151,6 +144,16 @@ const routes = [
     path: "/manage-employees",
     name: "ManageEmployees",
     component: ManageEmployees,
+  },
+  {
+    path: "/order-confirmation",
+    name: "OrderConfirmation",
+    component: () => import("@/views/OrderConfirmation.vue"),
+  },
+  {
+    path: "/order-history",
+    name: "OrderHistory",
+    component: () => import("@/views/OrderHistory.vue"),
   },
   {
     path: "/manage-employees/manage-archive-employee",
