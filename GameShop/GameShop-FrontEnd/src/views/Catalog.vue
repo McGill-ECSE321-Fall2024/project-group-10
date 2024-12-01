@@ -85,6 +85,7 @@ import ProductItem from "@/components/ProductItem.vue";
 import { productsStore } from "@/stores/products";
 import { usePromotionsStore } from "@/stores/promotions";
 import { useRouter } from "vue-router";
+import { useSearchStore } from "@/stores/searchQuery";
 
 export default defineComponent({
   name: "CatalogView",
@@ -95,8 +96,10 @@ export default defineComponent({
     const store = productsStore();
     const router = useRouter();
     const promos = usePromotionsStore();
+    const searchStore = useSearchStore();
 
     const filters = ref({
+      search: "",
       onSale: false,
       categories: [],
       platforms: [],
@@ -118,6 +121,12 @@ export default defineComponent({
     });
 
     const applyFilters = async () => {
+      if (filters.value.search) {
+        console.log("Triggering Search");
+        store.products = store.products.filter((product) =>
+          product.title.toLowerCase().includes(filters.value.search.toLowerCase())
+        );
+      } else {
       if (filters.value.categories.length > 0 && filters.value.platforms.length > 0) {
         await fetchGamesByCategoriesAndPlatforms(filters.value.categories, filters.value.platforms);
       } else if (filters.value.categories.length > 0) {
@@ -128,7 +137,7 @@ export default defineComponent({
         await fetchGamesOnSale();
       } else {
         await store.fetchProductsFromDB();
-      }
+      }}
     };
 
     const fetchGamesOnSale = async () => {
@@ -348,6 +357,11 @@ export default defineComponent({
       await applyFilters();
     };
 
+    const toggleSearchFilter = async () => {
+      filters.value.search = searchStore.searchQuery;
+      await applyFilters();
+    };
+
     const goToProductPage = (id) => {
       router.push({ name: "ProductView", params: { id } });
     };
@@ -395,6 +409,9 @@ export default defineComponent({
         console.error("Error fetching games on sale:", error);
       }
 
+      // Apply filters on initial load
+      
+
     });
 
     return {
@@ -408,6 +425,7 @@ export default defineComponent({
       toggleCategoryFilter,
       togglePlatformFilter,
       togglePromotionsFilter,
+      toggleSearchFilter,
     };
   },
 });

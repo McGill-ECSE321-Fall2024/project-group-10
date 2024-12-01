@@ -14,6 +14,19 @@
         >
           <span class="title">Game Shop</span>
         </router-link>
+
+        <v-spacer></v-spacer>
+
+        <!-- Search Bar -->
+        <v-text-field
+          v-model="searchStore.searchQuery"
+          label="Search by name"
+          outlined
+          dense
+          clearable
+          style="margin-left: 20px; max-width: 300px;"
+        ></v-text-field>
+
         <v-spacer></v-spacer>
         <v-btn
           v-if="isCustomer"
