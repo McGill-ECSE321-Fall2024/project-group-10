@@ -41,13 +41,10 @@ export const productsStore = defineStore("products", {
           "No Valid Promos Found"
         )}
 
-        console.log("PromoMapiii:", promoMap);
-        console.log("Games:", data.games);
         // GGo Through games and apply promos
         this.products = data.games.map((game) => {
           let discountedPrice = game.price; // Start with the base price
           let originalPrice = null;
-          console.log("Adding Game:", game);
           // Check if the game has any promotions
           if (promoMap.has(game.gameId)) {
             console.log("PromoMap has gameId:", game.game);
@@ -135,17 +132,18 @@ export const productsStore = defineStore("products", {
       }
 
     },
-    
 
     async addGame(gameData) {
+      let newGame = undefined;
       try {
         const response = await fetch("http://localhost:8080/games", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(gameData),
         });
-        const newGame = await response.json();
+        newGame = await response.json();
         this.products.push(newGame);
+        console.log("Game added:", newGame);
       } catch (error) {
         console.error("Error adding game:", error);
       }
@@ -154,13 +152,30 @@ export const productsStore = defineStore("products", {
         console.error("Error adding game:", error);
       }
 
-      for (let i = 0; i < newGame.stockQuantity; i++) {
-        if (this.products[i].gameId === newGame.gameId) {
-          this.products[i] = newGame;
-          break;
+      try{
+        for (let i = 0; i < newGame.aStockQuantity; i++) {
+          
+        const specificGameData = {
+          itemStatus: "Returned", // Adjust this status as required
+          trackingNumber: [], // Add tracking numbers if needed
+          game_id: newGame.aGame_id,
+        };
+
+        // Create the specific game
+        const specificGameResponse = await fetch("http://localhost:8080/specificGames", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(specificGameData),
+        });
+        const newSpecificGame = await specificGameResponse.json();
+        if (newSpecificGame !== null){
+          console.log("Specific Game added:", newSpecificGame);
         }
       }
-
+    
+      }catch (error) {
+          console.error("Error adding game:", error);
+        }
     },
 
     async fetchCategories() {
