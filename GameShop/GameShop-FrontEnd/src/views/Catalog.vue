@@ -110,22 +110,18 @@ export default defineComponent({
       return store.products.filter((product) => {
         let matches = true;
 
-        console.log("Store products:", store.products);
-        console.log("Filter - On Sale:", filters.value.onSale);
-        console.log("what is product input", product);
-
-        // Filter by Promotions 
         if (filters.value.onSale) {
           matches = matches && store.products.length > 0 && product.gameId > 0;
-          console.log("Matches - On Sale:", matches);
+          // console.log("Matches - On Sale:", matches);
         }
-        // Since we fetch games by categories and platforms from the backend,
-        // we only need to filter by promotions here.
 
-        // console.log('Product:', product);
-        // console.log('Product Categories:', product.categories);
-        // console.log('Product Platforms:', product.platforms);
-        // console.log('Product Promotions:', product.promotions);
+        // if (matches){
+        //   console.log("Input product:", product);
+        //   console.log(promotions.value); // Logs the array of promotions
+        //   promotions.value.forEach(promotion => {
+        //     console.log(promotion); // Logs each promotion
+        //   });
+        // }
 
         return matches;
       });
@@ -146,30 +142,9 @@ export default defineComponent({
     };
 
     const fetchGamesOnSale = async () => {
-      // Filter out games with promotions
-      // console.log("Store products before filtering:", store.products);
-      // store.products = store.products.filter((product) => 
-      //   product.promotions 
-      //   && product.promotions.length > 0
-      // );
-
-      // // If there are no products with promotions, return early
-      // if (store.products.length <= 0) {
-      //   console.log("No products with promotions found!");
-      //   return;
-      // }
-
       // Fetch all Promotions from the backend
       let allPromotions = await promos.fetchValidPromotions();
       const promotionsArray = Array.isArray(allPromotions) ? allPromotions : [];
-
-      // --Space for handling returned promotions from BE--
-      // if (
-      //   (Array.isArray(allPromotions) && allPromotions.length === 0) || // Empty array
-      //   (typeof allPromotions === "object" && Object.keys(allPromotions).length === 0) // Empty object
-      // ) {
-      //   throw new Error("The response JSON from BE promotions is empty!");
-      // }
 
       // Update the store.products to display
       try{
@@ -180,22 +155,23 @@ export default defineComponent({
           const response = await fetch(
             `http://localhost:8080/promotions/${promotion.promotionId}/games`
           );
-          const data = await response.json();
-
-          console.log("RESPONSE DATA:", data);
+          const data = await response.json()
 
           data.forEach((game) => {
-            console.log("GAME:", game);
+            // Calcualte the discounted price
+            const discountRate = promotion.discountRate;
+            const discountedPrice = game.price - (game.price * discountRate) / 100;
             gamesMap.set(game.gameId, {
               ...game,
-              // categories: game.categories?.categories || [],
-              // platforms: game.platforms?.platforms || [],
+              price: discountedPrice !== game.price ? discountedPrice : game.price,
+              discountedPrice: discountedPrice !== game.price ? discountedPrice : game.price,
+              originalPrice: game.price,
             });
+            console.log("Appended Game", game);
+            console.log("GamesMap", gamesMap);
           });
         }
         store.products = Array.from(gamesMap.values());
-        console.log("Final Arrayed Version:", Array.from(gamesMap.values()));
-        console.log("Store products after filtering:", store.products);
       } catch (error) {
         console.error("Error fetching games on sale:", error);
       }
@@ -247,7 +223,6 @@ export default defineComponent({
         }
 
         store.products = Array.from(gamesMap.values());
-        console.log("Store Platforms after filtering:", store.products);
       } catch (error) {
         console.error("Error fetching games by platforms:", error);
       }
@@ -353,7 +328,6 @@ export default defineComponent({
 
     const togglePromotionsFilter = async () => {
       filters.value.onSale = !filters.value.onSale;
-      console.log("TOGGLE SALE")
       await applyFilters();
     };
 
