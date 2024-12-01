@@ -9,10 +9,10 @@
     <v-card-subtitle>
       <!-- Show discounted price if it exists, otherwise show original price -->
       <span v-if="props.productData.originalPrice && props.productData.price !== props.productData.originalPrice">
-        <span class="original-price" style="text-decoration: line-through; color: gray;">
+        <span class="original-price">
           $ {{ props.productData.originalPrice }}
         </span>
-        <span class="discounted-price" style="color: green; margin-left: 8px;">
+        <span class="discounted-price">
           $ {{ props.productData.price }}
         </span>
       </span>
