@@ -84,7 +84,7 @@
             }
           }
 
-          successMessage.value = `Employee account with email ${email.value} has been archived successfully.`;
+          successMessage.value = `Employee account with email ${email} has been archived successfully.`;
           fetchEmployees(); // Refresh the list of employees
         } catch (error) {
           errorMessage.value = error.message;
