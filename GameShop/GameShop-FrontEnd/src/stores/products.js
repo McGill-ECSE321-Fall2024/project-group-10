@@ -149,6 +149,18 @@ export const productsStore = defineStore("products", {
       } catch (error) {
         console.error("Error adding game:", error);
       }
+
+      if (newGame === undefined) {
+        console.error("Error adding game:", error);
+      }
+
+      for (let i = 0; i < newGame.stockQuantity; i++) {
+        if (this.products[i].gameId === newGame.gameId) {
+          this.products[i] = newGame;
+          break;
+        }
+      }
+
     },
 
     async fetchCategories() {

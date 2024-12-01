@@ -1,7 +1,20 @@
 <template>
   <div class="catalog-container">
+
     <!-- Sidebar with Filters -->
     <div class="sidebar">
+      <h3>Search</h3>
+
+      <!-- Search Bar -->
+      <v-text-field
+          v-model="searchStore.searchQuery"
+          label="Search by name"
+          outlined
+          dense
+          clearable
+          style="margin-left: 20px; max-width: 300px;"
+      ></v-text-field>
+      
       <h3>Filters</h3>
 
       <!-- Promotions Filter -->
@@ -74,7 +87,9 @@
           />
         </v-col>
       </v-row>
+
     </div>
+    
   </div>
 </template>
 
@@ -85,7 +100,7 @@ import ProductItem from "@/components/ProductItem.vue";
 import { productsStore } from "@/stores/products";
 import { usePromotionsStore } from "@/stores/promotions";
 import { useRouter } from "vue-router";
-import { useSearchStore } from "@/stores/searchQuery";
+import { searchQueryStore } from "@/stores/searchQuery";
 
 export default defineComponent({
   name: "CatalogView",
@@ -96,7 +111,7 @@ export default defineComponent({
     const store = productsStore();
     const router = useRouter();
     const promos = usePromotionsStore();
-    const searchStore = useSearchStore();
+    const searchStore = searchQueryStore();
 
     const filters = ref({
       search: "",
@@ -410,7 +425,7 @@ export default defineComponent({
       }
 
       // Apply filters on initial load
-      
+
 
     });
 
@@ -420,6 +435,7 @@ export default defineComponent({
       promotions,
       platforms,
       filteredProducts,
+      searchStore,
       goToProductPage,
       applyFilters,
       toggleCategoryFilter,
