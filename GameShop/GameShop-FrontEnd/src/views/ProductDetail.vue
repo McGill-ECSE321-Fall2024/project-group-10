@@ -72,6 +72,7 @@
       </div>
       <div class="review-rating">
         <v-icon
+          v-if="isCustomer && !review.hasVoted && review.customerEmail!==loggedInUserEmail"
           @click="increaseRating(review)"
           :class="{ disabled: review.customerEmail === loggedInUserEmail }"
           class="arrow"
@@ -80,6 +81,7 @@
         </v-icon>
         <p class="score">{{ review.reviewRating }}</p>
         <v-icon
+          v-if="isCustomer && !review.hasVoted && review.customerEmail!==loggedInUserEmail"
           @click="decreaseRating(review)"
           :class="{ disabled: review.customerEmail === loggedInUserEmail }"
           class="arrow"
@@ -211,8 +213,9 @@ export default defineComponent({
             gameRating: review.gameRating,
             reviewRating: review.rating || 0,
             customerEmail: review.customerEmail || "Anonymous",
+            hasVoted: false, // New flag to track voting
           }))
-          .sort((a, b) => a.reviewId - b.reviewId); // Sort in ascending order by reviewId
+          .sort((a, b) => a.reviewId - b.reviewId); // Sort by reviewId
       } catch (error) {
         console.error("Error fetching reviews:", error.message);
       }
@@ -220,21 +223,29 @@ export default defineComponent({
     const increaseRating = async (review) => {
       try {
         await detailStore.increaseRatingReview(review.reviewId);
+        const index = reviews.value.findIndex((r) => r.reviewId === review.reviewId);
+        if (index !== -1) {
+          reviews.value[index].reviewRating += 1; // Update rating locally
+          reviews.value[index].hasVoted = true; // Mark as voted
+        }
       } catch (error) {
         console.error("Error increasing review rating:", error.message);
         alert("Failed to upvote review.");
       }
-      fetchReviews();
     };
 
     const decreaseRating = async (review) => {
       try {
         await detailStore.decreaseRatingReview(review.reviewId);
+        const index = reviews.value.findIndex((r) => r.reviewId === review.reviewId);
+        if (index !== -1) {
+          reviews.value[index].reviewRating -= 1; // Update rating locally
+          reviews.value[index].hasVoted = true; // Mark as voted
+        }
       } catch (error) {
         console.error("Error decreasing review rating:", error.message);
         alert("Failed to downvote review.");
       }
-      fetchReviews();
     };
     onMounted(() => {
       fetchReviews();
