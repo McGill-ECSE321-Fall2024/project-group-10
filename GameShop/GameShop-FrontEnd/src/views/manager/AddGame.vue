@@ -91,7 +91,7 @@ export default defineComponent({
     const platforms = ref([]);
     const categoryMap = ref({});
     const platformMap = ref({});
-    const gameStatuses = ref(['InStock', 'OutOfStock', 'PreOrder']);
+    const gameStatuses = ref(['InStock', 'OutOfStock', 'Archived']);
     const valid = ref(false);
     const form = ref(null);
 
