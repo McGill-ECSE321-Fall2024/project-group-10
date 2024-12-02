@@ -112,6 +112,11 @@ const routes = [
     {path: "/employee/requests-games",
       name: "RequestsGames",
       component: () => import("@/views/employee/RequestsGames.vue"),
+    },
+    {path: "/employee/request-delete",
+      name: "RequestDelete",
+      component: () => import("@/views/employee/RequestDelete.vue"),
+      props: true,
     }
   ],
   },
