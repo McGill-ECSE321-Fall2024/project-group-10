@@ -183,6 +183,9 @@ public class GameService {
         }
         // Find game and update stock quantity
         Game game = findGameById(game_id);
+        if (newStockQuantity == 0) {
+            game.setGameStatus(GameStatus.OutOfStock);
+        }
 
         game.setStockQuantity(newStockQuantity);
         gameRepository.save(game);

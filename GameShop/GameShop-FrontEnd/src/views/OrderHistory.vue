@@ -1,35 +1,71 @@
 <template>
   <v-container>
     <h1>Your Orders</h1>
-    <div v-if="loading">Loading...</div>
-    <div v-else-if="error">{{ error }}</div>
+    <div v-if="loading">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    </div>
+    <div v-else-if="error">
+      <v-alert type="error">{{ error }}</v-alert>
+    </div>
     <div v-else-if="!orderStore.orders.length">
-      <p>No orders found for your account.</p>
+      <v-alert type="info">No orders found for your account.</v-alert>
       <v-btn color="primary" @click="goToCatalog">Start Shopping</v-btn>
     </div>
     <div v-else>
-      <div
-        v-for="order in orderStore.orders"
-        :key="order.trackingNumber"
-        class="order-item"
-      >
-        <p><strong>Tracking Number:</strong> {{ order.trackingNumber }}</p>
-        <p><strong>Order Date:</strong> {{ order.orderDate }}</p>
-        <p><strong>Items:</strong></p>
-        <ul>
-          <li v-for="(game, index) in order.games" :key="index">
-            {{ game.title }} (x{{ game.quantity }})
-            <span v-if="game.trackingNumbers">
-              <br />
-              <strong>Tracking Numbers:</strong>
-              {{ game.trackingNumbers.join(", ") }}
-            </span>
-          </li>
-        </ul>
-        <v-btn color="primary" @click="viewOrder(order.trackingNumber)">
-          View Details
-        </v-btn>
-      </div>
+      <v-row>
+        <v-col
+          cols="12"
+          md="6"
+          v-for="order in orderStore.orders"
+          :key="order.trackingNumber"
+        >
+          <v-card class="mb-4">
+            <v-card-title>
+              <v-icon class="mr-2">mdi-truck</v-icon>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    Order #{{ order.trackingNumber.substring(0, 8) }}...
+                  </span>
+                </template>
+                <span>{{ order.trackingNumber }}</span>
+              </v-tooltip>
+            </v-card-title>
+            <v-card-subtitle>
+              <v-icon class="mr-2">mdi-calendar</v-icon>
+              {{ formatDate(order.orderDate) }}
+            </v-card-subtitle>
+            <v-divider></v-divider>
+            <v-card-text>
+              <v-list dense>
+                <v-list-item v-for="(game, index) in order.games" :key="index">
+                  <v-list-item-content>
+                    <v-list-item-title>{{ game.title }}</v-list-item-title>
+                    <v-list-item-subtitle>
+                      Quantity: {{ game.quantity }} - ${{
+                        game.price.toFixed(2)
+                      }}
+                      each
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+            <v-card-actions class="justify-space-between">
+              <v-btn
+                color="primary"
+                text
+                @click="viewOrder(order.trackingNumber)"
+              >
+                View Details
+              </v-btn>
+              <v-chip color="green" text-color="white">
+                Total: ${{ order.totalPrice.toFixed(2) }}
+              </v-chip>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
     </div>
   </v-container>
 </template>
@@ -69,6 +105,12 @@ export default defineComponent({
       router.push({ name: "OrderDetails", params: { trackingNumber } });
     };
 
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      return date.toLocaleDateString(undefined, options);
+    };
+
     onMounted(() => {
       fetchOrders();
     });
@@ -79,17 +121,20 @@ export default defineComponent({
       error,
       goToCatalog,
       viewOrder,
+      formatDate,
     };
   },
 });
 </script>
 
 <style scoped>
-.order-item {
-  margin-bottom: 20px;
-  padding: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
+.v-card-title,
+.v-card-subtitle {
+  display: flex;
+  align-items: center;
+}
+
+.v-card-title span {
+  cursor: pointer;
 }
 </style>
