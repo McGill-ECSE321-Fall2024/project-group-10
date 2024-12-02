@@ -1,3 +1,4 @@
+<!-- src/views/OrderHistory.vue -->
 <template>
   <v-container>
     <h1>Your Orders</h1>
@@ -22,14 +23,7 @@
           <v-card class="mb-4">
             <v-card-title>
               <v-icon class="mr-2">mdi-truck</v-icon>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <span v-bind="attrs" v-on="on">
-                    Order #{{ order.trackingNumber.substring(0, 8) }}...
-                  </span>
-                </template>
-                <span>{{ order.trackingNumber }}</span>
-              </v-tooltip>
+              Order #{{ order.trackingNumber }}
             </v-card-title>
             <v-card-subtitle>
               <v-icon class="mr-2">mdi-calendar</v-icon>
@@ -59,9 +53,6 @@
               >
                 View Details
               </v-btn>
-              <v-chip color="green" text-color="white">
-                Total: ${{ order.totalPrice.toFixed(2) }}
-              </v-chip>
             </v-card-actions>
           </v-card>
         </v-col>
