@@ -2,7 +2,12 @@ import { defineStore } from "pinia";
 import { useAuthStore } from "@/stores/auth";
 
 export const productDetailStore = defineStore("productDetail", {
+  state: () => ({
+    reviews: [],
+  }),
+
   actions: {
+    // Submit a new review
     async submitReview(reviewData) {
       const authStore = useAuthStore();
 
@@ -13,47 +18,105 @@ export const productDetailStore = defineStore("productDetail", {
       }
 
       try {
-        // Debugging: Log review data before sending
-        console.log("Review data being sent:", {
-          description: reviewData.comment.trim(), // Map 'comment' to 'description'
-          gameRating: reviewData.rating, // Confirm 'rating' is sent as 'gameRating' if required
-          gameId: reviewData.gameId,
-          customerEmail: authStore.user.email,
-        });
-
-        // Validate client-side data
+        // Validate required fields
         if (!reviewData.comment.trim()) {
-          console.error("Description cannot be empty.");
           throw new Error("Description cannot be empty.");
         }
         if (!reviewData.rating) {
-          console.error("Game rating cannot be null.");
           throw new Error("Game rating cannot be null.");
         }
+        if (!authStore.user.email) {
+          throw new Error("Customer email cannot be empty.");
+        }
 
+        // Submit review to the backend
         const response = await fetch("http://localhost:8080/reviews", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            description: reviewData.comment.trim(), // Correct key for the server
-            gameRating: reviewData.rating, // Confirm correct key for the server
+            rating: reviewData.rating,
+            comment: reviewData.comment, // Maps to 'description' on the server
             gameId: reviewData.gameId,
-            customerEmail: authStore.user.email, // Add customer email
+            customerEmail: authStore.user.email, // Add the email field
           }),
         });
 
-        // Handle server response
+        // Check the response
         if (!response.ok) {
           const errorText = await response.text();
-          console.error("Error response from server:", response.status, errorText);
           throw new Error(`Failed to submit review. Server response: ${errorText}`);
         }
 
         console.log("Review submitted successfully!");
+
+        // Refresh reviews after submitting a new one
+        await this.fetchReviews(reviewData.gameId);
       } catch (error) {
         console.error("Error submitting review:", error.message);
+      }
+    },
+
+    // Fetch reviews for a specific product
+    async fetchReviews(gameId) {
+      try {
+        const response = await fetch(`http://localhost:8080/reviews/review/game${gameId}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch reviews. Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Map the response to ensure the `id` field is properly included
+        this.reviews = data.reviews.map((review) => ({
+          id: review.id, // Map the `id` field explicitly
+          description: review.description,
+          gameRating: review.gameRating,
+          rating: review.rating || 0, // Default to 0 if undefined
+          customerEmail: review.customerEmail || "Anonymous",
+        }));
+      } catch (error) {
+        console.error("Error fetching reviews:", error.message);
+      }
+    },
+
+    // Upvote a review
+    async upvoteReview(reviewId) {
+      try {
+        const response = await fetch(`http://localhost:8080/reviews/review/${reviewId}/1`, {
+          method: "PUT",
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to upvote review. Status: ${response.status}`);
+        }
+
+        // Update local state after successful upvote
+        const review = this.reviews.find((r) => r.id === reviewId);
+        if (review) {
+          review.rating += 1;
+        }
+      } catch (error) {
+        console.error("Error upvoting review:", error.message);
+      }
+    },
+
+    // Downvote a review
+    async downvoteReview(reviewId) {
+      try {
+        const response = await fetch(`http://localhost:8080/reviews/review/${reviewId}/-1`, {
+          method: "PUT",
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to downvote review. Status: ${response.status}`);
+        }
+
+        // Update local state after successful downvote
+        const review = this.reviews.find((r) => r.id === reviewId);
+        if (review) {
+          review.rating -= 1;
+        }
+      } catch (error) {
+        console.error("Error downvoting review:", error.message);
       }
     },
   },

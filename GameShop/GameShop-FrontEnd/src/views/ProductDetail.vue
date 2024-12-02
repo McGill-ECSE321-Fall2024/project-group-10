@@ -85,9 +85,21 @@
         <p>{{ review.description }}</p>
       </div>
       <div class="review-rating">
-        <v-icon @click="increaseRating(review)" class="arrow">mdi-arrow-up</v-icon>
+        <v-icon
+          @click="increaseRating(review)"
+          :class="{ disabled: review.customerEmail === loggedInUserEmail }"
+          class="arrow"
+        >
+          mdi-arrow-up
+        </v-icon>
         <p class="score">{{ review.reviewRating }}</p>
-        <v-icon @click="decreaseRating(review)" class="arrow">mdi-arrow-down</v-icon>
+        <v-icon
+          @click="decreaseRating(review)"
+          :class="{ disabled: review.customerEmail === loggedInUserEmail }"
+          class="arrow"
+        >
+          mdi-arrow-down
+        </v-icon>
       </div>
     </div>
   </div>
@@ -115,7 +127,9 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const authStore = useAuthStore();
+    const loggedInUserEmail = computed(() => authStore.user?.email || null);
 
+    
     const ratingEnumMap = {
       One: "1",
       Two: "2",
@@ -131,6 +145,54 @@ export default defineComponent({
       );
     });
 
+    const addToCart = async () => {
+      await cartStore.addGameToCart(selectedProduct.value.gameId, 1);
+      router.push({ name: "CartView" });
+    };
+
+    const addToWishlist = async () => {
+      try {
+        await wishlistStore.addGameToWishlist(selectedProduct.value.gameId);
+      } catch (error) {
+        console.error("Error adding to wishlist:", error);
+      }
+    };
+
+    // Review functionality
+    const showReviewBox = ref(false);
+    const reviewText = ref("");
+    const rating = ref(null);
+
+    const toggleReview = () => {
+      showReviewBox.value = !showReviewBox.value;
+    };
+
+    const submitReview = async () => {
+      try {
+        await detailStore.submitReview({
+          comment: reviewText.value.trim(),
+          rating: rating.value,
+          gameId: selectedProduct.value.gameId,
+        });
+        console.log("Review submitted successfully");
+        fetchReviews(); // Refresh reviews after submission
+      } catch (error) {
+        console.error("Error creating review:", error);
+      }
+      resetReviewBox();
+    };
+
+    const cancelReview = () => {
+      resetReviewBox();
+    };
+
+    const resetReviewBox = () => {
+      showReviewBox.value = false;
+      reviewText.value = "";
+      rating.value = null;
+    };
+
+    // Fetch and display reviews
     const reviews = ref([]);
 
     const fetchReviews = async () => {
@@ -144,27 +206,34 @@ export default defineComponent({
         }
         const data = await response.json();
 
-        // Map the response and initialize reviewRating
+        // Map backend response and correctly assign reviewId
         reviews.value = data.reviews.map((review) => ({
-          ...review,
+          id: review.id, // Ensure this matches the backend field name
+          description: review.description,
           gameRating: ratingEnumMap[review.gameRating] || "0",
-          reviewRating: review.reviewRating || 0, // Ensure reviewRating is initialized
+          reviewRating: review.reviewRating || 0,
+          customerEmail: review.customerEmail || "Anonymous",
         }));
+        console.log("Fetched Reviews:", reviews.value);
       } catch (error) {
         console.error("Error fetching reviews:", error.message);
       }
     };
 
-    const increaseRating = (review) => {
-      review.reviewRating += 1;
-      // Optional: Send this update to the backend
-      console.log(`Increased rating for review ${review.id} to ${review.reviewRating}`);
+    const increaseRating = async (review) => {
+      if (review.customerEmail === loggedInUserEmail.value) {
+        alert("You cannot vote on your own review.");
+        return;
+      }
+      await detailStore.upvoteReview(review.id); // Call the store's upvoteReview method
     };
 
-    const decreaseRating = (review) => {
-      review.reviewRating -= 1;
-      // Optional: Send this update to the backend
-      console.log(`Decreased rating for review ${review.id} to ${review.reviewRating}`);
+    const decreaseRating = async (review) => {
+      if (review.customerEmail === loggedInUserEmail.value) {
+        alert("You cannot vote on your own review.");
+        return;
+      }
+      await detailStore.downvoteReview(review.id); // Call the store's downvoteReview method
     };
 
     onMounted(() => {
@@ -174,16 +243,26 @@ export default defineComponent({
     return {
       router,
       selectedProduct,
+      addToCart,
       isCustomer,
+      addToWishlist,
+      showReviewBox,
+      toggleReview,
+      reviewText,
+      rating,
+      submitReview,
+      cancelReview,
       reviews,
       increaseRating,
       decreaseRating,
+      loggedInUserEmail,
     };
   },
 });
 </script>
 
 <style scoped>
+/* General Product Section */
 .product {
   display: flex;
   margin-top: 50px;
@@ -206,10 +285,11 @@ export default defineComponent({
 .custom-textarea {
   width: 100%;
   margin-bottom: 10px;
-  border: 2px solid black;
+  border: 2px solid #ccc;
   border-radius: 5px;
   padding: 8px;
   font-size: 16px;
+  resize: none;
 }
 
 .rating-container {
@@ -221,11 +301,12 @@ export default defineComponent({
   width: 150px;
   height: 40px;
   font-size: 16px;
-  border: 2px solid black;
+  border: 2px solid #ccc;
   border-radius: 5px;
   padding: 5px;
 }
 
+/* Reviews Section */
 .reviews-section {
   margin-top: 30px;
   padding: 16px;
@@ -235,6 +316,7 @@ export default defineComponent({
 .review-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
   padding: 10px;
   background-color: #f9f9f9;
@@ -244,14 +326,15 @@ export default defineComponent({
 
 .review-header {
   flex: 1;
+  margin-right: 16px;
 }
 
-.review-item p:first-of-type {
+.review-header p:first-of-type {
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.review-item p:last-of-type {
+.review-header p:last-of-type {
   margin-top: 0;
 }
 
@@ -263,38 +346,30 @@ export default defineComponent({
 }
 
 /* Voting System */
-.review-voting {
+.review-rating {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  width: 40px; /* Reduced width */
+  justify-content: center;
+  width: 50px;
 }
 
-.review-voting .review-score {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin: 0; /* Remove unnecessary margins */
-  line-height: 1;
-  text-align: center;
-  width: 100%; /* Ensure it uses the full container width */
-}
-
-.review-voting v-btn {
+.review-rating .arrow {
+  cursor: pointer;
+  font-size: 1.5rem;
   color: gray;
   transition: color 0.2s;
 }
 
-.review-voting v-btn:hover {
+.review-rating .arrow:hover {
   color: black;
 }
 
-.review-voting .arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  font-size: 1.5rem;
-  padding: 0; /* Remove any extra padding */
+.review-rating .score {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 5px 0; /* Space between the number and the arrows */
+  text-align: center;
+  line-height: 1;
 }
 </style>
