@@ -124,7 +124,6 @@ export const productsStore = defineStore("products", {
 
     async addGame(gameData) {
       let newGame = undefined;
-      let newGame = undefined;
       try {
         const response = await fetch("http://localhost:8080/games", {
           method: "POST",
