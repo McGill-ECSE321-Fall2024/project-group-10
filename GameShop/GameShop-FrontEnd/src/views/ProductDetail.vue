@@ -63,7 +63,7 @@
 
   <div class="reviews-section" v-if="reviews.length > 0">
     <h3>Customer Reviews:</h3>
-    <div class="review-item" v-for="review in reviews" :key="review.id">
+    <div class="review-item" v-for="review in reviews" :key="review.reviewId">
       <div class="review-header">
         <p>
           <strong>{{ review.customerEmail || "Anonymous" }}</strong>, {{ translateGameRating(review.gameRating) }}/5
@@ -204,44 +204,38 @@ export default defineComponent({
           throw new Error(`Failed to fetch reviews. Status: ${response.status}`);
         }
         const data = await response.json();
-        reviews.value = data.reviews.map((review) => ({
-          id: review.id,
-          description: review.description,
-          gameRating: review.gameRating,
-          reviewRating: review.reviewRating || 0,
-          customerEmail: review.customerEmail || "Anonymous",
-        }));
+        reviews.value = data.reviews
+          .map((review) => ({
+            reviewId: review.reviewId,
+            description: review.description,
+            gameRating: review.gameRating,
+            reviewRating: review.rating || 0,
+            customerEmail: review.customerEmail || "Anonymous",
+          }))
+          .sort((a, b) => a.reviewId - b.reviewId); // Sort in ascending order by reviewId
       } catch (error) {
         console.error("Error fetching reviews:", error.message);
       }
     };
-
     const increaseRating = async (review) => {
-      if (review.customerEmail === loggedInUserEmail.value) {
-        alert("You cannot vote on your own review.");
-        return;
-      }
       try {
-        await detailStore.increaseRatingReview(review.id);
-        fetchReviews();
+        await detailStore.increaseRatingReview(review.reviewId);
       } catch (error) {
-        console.error("Error upvoting review:", error.message);
+        console.error("Error increasing review rating:", error.message);
+        alert("Failed to upvote review.");
       }
+      fetchReviews();
     };
 
     const decreaseRating = async (review) => {
-      if (review.customerEmail === loggedInUserEmail.value) {
-        alert("You cannot vote on your own review.");
-        return;
-      }
       try {
-        await detailStore.decreaseRating(review.id);
-        fetchReviews();
+        await detailStore.decreaseRatingReview(review.reviewId);
       } catch (error) {
-        console.error("Error downvoting review:", error.message);
+        console.error("Error decreasing review rating:", error.message);
+        alert("Failed to downvote review.");
       }
+      fetchReviews();
     };
-
     onMounted(() => {
       fetchReviews();
     });
