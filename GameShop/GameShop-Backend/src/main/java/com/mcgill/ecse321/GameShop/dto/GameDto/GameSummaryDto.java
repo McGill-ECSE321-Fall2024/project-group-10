@@ -9,6 +9,7 @@ public class GameSummaryDto {
     private double price;
     private String photoUrl;
     private int gameId;
+    private int stockQuantity;
 
     public GameSummaryDto(Game game) {
         this.title = game.getTitle();
@@ -16,6 +17,7 @@ public class GameSummaryDto {
         this.price = game.getPrice();
         this.photoUrl = game.getPhotoUrl();
         this.gameId = game.getGame_id();
+        this.stockQuantity = game.getStockQuantity();
     }
 
     protected GameSummaryDto() {
@@ -45,4 +47,11 @@ public class GameSummaryDto {
         this.gameId = gameId;
     }
 
+    public int getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public void setStockQuantity(int stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
 }

@@ -10,6 +10,18 @@ export const useAuthStore = defineStore("auth", {
   }),
 
   actions: {
+    loadFromLocalStorage() {
+      const user = localStorage.getItem("user");
+      const accountType = localStorage.getItem("accountType");
+
+      if (user) {
+        this.user = JSON.parse(user);
+      }
+
+      if (accountType) {
+        this.accountType = JSON.parse(accountType);
+      }
+    },
     async login(email, password) {
       try {
         console.log("Starting login process for:", email);
@@ -29,6 +41,9 @@ export const useAuthStore = defineStore("auth", {
 
         this.user = { email: data.email };
         this.accountType = data.type;
+
+        localStorage.setItem("user", JSON.stringify(this.user));
+        localStorage.setItem("accountType", JSON.stringify(this.accountType));
 
         const cartStore = useCartStore();
         await cartStore.fetchCart();
@@ -73,6 +88,7 @@ export const useAuthStore = defineStore("auth", {
 
       // Clear persistent storage if used
       localStorage.removeItem("user");
+      localStorage.removeItem("accountType");
 
       // Redirect using the router instance
       if (router) {
@@ -82,4 +98,8 @@ export const useAuthStore = defineStore("auth", {
       }
     },
   },
+  persist: true,
+  created() {
+    this.loadFromLocalStorage();
+  }
 });
