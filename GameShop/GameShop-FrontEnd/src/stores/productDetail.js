@@ -10,25 +10,24 @@ export const productDetailStore = defineStore("productDetail", {
     // Submit a new review
     async submitReview(reviewData) {
       const authStore = useAuthStore();
-
+      console.log("Review data:", reviewData);
+    
       // Check if the user is logged in and is a customer
       if (!authStore.user || authStore.accountType !== "CUSTOMER") {
         console.warn("Reviews can only be submitted by customers.");
         return;
       }
-
+    
+      // Map numeric rating to text-based game rating
+    
+      // Validate if the rating exists in the map
+      //const gameRating = reviewData.rating;
+      // if (!gameRating) {
+      //   console.error("Invalid game rating:", reviewData.rating);
+      //   throw new Error("Invalid game rating provided.");
+      // }
+    
       try {
-        // Validate required fields
-        if (!reviewData.comment.trim()) {
-          throw new Error("Description cannot be empty.");
-        }
-        if (!reviewData.rating) {
-          throw new Error("Game rating cannot be null.");
-        }
-        if (!authStore.user.email) {
-          throw new Error("Customer email cannot be empty.");
-        }
-
         // Submit review to the backend
         const response = await fetch("http://localhost:8080/reviews", {
           method: "POST",
@@ -36,21 +35,21 @@ export const productDetailStore = defineStore("productDetail", {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            rating: reviewData.rating,
-            comment: reviewData.comment, // Maps to 'description' on the server
+            gameRating : reviewData.gameRating, // Use the mapped text-based game rating
+            description: reviewData.description.trim(), // Trim description
             gameId: reviewData.gameId,
             customerEmail: authStore.user.email, // Add the email field
           }),
         });
-
+    
         // Check the response
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`Failed to submit review. Server response: ${errorText}`);
         }
-
+    
         console.log("Review submitted successfully!");
-
+    
         // Refresh reviews after submitting a new one
         await this.fetchReviews(reviewData.gameId);
       } catch (error) {
