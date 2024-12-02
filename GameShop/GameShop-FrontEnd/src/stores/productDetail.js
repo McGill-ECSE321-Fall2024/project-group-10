@@ -80,8 +80,7 @@ export const productDetailStore = defineStore("productDetail", {
       }
     },
 
-    // Upvote a review
-    async upvoteReview(reviewId) {
+    async increaseRatingReview(reviewId) {
       try {
         const response = await fetch(`http://localhost:8080/reviews/review/${reviewId}/1`, {
           method: "PUT",
@@ -90,18 +89,16 @@ export const productDetailStore = defineStore("productDetail", {
           throw new Error(`Failed to upvote review. Status: ${response.status}`);
         }
 
-        // Update local state after successful upvote
         const review = this.reviews.find((r) => r.id === reviewId);
         if (review) {
-          review.rating += 1;
+          review.rating += 1; // Update the review's rating in the local store
         }
       } catch (error) {
         console.error("Error upvoting review:", error.message);
       }
     },
-
     // Downvote a review
-    async downvoteReview(reviewId) {
+    async decreaseRating(reviewId) {
       try {
         const response = await fetch(`http://localhost:8080/reviews/review/${reviewId}/-1`, {
           method: "PUT",
@@ -110,10 +107,9 @@ export const productDetailStore = defineStore("productDetail", {
           throw new Error(`Failed to downvote review. Status: ${response.status}`);
         }
 
-        // Update local state after successful downvote
         const review = this.reviews.find((r) => r.id === reviewId);
         if (review) {
-          review.rating -= 1;
+          review.rating -= 1; // Update the review's rating in the local store
         }
       } catch (error) {
         console.error("Error downvoting review:", error.message);
