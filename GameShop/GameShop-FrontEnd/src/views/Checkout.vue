@@ -8,7 +8,7 @@
     >
       <p>{{ item.title }} (x{{ item.quantity }}) - ${{ item.price }}</p>
     </div>
-    <h2>Total: ${{ total }}</h2>
+    <h2>Total: ${{ (total || 0).toFixed(2) }}</h2>
 
     <v-form ref="checkoutForm" v-model="formValid">
       <v-textarea
