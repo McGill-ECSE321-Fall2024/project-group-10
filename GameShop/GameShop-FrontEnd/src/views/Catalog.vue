@@ -13,6 +13,7 @@
           dense
           clearable
           style="margin-left: 20px; max-width: 300px;"
+          @input="toggleSearchFilter"
       ></v-text-field>
       
       <h3>Filters</h3>
@@ -131,17 +132,19 @@ export default defineComponent({
 
       return store.products.filter((product) => {
         let matches = true;
+
+        if (filters.value.search !== null
+            && filters.value.search !== "" 
+            && filters.value.search !== undefined
+            && filters.value.search !== " ") {
+          matches = matches && product.title.toLowerCase().includes(filters.value.search.toLowerCase());
+        }
+
         return matches;
       });
     });
 
     const applyFilters = async () => {
-      if (filters.value.search) {
-        console.log("Triggering Search");
-        store.products = store.products.filter((product) =>
-          product.title.toLowerCase().includes(filters.value.search.toLowerCase())
-        );
-      } else {
       if (filters.value.categories.length > 0 && filters.value.platforms.length > 0) {
         await fetchGamesByCategoriesAndPlatforms(filters.value.categories, filters.value.platforms);
       } else if (filters.value.categories.length > 0) {
@@ -152,7 +155,7 @@ export default defineComponent({
         await fetchGamesOnSale();
       } else {
         await store.fetchProductsFromDB();
-      }}
+      }
     };
 
     const fetchGamesOnSale = async () => {

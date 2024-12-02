@@ -11,7 +11,12 @@ export const searchQueryStore = defineStore('search', () => {
     }
 
     // Compute the search query dynamically
-    const computedSearchQuery = computed(() => searchQuery.value);
+    const computedSearchQuery = computed({
+        get: () => searchQuery.value,
+        set: (value) => {
+            searchQuery.value = value;
+        },
+    });
 
     // List filterer Just in case
     const listFilterer = (list, query) => {

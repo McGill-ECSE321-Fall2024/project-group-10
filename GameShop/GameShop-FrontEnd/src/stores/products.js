@@ -59,13 +59,6 @@ export const productsStore = defineStore("products", {
               }
             });
           }
-        
-          console.log(
-            "Game Id: ",
-            game.gameId,
-            "Discounted Price: ",
-            discountedPrice
-          );
 
           // Return the updated game object with prices and additional fields
           return {
