@@ -1,9 +1,5 @@
 <template>
-  <v-btn
-    @click="router.push({ name: 'Catalog' })"
-    color="primary"
-    variant="elevated"
-  >
+  <v-btn @click="router.push({ name: 'Catalog' })" color="primary" variant="elevated">
     Back to catalog
   </v-btn>
 
@@ -55,32 +51,22 @@
             <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
           </select>
         </div>
-        <v-btn
-          variant="elevated"
-          color="success"
-          @click="submitReview"
-        >
+        <v-btn variant="elevated" color="success" @click="submitReview">
           Submit Review
         </v-btn>
-        <v-btn
-          variant="elevated"
-          color="error"
-          @click="cancelReview"
-        >
+        <v-btn variant="elevated" color="error" @click="cancelReview">
           Cancel
         </v-btn>
       </div>
     </div>
   </div>
 
-  <!-- Reviews Section -->
   <div class="reviews-section" v-if="reviews.length > 0">
     <h3>Customer Reviews:</h3>
     <div class="review-item" v-for="review in reviews" :key="review.id">
       <div class="review-header">
         <p>
-          <strong>{{ review.customerEmail || "Anonymous" }}</strong>,
-          {{ review.gameRating }}/5
+          <strong>{{ review.customerEmail || "Anonymous" }}</strong>, {{ review.gameRating }}/5
         </p>
         <p>{{ review.description }}</p>
       </div>
@@ -129,21 +115,10 @@ export default defineComponent({
     const authStore = useAuthStore();
     const loggedInUserEmail = computed(() => authStore.user?.email || null);
 
-    
-    const ratingEnumMap = {
-      One: "1",
-      Two: "2",
-      Three: "3",
-      Four: "4",
-      Five: "5",
-    };
-
     const isCustomer = computed(() => authStore.accountType === "CUSTOMER");
-    const selectedProduct = computed(() => {
-      return store.products.find(
-        (item) => item.gameId === Number(route.params.id)
-      );
-    });
+    const selectedProduct = computed(() =>
+      store.products.find((item) => item.gameId === Number(route.params.id))
+    );
 
     const addToCart = async () => {
       await cartStore.addGameToCart(selectedProduct.value.gameId, 1);
@@ -158,7 +133,6 @@ export default defineComponent({
       }
     };
 
-    // Review functionality
     const showReviewBox = ref(false);
     const reviewText = ref("");
     const rating = ref(null);
@@ -174,8 +148,7 @@ export default defineComponent({
           rating: rating.value,
           gameId: selectedProduct.value.gameId,
         });
-        console.log("Review submitted successfully");
-        fetchReviews(); // Refresh reviews after submission
+        fetchReviews();
       } catch (error) {
         console.error("Error creating review:", error);
       }
@@ -192,7 +165,6 @@ export default defineComponent({
       rating.value = null;
     };
 
-    // Fetch and display reviews
     const reviews = ref([]);
 
     const fetchReviews = async () => {
@@ -205,16 +177,13 @@ export default defineComponent({
           throw new Error(`Failed to fetch reviews. Status: ${response.status}`);
         }
         const data = await response.json();
-
-        // Map backend response and correctly assign reviewId
         reviews.value = data.reviews.map((review) => ({
-          id: review.id, // Ensure this matches the backend field name
+          id: review.id,
           description: review.description,
-          gameRating: ratingEnumMap[review.gameRating] || "0",
+          gameRating: review.gameRating,
           reviewRating: review.reviewRating || 0,
           customerEmail: review.customerEmail || "Anonymous",
         }));
-        console.log("Fetched Reviews:", reviews.value);
       } catch (error) {
         console.error("Error fetching reviews:", error.message);
       }
@@ -225,7 +194,12 @@ export default defineComponent({
         alert("You cannot vote on your own review.");
         return;
       }
-      await detailStore.upvoteReview(review.id); // Call the store's upvoteReview method
+      try {
+        await detailStore.increaseRatingReview(review.id);
+        fetchReviews();
+      } catch (error) {
+        console.error("Error upvoting review:", error.message);
+      }
     };
 
     const decreaseRating = async (review) => {
@@ -233,11 +207,16 @@ export default defineComponent({
         alert("You cannot vote on your own review.");
         return;
       }
-      await detailStore.downvoteReview(review.id); // Call the store's downvoteReview method
+      try {
+        await detailStore.decreaseRating(review.id);
+        fetchReviews();
+      } catch (error) {
+        console.error("Error downvoting review:", error.message);
+      }
     };
 
     onMounted(() => {
-      fetchReviews(); // Fetch reviews on component mount
+      fetchReviews();
     });
 
     return {
