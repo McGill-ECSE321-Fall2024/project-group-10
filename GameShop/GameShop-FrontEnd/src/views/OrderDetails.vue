@@ -17,7 +17,7 @@
       <v-card class="mt-4">
         <v-card-title>
           <v-icon class="mr-2">mdi-truck</v-icon>
-          Order Details - #{{ order.trackingNumber.substring(0, 8) }}...
+          Order Details - #{{ order.trackingNumber }}
         </v-card-title>
         <v-card-subtitle>
           <v-icon class="mr-2">mdi-calendar</v-icon>
@@ -26,14 +26,16 @@
         <v-divider></v-divider>
         <v-card-text>
           <v-list dense>
-            <v-list-item v-for="(game, index) in order.games" :key="index">
+            <v-list-item
+              v-for="(game, index) in order.games"
+              :key="index"
+              :class="{ returned: game.itemStatus === 'Returned' }"
+            >
               <v-list-item-content>
                 <v-list-item-title>{{ game.title }}</v-list-item-title>
                 <v-list-item-subtitle>
-                  Status: {{ game.itemStatus }} - ${{
-                    game.price.toFixed(2)
-                  }}
-                  each
+                  Quantity: {{ game.quantity }} - Status:
+                  {{ game.itemStatus }} - ${{ game.price.toFixed(2) }} each
                 </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
@@ -84,21 +86,6 @@ export default defineComponent({
 
         if (!order.value) {
           throw new Error("Order not found");
-        }
-
-        // Calculate total price if not already done
-        if (!("totalPrice" in order.value)) {
-          const totalPrice = order.value.games.reduce(
-            (sum, game) =>
-              game.itemStatus !== "Returned"
-                ? sum +
-                  (isFinite(game.price * game.quantity)
-                    ? game.price * game.quantity
-                    : 0)
-                : sum,
-            0
-          );
-          order.value.totalPrice = totalPrice;
         }
       } catch (err) {
         error.value = "Failed to fetch order details. Please try again.";
@@ -175,5 +162,10 @@ export default defineComponent({
 .v-card-subtitle {
   display: flex;
   align-items: center;
+}
+
+.returned {
+  opacity: 0.5;
+  filter: grayscale(100%);
 }
 </style>
