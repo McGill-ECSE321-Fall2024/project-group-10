@@ -66,7 +66,7 @@
     <div class="review-item" v-for="review in reviews" :key="review.id">
       <div class="review-header">
         <p>
-          <strong>{{ review.customerEmail || "Anonymous" }}</strong>, {{ review.gameRating }}/5
+          <strong>{{ review.customerEmail || "Anonymous" }}</strong>, {{ translateGameRating(review.gameRating) }}/5
         </p>
         <p>{{ review.description }}</p>
       </div>
@@ -114,7 +114,16 @@ export default defineComponent({
     const route = useRoute();
     const authStore = useAuthStore();
     const loggedInUserEmail = computed(() => authStore.user?.email || null);
-
+    const translateGameRating = (gameRating) => {
+        const ratingMap = {
+          One: 1,
+          Two: 2,
+          Three: 3,
+          Four: 4,
+          Five: 5,
+        };
+        return ratingMap[gameRating] || "N/A"; // Return "N/A" if the gameRating is invalid or missing
+      };
     const isCustomer = computed(() => authStore.accountType === "CUSTOMER");
     const selectedProduct = computed(() =>
       store.products.find((item) => item.gameId === Number(route.params.id))
@@ -142,15 +151,33 @@ export default defineComponent({
     };
 
     const submitReview = async () => {
+      if (reviewText.value.trim() === "" || rating.value === null) {
+        alert("Please write a review and select a rating.");
+        return;
+      }
+
+      const ratingMap = {
+        1: 'One',
+        2: 'Two',
+        3: 'Three',
+        4: 'Four',
+        5: 'Five',
+      };
+
       try {
-        await detailStore.submitReview({
-          comment: reviewText.value.trim(),
-          rating: rating.value,
+        const reviewData = {
+          description: reviewText.value.trim(),
+          gameRating: ratingMap[rating.value], // Convert the numeric rating to text
           gameId: selectedProduct.value.gameId,
-        });
+          customerEmail: authStore.user.email, // Ensure the logged-in user's email is included
+        };
+
+        await detailStore.submitReview(reviewData);
         fetchReviews();
+        alert("Review submitted successfully!");
       } catch (error) {
         console.error("Error creating review:", error);
+        alert("Failed to submit the review.");
       }
       resetReviewBox();
     };
@@ -235,6 +262,7 @@ export default defineComponent({
       increaseRating,
       decreaseRating,
       loggedInUserEmail,
+      translateGameRating,
     };
   },
 });
