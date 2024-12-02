@@ -14,6 +14,7 @@
         >
           <span class="title">Game Shop</span>
         </router-link>
+        
         <v-spacer></v-spacer>
         <v-btn
           v-if="isCustomer"
