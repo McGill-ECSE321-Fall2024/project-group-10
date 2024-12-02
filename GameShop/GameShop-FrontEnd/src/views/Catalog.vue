@@ -1,7 +1,21 @@
 <template>
   <div class="catalog-container">
+
     <!-- Sidebar with Filters -->
     <div class="sidebar">
+      <h3>Search</h3>
+
+      <!-- Search Bar -->
+      <v-text-field
+          v-model="searchStore.searchQuery"
+          label="Search by name"
+          outlined
+          dense
+          clearable
+          style="margin-left: 20px; max-width: 300px;"
+          @input="toggleSearchFilter"
+      ></v-text-field>
+      
       <h3>Filters</h3>
 
       <!-- Promotions Filter -->
@@ -74,7 +88,9 @@
           />
         </v-col>
       </v-row>
+
     </div>
+    
   </div>
 </template>
 
@@ -85,6 +101,7 @@ import ProductItem from "@/components/ProductItem.vue";
 import { productsStore } from "@/stores/products";
 import { usePromotionsStore } from "@/stores/promotions";
 import { useRouter } from "vue-router";
+import { searchQueryStore } from "@/stores/searchQuery";
 
 export default defineComponent({
   name: "CatalogView",
@@ -95,8 +112,10 @@ export default defineComponent({
     const store = productsStore();
     const router = useRouter();
     const promos = usePromotionsStore();
+    const searchStore = searchQueryStore();
 
     const filters = ref({
+      search: "", // Search query holder
       onSale: false,
       categories: [],
       platforms: [],
@@ -107,25 +126,19 @@ export default defineComponent({
     const promotions = ref([]);
 
     const filteredProducts = computed(() => {
+      if (!store.products.length) {
+        return [];
+      }
+
       return store.products.filter((product) => {
         let matches = true;
 
-        console.log("Store products:", store.products);
-        console.log("Filter - On Sale:", filters.value.onSale);
-        console.log("what is product input", product);
-
-        // Filter by Promotions 
-        if (filters.value.onSale) {
-          matches = matches && store.products.length > 0 && product.gameId > 0;
-          console.log("Matches - On Sale:", matches);
+        if (filters.value.search !== null
+            && filters.value.search !== "" 
+            && filters.value.search !== undefined
+            && filters.value.search !== " ") {
+          matches = matches && product.title.toLowerCase().includes(filters.value.search.toLowerCase());
         }
-        // Since we fetch games by categories and platforms from the backend,
-        // we only need to filter by promotions here.
-
-        // console.log('Product:', product);
-        // console.log('Product Categories:', product.categories);
-        // console.log('Product Platforms:', product.platforms);
-        // console.log('Product Promotions:', product.promotions);
 
         return matches;
       });
@@ -146,30 +159,9 @@ export default defineComponent({
     };
 
     const fetchGamesOnSale = async () => {
-      // Filter out games with promotions
-      // console.log("Store products before filtering:", store.products);
-      // store.products = store.products.filter((product) => 
-      //   product.promotions 
-      //   && product.promotions.length > 0
-      // );
-
-      // // If there are no products with promotions, return early
-      // if (store.products.length <= 0) {
-      //   console.log("No products with promotions found!");
-      //   return;
-      // }
-
       // Fetch all Promotions from the backend
       let allPromotions = await promos.fetchValidPromotions();
       const promotionsArray = Array.isArray(allPromotions) ? allPromotions : [];
-
-      // --Space for handling returned promotions from BE--
-      // if (
-      //   (Array.isArray(allPromotions) && allPromotions.length === 0) || // Empty array
-      //   (typeof allPromotions === "object" && Object.keys(allPromotions).length === 0) // Empty object
-      // ) {
-      //   throw new Error("The response JSON from BE promotions is empty!");
-      // }
 
       // Update the store.products to display
       try{
@@ -180,22 +172,21 @@ export default defineComponent({
           const response = await fetch(
             `http://localhost:8080/promotions/${promotion.promotionId}/games`
           );
-          const data = await response.json();
-
-          console.log("RESPONSE DATA:", data);
+          const data = await response.json()
 
           data.forEach((game) => {
-            console.log("GAME:", game);
+            // Calcualte the discounted price
+            const discountRate = promotion.discountRate;
+            const discountedPrice = game.price - (game.price * discountRate) / 100;
             gamesMap.set(game.gameId, {
               ...game,
-              // categories: game.categories?.categories || [],
-              // platforms: game.platforms?.platforms || [],
+              price: discountedPrice !== game.price ? discountedPrice : game.price,
+              discountedPrice: discountedPrice !== game.price ? discountedPrice : game.price,
+              originalPrice: game.price,
             });
           });
         }
         store.products = Array.from(gamesMap.values());
-        console.log("Final Arrayed Version:", Array.from(gamesMap.values()));
-        console.log("Store products after filtering:", store.products);
       } catch (error) {
         console.error("Error fetching games on sale:", error);
       }
@@ -211,14 +202,24 @@ export default defineComponent({
           );
           const data = await response.json();
 
-          data.games.forEach((game) => {
+          for (let game of data.games) {
+            game = await store.refreshPrices(game);
             gamesMap.set(game.gameId, {
               ...game,
               categories: game.categories?.categories || [],
               platforms: game.platforms?.platforms || [],
               promotions: game.promotions || [],
             });
-          });
+          }
+
+          // data.games.forEach((game) => {
+          //   gamesMap.set(game.gameId, {
+          //     ...game,
+          //     categories: game.categories?.categories || [],
+          //     platforms: game.platforms?.platforms || [],
+          //     promotions: game.promotions || [],
+          //   });
+          // });
         }
 
         store.products = Array.from(gamesMap.values());
@@ -236,18 +237,29 @@ export default defineComponent({
           );
           const data = await response.json();
 
-          data.games.forEach((game) => {
+          for (let game of data.games) {
+            game = await store.refreshPrices(game);
             gamesMap.set(game.gameId, {
               ...game,
               categories: game.categories?.categories || [],
               platforms: game.platforms?.platforms || [],
               promotions: game.promotions || [],
             });
-          });
+          }
+
+          // data.games.forEach((game) => {
+          //   game = await store.refreshPrices(game);
+          //   console.log("UpdatedProduct", game);  
+          //   gamesMap.set(game.gameId, {
+          //     ...game,
+          //     categories: game.categories?.categories || [],
+          //     platforms: game.platforms?.platforms || [],
+          //     promotions: game.promotions || [],
+          //   });
+          // });
         }
 
         store.products = Array.from(gamesMap.values());
-        console.log("Store Platforms after filtering:", store.products);
       } catch (error) {
         console.error("Error fetching games by platforms:", error);
       }
@@ -323,6 +335,13 @@ export default defineComponent({
           platformGamesMap.has(game.gameId)
         );
 
+        // Call the refreshPrices method for each game
+        for (let i = 0; i < intersectionGames.length; i++) {
+          const updatedGame = await store.refreshPrices(intersectionGames[i]);
+          intersectionGames[i] = updatedGame;
+        }
+
+        // Assign updated array to store.products
         store.products = intersectionGames;
       } catch (error) {
         console.error("Error fetching games by categories and platforms:", error);
@@ -353,7 +372,11 @@ export default defineComponent({
 
     const togglePromotionsFilter = async () => {
       filters.value.onSale = !filters.value.onSale;
-      console.log("TOGGLE SALE")
+      await applyFilters();
+    };
+
+    const toggleSearchFilter = async () => {
+      filters.value.search = searchStore.searchQuery;
       await applyFilters();
     };
 
@@ -404,6 +427,9 @@ export default defineComponent({
         console.error("Error fetching games on sale:", error);
       }
 
+      // Apply filters on initial load
+
+
     });
 
     return {
@@ -412,11 +438,13 @@ export default defineComponent({
       promotions,
       platforms,
       filteredProducts,
+      searchStore,
       goToProductPage,
       applyFilters,
       toggleCategoryFilter,
       togglePlatformFilter,
       togglePromotionsFilter,
+      toggleSearchFilter,
     };
   },
 });
