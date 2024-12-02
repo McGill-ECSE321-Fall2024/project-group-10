@@ -3,6 +3,9 @@
       <h1>Employee Dashboard</h1>
       <v-btn color="primary" @click="router.push({ name: 'ViewEmployees' })">View all Employees</v-btn>   
       <v-btn color="primary" @click="router.push({ name: 'ViewCustomers' })">View all Customers</v-btn>
+      <v-btn color="primary" @click="router.push({ name: 'ViewGameQuantity' })">View Game Quantities</v-btn>
+      <v-btn color="primary" @click="router.push({ name: 'SuggestGames' })">Suggest Games</v-btn>
+      <v-btn color="primary" @click="router.push({ name: 'RequestsGames' })">Request Addition of Game</v-btn>
       <router-view></router-view>
     </v-container>
   </template>

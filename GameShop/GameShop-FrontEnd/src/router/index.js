@@ -31,6 +31,7 @@ import OrderDetails from "@/views/OrderDetails.vue";
 import OrderConfirmation from "@/views/OrderConfirmation.vue";
 import OrderHistory from "@/views/OrderHistory.vue";
 
+import ViewGameQuantity from '@/views/employee/ViewGameQuantity.vue';
 
 const routes = [
   {
@@ -97,7 +98,22 @@ const routes = [
       path: "/employee/view-customers",
       name: "ViewCustomers",
       component: ViewCustomers,
-    },],
+    },
+    {
+      path:"/employee/view-game-quantiy",
+      name:"ViewGameQuantity",
+      component: ViewGameQuantity,
+    },
+    {
+      path: "/employee/suggest-games",
+      name: "SuggestGames",
+      component: () => import("@/views/employee/SuggestGames.vue"),
+    },
+    {path: "/employee/requests-games",
+      name: "RequestsGames",
+      component: () => import("@/views/employee/RequestsGames.vue"),
+    }
+  ],
   },
   {
     path: '/manager',
