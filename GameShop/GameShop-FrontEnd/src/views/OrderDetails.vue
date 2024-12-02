@@ -26,9 +26,9 @@
             </span>
           </li>
         </ul>
-        <v-btn color="primary" @click="viewOrder(order.trackingNumber)">
-          View Details
-        </v-btn>
+        <v-btn color="primary" @click="viewOrder(order.trackingNumber)"
+          >View Details</v-btn
+        >
       </div>
     </div>
   </v-container>

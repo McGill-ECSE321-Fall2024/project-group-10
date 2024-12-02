@@ -26,15 +26,81 @@ export const useOrderStore = defineStore("order", {
         }
 
         const data = await response.json();
-        this.orders = data.orders || []; // Default to empty array if no orders
+
+        // Fetch specific games for each order
+        const ordersWithGameDetails = await Promise.all(
+          data.orders.map(async (order) => {
+            try {
+              const specificGamesResponse = await fetch(
+                `http://localhost:8080/orders/${order.trackingNumber}/specificGames`
+              );
+
+              if (!specificGamesResponse.ok) {
+                console.error(
+                  `Failed to fetch specific games for order: ${order.trackingNumber}`
+                );
+                return { ...order, games: [] };
+              }
+
+              const specificGames = await specificGamesResponse.json();
+
+              const gamesWithDetails = await Promise.all(
+                specificGames.games.map(async (specificGame) => {
+                  try {
+                    console.log("SpecificGame:", specificGame);
+
+                    const gameId =
+                      specificGame.game?.aGame_id || specificGame.game?.game_id;
+
+                    if (!gameId) {
+                      console.error(
+                        "Game ID not found in specificGame:",
+                        specificGame
+                      );
+                      return { title: "Unknown Game", quantity: 1 };
+                    }
+
+                    const gameResponse = await fetch(
+                      `http://localhost:8080/games/${gameId}`
+                    );
+
+                    if (!gameResponse.ok) {
+                      return { title: "Unknown Game", quantity: 1 };
+                    }
+
+                    const gameDetails = await gameResponse.json();
+                    return {
+                      title: gameDetails.aTitle,
+                      quantity: 1, // Each SpecificGame represents one unit
+                    };
+                  } catch (err) {
+                    console.error(
+                      `Error fetching game details for specificGame: ${specificGame}`,
+                      err
+                    );
+                    return { title: "Unknown Game", quantity: 1 };
+                  }
+                })
+              );
+
+              return { ...order, games: gamesWithDetails };
+            } catch (err) {
+              console.error(`Error fetching games for order: ${order}`, err);
+              return { ...order, games: [] };
+            }
+          })
+        );
+
+        this.orders = ordersWithGameDetails || [];
       } catch (error) {
         console.error("Error fetching orders:", error);
-        this.orders = []; // Ensure the orders state remains consistent
+        this.orders = [];
       }
     },
 
     async createOrder(orderData) {
       try {
+        // Step 1: Create the order
         const response = await fetch(`http://localhost:8080/orders`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -42,12 +108,13 @@ export const useOrderStore = defineStore("order", {
         });
 
         if (!response.ok) {
-          const errorText = await response.text(); // Read backend error message
+          const errorText = await response.text();
           throw new Error(errorText || "Error creating order");
         }
 
         const newOrder = await response.json();
         this.currentOrder = newOrder;
+
         alert("Order successfully created!");
       } catch (error) {
         console.error("Error creating order:", error);

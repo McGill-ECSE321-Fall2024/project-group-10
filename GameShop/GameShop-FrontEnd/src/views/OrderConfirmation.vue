@@ -1,8 +1,14 @@
 <template>
   <v-container>
     <h1>Order Confirmation</h1>
-    <p>Tracking Number: {{ orderStore.currentOrder.trackingNumber }}</p>
-    <p>Order Date: {{ orderStore.currentOrder.orderDate }}</p>
+    <p>
+      <strong>Tracking Number:</strong>
+      {{ orderStore.currentOrder.trackingNumber }}
+    </p>
+    <p>
+      <strong>Order Date:</strong>
+      {{ formatDate(orderStore.currentOrder.orderDate) }}
+    </p>
     <p>Thank you for your purchase!</p>
 
     <v-btn color="primary" @click="goToCatalog">Back to Catalog</v-btn>
@@ -24,9 +30,17 @@ export default defineComponent({
       router.push({ name: "Catalog" });
     };
 
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
     return {
       orderStore,
       goToCatalog,
+      formatDate,
     };
   },
 });

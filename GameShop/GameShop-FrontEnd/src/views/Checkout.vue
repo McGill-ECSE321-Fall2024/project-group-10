@@ -6,7 +6,7 @@
       :key="item.gameId"
       class="checkout-item"
     >
-      <p>{{ item.title }} - ${{ item.price }}</p>
+      <p>{{ item.title }} (x{{ item.quantity }}) - ${{ item.price }}</p>
     </div>
     <h2>Total: ${{ total }}</h2>
 
@@ -66,7 +66,6 @@ export default defineComponent({
         note: note.value,
         paymentCard: paymentCard.value,
         customerEmail: authStore.user.email,
-        specificGameIds: cartStore.cartItems.map((item) => item.gameId),
       };
 
       try {

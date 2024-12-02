@@ -23,14 +23,46 @@ export const productsStore = defineStore("products", {
     },
 
     async addGame(gameData) {
+      let newGame = undefined;
       try {
         const response = await fetch("http://localhost:8080/games", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(gameData),
         });
-        const newGame = await response.json();
+        newGame = await response.json();
         this.products.push(newGame);
+        console.log("Game added:", newGame);
+      } catch (error) {
+        console.error("Error adding game:", error);
+      }
+
+      if (newGame === undefined) {
+        console.error("Error adding game:", error);
+      }
+
+      try {
+        for (let i = 0; i < newGame.aStockQuantity; i++) {
+          const specificGameData = {
+            itemStatus: "Returned", // Adjust this status as required
+            trackingNumber: [], // Add tracking numbers if needed
+            game_id: newGame.aGame_id,
+          };
+
+          // Create the specific game
+          const specificGameResponse = await fetch(
+            "http://localhost:8080/specificGames",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(specificGameData),
+            }
+          );
+          const newSpecificGame = await specificGameResponse.json();
+          if (newSpecificGame !== null) {
+            console.log("Specific Game added:", newSpecificGame);
+          }
+        }
       } catch (error) {
         console.error("Error adding game:", error);
       }

@@ -90,7 +90,6 @@ export const useCartStore = defineStore("cart", {
           method: "PUT",
         });
         await this.fetchCart();
-        alert("Cart Cleared!");
       } catch (error) {
         console.error("Error clearing cart:", error);
       }
