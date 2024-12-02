@@ -33,6 +33,14 @@
           Cart ({{ cartItemCount }})
         </v-btn>
         <v-btn
+          v-if="isCustomer"
+          @click="router.push({ name: 'OrderHistory' })"
+          color="primary"
+          variant="elevated"
+        >
+          Order History
+        </v-btn>
+        <v-btn
           v-if="isManager || isEmployee || isCustomer"
           @click="goToUpdateAccount"
           color="primary"

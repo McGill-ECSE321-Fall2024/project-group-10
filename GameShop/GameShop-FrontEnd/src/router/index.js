@@ -27,6 +27,10 @@ import ManageEmployees from '@/views/manager/ManageEmployees.vue';
 import ManagePromotions from '@/views/manager/ManagePromotions.vue';
 import ManageGames from '@/views/manager/ManageGames.vue';
 import ListGames from '@/views/manager/ListGames.vue';
+import OrderDetails from "@/views/OrderDetails.vue";
+import OrderConfirmation from "@/views/OrderConfirmation.vue";
+import OrderHistory from "@/views/OrderHistory.vue";
+
 
 const routes = [
   {
@@ -43,7 +47,7 @@ const routes = [
     path: '/cart',
     name: 'CartView',
     component: Cart,
-    meta: { requiresAuth: true, role: 'CUSTOMER' },
+    meta: { requiresAuth: true }
   },
   {
     path: '/checkout',
@@ -79,7 +83,6 @@ const routes = [
     component: () => import("@/views/Wishlist.vue"),
     meta: { requiresAuth: true, role: "CUSTOMER" },
   },
-  
   {
     path: '/employee',
     name: 'EmployeeDashboard',
@@ -151,6 +154,22 @@ const routes = [
     path: "/manage-employees",
     name: "ManageEmployees",
     component: ManageEmployees,
+  },
+  {
+    path: "/order-confirmation",
+    name: "OrderConfirmation",
+    component: () => import("@/views/OrderConfirmation.vue"),
+  },
+  {
+    path: "/order-history",
+    name: "OrderHistory",
+    component: () => import("@/views/OrderHistory.vue"),
+  },
+  {
+    path: "/orders/:trackingNumber",
+    name: "OrderDetails",
+    component: OrderDetails,
+    meta: { requiresAuth: true, role: "CUSTOMER" },
   },
   {
     path: "/manage-employees/manage-archive-employee",

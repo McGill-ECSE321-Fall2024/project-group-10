@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import {usePromotionsStore} from "./promotions.js";
+import { usePromotionsStore } from "./promotions.js";
 
 export const productsStore = defineStore("products", {
   state: () => ({
@@ -31,15 +31,14 @@ export const productsStore = defineStore("products", {
               } else {
                 promoMap.set(gameId, [promo.discountRate]);
               }
-              if(!promoMap.has(gameId)) {
+              if (!promoMap.has(gameId)) {
                 console.error("Error in PromoMap Initi for game", gameId);
               }
-            }
-            )
+            });
           });
-        } else {console.log(
-          "No Valid Promos Found"
-        )}
+        } else {
+          console.log("No Valid Promos Found");
+        }
 
         // GGo Through games and apply promos
         this.products = data.games.map((game) => {
@@ -51,7 +50,7 @@ export const productsStore = defineStore("products", {
             promoMap.get(game.gameId).forEach((promo) => {
               console.log("Promo:", promo);
               const newPrice = game.price - (game.price * promo) / 100;
-        
+
               // Update the discounted price if the new price is lower
               if (newPrice < discountedPrice) {
                 originalPrice = discountedPrice;
@@ -76,7 +75,7 @@ export const productsStore = defineStore("products", {
 
     // Apply promotions to a single game
     async applyPromotionToGame(game) {
-      try{
+      try {
         const validPromos = await usePromotionsStore().fetchValidPromotions();
         const promo_list = []; // Array to hold the promotions to the specific game inputted
 
@@ -118,12 +117,9 @@ export const productsStore = defineStore("products", {
           categories: game.categories?.categories || [],
           platforms: game.platforms?.platforms || [],
         };
-
-
       } catch (error) {
         console.error("Error applying promotions to game:", error);
       }
-
     },
 
     async addGame(gameData) {
@@ -135,6 +131,7 @@ export const productsStore = defineStore("products", {
           body: JSON.stringify(gameData),
         });
         newGame = await response.json();
+        newGame = await response.json();
         this.products.push(newGame);
         console.log("Game added:", newGame);
       } catch (error) {
@@ -145,30 +142,61 @@ export const productsStore = defineStore("products", {
         console.error("Error adding game:", error);
       }
 
-      try{
+      try {
         for (let i = 0; i < newGame.aStockQuantity; i++) {
-          
-        const specificGameData = {
-          itemStatus: "Returned", // Adjust this status as required
-          trackingNumber: [], // Add tracking numbers if needed
-          game_id: newGame.aGame_id,
-        };
+          const specificGameData = {
+            itemStatus: "Returned", // Adjust this status as required
+            trackingNumber: [], // Add tracking numbers if needed
+            game_id: newGame.aGame_id,
+          };
 
-        // Create the specific game
-        const specificGameResponse = await fetch("http://localhost:8080/specificGames", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(specificGameData),
-        });
-        const newSpecificGame = await specificGameResponse.json();
-        if (newSpecificGame !== null){
-          console.log("Specific Game added:", newSpecificGame);
+          // Create the specific game
+          const specificGameResponse = await fetch(
+            "http://localhost:8080/specificGames",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(specificGameData),
+            }
+          );
+          const newSpecificGame = await specificGameResponse.json();
+          if (newSpecificGame !== null) {
+            console.log("Specific Game added:", newSpecificGame);
+          }
         }
+      } catch (error) {
+        console.error("Error adding game:", error);
       }
-    
-      }catch (error) {
-          console.error("Error adding game:", error);
+
+      if (newGame === undefined) {
+        console.error("Error adding game:", error);
+      }
+
+      try {
+        for (let i = 0; i < newGame.aStockQuantity; i++) {
+          const specificGameData = {
+            itemStatus: "Returned", // Adjust this status as required
+            trackingNumber: [], // Add tracking numbers if needed
+            game_id: newGame.aGame_id,
+          };
+
+          // Create the specific game
+          const specificGameResponse = await fetch(
+            "http://localhost:8080/specificGames",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(specificGameData),
+            }
+          );
+          const newSpecificGame = await specificGameResponse.json();
+          if (newSpecificGame !== null) {
+            console.log("Specific Game added:", newSpecificGame);
+          }
         }
+      } catch (error) {
+        console.error("Error adding game:", error);
+      }
     },
 
     async fetchCategories() {

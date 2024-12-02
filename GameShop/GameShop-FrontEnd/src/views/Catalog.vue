@@ -1,21 +1,20 @@
 <template>
   <div class="catalog-container">
-
     <!-- Sidebar with Filters -->
     <div class="sidebar">
       <h3>Search</h3>
 
       <!-- Search Bar -->
       <v-text-field
-          v-model="searchStore.searchQuery"
-          label="Search by name"
-          outlined
-          dense
-          clearable
-          style="margin-left: 20px; max-width: 300px;"
-          @input="toggleSearchFilter"
+        v-model="searchStore.searchQuery"
+        label="Search by name"
+        outlined
+        dense
+        clearable
+        style="margin-left: 20px; max-width: 300px"
+        @input="toggleSearchFilter"
       ></v-text-field>
-      
+
       <h3>Filters</h3>
 
       <!-- Promotions Filter -->
@@ -53,7 +52,7 @@
       </div>
 
       <!-- Platform Filter -->
-      `<div class="filter-section">
+      <div class="filter-section">
         <h4>Platform</h4>
         <div
           class="custom-checkbox"
@@ -70,7 +69,7 @@
             {{ platform.platformName }}
           </label>
         </div>
-      </div>`
+      </div>
     </div>
 
     <!-- Products List -->
@@ -88,9 +87,7 @@
           />
         </v-col>
       </v-row>
-
     </div>
-    
   </div>
 </template>
 
@@ -133,11 +130,17 @@ export default defineComponent({
       return store.products.filter((product) => {
         let matches = true;
 
-        if (filters.value.search !== null
-            && filters.value.search !== "" 
-            && filters.value.search !== undefined
-            && filters.value.search !== " ") {
-          matches = matches && product.title.toLowerCase().includes(filters.value.search.toLowerCase());
+        if (
+          filters.value.search !== null &&
+          filters.value.search !== "" &&
+          filters.value.search !== undefined &&
+          filters.value.search !== " "
+        ) {
+          matches =
+            matches &&
+            product.title
+              .toLowerCase()
+              .includes(filters.value.search.toLowerCase());
         }
 
         return matches;
@@ -145,8 +148,14 @@ export default defineComponent({
     });
 
     const applyFilters = async () => {
-      if (filters.value.categories.length > 0 && filters.value.platforms.length > 0) {
-        await fetchGamesByCategoriesAndPlatforms(filters.value.categories, filters.value.platforms);
+      if (
+        filters.value.categories.length > 0 &&
+        filters.value.platforms.length > 0
+      ) {
+        await fetchGamesByCategoriesAndPlatforms(
+          filters.value.categories,
+          filters.value.platforms
+        );
       } else if (filters.value.categories.length > 0) {
         await fetchGamesByCategories(filters.value.categories);
       } else if (filters.value.platforms.length > 0) {
@@ -164,7 +173,7 @@ export default defineComponent({
       const promotionsArray = Array.isArray(allPromotions) ? allPromotions : [];
 
       // Update the store.products to display
-      try{
+      try {
         // Create a map to store games by gameId
         let gamesMap = new Map();
 
@@ -172,16 +181,19 @@ export default defineComponent({
           const response = await fetch(
             `http://localhost:8080/promotions/${promotion.promotionId}/games`
           );
-          const data = await response.json()
+          const data = await response.json();
 
           data.forEach((game) => {
             // Calcualte the discounted price
             const discountRate = promotion.discountRate;
-            const discountedPrice = game.price - (game.price * discountRate) / 100;
+            const discountedPrice =
+              game.price - (game.price * discountRate) / 100;
             gamesMap.set(game.gameId, {
               ...game,
-              price: discountedPrice !== game.price ? discountedPrice : game.price,
-              discountedPrice: discountedPrice !== game.price ? discountedPrice : game.price,
+              price:
+                discountedPrice !== game.price ? discountedPrice : game.price,
+              discountedPrice:
+                discountedPrice !== game.price ? discountedPrice : game.price,
               originalPrice: game.price,
             });
           });
@@ -190,7 +202,6 @@ export default defineComponent({
       } catch (error) {
         console.error("Error fetching games on sale:", error);
       }
-
     };
 
     const fetchGamesByCategories = async (categoryIds) => {
@@ -249,7 +260,7 @@ export default defineComponent({
 
           // data.games.forEach((game) => {
           //   game = await store.refreshPrices(game);
-          //   console.log("UpdatedProduct", game);  
+          //   console.log("UpdatedProduct", game);
           //   gamesMap.set(game.gameId, {
           //     ...game,
           //     categories: game.categories?.categories || [],
@@ -291,7 +302,10 @@ export default defineComponent({
     //     console.error("Error fetching games by categories and platforms:", error);
     //   }
     // };
-    const fetchGamesByCategoriesAndPlatforms = async (categoryIds, platformIds) => {
+    const fetchGamesByCategoriesAndPlatforms = async (
+      categoryIds,
+      platformIds
+    ) => {
       try {
         let categoryGamesMap = new Map();
         let platformGamesMap = new Map();
@@ -331,8 +345,8 @@ export default defineComponent({
         }
 
         // Find intersection of games in both maps
-        const intersectionGames = Array.from(categoryGamesMap.values()).filter((game) =>
-          platformGamesMap.has(game.gameId)
+        const intersectionGames = Array.from(categoryGamesMap.values()).filter(
+          (game) => platformGamesMap.has(game.gameId)
         );
 
         // Call the refreshPrices method for each game
@@ -344,7 +358,10 @@ export default defineComponent({
         // Assign updated array to store.products
         store.products = intersectionGames;
       } catch (error) {
-        console.error("Error fetching games by categories and platforms:", error);
+        console.error(
+          "Error fetching games by categories and platforms:",
+          error
+        );
       }
     };
 
@@ -428,8 +445,6 @@ export default defineComponent({
       }
 
       // Apply filters on initial load
-
-
     });
 
     return {

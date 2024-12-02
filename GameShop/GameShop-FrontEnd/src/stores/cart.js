@@ -57,7 +57,7 @@ export const useCartStore = defineStore("cart", {
 
     async updateGameQuantity(gameId, quantity) {
       try {
-        await fetch(
+        const response = await fetch(
           `http://localhost:8080/carts/${this.cartId}/games/${gameId}/quantity`,
           {
             method: "PUT",
@@ -65,6 +65,9 @@ export const useCartStore = defineStore("cart", {
             body: JSON.stringify({ gameId, quantity }),
           }
         );
+        if (!response.ok) {
+          alert("Failed to update game quantity, check stock availability.");
+        }
         await this.fetchCart();
       } catch (error) {
         console.error("Error updating game quantity:", error);
@@ -90,7 +93,6 @@ export const useCartStore = defineStore("cart", {
           method: "PUT",
         });
         await this.fetchCart();
-        alert("Cart Cleared!");
       } catch (error) {
         console.error("Error clearing cart:", error);
       }
