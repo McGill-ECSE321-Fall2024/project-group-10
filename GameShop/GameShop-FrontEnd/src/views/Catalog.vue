@@ -115,7 +115,7 @@ export default defineComponent({
     const searchStore = searchQueryStore();
 
     const filters = ref({
-      search: "",
+      search: "", // Search query holder
       onSale: false,
       categories: [],
       platforms: [],
