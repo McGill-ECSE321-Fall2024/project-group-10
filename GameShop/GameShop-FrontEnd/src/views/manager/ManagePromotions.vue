@@ -10,8 +10,6 @@
         </v-btn>
       </v-col>
     </v-row>
-
-    <!-- Promotions List -->
     <v-row>
       <v-col
         cols="12"
@@ -42,7 +40,6 @@
       </v-col>
     </v-row>
 
-    <!-- Create/Edit Promotion Dialog -->
     <v-dialog v-model="showPromotionDialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -94,7 +91,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Delete Confirmation Dialog -->
     <v-dialog v-model="showDeleteDialog" max-width="500px">
       <v-card>
         <v-card-title>

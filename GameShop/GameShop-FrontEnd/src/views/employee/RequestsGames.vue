@@ -41,7 +41,6 @@
           :rules="[rules.required]"
           required
         ></v-text-field>
-        <!-- Categories Selection -->
         <v-select
           v-model="game.categories"
           :items="categories"
@@ -50,7 +49,6 @@
           :rules="[rules.required]"
           required
         ></v-select>
-        <!-- Platforms Selection -->
         <v-select
           v-model="game.platforms"
           :items="platforms"
@@ -183,8 +181,5 @@
     },
   });
   </script>
-  
-  <style scoped>
-  /* Add styles if needed */
-  </style>
+
   

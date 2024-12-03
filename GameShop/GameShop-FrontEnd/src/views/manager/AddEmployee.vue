@@ -67,13 +67,13 @@ export default defineComponent({
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${authStore.token}`, // Assuming token is stored in the auth store
+            Authorization: `Bearer ${authStore.token}`,
           },
           body: JSON.stringify({
             email: employee.value.email,
             username: employee.value.username,
             password: employee.value.password,
-            employeeStatus: employee.value.employeeStatus, // Include employeeStatus in request body
+            employeeStatus: employee.value.employeeStatus,
           }),
         });
 
@@ -111,7 +111,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-/* Add custom styles if needed */
-</style>

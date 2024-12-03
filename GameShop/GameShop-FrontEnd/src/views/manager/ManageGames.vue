@@ -9,7 +9,6 @@
           <v-btn color="primary" @click="router.push({ name: 'ViewAllGames' })">View All Games</v-btn>
         </v-col>
       </v-row>
-      <!-- Include router-view to render child components -->
       <router-view></router-view>
     </v-container>
   </template>

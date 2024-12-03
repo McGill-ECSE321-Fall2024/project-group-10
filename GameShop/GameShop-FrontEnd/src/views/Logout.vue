@@ -30,6 +30,3 @@
   };
   </script>
   
-  <style scoped>
-  /* Optional styles for the page */
-  </style>
