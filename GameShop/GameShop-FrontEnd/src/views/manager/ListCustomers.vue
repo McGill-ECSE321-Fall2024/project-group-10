@@ -2,7 +2,6 @@
     <v-container>
       <h1>List of Customers</h1>
   
-      <!-- Customer Table -->
       <v-simple-table dense>
         <template v-slot:default>
           <thead>
@@ -24,7 +23,6 @@
         </template>
       </v-simple-table>
   
-      <!-- Error Message -->
       <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
     </v-container>
   </template>
@@ -35,15 +33,15 @@
   export default {
     name: "ListCustomers",
     setup() {
-      const customers = ref([]); // Customer list fetched from the database
-      const errorMessage = ref(""); // Error message in case of failure
+      const customers = ref([]);
+      const errorMessage = ref("");
   
       // Fetch customers from the backend
       const fetchCustomers = async () => {
   try {
     errorMessage.value = ""; // Clear previous errors
     console.log("Fetching customers...");
-    // Fetch customer data from the backend
+    // Fetch customer data from backend
     const response = await fetch("http://localhost:8080/account/customers", {
       method: "GET",
     });
@@ -51,11 +49,9 @@
     if (!response.ok) {
       throw new Error(`Failed to fetch customers. Status: ${response.status}`);
     }
-    // Parse and store the customer data
     const data = await response.json();
     console.log("API response data:", data);
-    // Access the 'accounts' array from the response
-    customers.value = data.accounts; // Correctly accessing accounts instead of customers
+    customers.value = data.accounts;
     console.log("Customers stored in state:", customers.value);
   } catch (error) {
     console.error("Error fetching customers:", error);
@@ -77,7 +73,6 @@
   </script>
   
   <style scoped>
-  /* Add styles for the table */
   v-simple-table {
     width: 100%;
     border-collapse: collapse;

@@ -154,6 +154,45 @@ export const useOrderStore = defineStore("order", {
       }
     },
 
+    async returnGame(trackingNumber, specificGameId) {
+      console.log(
+        "Attempting to return game with trackingNumber:",
+        trackingNumber,
+        "and specificGameId:",
+        specificGameId
+      );
+      try {
+        const response = await fetch(
+          `http://localhost:8080/orders/${trackingNumber}/return/${specificGameId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ note: "" }), // Send an empty note or provide a value
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          console.error("Server responded with:", response.status, errorData);
+          throw new Error("Failed to return game");
+        }
+
+        // Update the currentOrder
+        await this.getOrderByTrackingNumber(trackingNumber);
+
+        // Update the specific order in the orders array
+        const orderIndex = this.orders.findIndex(
+          (o) => o.trackingNumber === trackingNumber
+        );
+        if (orderIndex !== -1) {
+          this.orders[orderIndex] = { ...this.currentOrder };
+        }
+      } catch (error) {
+        console.error("Error returning game:", error);
+        throw error;
+      }
+    },
+
     async getOrderByTrackingNumber(trackingNumber) {
       try {
         // Fetch the order details
@@ -280,36 +319,6 @@ export const useOrderStore = defineStore("order", {
       } catch (error) {
         console.error("Error fetching order by tracking number:", error);
         this.currentOrder = null;
-      }
-    },
-
-    async returnGame(trackingNumber, specificGameId) {
-      console.log(
-        "Attempting to return game with trackingNumber:",
-        trackingNumber,
-        "and specificGameId:",
-        specificGameId
-      );
-      try {
-        const response = await fetch(
-          `http://localhost:8080/orders/${trackingNumber}/return/${specificGameId}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ note: "" }), // Send an empty note or provide a value
-          }
-        );
-
-        if (!response.ok) {
-          const errorData = await response.text();
-          console.error("Server responded with:", response.status, errorData);
-          throw new Error("Failed to return game");
-        }
-
-        // Optionally, update the currentOrder here if needed
-      } catch (error) {
-        console.error("Error returning game:", error);
-        throw error;
       }
     },
   },

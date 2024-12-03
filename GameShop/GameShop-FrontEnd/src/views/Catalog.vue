@@ -1,6 +1,5 @@
 <template>
   <div class="catalog-container">
-    <!-- Sidebar with Filters -->
     <div class="sidebar">
       <h3>Search</h3>
 

@@ -1,5 +1,3 @@
-// main.js
-
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import './assets/styles.css';
@@ -45,7 +43,6 @@ const ensureManagerAccount = async () => {
       console.log('Manager account already exists:', managerResponse.data);
     } else {
       console.warn('Manager account check returned no data; proceeding to creation.');
-      // Optionally, you can call the creation function here if needed
     }
   } catch (error) {
     if (error.response && error.response.status === 404) {
