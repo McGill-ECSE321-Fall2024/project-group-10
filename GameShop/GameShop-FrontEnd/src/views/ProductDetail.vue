@@ -72,7 +72,7 @@
       </div>
       <div class="review-rating">
         <v-icon
-          v-if="isCustomer && !review.hasVoted && review.customerEmail!==loggedInUserEmail"
+          v-if="isCustomer && !review.hasVoted && review.customerEmail !== loggedInUserEmail"
           @click="increaseRating(review)"
           :class="{ disabled: review.customerEmail === loggedInUserEmail }"
           class="arrow"
@@ -81,7 +81,7 @@
         </v-icon>
         <p class="score">{{ review.reviewRating }}</p>
         <v-icon
-          v-if="isCustomer && !review.hasVoted && review.customerEmail!==loggedInUserEmail"
+          v-if="isCustomer && !review.hasVoted && review.customerEmail !== loggedInUserEmail"
           @click="decreaseRating(review)"
           :class="{ disabled: review.customerEmail === loggedInUserEmail }"
           class="arrow"
@@ -89,6 +89,9 @@
           mdi-arrow-down
         </v-icon>
       </div>
+      <v-btn variant="elevated" color="primary" class="reply-btn">
+        Reply
+      </v-btn>
     </div>
   </div>
   <div v-else>
