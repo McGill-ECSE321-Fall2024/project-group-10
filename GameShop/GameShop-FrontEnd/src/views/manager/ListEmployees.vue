@@ -34,16 +34,16 @@ export default {
   name: "ListEmployees",
   setup() {
     const router = useRouter();
-    const employees = ref([]); // Employee list fetched from the database
-    const errorMessage = ref(""); // Error message in case of failure
+    const employees = ref([]); 
+    const errorMessage = ref("");
 
     const goBack = () => {
       router.push({ name: 'ManageEmployees' });
     };
-    // Fetch employees from the backend
+    // Fetch employees from backend
     const fetchEmployees = async () => {
 try {
-  errorMessage.value = ""; // Clear previous errors
+  errorMessage.value = "";
   console.log("Fetching employees...");
 
   const response = await fetch("http://localhost:8080/account/employees", {
@@ -59,7 +59,6 @@ try {
   const data = await response.json();
   console.log("API response data:", data);
 
-  // Access the 'accounts' array from the response
   employees.value = data.accounts;
   console.log("Employees stored in state:", employees.value);
 } catch (error) {

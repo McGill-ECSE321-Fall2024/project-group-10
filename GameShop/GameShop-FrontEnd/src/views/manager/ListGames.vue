@@ -39,8 +39,7 @@
         try {
           const response = await fetch('http://localhost:8080/games');
           const data = await response.json();
-          console.log('Fetched games:', data); // Debugging log
-          games.value = data.games || []; // Adjust based on your API response
+          games.value = data.games || [];
         } catch (error) {
           console.error('Error fetching games:', error);
         }

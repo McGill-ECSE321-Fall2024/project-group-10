@@ -145,7 +145,7 @@ const routes = [
         ],
       },
       {
-        path: 'categories', // Changed from '/manager/categories' to 'categories'
+        path: 'categories',
         name: 'ManageCategories',
         component: ManageCategories,
       },

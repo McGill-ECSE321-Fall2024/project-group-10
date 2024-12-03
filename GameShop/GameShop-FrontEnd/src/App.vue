@@ -100,11 +100,11 @@ export default defineComponent({
   computed: {
     isManager() {
       const authStore = useAuthStore();
-      return authStore.accountType === "MANAGER"; // Adjust according to your role naming
+      return authStore.accountType === "MANAGER";
     },
     isEmployee() {
       const authStore = useAuthStore();
-      return authStore.accountType === "EMPLOYEE"; // Adjust according to your role naming
+      return authStore.accountType === "EMPLOYEE";
     },
     isCustomer() {
       const authStore = useAuthStore();
@@ -170,7 +170,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style>
-/* Add global styles if needed */
-</style>

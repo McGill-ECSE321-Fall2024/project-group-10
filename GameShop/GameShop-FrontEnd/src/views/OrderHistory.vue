@@ -1,4 +1,3 @@
-<!-- src/views/OrderHistory.vue -->
 <template>
   <v-container>
     <h1>Your Orders</h1>

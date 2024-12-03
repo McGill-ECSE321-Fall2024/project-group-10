@@ -1,5 +1,3 @@
-<!-- File: src/views/manager/EditGame.vue -->
-
 <template>
   <v-container>
     <h2>Edit Game</h2>
@@ -222,6 +220,3 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-/* Add styles if needed */
-</style>

@@ -1,5 +1,3 @@
-<!-- File: src/views/manager/ManagePlatforms.vue -->
-
 <template>
     <v-container>
       <v-row class="align-center mb-4">
@@ -12,7 +10,6 @@
         </v-col>
       </v-row>
   
-      <!-- Platforms List -->
       <v-list two-line>
         <v-list-item
           v-for="platform in sortedPlatforms"
@@ -29,7 +26,6 @@
         </v-list-item>
       </v-list>
   
-      <!-- Create Platform Dialog -->
       <v-dialog v-model="showCreateDialog" max-width="500px">
         <v-card>
           <v-card-title>
@@ -46,7 +42,6 @@
         </v-card>
       </v-dialog>
   
-      <!-- Edit Platform Dialog -->
       <v-dialog v-model="showEditDialog" max-width="500px">
         <v-card>
           <v-card-title>
@@ -63,7 +58,6 @@
         </v-card>
       </v-dialog>
   
-      <!-- Delete Platform Dialog -->
       <v-dialog v-model="showDeleteDialog" max-width="500px">
         <v-card>
           <v-card-title>

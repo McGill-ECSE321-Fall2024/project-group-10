@@ -1,4 +1,3 @@
-<!-- src/views/OrderDetails.vue -->
 <template>
   <v-container>
     <v-btn text @click="goBack">
