@@ -23,7 +23,7 @@
       <v-text-field
         v-model="accountData.phoneNumber"
         label="Phone Number"
-        :rules="[rules.required]"
+        :rules="[rules.required, rules.phoneNumber]"
         required
       ></v-text-field>
       <v-text-field
@@ -62,6 +62,7 @@ export default defineComponent({
     const rules = {
       required: (value) => !!value || 'Required.',
       email: (value) => /.+@.+\..+/.test(value) || 'Invalid email.',
+      phoneNumber: (value) => /^[0-9]{10}$/.test(value) || 'Phone number must be 10 digits.',
     };
 
     const submitRegister = async () => {
@@ -75,7 +76,7 @@ export default defineComponent({
     } catch (error) {
       // Handle failure
       console.error('Registration failed:', error);
-      alert('Registration failed. Please try again.');
+      alert('Registration failed. Email already exists. Please try again.');
     }
     };
 
