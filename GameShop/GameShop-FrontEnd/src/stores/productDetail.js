@@ -42,9 +42,7 @@ export const productDetailStore = defineStore("productDetail", {
     },
 
     async submitReply(replyData){
-      console.log("replyData", replyData);
-      const formattedDate = new Date(replyData.replyDate).toISOString().split("T")[0];
-      console.log("formattedDate", formattedDate);
+      console.log(replyData);
       try {
         const response = await fetch("http://localhost:8080/replies", {
           method: "POST",
@@ -54,7 +52,7 @@ export const productDetailStore = defineStore("productDetail", {
           body: JSON.stringify({
             replyDate: replyData.replyDate,
             description: replyData.description,
-            reviewRating: 'replyData.reviewRating',
+            reviewRating: replyData.reviewRating,
             reviewId: replyData.reviewId,
             managerEmail: replyData.managerEmail,
           }),
@@ -66,7 +64,6 @@ export const productDetailStore = defineStore("productDetail", {
           throw new Error(`Failed to submit reply. Server response: ${errorText}`);
         }
       
-        console.log("Reply submitted successfully!");
       } catch (error) {
         console.error("Error submitting reply:", error.message);
       }
@@ -82,7 +79,7 @@ export const productDetailStore = defineStore("productDetail", {
         const data = await response.json();
 
         this.reviews = data.reviews.map((review) => ({
-          id: review.id,
+          id: review.reviewId,
           description: review.description,
           gameRating: review.gameRating,
           reviewRating: review.rating || 0,

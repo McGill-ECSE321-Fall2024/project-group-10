@@ -230,22 +230,18 @@ export default defineComponent({
 
     const fetchReviews = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8080/reviews/review/game${selectedProduct.value.gameId}`,
-          { method: "GET" }
-        );
-        if (!response.ok) {
-          throw new Error(`Failed to fetch reviews. Status: ${response.status}`);
-        }
-        const data = await response.json();
-        reviews.value = data.reviews
+        // Call the fetchReviews function from productDetail.js
+        await detailStore.fetchReviews(selectedProduct.value.gameId);
+
+        // Bind the reviews from the store to the component's state
+        reviews.value = detailStore.reviews
           .map((review) => ({
-            reviewId: review.reviewId,
+            reviewId: review.reviewId || review.id, // Consistently use reviewId
             description: review.description,
             gameRating: review.gameRating,
-            reviewRating: review.rating || 0,
+            reviewRating: review.reviewRating || 0,
             customerEmail: review.customerEmail || "Anonymous",
-            hasVoted: false, // New flag to track voting
+            hasVoted: review.hasVoted || false, // Optional flag for UI
           }))
           .sort((a, b) => a.reviewId - b.reviewId); // Sort by reviewId
       } catch (error) {
@@ -292,7 +288,6 @@ export default defineComponent({
     };
 
     const submitReply = async (reviewId) => {
-      console.log("Submitting reply for review:", reviewId);
       const replyText = replyTexts.value[reviewId]?.trim();
       if (!replyText) {
         alert("Reply cannot be empty!");
