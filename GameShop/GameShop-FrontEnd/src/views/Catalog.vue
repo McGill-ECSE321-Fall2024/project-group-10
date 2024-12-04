@@ -187,14 +187,16 @@ export default defineComponent({
             const discountRate = promotion.discountRate;
             const discountedPrice =
               game.price - (game.price * discountRate) / 100;
+              console.log("DiscountedPrice", discountedPrice);
             gamesMap.set(game.gameId, {
               ...game,
               price:
-                discountedPrice !== game.price ? discountedPrice : game.price,
+                discountedPrice !== game.price ? Math.floor(discountedPrice * 100) / 100 : game.price,
               discountedPrice:
-                discountedPrice !== game.price ? discountedPrice : game.price,
+                discountedPrice !== game.price ? Math.floor(discountedPrice * 100) / 100 : game.price,
               originalPrice: game.price,
             });
+            console.log("UpdatedProduct", gamesMap);
           });
         }
         store.products = Array.from(gamesMap.values());
@@ -256,17 +258,6 @@ export default defineComponent({
               promotions: game.promotions || [],
             });
           }
-
-          // data.games.forEach((game) => {
-          //   game = await store.refreshPrices(game);
-          //   console.log("UpdatedProduct", game);
-          //   gamesMap.set(game.gameId, {
-          //     ...game,
-          //     categories: game.categories?.categories || [],
-          //     platforms: game.platforms?.platforms || [],
-          //     promotions: game.promotions || [],
-          //   });
-          // });
         }
 
         store.products = Array.from(gamesMap.values());
@@ -275,32 +266,6 @@ export default defineComponent({
       }
     };
 
-    // const fetchGamesByCategoriesAndPlatforms = async (categoryIds, platformIds) => {
-    //   try {
-    //     let gamesMap = new Map();
-    //     for (const catId of categoryIds) {
-    //       for (const platId of platformIds) {
-    //         const response = await fetch(
-    //           `http://localhost:8080/games?categoryId=${catId}&platformId=${platId}`
-    //         );
-    //         const data = await response.json();
-
-    //         data.games.forEach((game) => {
-    //           gamesMap.set(game.gameId, {
-    //             ...game,
-    //             categories: game.categories?.categories || [],
-    //             platforms: game.platforms?.platforms || [],
-    //             promotions: game.promotions || [],
-    //           });
-    //         });
-    //       }
-    //     }
-
-    //     store.products = Array.from(gamesMap.values());
-    //   } catch (error) {
-    //     console.error("Error fetching games by categories and platforms:", error);
-    //   }
-    // };
     const fetchGamesByCategoriesAndPlatforms = async (
       categoryIds,
       platformIds
