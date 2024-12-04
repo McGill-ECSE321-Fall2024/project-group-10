@@ -753,19 +753,11 @@ public class ReviewServiceTests {
 
         // Act
         // Get a reply to a review that does not have a reply
-<<<<<<< HEAD
         
         ArrayList<Reply> replies = (ArrayList<Reply>) reviewService.getReplyToReview(VALID_REVIEW_ID);
         // Assert
         // Check if the exception is thrown
         assertEquals(replies.size(),0);
-=======
-        Reply result = reviewService.getReplyToReview(VALID_REVIEW_ID);
-
-        // Assert
-        // Ensure the result is null for a review without a reply
-        assertNull(result);
->>>>>>> ea01ced01958e29f4743e80c03c40cd2439f36a2
     }
 
     @Test
