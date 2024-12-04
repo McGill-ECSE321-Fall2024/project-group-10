@@ -82,10 +82,10 @@ export default defineComponent({
           alert('Employee created successfully.');
           router.push({ name: 'ManagerDashboard' });
         } else {
-          alert(`Failed to create employee: ${data.message}`);
+          alert(`Failed to create employee: Email already exists`);
         }
       } catch (error) {
-        console.error('Error creating employee:', error);
+        console.error('Error creating employee: Email already exists');
         alert('Error creating employee.');
       }
     };
