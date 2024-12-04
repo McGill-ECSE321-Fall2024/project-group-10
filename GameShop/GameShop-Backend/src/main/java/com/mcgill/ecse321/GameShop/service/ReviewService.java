@@ -185,7 +185,7 @@ public class ReviewService {
             }
         }
         // Throw exception if no reply found
-        throw new GameShopException(HttpStatus.NOT_FOUND, "No reply to given review");
+        return null;
 
     }
 
