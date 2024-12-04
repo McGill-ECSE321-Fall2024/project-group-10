@@ -30,6 +30,7 @@ import ListGames from '@/views/manager/ListGames.vue';
 import OrderDetails from "@/views/OrderDetails.vue";
 import OrderConfirmation from "@/views/OrderConfirmation.vue";
 import OrderHistory from "@/views/OrderHistory.vue";
+import ManagerViewsQuantity from "@/views/manager/ManagerViewsQuantity.vue";
 
 import ViewGameQuantity from '@/views/employee/ViewGameQuantity.vue';
 
@@ -142,6 +143,11 @@ const routes = [
             component: EditGame,
             props: true,
           },
+          {
+            path: 'view-quantity',
+            name: 'ManagerViewsQuantity',
+            component: ManagerViewsQuantity,
+          }
         ],
       },
       {
