@@ -8,6 +8,8 @@
           <tr>
             <th>Email</th>
             <th>Username</th>
+            <th>PhoneNumber</th>
+            <th>Address</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -15,6 +17,8 @@
           <tr v-for="employee in employees" :key="employee.email">
             <td>{{ employee.email }}</td>
             <td>{{ employee.username }}</td>
+            <td>{{ employee.phoneNumber }}</td>
+            <td>{{ employee.address }}</td>
             <td>{{ employee.employeeStatus }}</td>
           </tr>
         </tbody>
