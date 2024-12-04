@@ -687,8 +687,9 @@ public class ReviewServiceTests {
 
         // Act
         // Get a reply to a review
-        Reply foundReply = reviewService.getReplyToReview(VALID_REVIEW_ID);
-
+        ArrayList<Reply> replies = (ArrayList<Reply>) reviewService.getReplyToReview(VALID_REVIEW_ID);
+        assertEquals(replies.size(),1);
+        Reply foundReply = replies.get(0);
         // Assert
         // Check if the reply is found
         assertNotNull(foundReply);
@@ -749,13 +750,11 @@ public class ReviewServiceTests {
 
         // Act
         // Get a reply to a review that does not have a reply
-        GameShopException exception = assertThrows(GameShopException.class, () -> {
-            reviewService.getReplyToReview(VALID_REVIEW_ID);
-        });
+        
+        ArrayList<Reply> replies = (ArrayList<Reply>) reviewService.getReplyToReview(VALID_REVIEW_ID);
         // Assert
         // Check if the exception is thrown
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals("No reply to given review", exception.getMessage());
+        assertEquals(replies.size(),0);
     }
 
     @Test

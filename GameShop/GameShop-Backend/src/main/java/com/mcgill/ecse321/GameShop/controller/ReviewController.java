@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mcgill.ecse321.GameShop.dto.AccountDtos.AccountResponseDto;
-import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyResponseDto;
+import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplyListDto;
+import com.mcgill.ecse321.GameShop.dto.ReplyDto.ReplySummaryDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewListDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewRequestDto;
 import com.mcgill.ecse321.GameShop.dto.ReviewDto.ReviewResponseDto;
@@ -126,9 +127,13 @@ public class ReviewController {
      *         reply to the specified review
      */
     @GetMapping("/reviews/review/reply/{reviewId}")
-    public ReplyResponseDto getReplyByReviewId(@PathVariable int reviewId) {
-        Reply reply = reviewService.getReplyToReview(reviewId);
-        return new ReplyResponseDto(reply);
+    public ReplyListDto getReplyByReviewId(@PathVariable int reviewId) {
+        Iterable<Reply> replies = reviewService.getReplyToReview(reviewId);
+        List<ReplySummaryDto> replyDto = new ArrayList<>();
+        for(Reply reply : replies) {
+            replyDto.add(new ReplySummaryDto(reply));
+        }
+        return new ReplyListDto(replyDto);
     }
 
     /**
