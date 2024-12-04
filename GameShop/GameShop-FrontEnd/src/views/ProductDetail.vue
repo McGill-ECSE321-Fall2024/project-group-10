@@ -292,16 +292,22 @@ export default defineComponent({
     };
 
     const submitReply = async (reviewId) => {
+      console.log("Submitting reply for review:", reviewId);
       const replyText = replyTexts.value[reviewId]?.trim();
       if (!replyText) {
         alert("Reply cannot be empty!");
         return;
       }
       try {
-        // Submit reply logic (Replace this with an actual API call)
-        console.log(`Submitting reply for review ${reviewId}: ${replyText}`);
-
+        const replyData = {
+          replyDate : '2031-10-10',
+          description : replyText,
+          reviewRating : 'Like',
+          reviewId : reviewId,
+          managerEmail: authStore.user.email,
+        }
         // Clear the reply text after submission
+        await detailStore.submitReply(replyData);
         replyTexts.value[reviewId] = "";
         activeReplyId.value = null;
         alert("Reply submitted successfully!");
