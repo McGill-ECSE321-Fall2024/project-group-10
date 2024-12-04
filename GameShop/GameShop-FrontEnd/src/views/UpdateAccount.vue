@@ -25,7 +25,7 @@
       <v-text-field
         v-model="phoneNumber"
         label="Phone Number"
-        :rules="[rules.required]"
+        :rules="[rules.required, rules.phoneNumber]"
         required
       ></v-text-field>
       <v-text-field
@@ -58,6 +58,7 @@ export default {
       required: (value) => !!value || "Required.",
       email: (value) => /.+@.+\..+/.test(value) || "Invalid email.",
       password: (value) => value.length >= 6 || "Password must be at least 6 characters.",
+      phoneNumber: (value) => /^[0-9]{10}$/.test(value) || 'Phone number must be 10 digits.',
     };
 
     const clearFields = () => {
@@ -92,6 +93,7 @@ export default {
         }
 
         successMessage.value = "Account updated successfully!";
+        clearFields();
       } catch (error) {
         alert(error.message); // Show a pop-up with the error message
         clearFields(); // Clear all fields on error
