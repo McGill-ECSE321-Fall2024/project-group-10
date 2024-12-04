@@ -1,3 +1,5 @@
+// auth.js
+
 import { defineStore } from "pinia";
 import { useRouter } from "vue-router";
 import { useCartStore } from "@/stores/cart";
@@ -98,8 +100,20 @@ export const useAuthStore = defineStore("auth", {
       }
     },
   },
-  persist: true,
+
+  // Added the persist option
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: 'auth',
+        storage: localStorage,
+        paths: ['user', 'accountType'],
+      },
+    ],
+  },
+
   created() {
     this.loadFromLocalStorage();
-  }
+  },
 });
