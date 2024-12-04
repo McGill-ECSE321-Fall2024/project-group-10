@@ -243,28 +243,6 @@ export default defineComponent({
     const reviews = ref([]);
     const repliesByReviewId = ref({});
 
-    const fetchReviews = async () => {
-      try {
-        // Call the fetchReviews function from productDetail.js
-        await detailStore.fetchReviews(selectedProduct.value.gameId);
-
-        // Bind the reviews from the store to the component's state
-        reviews.value = detailStore.reviews
-          .map((review) => ({
-            reviewId: review.reviewId || review.id, // Consistently use reviewId
-            description: review.description,
-            gameRating: review.gameRating,
-            reviewRating: review.reviewRating || 0,
-            customerEmail: review.customerEmail || "Anonymous",
-            hasVoted: review.hasVoted || false, // Optional flag for UI
-          }))
-          .sort((a, b) => a.reviewId - b.reviewId); // Sort by reviewId
-      } catch (error) {
-        console.error("Error fetching reviews:", error.message);
-      }
-      fetchReviewsAndReplies();
-    };
-    
     const fetchReviewsAndReplies = async () => {
       try {
         // Fetch reviews
@@ -293,6 +271,28 @@ export default defineComponent({
       } catch (error) {
         console.error("Error fetching reviews and replies:", error.message);
       }
+    };
+
+    const fetchReviews = async () => {
+      try {
+        // Call the fetchReviews function from productDetail.js
+        await detailStore.fetchReviews(selectedProduct.value.gameId);
+
+        // Bind the reviews from the store to the component's state
+        reviews.value = detailStore.reviews
+          .map((review) => ({
+            reviewId: review.reviewId || review.id, // Consistently use reviewId
+            description: review.description,
+            gameRating: review.gameRating,
+            reviewRating: review.reviewRating || 0,
+            customerEmail: review.customerEmail || "Anonymous",
+            hasVoted: review.hasVoted || false, // Optional flag for UI
+          }))
+          .sort((a, b) => a.reviewId - b.reviewId); // Sort by reviewId
+      } catch (error) {
+        console.error("Error fetching reviews:", error.message);
+      }
+      fetchReviewsAndReplies();
     };
 
     onMounted(() => {

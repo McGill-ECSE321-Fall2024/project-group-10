@@ -97,7 +97,7 @@ export const productDetailStore = defineStore("productDetail", {
     
         // Iterate over all reviews and fetch replies for each
         for (const review of reviews) {
-          const response = await fetch(`http://localhost:8080/replies/review/reply${review.reviewId}`);
+          const response = await fetch(`http://localhost:8080/replies/review/reply/${review.reviewId}`);
           if (!response.ok) {
             throw new Error(`Failed to fetch replies for review ID ${review.reviewId}. Status: ${response.status}`);
           }
