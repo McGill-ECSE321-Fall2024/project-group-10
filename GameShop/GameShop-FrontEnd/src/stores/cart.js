@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "@/stores/auth";
+import { productsStore } from "@/stores/products";
+import { usePromotionsStore } from "@/stores/promotions";
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
@@ -9,7 +11,7 @@ export const useCartStore = defineStore("cart", {
   }),
 
   actions: {
-    async fetchCart() {
+    async fetchCart(tgt_game = null) {
       const auth = useAuthStore();
 
       // Check if the user is logged in and is a customer
@@ -25,30 +27,61 @@ export const useCartStore = defineStore("cart", {
         const data = await response.json();
 
         this.cartId = data.cartId;
-        this.cartItems = data.games.map((g) => ({
-          gameId: g.game.aGame_id,
-          title: g.game.aTitle,
-          price: g.game.aPrice,
-          photoUrl: g.game.aPhotoUrl,
-          quantity: g.quantity,
-        }));
-        this.totalPrice = data.totalPrice;
+        this.cartItems = data.games.map((g) => {
+          let discountedPrice = g.game.aPrice;
+          console.log("Tgt Inpuit", tgt_game);
+
+          if (tgt_game && tgt_game.gameId === g.game.aGame_id) {
+            console.log("aaaaaaaaaAAAAAAA");
+            discountedPrice = tgt_game.price;
+          }
+
+          console.log("Game:", g.game.aTitle, "Price:", discountedPrice);
+
+          return {
+            gameId: g.game.aGame_id,
+            title: g.game.aTitle,
+            price: discountedPrice ? discountedPrice : g.game.aPrice,
+            photoUrl: g.game.aPhotoUrl,
+            quantity: g.quantity,
+          };
+        });
+
+        console.log("Cart fetched from backend:", this.cartItems);
+
+        this.totalPrice = this.cartItems.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        );
       } catch (error) {
         console.error("Error fetching cart:", error);
       }
     },
 
     async addGameToCart(gameId, quantity) {
+      const prod = productsStore();
+      const promos = usePromotionsStore().fetchValidPromotions();
+
       if (!this.cartId) {
         await this.fetchCart();
       }
+
+      // Check the target game and apply promotions if any
+      console.log("Products:", prod.products);
+      const tgt_game = prod.products.find((game) => game.gameId === gameId);
+
+      if (tgt_game === undefined || tgt_game === null) {
+        console.error("Unavailable game:", tgt_game);
+        return;
+      }
+
       try {
         await fetch(`http://localhost:8080/carts/${this.cartId}/games`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ gameId, quantity }),
         });
-        await this.fetchCart();
+        await this.fetchCart(tgt_game);
         alert("Game added to Cart!");
       } catch (error) {
         console.error("Error adding game to cart:", error);

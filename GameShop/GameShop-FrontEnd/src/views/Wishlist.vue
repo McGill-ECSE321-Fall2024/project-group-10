@@ -73,7 +73,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      wishlistStore.fetchWishlist();
+      wishlistStore.wishlistItems;
     });
 
     return {

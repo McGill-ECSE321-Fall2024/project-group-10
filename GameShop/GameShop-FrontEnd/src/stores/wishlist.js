@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "@/stores/auth";
 import { useCartStore } from "@/stores/cart";
+import { usePromotionsStore } from "@/stores/promotions";
+import { productsStore } from "@/stores/products";
 
 export const useWishlistStore = defineStore("wishlist", {
   state: () => ({
@@ -9,7 +11,7 @@ export const useWishlistStore = defineStore("wishlist", {
   }),
 
   actions: {
-    async fetchWishlist() {
+    async fetchWishlist(tgt_game = null) {
       const authStore = useAuthStore();
       if (!authStore.user || authStore.accountType !== "CUSTOMER") {
         console.warn("Wishlist can only be fetched for customers.");
@@ -29,27 +31,58 @@ export const useWishlistStore = defineStore("wishlist", {
 
         // Extract wishlistId and games
         this.wishlistId = data.wishlistId;
-        this.wishlistItems = data.games.games.map((game) => ({
-          gameId: game.gameId,
-          title: game.title,
-          price: game.price,
-          photoUrl: game.photoUrl,
-          description: game.description,
-          // Add other fields if necessary
-        }));
+        this.wishlistItems = data.games.games.map((game) => {
+          let discountedPrice = game.price;
+
+          if (tgt_game && tgt_game.gameId === game.gameId) {
+            discountedPrice = tgt_game.price;;
+          }
+
+          console.log("GamePIOPIPIPIPI:", discountedPrice);
+
+          return {
+            gameId: game.gameId,
+            title: game.title,
+            price: discountedPrice ? discountedPrice : game.price,
+            photoUrl: game.photoUrl,
+          };
+
+        });
+      
+        console.log("Wishlist fetched from backend:", this.wishlistItems);
+
       } catch (error) {
         console.error("Error fetching wishlist:", error);
       }
     },
 
     async addGameToWishlist(gameId) {
+      const promos = await usePromotionsStore().fetchValidPromotions();
+      const prod = productsStore();
+
       if (!this.wishlistId) {
         await this.fetchWishlist();
       }
 
+      // check if the game has any promotions and apply them:
+      console.log("Adding game from prodList:", prod.products);
+      console.log("With GameId:", gameId);
+      let tgt_game = prod.products.find((game) => {
+        if (game.gameId === gameId) {
+          console.log("Game found:", game);
+          return game;
+        }
+      });
+
+      if (this.wishlistId === null || tgt_game.gameId === null) {
+        console.error("Invalid wishlistId or gameId");
+      }
+
+      console.log("Adding game to wishlist:", this.wishlistId);
+
       try {
         const response = await fetch(
-          `http://localhost:8080/wishlist/${this.wishlistId}/${gameId}`,
+          `http://localhost:8080/wishlist/${this.wishlistId}/${tgt_game.gameId}`,
           {
             method: "PUT",
           }
@@ -59,7 +92,7 @@ export const useWishlistStore = defineStore("wishlist", {
           throw new Error("Failed to add game to wishlist.");
         }
 
-        await this.fetchWishlist(); // Refresh the wishlist after adding
+        await this.fetchWishlist(tgt_game); // Refresh the wishlist after adding
         alert("Game added to WishList!");
       } catch (error) {
         console.error("Error adding game to wishlist:", error);
