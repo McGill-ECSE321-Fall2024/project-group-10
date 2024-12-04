@@ -1,56 +1,68 @@
 <template>
-  <v-btn @click="router.push({ name: 'Catalog' })" color="primary" variant="elevated">
-    Back to catalog
-  </v-btn>
+  <section class="product-container">
+    <!-- Full-Width Button -->
+    <v-btn 
+      @click="router.push({ name: 'Catalog' })" 
+      color="primary" 
+      variant="elevated" 
+      class="full-width-btn"
+    >
+      Back to Catalog
+    </v-btn>
 
-  <div class="product">
-    <div class="product-image">
-      <img :src="selectedProduct.photoUrl" alt="" />
-      <v-btn
-        v-if="isCustomer"
-        variant="elevated"
-        color="yellow"
-        class="add-review-btn"
-        @click="toggleReview"
-      >
-        Add Review
-      </v-btn>
-    </div>
-    <div class="product-details">
-      <p>Title: {{ selectedProduct.title }}</p>
-      <p>Description: {{ selectedProduct.description }}</p>
-      <h2>Price: ${{ selectedProduct.price }}</h2>
-      <v-btn
-        v-if="isCustomer"
-        variant="elevated"
-        color="indigo-lighten-3"
-        @click="addToCart"
-      >
-        Add to cart
-      </v-btn>
-      <v-btn
-        v-if="isCustomer"
-        variant="elevated"
-        color="secondary"
-        @click="addToWishlist"
-      >
-        Add to Wishlist
-      </v-btn>
-
-      <div v-if="showReviewBox" class="review-box">
-        <textarea
-          v-model="reviewText"
-          placeholder="Write your review here..."
-          rows="4"
-          cols="50"
-          class="custom-textarea"
-        ></textarea>
-        <div class="rating-container">
-          <label for="rating">Rating: </label>
-          <select id="rating" v-model="rating" class="custom-select">
-            <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
-          </select>
+    <!-- Product Section -->
+    <div class="product">
+      <div class="product-image">
+        <img :src="selectedProduct.photoUrl" alt="Product Image" />
+        <v-btn
+          v-if="isCustomer"
+          variant="elevated"
+          color="yellow"
+          class="add-review-btn"
+          @click="toggleReview"
+        >
+          Add Review
+        </v-btn>
+      </div>
+      <div class="product-details">
+        <h1 class="product-title">{{ selectedProduct.title }}</h1>
+        <p class="product-description">{{ selectedProduct.description }}</p>
+        <h2 class="product-price">Price: ${{ selectedProduct.price }}</h2>
+        <div class="product-actions">
+          <v-btn
+            v-if="isCustomer"
+            variant="elevated"
+            color="indigo-lighten-3"
+            @click="addToCart"
+          >
+            Add to Cart
+          </v-btn>
+          <v-btn
+            v-if="isCustomer"
+            variant="elevated"
+            color="secondary"
+            @click="addToWishlist"
+          >
+            Add to Wishlist
+          </v-btn>
         </div>
+      </div>
+    </div>
+
+    <!-- Review Form -->
+    <div v-if="showReviewBox" class="review-box">
+      <textarea
+        v-model="reviewText"
+        placeholder="Write your review here..."
+        class="custom-textarea"
+      ></textarea>
+      <div class="rating-container">
+        <label for="rating">Rating: </label>
+        <select id="rating" v-model="rating" class="custom-select">
+          <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
+        </select>
+      </div>
+      <div class="review-buttons">
         <v-btn variant="elevated" color="success" @click="submitReview">
           Submit Review
         </v-btn>
@@ -59,70 +71,72 @@
         </v-btn>
       </div>
     </div>
-  </div>
 
-  <div class="reviews-section" v-if="reviews.length > 0">
-    <h3>Customer Reviews:</h3>
-    <div class="review-item" v-for="review in reviews" :key="review.reviewId">
-      <div class="review-header">
-        <p>
-          <strong>{{ review.customerEmail || "Anonymous" }}</strong>, {{ translateGameRating(review.gameRating) }}/5
-        </p>
-        <p>{{ review.description }}</p>
-      </div>
-      <div class="review-rating">
-        <v-icon
-          v-if="isCustomer && !review.hasVoted && review.customerEmail !== loggedInUserEmail"
-          @click="increaseRating(review)"
-          :class="{ disabled: review.customerEmail === loggedInUserEmail }"
-          class="arrow"
+    <!-- Reviews Section -->
+    <div class="reviews-section" v-if="reviews.length > 0">
+      <h3>Customer Reviews:</h3>
+      <div class="review-item" v-for="review in reviews" :key="review.reviewId">
+        <div class="review-header">
+          <p>
+            <strong>{{ review.customerEmail || "Anonymous" }}</strong>, 
+            {{ translateGameRating(review.gameRating) }}/5
+          </p>
+          <p>{{ review.description }}</p>
+        </div>
+        <div class="review-rating">
+          <v-icon
+            v-if="isCustomer && !review.hasVoted && review.customerEmail !== loggedInUserEmail"
+            @click="increaseRating(review)"
+            class="arrow mdi mdi-arrow-up"
+          ></v-icon>
+          <span class="score">{{ review.reviewRating }}</span>
+          <v-icon
+            v-if="isCustomer && !review.hasVoted && review.customerEmail !== loggedInUserEmail"
+            @click="decreaseRating(review)"
+            class="arrow mdi mdi-arrow-down"
+          ></v-icon>
+        </div>
+
+        <!-- Reply Section -->
+        <div class="replies-section">
+          <h4>Replies:</h4>
+          <div class="reply-item" v-for="reply in review.replies" :key="reply.replyId">
+            <p>
+              <strong>{{ reply.managerEmail }}</strong>: {{ reply.description }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Reply Form -->
+        <v-btn
+          v-if="isManager"
+          variant="elevated"
+          color="primary"
+          @click="toggleReplyBox(review.reviewId)"
         >
-          mdi-arrow-up
-        </v-icon>
-        <p class="score">{{ review.reviewRating }}</p>
-        <v-icon
-          v-if="isCustomer && !review.hasVoted && review.customerEmail !== loggedInUserEmail"
-          @click="decreaseRating(review)"
-          :class="{ disabled: review.customerEmail === loggedInUserEmail }"
-          class="arrow"
-        >
-          mdi-arrow-down
-        </v-icon>
-      </div>
-      <v-btn
-        v-if="isManager"
-        variant="elevated"
-        color="primary"
-        class="reply-btn"
-        @click="toggleReplyBox(review.reviewId)"
-      >
-        Reply
-      </v-btn>
-      
-      <!-- Reply Box -->
-      <div v-if="activeReplyId === review.reviewId" class="reply-box">
-        <textarea
-          v-model="replyTexts[review.reviewId]"
-          placeholder="Write your reply here..."
-          rows="3"
-          cols="50"
-          class="custom-textarea"
-        ></textarea>
-        <v-btn variant="elevated" color="success" @click="submitReply(review.reviewId)">
-          Submit Reply
+          Reply
         </v-btn>
-        <v-btn variant="elevated" color="error" @click="cancelReply">
-          Cancel
-        </v-btn>
+        <div v-if="activeReplyId === review.reviewId" class="reply-box">
+          <textarea
+            v-model="replyTexts[review.reviewId]"
+            placeholder="Write your reply here..."
+            class="custom-textarea"
+          ></textarea>
+          <v-btn variant="elevated" color="success" @click="submitReply(review.reviewId)">
+            Submit Reply
+          </v-btn>
+          <v-btn variant="elevated" color="error" @click="cancelReply">
+            Cancel
+          </v-btn>
+        </div>
       </div>
     </div>
-  </div>
-  <div v-else>
-    <p>No reviews available for this product.</p>
-  </div>
-  <div v-else>
-    <p>No reviews available for this product.</p>
-  </div>
+
+    <!-- No Reviews Message -->
+    <div v-else class="no-reviews">
+      <p>No reviews available for this product.</p>
+    </div>
+  </section>
 </template>
 
 <script>
@@ -227,6 +241,7 @@ export default defineComponent({
     };
 
     const reviews = ref([]);
+    const repliesByReviewId = ref({});
 
     const fetchReviews = async () => {
       try {
@@ -247,7 +262,42 @@ export default defineComponent({
       } catch (error) {
         console.error("Error fetching reviews:", error.message);
       }
+      fetchReviewsAndReplies();
     };
+    
+    const fetchReviewsAndReplies = async () => {
+      try {
+        // Fetch reviews
+        await detailStore.fetchReviews(selectedProduct.value.gameId);
+
+        // Get the reviews from the store
+        const reviews = detailStore.reviews.map((review) => ({
+          reviewId: review.reviewId || review.id,
+          description: review.description,
+          gameRating: review.gameRating,
+          reviewRating: review.reviewRating || 0,
+          customerEmail: review.customerEmail || "Anonymous",
+          replies: [], // Initialize with an empty array for replies
+        }));
+
+        // Fetch replies for all reviews
+        const repliesByReview = await detailStore.fetchRepliesForAllReviews(reviews);
+
+        // Attach replies to the corresponding review
+        reviews.forEach((review) => {
+          review.replies = repliesByReview[review.reviewId] || [];
+        });
+
+        // Update the component state with the enriched reviews
+        reviews.value = reviews.sort((a, b) => a.reviewId - b.reviewId);
+      } catch (error) {
+        console.error("Error fetching reviews and replies:", error.message);
+      }
+    };
+
+    onMounted(() => {
+      fetchReviews();
+    });
 
     
     const increaseRating = async (review) => {
@@ -350,6 +400,12 @@ export default defineComponent({
 
 <style scoped>
 /* General Product Section */
+.full-width-btn{
+  display: block; /* Ensures the button behaves as a block-level element */
+  width: 100%; /* Makes the button span the full width of its container */
+  text-align: center; /* Centers the text inside the button */
+  margin-bottom: 20px; /* Optional: Adds spacing below the button */
+}
 .product {
   display: flex;
   margin-top: 50px;
@@ -396,67 +452,111 @@ export default defineComponent({
 /* Reviews Section */
 .reviews-section {
   margin-top: 30px;
-  padding: 16px;
+  padding: 20px;
   border-top: 1px solid #ddd;
 }
 
 .review-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 20px;
-  padding: 10px;
-  background-color: #f9f9f9;
+  padding: 15px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
+  background: #fff;
 }
 
 .review-header {
-  flex: 1;
-  margin-right: 16px;
+  margin-bottom: 10px;
 }
 
-.review-header p:first-of-type {
-  font-weight: bold;
-  margin-bottom: 5px;
+.review-header p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #333;
 }
 
-.review-header p:last-of-type {
-  margin-top: 0;
+.review-header p strong {
+  font-size: 16px;
+  color: #000;
 }
 
-.no-reviews {
-  text-align: center;
-  margin-top: 20px;
-  color: gray;
-  font-style: italic;
-}
-
-/* Voting System */
 .review-rating {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 50px;
+  margin-top: 10px;
 }
 
 .review-rating .arrow {
   cursor: pointer;
-  font-size: 1.5rem;
-  color: gray;
+  font-size: 24px;
+  margin: 0 5px;
+  color: #999;
   transition: color 0.2s;
 }
 
 .review-rating .arrow:hover {
-  color: black;
+  color: #333;
 }
 
 .review-rating .score {
-  font-size: 1.2rem;
+  font-size: 18px;
   font-weight: bold;
-  margin: 5px 0; /* Space between the number and the arrows */
-  text-align: center;
-  line-height: 1;
+  color: #333;
 }
+
+/* Replies Section */
+.replies-section {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f1f1f1;
+  border-radius: 8px;
+}
+
+.reply-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.reply-item p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.reply-item p strong {
+  color: #000;
+}
+
+/* Buttons */
+v-btn.primary {
+  background-color: #3f51b5;
+  color: white;
+}
+
+v-btn.secondary {
+  background-color: #f44336;
+  color: white;
+}
+
+v-btn.success {
+  background-color: #4caf50;
+  color: white;
+}
+
+v-btn.error {
+  background-color: #e53935;
+  color: white;
+}
+
+/* Miscellaneous */
+.no-reviews {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
 </style>

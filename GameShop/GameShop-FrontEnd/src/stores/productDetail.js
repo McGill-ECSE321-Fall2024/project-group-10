@@ -90,6 +90,37 @@ export const productDetailStore = defineStore("productDetail", {
       }
     },
 
+    async fetchRepliesForAllReviews(reviews) {
+      try {
+        // Initialize an empty object to store replies grouped by reviewId
+        const repliesByReview = {};
+    
+        // Iterate over all reviews and fetch replies for each
+        for (const review of reviews) {
+          const response = await fetch(`http://localhost:8080/replies/review/reply${review.reviewId}`);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch replies for review ID ${review.reviewId}. Status: ${response.status}`);
+          }
+          const data = await response.json();
+    
+          // Store replies under the corresponding reviewId
+          repliesByReview[review.reviewId] = data.replies.map((reply) => ({
+            id: reply.replyId,
+            description: reply.description,
+            replyDate: reply.replyDate,
+            reviewRating: reply.reviewRating,
+            managerEmail: reply.managerEmail,
+          }));
+        }
+    
+        // Return the structured replies
+        return repliesByReview;
+      } catch (error) {
+        console.error("Error fetching replies:", error.message);
+        return {};
+      }
+    },
+
     // Increase review rating
     async increaseRatingReview(reviewId) {
       try {
