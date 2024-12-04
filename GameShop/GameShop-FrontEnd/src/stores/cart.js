@@ -29,14 +29,10 @@ export const useCartStore = defineStore("cart", {
         this.cartId = data.cartId;
         this.cartItems = data.games.map((g) => {
           let discountedPrice = g.game.aPrice;
-          console.log("Tgt Inpuit", tgt_game);
 
           if (tgt_game && tgt_game.gameId === g.game.aGame_id) {
-            console.log("aaaaaaaaaAAAAAAA");
             discountedPrice = tgt_game.price;
           }
-
-          console.log("Game:", g.game.aTitle, "Price:", discountedPrice);
 
           return {
             gameId: g.game.aGame_id,
@@ -46,8 +42,6 @@ export const useCartStore = defineStore("cart", {
             quantity: g.quantity,
           };
         });
-
-        console.log("Cart fetched from backend:", this.cartItems);
 
         this.totalPrice = this.cartItems.reduce(
           (total, item) => total + item.price * item.quantity,
@@ -67,7 +61,6 @@ export const useCartStore = defineStore("cart", {
       }
 
       // Check the target game and apply promotions if any
-      console.log("Products:", prod.products);
       const tgt_game = prod.products.find((game) => game.gameId === gameId);
 
       if (tgt_game === undefined || tgt_game === null) {

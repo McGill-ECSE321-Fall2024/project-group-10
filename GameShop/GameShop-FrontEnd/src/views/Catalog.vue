@@ -187,7 +187,6 @@ export default defineComponent({
             const discountRate = promotion.discountRate;
             const discountedPrice =
               game.price - (game.price * discountRate) / 100;
-              console.log("DiscountedPrice", discountedPrice);
             gamesMap.set(game.gameId, {
               ...game,
               price:
@@ -196,7 +195,6 @@ export default defineComponent({
                 discountedPrice !== game.price ? Math.floor(discountedPrice * 100) / 100 : game.price,
               originalPrice: game.price,
             });
-            console.log("UpdatedProduct", gamesMap);
           });
         }
         store.products = Array.from(gamesMap.values());
