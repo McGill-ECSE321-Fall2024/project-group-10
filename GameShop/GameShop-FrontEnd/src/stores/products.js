@@ -46,15 +46,13 @@ export const productsStore = defineStore("products", {
           let originalPrice = null;
           // Check if the game has any promotions
           if (promoMap.has(game.gameId)) {
-            console.log("PromoMap has gameId:", game.game);
             promoMap.get(game.gameId).forEach((promo) => {
-              console.log("Promo:", promo);
               const newPrice = game.price - (game.price * promo) / 100;
 
               // Update the discounted price if the new price is lower
               if (newPrice < discountedPrice) {
                 originalPrice = discountedPrice;
-                discountedPrice = newPrice;
+                discountedPrice = Math.floor(newPrice*100) / 100;
               }
             });
           }
@@ -106,7 +104,7 @@ export const productsStore = defineStore("products", {
           const newPrice = game.price - (game.price * promo) / 100;
           if (newPrice < discountedPrice) {
             originalPrice = discountedPrice;
-            discountedPrice = newPrice;
+            discountedPrice = Math.floor(newPrice * 100) / 100;
           }
         });
 

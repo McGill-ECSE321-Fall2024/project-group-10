@@ -10,7 +10,6 @@ export const usePromotionsStore = defineStore("promotions", {
     async fetchPromotions() {
       try {
         const response = await axios.get("http://localhost:8080/promotions");
-        console.log("Promotions fetched from backend:", response.data.promotions);
         this.promotions = response.data.promotions || [];
         return this.promotions; // Return the array of promotions
       } catch (error) {
@@ -23,7 +22,6 @@ export const usePromotionsStore = defineStore("promotions", {
     // smaller than today
     // And end date after today
     async fetchValidPromotions() {
-      console.log("Fetching valid promotions...");
       try {
         const response = await axios.get("http://localhost:8080/promotions");
         this.promotions = response.data.promotions || [];
@@ -33,7 +31,6 @@ export const usePromotionsStore = defineStore("promotions", {
           let endDate = new Date(promotion.endLocalDate);
           return startDate <= today && endDate >= today;
         });
-        console.log("Valid Promotions:", validPromotions);
         return validPromotions; // Return the array of promotions
       } catch (error) {
         console.error("Error fetching promotions:", error);

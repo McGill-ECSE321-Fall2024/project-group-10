@@ -61,7 +61,8 @@ export default defineComponent({
 
     onMounted(async () => {
       if (auth.user) {
-        await cartStore.fetchCart();
+        // await cartStore.fetchCart();
+        cartStore.cartItems;
       } else {
         router.push({ name: "Login" });
       }
