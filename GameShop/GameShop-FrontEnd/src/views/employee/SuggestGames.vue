@@ -27,6 +27,11 @@ export default defineComponent({
         const message = ref('');
 
         const submitForm = async () => {
+            if (!gameName.value.trim()){
+                message.value = "Please enter the name of the game.";
+                return;
+            }
+            message.value = '';
           alert("An email has been sent to the manager to review the deletion request.");
           gameName.value = "";
        
@@ -36,6 +41,7 @@ export default defineComponent({
             gameName,
             reason,
             submitForm,
+            message,
         };
     },
 });
