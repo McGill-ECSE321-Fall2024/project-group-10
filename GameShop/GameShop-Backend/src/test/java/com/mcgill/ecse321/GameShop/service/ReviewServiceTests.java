@@ -3,6 +3,7 @@ package com.mcgill.ecse321.GameShop.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -728,33 +729,43 @@ public class ReviewServiceTests {
         INVALID_REVIEW_ID = 1092;
         game.setGame_id(VALID_GAME_ID);
 
-        // Mock
+        // Mock repositories
         when(gameRepository.findById(VALID_GAME_ID)).thenReturn(game);
         when(customerRepository.findByEmail(VALID_CUSTOMER_EMAIL)).thenReturn(customer);
         when(customerRepository.findByEmail(VALID_CUSTOMER_EMAIL2)).thenReturn(customer2);
+
+        // Mock review repository save behavior
         when(reviewRepository.save(any(Review.class))).thenAnswer((InvocationOnMock invocation) -> {
             Review review = invocation.getArgument(0);
             review.setReview_id(VALID_REVIEW_ID);
             return review;
         });
 
-        // Create a review
-        Review review = reviewService.createReview(VALID_DESCRIPTION, VALID_GAME_RATING, VALID_GAME_ID,
-                VALID_CUSTOMER_EMAIL);
-        Review review2 = reviewService.createReview(VALID_DESCRIPTION + "extra", VALID_GAME_RATING, VALID_GAME_ID,
-                VALID_CUSTOMER_EMAIL2);
+        // Create reviews
+        Review review = reviewService.createReview(VALID_DESCRIPTION, VALID_GAME_RATING, VALID_GAME_ID, VALID_CUSTOMER_EMAIL);
+        Review review2 = reviewService.createReview(VALID_DESCRIPTION + "extra", VALID_GAME_RATING, VALID_GAME_ID, VALID_CUSTOMER_EMAIL2);
 
         when(reviewRepository.findById(VALID_REVIEW_ID)).thenReturn(review);
+
+        // Create a reply for the second review only
         Reply reply = new Reply(Date.valueOf(LocalDate.now()), "This is a reply", review2, VALID_MANAGER);
         when(replyRepository.findAll()).thenReturn(java.util.Arrays.asList(reply));
 
         // Act
         // Get a reply to a review that does not have a reply
+<<<<<<< HEAD
         
         ArrayList<Reply> replies = (ArrayList<Reply>) reviewService.getReplyToReview(VALID_REVIEW_ID);
         // Assert
         // Check if the exception is thrown
         assertEquals(replies.size(),0);
+=======
+        Reply result = reviewService.getReplyToReview(VALID_REVIEW_ID);
+
+        // Assert
+        // Ensure the result is null for a review without a reply
+        assertNull(result);
+>>>>>>> ea01ced01958e29f4743e80c03c40cd2439f36a2
     }
 
     @Test

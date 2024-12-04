@@ -186,7 +186,13 @@ public class ReviewService {
                 break;
             }
         }
+<<<<<<< HEAD
         return replies;
+=======
+        // Throw exception if no reply found
+        return null;
+
+>>>>>>> ea01ced01958e29f4743e80c03c40cd2439f36a2
     }
 
     @Transactional
