@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'; // Import the persistence plugin
 import './assets/styles.css';
 
 import App from './App.vue';
@@ -32,6 +33,10 @@ const vuetify = createVuetify({
 
 // Create Vue App Instance
 const app = createApp(App);
+
+// Create Pinia instance and apply the persistence plugin
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
 // Function to ensure the manager account exists
 const ensureManagerAccount = async () => {
@@ -75,7 +80,7 @@ const ensureManagerAccount = async () => {
 // Initialize the app
 (async () => {
   await ensureManagerAccount(); // Ensure manager account exists
-  app.use(createPinia());
+  app.use(pinia); // Use the pinia instance with the plugin applied
   app.use(router);
   app.use(vuetify);
   app.mount('#app');
