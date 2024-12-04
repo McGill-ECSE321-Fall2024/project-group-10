@@ -139,9 +139,16 @@ export default defineComponent({
     const goToUpdateAccount = () => {
       router.push("/update-account");
     };
+
     onMounted(() => {
+      // Ensure wishlist is fetched for customers
       if (auth.user && auth.accountType === "CUSTOMER") {
         wishlistStore.fetchWishlist();
+      }
+
+      // Ensure cart is fetched for customers
+      if (auth.user) {
+        cartStore.fetchCart();
       }
     });
 
