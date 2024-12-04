@@ -21,6 +21,9 @@
       <v-col cols="auto">
         <v-btn color="primary" @click="router.push({ name: 'ManagePromotions' })">Manage Promotions</v-btn>
       </v-col>
+      <v-col cols="auto">
+        <v-btn color="primary" @click="router.push({ name: 'ManagerViewsQuantity' })">View Games and Quantities</v-btn>
+      </v-col>
     </v-row>
 
     <router-view></router-view>
