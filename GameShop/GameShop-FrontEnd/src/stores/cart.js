@@ -11,7 +11,7 @@ export const useCartStore = defineStore("cart", {
   }),
 
   actions: {
-    async fetchCart(tgt_game = null) {
+    async fetchCart(tgt_game = null, first = null) {
       const auth = useAuthStore();
 
       // Check if the user is logged in and is a customer
@@ -40,13 +40,22 @@ export const useCartStore = defineStore("cart", {
             discountedPrice = tgt_game.price;
           }
 
-          if (existingItem) {
+          if (existingItem && discountedPrice < g.game.aPrice) {
+            // Update existing item
+            return {
+              ...existingItem,
+              price: discountedPrice,
+              quantity: g.quantity,
+            };
+          } else if (existingItem) {
             // Update existing item
             return {
               ...existingItem,
               quantity: g.quantity,
             };
-          } else {
+          }
+          
+          else {
             // Add new item
             return {
               gameId: g.game.aGame_id,
@@ -66,6 +75,8 @@ export const useCartStore = defineStore("cart", {
           (total, item) => total + item.price * item.quantity,
           0
         );
+
+        return updatedCartItems;
       } catch (error) {
         console.error("Error fetching cart:", error);
       }
@@ -128,7 +139,6 @@ export const useCartStore = defineStore("cart", {
         if (!response.ok) {
           alert("Failed to update game quantity, check stock availability.");
         }
-        console.log("Caling fetchCart", tgt_game);
         await this.fetchCart(tgt_game);
       } catch (error) {
         console.error("Error updating game quantity:", error);
@@ -158,5 +168,16 @@ export const useCartStore = defineStore("cart", {
         console.error("Error clearing cart:", error);
       }
     },
+
+    async initializeCart() {
+      await this.fetchCart();
+
+      for (const item of this.cartItems) {
+        let game = await productsStore().refreshPrices(item);
+        await this.fetchCart(game, true);
+        }
+      }
+    },
+
   },
-});
+);

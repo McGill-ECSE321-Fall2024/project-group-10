@@ -74,7 +74,6 @@ export const productsStore = defineStore("products", {
     // Apply promotions to a single game
     async applyPromotionToGame(game) {
       try {
-        console.log("Applying promotions to game:", game);
         const validPromos = await usePromotionsStore().fetchValidPromotions();
         const promo_list = []; // Array to hold the promotions to the specific game inputted
 
@@ -106,7 +105,6 @@ export const productsStore = defineStore("products", {
           if (newPrice < discountedPrice) {
             originalPrice = discountedPrice;
             discountedPrice = Math.floor(newPrice * 100) / 100;
-            console.log("FLOFLOFLOFLOFLO Price:", discountedPrice);
           }
         });
 

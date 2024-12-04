@@ -44,13 +44,21 @@ export const useWishlistStore = defineStore("wishlist", {
             discountedPrice = tgt_game.price;
           }
 
-          if (existingItem) {
+          if (existingItem && discountedPrice < game.price) {
+            // Update existing item
+            return {
+              ...existingItem,
+              price: discountedPrice,
+              quantity: game.quantity,
+            };
+          } else if (existingItem) {
             // Update existing item
             return {
               ...existingItem,
               quantity: game.quantity,
             };
-          } else {
+          }
+          else {
             // Add new item
             return {
               gameId: game.gameId,
@@ -172,5 +180,15 @@ export const useWishlistStore = defineStore("wishlist", {
         console.error("Error moving wishlist to cart:", error);
       }
     },
+
+    async initializeWishlist() {
+      await this.fetchWishlist();
+
+      for (const item of this.wishlistItems) {
+        const refreshedGame = await productsStore().refreshPrices(item);
+        await this.fetchWishlist(refreshedGame);
+      }
+    },
+    
   },
 });

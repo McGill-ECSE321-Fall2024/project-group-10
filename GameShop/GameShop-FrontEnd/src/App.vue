@@ -89,7 +89,7 @@
 
 <script>
 import { defineComponent, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { createWebHistory, useRouter } from "vue-router";
 import { useCartStore } from "@/stores/cart";
 import { productsStore } from "@/stores/products";
 import { useAuthStore } from "@/stores/auth";
@@ -148,7 +148,8 @@ export default defineComponent({
 
       // Ensure cart is fetched for customers
       if (auth.user) {
-        cartStore.fetchCart();
+        cartStore.initializeCart();
+        wishlistStore.initializeWishlist();
       }
     });
 
