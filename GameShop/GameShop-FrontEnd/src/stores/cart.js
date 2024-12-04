@@ -42,7 +42,7 @@ export const useCartStore = defineStore("cart", {
             quantity: g.quantity,
           };
         });
-
+        
         this.totalPrice = this.cartItems.reduce(
           (total, item) => total + item.price * item.quantity,
           0
@@ -82,6 +82,21 @@ export const useCartStore = defineStore("cart", {
     },
 
     async updateGameQuantity(gameId, quantity) {
+      const prod = productsStore();
+      const promos = await usePromotionsStore().fetchValidPromotions();
+
+      if (!this.cartId) {
+        await this.fetchCart();
+      }
+
+      // Check the target game and apply promotions if any
+      const tgt_game = prod.products.find((game) => game.gameId === gameId);
+
+      if (tgt_game === undefined || tgt_game === null) {
+        console.error("Unavailable game:", tgt_game);
+        return;
+      }
+
       try {
         const response = await fetch(
           `http://localhost:8080/carts/${this.cartId}/games/${gameId}/quantity`,
@@ -94,7 +109,8 @@ export const useCartStore = defineStore("cart", {
         if (!response.ok) {
           alert("Failed to update game quantity, check stock availability.");
         }
-        await this.fetchCart();
+        console.log("Caling fetchCart", tgt_game);
+        await this.fetchCart(tgt_game);
       } catch (error) {
         console.error("Error updating game quantity:", error);
       }
