@@ -31,23 +31,38 @@ export const useWishlistStore = defineStore("wishlist", {
 
         // Extract wishlistId and games
         this.wishlistId = data.wishlistId;
-        this.wishlistItems = data.games.games.map((game) => {
+        // Update existing wishlistItems or add new ones
+        const updatedWishlistItems = data.games.games.map((game) => {
+          const existingItem = this.wishlistItems.find(
+            (item) => item.gameId === game.gameId
+          );
+
           let discountedPrice = game.price;
 
+          // If tgt_game matches the current game, apply its discounted price
           if (tgt_game && tgt_game.gameId === game.gameId) {
-            discountedPrice = tgt_game.price;;
+            discountedPrice = tgt_game.price;
           }
 
-          console.log("GamePIOPIPIPIPI:", discountedPrice);
-
-          return {
-            gameId: game.gameId,
-            title: game.title,
-            price: discountedPrice ? discountedPrice : game.price,
-            photoUrl: game.photoUrl,
-          };
-
+          if (existingItem) {
+            // Update existing item
+            return {
+              ...existingItem,
+              quantity: game.quantity,
+            };
+          } else {
+            // Add new item
+            return {
+              gameId: game.gameId,
+              title: game.title,
+              price: discountedPrice || game.price,
+              photoUrl: game.photoUrl,
+            };
+          }
         });
+
+        // Replace wishlistItems with updated items
+        this.wishlistItems = updatedWishlistItems;
       
         console.log("Wishlist fetched from backend:", this.wishlistItems);
 

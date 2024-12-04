@@ -27,22 +27,41 @@ export const useCartStore = defineStore("cart", {
         const data = await response.json();
 
         this.cartId = data.cartId;
-        this.cartItems = data.games.map((g) => {
+        // Update existing cartItems or add new ones
+        const updatedCartItems = data.games.map((g) => {
+          const existingItem = this.cartItems.find(
+            (item) => item.gameId === g.game.aGame_id
+          );
+
           let discountedPrice = g.game.aPrice;
 
+          // If tgt_game matches the current game, apply its discounted price
           if (tgt_game && tgt_game.gameId === g.game.aGame_id) {
             discountedPrice = tgt_game.price;
           }
 
-          return {
-            gameId: g.game.aGame_id,
-            title: g.game.aTitle,
-            price: discountedPrice ? discountedPrice : g.game.aPrice,
-            photoUrl: g.game.aPhotoUrl,
-            quantity: g.quantity,
-          };
+          if (existingItem) {
+            // Update existing item
+            return {
+              ...existingItem,
+              quantity: g.quantity,
+            };
+          } else {
+            // Add new item
+            return {
+              gameId: g.game.aGame_id,
+              title: g.game.aTitle,
+              price: discountedPrice || g.game.aPrice,
+              photoUrl: g.game.aPhotoUrl,
+              quantity: g.quantity,
+            };
+          }
         });
-        
+
+        // Replace cartItems with updated items
+        this.cartItems = updatedCartItems;
+
+        // Recalculate total price
         this.totalPrice = this.cartItems.reduce(
           (total, item) => total + item.price * item.quantity,
           0
