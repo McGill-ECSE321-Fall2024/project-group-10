@@ -17,6 +17,9 @@
       <v-col cols="auto">
         <v-btn color="primary" @click="router.push({ name: 'SuggestGames' })">Request Deletion of Game</v-btn>
       </v-col>
+      <v-col cols="auto">
+        <v-btn color="primary" @click="router.push({ name: 'Catalog' })">Browse Catalog</v-btn>
+      </v-col>
     </v-row>
       <router-view></router-view>
     </v-container>

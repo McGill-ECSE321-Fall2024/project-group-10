@@ -89,10 +89,36 @@
           mdi-arrow-down
         </v-icon>
       </div>
-      <v-btn variant="elevated" color="primary" class="reply-btn">
+      <v-btn
+        v-if="isManager"
+        variant="elevated"
+        color="primary"
+        class="reply-btn"
+        @click="toggleReplyBox(review.reviewId)"
+      >
         Reply
       </v-btn>
+      
+      <!-- Reply Box -->
+      <div v-if="activeReplyId === review.reviewId" class="reply-box">
+        <textarea
+          v-model="replyTexts[review.reviewId]"
+          placeholder="Write your reply here..."
+          rows="3"
+          cols="50"
+          class="custom-textarea"
+        ></textarea>
+        <v-btn variant="elevated" color="success" @click="submitReply(review.reviewId)">
+          Submit Reply
+        </v-btn>
+        <v-btn variant="elevated" color="error" @click="cancelReply">
+          Cancel
+        </v-btn>
+      </div>
     </div>
+  </div>
+  <div v-else>
+    <p>No reviews available for this product.</p>
   </div>
   <div v-else>
     <p>No reviews available for this product.</p>
@@ -129,7 +155,10 @@ export default defineComponent({
         };
         return ratingMap[gameRating] || "N/A"; // Return "N/A" if the gameRating is invalid or missing
       };
+
     const isCustomer = computed(() => authStore.accountType === "CUSTOMER");
+    const isManager = computed(() => authStore.accountType === "MANAGER");
+
     const selectedProduct = computed(() =>
       store.products.find((item) => item.gameId === Number(route.params.id))
     );
@@ -223,6 +252,8 @@ export default defineComponent({
         console.error("Error fetching reviews:", error.message);
       }
     };
+
+    
     const increaseRating = async (review) => {
       try {
         await detailStore.increaseRatingReview(review.reviewId);
@@ -250,6 +281,40 @@ export default defineComponent({
         alert("Failed to downvote review.");
       }
     };
+
+    // Reply functionality
+    const activeReplyId = ref(null); // Tracks which review's reply box is active
+    const replyTexts = ref({}); // Stores reply text for each review
+
+    const toggleReplyBox = (reviewId) => {
+      activeReplyId.value = activeReplyId.value === reviewId ? null : reviewId;
+      if (!replyTexts.value[reviewId]) replyTexts.value[reviewId] = ""; // Initialize reply text for the review
+    };
+
+    const submitReply = async (reviewId) => {
+      const replyText = replyTexts.value[reviewId]?.trim();
+      if (!replyText) {
+        alert("Reply cannot be empty!");
+        return;
+      }
+      try {
+        // Submit reply logic (Replace this with an actual API call)
+        console.log(`Submitting reply for review ${reviewId}: ${replyText}`);
+
+        // Clear the reply text after submission
+        replyTexts.value[reviewId] = "";
+        activeReplyId.value = null;
+        alert("Reply submitted successfully!");
+      } catch (error) {
+        console.error("Error submitting reply:", error);
+        alert("Failed to submit reply.");
+      }
+    };
+
+    const cancelReply = () => {
+      activeReplyId.value = null; // Close the reply box
+    };
+
     onMounted(() => {
       fetchReviews();
     });
@@ -259,6 +324,7 @@ export default defineComponent({
       selectedProduct,
       addToCart,
       isCustomer,
+      isManager,
       addToWishlist,
       showReviewBox,
       toggleReview,
@@ -271,6 +337,11 @@ export default defineComponent({
       decreaseRating,
       loggedInUserEmail,
       translateGameRating,
+      activeReplyId,
+      replyTexts,
+      toggleReplyBox,
+      submitReply,
+      cancelReply,
     };
   },
 });
