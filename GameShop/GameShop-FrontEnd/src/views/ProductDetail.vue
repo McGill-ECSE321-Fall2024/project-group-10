@@ -15,7 +15,7 @@
       <div class="product-image">
         <img :src="selectedProduct.photoUrl" alt="Product Image" />
         <v-btn
-          v-if="isCustomer"
+          v-if="isCustomer && !hasReviewed"
           variant="elevated"
           color="yellow"
           class="add-review-btn"
@@ -245,6 +245,10 @@ export default defineComponent({
       reviewText.value = "";
       rating.value = null;
     };
+    const hasReviewed = computed(() => {
+      // Check if any review is by the logged-in customer
+      return reviews.value.some((review) => review.customerEmail === loggedInUserEmail.value);
+    });
 
     const reviews = ref([]);
 
@@ -399,6 +403,7 @@ export default defineComponent({
       toggleReplyBox,
       submitReply,
       cancelReply,
+      hasReviewed,
     };
   },
 });
