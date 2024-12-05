@@ -10,8 +10,8 @@
         <v-btn color="primary" @click="router.push({ name: 'ListCustomers' })">View all Customers</v-btn>
       </v-col>
       <v-col cols="auto">
-  <v-btn color="primary" @click="router.push({ name: 'ManageGames' })">Manage Games</v-btn>
-</v-col>
+        <v-btn color="primary" @click="router.push({ name: 'ManageGames' })">Manage Games</v-btn>
+      </v-col>
       <v-col cols="auto">
         <v-btn color="primary" @click="router.push({ name: 'ManageCategories' })">Manage Categories</v-btn>
       </v-col>
@@ -20,6 +20,9 @@
       </v-col>
       <v-col cols="auto">
         <v-btn color="primary" @click="router.push({ name: 'ManagePromotions' })">Manage Promotions</v-btn>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn color="primary" @click="router.push({ name: 'Catalog' })">Browse Catalog</v-btn>
       </v-col>
       <v-col cols="auto">
         <v-btn color="primary" @click="router.push({ name: 'ManagerViewsQuantity' })">View Games and Quantities</v-btn>

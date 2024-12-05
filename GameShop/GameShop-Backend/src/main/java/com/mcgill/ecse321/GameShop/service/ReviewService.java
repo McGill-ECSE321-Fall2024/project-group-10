@@ -170,23 +170,23 @@ public class ReviewService {
     }
 
     @Transactional
-    public Reply getReplyToReview(int reviewId) {
+    public Iterable<Reply> getReplyToReview(int reviewId) {
         // Validate review ID
         if (reviewId <= 0) {
             throw new GameShopException(HttpStatus.BAD_REQUEST, "Review ID must be positive");
         }
         // Retrieve review by ID
         getReviewById(reviewId);
+        ArrayList<Reply> replies = new ArrayList<>();
 
         // Iterate through all replies and filter by review ID
         for (Reply reply : replyRepository.findAll()) {
             if (reply.getReview().getReview_id() == reviewId) {
-                return reply;
+                replies.add(reply);
+                break;
             }
         }
-        // Throw exception if no reply found
-        throw new GameShopException(HttpStatus.NOT_FOUND, "No reply to given review");
-
+        return replies;
     }
 
     @Transactional
