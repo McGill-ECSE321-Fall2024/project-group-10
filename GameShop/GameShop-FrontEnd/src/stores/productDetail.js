@@ -153,5 +153,31 @@ export const productDetailStore = defineStore("productDetail", {
         throw error;
       }
     },
+    async fetchManagerUsername(email) {
+      try {
+        const response = await fetch(`http://localhost:8080/account/getmanager?email=${email}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch manager details. Status: ${response.status}`);
+        }
+        const manager = await response.json();
+        return manager.username;
+      } catch (error) {
+        console.error("Error fetching manager username:", error.message);
+        throw error;
+      }
+    },
+    async fetchCustomerUsername(email) {
+      try {
+        const response = await fetch(`http://localhost:8080/account/customer/${email}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch customer details. Status: ${response.status}`);
+        }
+        const customer = await response.json();
+        return customer.username;
+      } catch (error) {
+        console.error("Error fetching customer username:", error.message);
+        throw error;
+      }
+    },
   },
 });
