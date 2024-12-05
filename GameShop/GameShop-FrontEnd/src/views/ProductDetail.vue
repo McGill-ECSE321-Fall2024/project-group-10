@@ -74,63 +74,69 @@
 
     <!-- Reviews Section -->
     <div class="reviews-section" v-if="reviews.length > 0">
-      <h3>Customer Reviews:</h3>
-      <div class="review-item" v-for="review in reviews" :key="review.reviewId">
-        <div class="review-header">
-          <p>
-            <strong>{{ review.customerEmail || "Anonymous" }}</strong>, 
-            {{ translateGameRating(review.gameRating) }}/5
-          </p>
-          <p>{{ review.description }}</p>
-        </div>
-        <div class="review-rating">
-          <v-icon
-            v-if="isCustomer && !review.hasVoted && review.customerEmail !== loggedInUserEmail"
-            @click="increaseRating(review)"
-            class="arrow mdi mdi-arrow-up"
-          ></v-icon>
-          <span class="score">{{ review.reviewRating }}</span>
-          <v-icon
-            v-if="isCustomer && !review.hasVoted && review.customerEmail !== loggedInUserEmail"
-            @click="decreaseRating(review)"
-            class="arrow mdi mdi-arrow-down"
-          ></v-icon>
-        </div>
+    <h3>Customer Reviews:</h3>
+    <div class="review-item" v-for="review in reviews" :key="review.reviewId">
+      <div class="review-header">
+        <p>
+          <strong>{{ review.customerEmail || "Anonymous" }}</strong>, 
+          {{ translateGameRating(review.gameRating) }}/5
+        </p>
+        <p>{{ review.description }}</p>
+      </div>
+      <div class="review-rating">
+        <v-icon
+          v-if="isCustomer && !review.hasVoted && review.customerEmail !== loggedInUserEmail"
+          @click="increaseRating(review)"
+          class="arrow mdi mdi-arrow-up"
+        ></v-icon>
+        <span class="score">{{ review.reviewRating }}</span>
+        <v-icon
+          v-if="isCustomer && !review.hasVoted && review.customerEmail !== loggedInUserEmail"
+          @click="decreaseRating(review)"
+          class="arrow mdi mdi-arrow-down"
+        ></v-icon>
+      </div>
 
-        <!-- Reply Section -->
-        <div class="replies-section">
-          <h4>Replies:</h4>
-          <div class="reply-item" v-for="reply in review.replies" :key="reply.replyId">
-            <p>
-              <strong>{{ reply.managerEmail }}</strong>: {{ reply.description }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Reply Form -->
-        <v-btn
-          v-if="isManager"
-          variant="elevated"
-          color="primary"
-          @click="toggleReplyBox(review.reviewId)"
+      <!-- Reply Section -->
+      <div class="replies-section">
+        <h4>Reply:</h4>
+        <div 
+          class="reply-item" 
+          v-if="replies[review.reviewId]?.length" 
+          v-for="reply in replies[review.reviewId]" 
+          :key="reply.replyId"
         >
-          Reply
-        </v-btn>
-        <div v-if="activeReplyId === review.reviewId" class="reply-box">
-          <textarea
-            v-model="replyTexts[review.reviewId]"
-            placeholder="Write your reply here..."
-            class="custom-textarea"
-          ></textarea>
-          <v-btn variant="elevated" color="success" @click="submitReply(review.reviewId)">
-            Submit Reply
-          </v-btn>
-          <v-btn variant="elevated" color="error" @click="cancelReply">
-            Cancel
-          </v-btn>
+          <p>
+            <strong>{{ reply.managerEmail }}</strong>: {{ reply.description }}
+          </p>
         </div>
+        <p v-else>No replies yet.</p>
+      </div>
+
+      <!-- Reply Form -->
+      <v-btn
+        v-if="isManager && (!replies[review.reviewId] || replies[review.reviewId].length === 0)"
+        variant="elevated"
+        color="primary"
+        @click="toggleReplyBox(review.reviewId)"
+      >
+        Reply
+      </v-btn>
+      <div v-if="activeReplyId === review.reviewId" class="reply-box">
+        <textarea
+          v-model="replyTexts[review.reviewId]"
+          placeholder="Write your reply here..."
+          class="custom-textarea"
+        ></textarea>
+        <v-btn variant="elevated" color="success" @click="submitReply(review.reviewId)">
+          Submit Reply
+        </v-btn>
+        <v-btn variant="elevated" color="error" @click="cancelReply">
+          Cancel
+        </v-btn>
       </div>
     </div>
+  </div>
 
     <!-- No Reviews Message -->
     <div v-else class="no-reviews">
@@ -241,35 +247,21 @@ export default defineComponent({
     };
 
     const reviews = ref([]);
-    const repliesByReviewId = ref({});
 
-    const fetchReviewsAndReplies = async () => {
+    const replies = ref({}); // Stores replies for each review
+
+    const fetchReplies = async (reviewId) => {
+
       try {
-        // Fetch reviews
-        await detailStore.fetchReviews(selectedProduct.value.gameId);
-
-        // Get the reviews from the store
-        const reviews = detailStore.reviews.map((review) => ({
-          reviewId: review.reviewId || review.id,
-          description: review.description,
-          gameRating: review.gameRating,
-          reviewRating: review.reviewRating || 0,
-          customerEmail: review.customerEmail || "Anonymous",
-          replies: [], // Initialize with an empty array for replies
+        const response = await detailStore.fetchReplies(reviewId);
+        // Ensure replies are mapped and organized under each review
+        replies.value[reviewId] = response.map((reply) => ({
+          replyId: reply.replyId,
+          description: reply.description,
+          managerEmail: reply.managerEmail,
         }));
-
-        // Fetch replies for all reviews
-        const repliesByReview = await detailStore.fetchRepliesForAllReviews(reviews);
-
-        // Attach replies to the corresponding review
-        reviews.forEach((review) => {
-          review.replies = repliesByReview[review.reviewId] || [];
-        });
-
-        // Update the component state with the enriched reviews
-        reviews.value = reviews.sort((a, b) => a.reviewId - b.reviewId);
       } catch (error) {
-        console.error("Error fetching reviews and replies:", error.message);
+        console.error(`Error fetching replies for review ${reviewId}:`, error.message);
       }
     };
 
@@ -289,10 +281,12 @@ export default defineComponent({
             hasVoted: review.hasVoted || false, // Optional flag for UI
           }))
           .sort((a, b) => a.reviewId - b.reviewId); // Sort by reviewId
+          reviews.value.forEach(async (review) => {
+            await fetchReplies(review.reviewId);
+          });
       } catch (error) {
         console.error("Error fetching reviews:", error.message);
       }
-      fetchReviewsAndReplies();
     };
 
     onMounted(() => {
@@ -353,6 +347,7 @@ export default defineComponent({
         }
         // Clear the reply text after submission
         await detailStore.submitReply(replyData);
+        await fetchReplies(reviewId);
         replyTexts.value[reviewId] = "";
         activeReplyId.value = null;
         alert("Reply submitted successfully!");
@@ -384,6 +379,7 @@ export default defineComponent({
       submitReview,
       cancelReview,
       reviews,
+      replies,
       increaseRating,
       decreaseRating,
       loggedInUserEmail,

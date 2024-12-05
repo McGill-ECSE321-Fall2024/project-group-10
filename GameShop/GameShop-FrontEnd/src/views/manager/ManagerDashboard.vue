@@ -23,6 +23,8 @@
       </v-col>
       <v-col cols="auto">
         <v-btn color="primary" @click="router.push({ name: 'Catalog' })">Browse Catalog</v-btn>
+      </v-col>
+      <v-col cols="auto">
         <v-btn color="primary" @click="router.push({ name: 'ManagerViewsQuantity' })">View Games and Quantities</v-btn>
       </v-col>
     </v-row>
