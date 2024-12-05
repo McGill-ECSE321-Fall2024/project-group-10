@@ -66,8 +66,6 @@ const ensureManagerAccount = async () => {
             headers: { 'Content-Type': 'application/json' },
           }
         );
-
-        console.log('Manager account created successfully:', creationResponse.data);
       } catch (creationError) {
         console.error('Error creating manager account:', creationError);
       }
