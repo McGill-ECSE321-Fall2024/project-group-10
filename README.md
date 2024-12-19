@@ -1,19 +1,8 @@
-Documentation
+Report and Specification
 --------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-* [Database, Persistence and Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-2:-Project-Report#iii2-api-docs-instructions)
-* [Back-end/Controller Documentation](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-2:-Project-Report)
-* [Front-end/View Documentation](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-3:-Project-Report)
-  
-* [API Swagger Documentation](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-2:-Project-Report#iii2-api-docs-instructions)
-* [QA Plan with Jacoco Coverage](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-2:-Project-Report#iii2-api-docs-instructions)
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Build System Instructions
---------
-
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-* The other part of the build system submission (Testing Summary) is to be completed as part of the wiki along with the project report.
+* As per TA instructions, the project report is fully completed with all required sections in the wiki and is navigable using this link: [https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-3-Project-Report.](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-3:-Project-Report)
+* In the report, you will find the complete build system instructions as well as all the other project report components required in the rubric.
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 STEP 1: Clone The Repository
