@@ -1,7 +1,8 @@
 Build System Instructions for Deliverable 3
 --------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-* Project report and wiki and is navigable using this link: [wiki](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-3:-Project-Report) 
+* Project report, documentation, and wiki:
+*         [Database, Persistence and Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-2:-Project-Report#iii2-api-docs-instructions)
 * [API Swagger Documentation](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-2:-Project-Report#iii2-api-docs-instructions)
 * [QA Plan with Jacoco Coverage](https://github.com/McGill-ECSE321-Fall2024/project-group-10/wiki/Deliverable-2:-Project-Report#iii2-api-docs-instructions)
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
